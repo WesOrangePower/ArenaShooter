@@ -1,13 +1,11 @@
-package agency.shitcoding.doublejump.events;
+package agency.shitcoding.arena.events;
 
-import agency.shitcoding.doublejump.models.Weapon;
+import agency.shitcoding.arena.models.Weapon;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
-import lombok.RequiredArgsConstructor;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
-import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;

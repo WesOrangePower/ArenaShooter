@@ -1,4 +1,11 @@
-name: DoubleJump
+name: ArenaShooter
 version: '${project.version}'
-main: agency.shitcoding.doublejump.DoubleJump
+main: agency.shitcoding.arena.ArenaShooter
 api-version: '1.20'
+author: WesOrangePower
+depend: [ JellyLib ]
+commands:
+  arenadeathmatch:
+    description: Arena Deathmatch Command
+    usage: /arenadeathmatch
+    aliases: [ arena ]

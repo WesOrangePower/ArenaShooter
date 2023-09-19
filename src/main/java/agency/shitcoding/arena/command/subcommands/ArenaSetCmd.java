@@ -1,63 +1,85 @@
 package agency.shitcoding.arena.command.subcommands;
 
-import agency.shitcoding.arena.ArenaShooter;
-import agency.shitcoding.arena.command.ArenaDeathMatchCommand;
 import agency.shitcoding.arena.command.CommandInst;
+import agency.shitcoding.arena.command.subcommands.arenamutation.ArenaSetAction;
+import agency.shitcoding.arena.command.subcommands.arenamutation.ArenaSetField;
 import agency.shitcoding.arena.models.Arena;
 import agency.shitcoding.arena.storage.StorageProvider;
 import org.bukkit.command.CommandSender;
-import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.HashSet;
+import java.util.Arrays;
+import java.util.Collection;
 
-public class ArenaCreateCmd extends CommandInst {
-    public static final int ARG_NAME = 1;
-    public static final int ARG_MIN_LEN = 2;
-    public ArenaCreateCmd(@NotNull CommandSender sender, @NotNull String[] args) {
+public class ArenaSetCmd extends CommandInst {
+    public static final int ARG_ARENA = 1;
+    public static final int ARG_ACTION = 2;
+    public static final int ARG_FIELD = 3;
+    public static final int ARG_VALUE = 4;
+    public static final int MIN_ARGS = 4;
+    public static final int ARGS_WITH_VALUE = 5;
+    private Arena arena;
+    private ArenaSetAction action;
+    private ArenaSetField field;
+    private String value;
+
+    public ArenaSetCmd(@NotNull CommandSender sender, @NotNull String[] args) {
         super(sender, args);
     }
 
     @Override
     public void execute() {
         if (validate()) {
-            createArena();
+            setArena();
         }
     }
 
-    private void createArena() {
-        String name = args[ARG_NAME];
-        Player player = (Player) sender;
-        Arena arena = new Arena(name,
-                player.getLocation().subtract(20, 20, 20),
-                player.getLocation().add(20, 20, 20),
-                new HashSet<>()
-        );
-        StorageProvider.getArenaStorage().storeArena(arena);
+    private void setArena() {
+        field.applyValue.accept(arena, action, value, sender);
     }
 
     private boolean validate() {
-        String adminPerm = ArenaDeathMatchCommand.getAdminPerm();
-        if (!sender.hasPermission(adminPerm)) {
-            sender.sendRichMessage("<red>У вас нет прав на создание арены");
-        }
-        if (args.length < ARG_MIN_LEN) {
-            sender.sendRichMessage("<red>Вы не указали название арены");
+        if (args.length < MIN_ARGS) {
+            sender.sendRichMessage("<red>Not enough arguments. Usage: /arena set <arena> <action> <field> [value]");
             return false;
         }
-        int nameLen = args[ARG_NAME].length();
-        if (nameLen > 16 || nameLen < 3) {
-            sender.sendRichMessage("<red>Название арены должно быть от 3 до 16 символов");
+        arena = StorageProvider.getArenaStorage().getArena(args[ARG_ARENA]);
+        if (arena == null) {
+            sender.sendRichMessage("<red>Arena " + args[ARG_ARENA] + " does not exist.");
             return false;
         }
-        if (!args[ARG_NAME].matches("[a-zA-Z0-9_]{3,16}")) {
-            sender.sendRichMessage("<red>Название арены должно состоять из букв и цифр");
+        try {
+            action = ArenaSetAction.valueOf(args[ARG_ACTION].toUpperCase());
+        } catch (IllegalArgumentException e) {
+            sender.sendRichMessage("<red>Invalid action. Valid actions are: " + Arrays.toString(ArenaSetAction.values()));
             return false;
         }
-        if (!(sender instanceof Player)) {
-            sender.sendRichMessage("<red>Команду можно использовать только в игре");
+
+        try {
+            field = ArenaSetField.valueOf(args[ARG_FIELD].toUpperCase());
+        } catch (IllegalArgumentException e) {
+            Collection<ArenaSetField> supportedFields = Arrays.stream(ArenaSetField.values())
+                    .filter(f -> f.supports.test(action))
+                    .toList();
+            sender.sendRichMessage("<red>Invalid field. Valid fields are: " + supportedFields);
             return false;
         }
+
+        if (args.length < ARGS_WITH_VALUE && action != ArenaSetAction.GET) {
+            sender.sendRichMessage("<red>Not enough arguments. Usage: /arena set <arena> <action> <field> [value]");
+            return false;
+        }
+
+        if (args.length > ARGS_WITH_VALUE) {
+            sender.sendRichMessage("<red>Too many arguments. Usage: /arena set <arena> <action> <field> [value]");
+            return false;
+        }
+
+        if (action != ArenaSetAction.GET) {
+            value = args[ARG_VALUE];
+        }
+
         return true;
     }
+
 }

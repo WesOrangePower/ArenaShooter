@@ -1,8 +1,10 @@
 package agency.shitcoding.arena.gamestate;
 
-public class DeathMatchGameFactory extends AbstractGameFactory{
+import agency.shitcoding.arena.models.Arena;
+
+public class DeathMatchGameFactory implements GameFactory {
     @Override
-    public Game createGame() {
-        return null;
+    public Game createGame(Arena arena) {
+        return new DeathMatchGame(arena);
     }
 }

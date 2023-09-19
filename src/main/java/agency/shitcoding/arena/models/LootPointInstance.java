@@ -1,2 +1,15 @@
-package agency.shitcoding.arena.models;public class LootPointInstance {
+package agency.shitcoding.arena.models;
+
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.RequiredArgsConstructor;
+import org.bukkit.scheduler.BukkitTask;
+
+@Data
+@RequiredArgsConstructor
+public class LootPointInstance {
+    private final LootPoint lootPoint;
+    private boolean looted = false;
+    private BukkitTask spawnTask;
+
 }

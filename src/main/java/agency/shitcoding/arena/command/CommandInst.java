@@ -1,4 +1,4 @@
-package agency.shitcoding.doublejump.command;
+package agency.shitcoding.arena.command;
 
 import org.bukkit.command.CommandSender;
 import org.jetbrains.annotations.NotNull;
@@ -12,5 +12,5 @@ public abstract class CommandInst {
         this.sender = sender;
         this.args = args;
     }
-    abstract void execute();
+    public abstract void execute();
 }

@@ -1,25 +1,27 @@
 package agency.shitcoding.arena.events;
 
+import agency.shitcoding.arena.gamestate.Game;
 import agency.shitcoding.arena.models.Weapon;
-import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
-import org.bukkit.entity.LivingEntity;
-import org.bukkit.entity.Player;
 import org.bukkit.event.HandlerList;
+import org.bukkit.event.player.PlayerInteractEvent;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 @EqualsAndHashCode(callSuper = true)
-@AllArgsConstructor
 @Data
-public class GameDamageEvent extends GameEvent {
-    private  @Nullable Player dealer;
-    private  @NotNull LivingEntity victim;
-    private  double damage;
-    private  Weapon weapon;
-
+public class GameShootEvent extends GameEvent {
     private static final HandlerList handlers = new HandlerList();
+    private final PlayerInteractEvent parentEvent;
+    private final Game game;
+    private final Weapon weapon;
+
+
+    public GameShootEvent(PlayerInteractEvent playerInteractEvent, Game game, Weapon weapon) {
+        this.parentEvent = playerInteractEvent;
+        this.game = game;
+        this.weapon = weapon;
+    }
 
     @Override
     public @NotNull HandlerList getHandlers() {

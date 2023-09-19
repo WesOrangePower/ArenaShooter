@@ -1,10 +1,12 @@
-package agency.shitcoding.doublejump.models;
+package agency.shitcoding.arena.models;
 
-import agency.shitcoding.doublejump.DoubleJump;
+import agency.shitcoding.arena.ArenaShooter;
 import org.bukkit.NamespacedKey;
 
 public class Keys {
+    public static final NamespacedKey LOOT_POINT_KEY = new NamespacedKey(ArenaShooter.getInstance(), "lootPointId");
+
     public static NamespacedKey getPlayerAmmoKey() {
-        return new NamespacedKey(DoubleJump.getInstance(), "ammoValues");
+        return new NamespacedKey(ArenaShooter.getInstance(), "ammoValues");
     }
 }

@@ -2,23 +2,38 @@ package agency.shitcoding.arena.command.subcommands;
 
 import agency.shitcoding.arena.command.CommandInst;
 import agency.shitcoding.arena.command.HelpEntry;
+import agency.shitcoding.arena.gamestate.Game;
+import agency.shitcoding.arena.gamestate.GameOrchestrator;
 import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
-public class ArenaHelpCmd extends CommandInst {
+import java.util.Optional;
 
-    private final HelpEntry[] helpEntries;
+public class ArenaJoinCmd extends CommandInst {
 
-    public ArenaHelpCmd(@NotNull CommandSender sender, @NotNull String[] args, @NotNull HelpEntry[] helpEntries) {
+    public ArenaJoinCmd(@NotNull CommandSender sender, @NotNull String[] args) {
         super(sender, args);
-        this.helpEntries = helpEntries;
     }
 
     @Override
     public void execute() {
-        for (HelpEntry entry : helpEntries) {
-            sender.sendRichMessage(entry.getHelpMessage());
+        if (sender instanceof Player player) {
+            GameOrchestrator gameOrchestrator = GameOrchestrator.getInstance();
+            if (gameOrchestrator.getGameByPlayer(player).isPresent()) {
+                sender.sendRichMessage("<dark_red>Вы уже в игре");
+                return;
+            }
+            Optional<Game> first = gameOrchestrator.getGames().stream().findFirst();
+            if (first.isPresent()) {
+                Game game = first.get();
+                game.addPlayer(player);
+                return;
+            }
+            sender.sendRichMessage("<dark_red>Нет доступных игр. Используйте /arena host");
+            return;
         }
+        sender.sendRichMessage("<dark_red> Only players can use this command");
     }
 
 }

@@ -1,8 +1,7 @@
-package agency.shitcoding.doublejump.events;
+package agency.shitcoding.arena.events;
 
 import lombok.RequiredArgsConstructor;
 import org.bukkit.entity.Player;
-import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
 import org.jetbrains.annotations.NotNull;
 

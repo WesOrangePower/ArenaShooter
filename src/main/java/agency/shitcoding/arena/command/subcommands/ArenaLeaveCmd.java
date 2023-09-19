@@ -4,15 +4,16 @@ import agency.shitcoding.arena.command.CommandInst;
 import agency.shitcoding.arena.command.HelpEntry;
 import agency.shitcoding.arena.gamestate.Game;
 import agency.shitcoding.arena.gamestate.GameOrchestrator;
+import agency.shitcoding.arena.gamestate.Lobby;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Optional;
 
-public class ArenaJoinCmd extends CommandInst {
+public class ArenaLeaveCmd extends CommandInst {
 
-    public ArenaJoinCmd(@NotNull CommandSender sender, @NotNull String[] args, @NotNull HelpEntry[] helpEntries) {
+    public ArenaLeaveCmd(@NotNull CommandSender sender, @NotNull String[] args) {
         super(sender, args);
     }
 
@@ -20,17 +21,15 @@ public class ArenaJoinCmd extends CommandInst {
     public void execute() {
         if (sender instanceof Player player) {
             GameOrchestrator gameOrchestrator = GameOrchestrator.getInstance();
-            if (gameOrchestrator.getGameByPlayer(player).isPresent()) {
-                sender.sendRichMessage("<dark_red>Вы уже в игре");
+            Optional<Game> game = gameOrchestrator.getGameByPlayer(player);
+            if (game.isEmpty()) {
+                sender.sendRichMessage("<dark_red>Вы не в игре");
                 return;
             }
-            Optional<Game> first = gameOrchestrator.getGames().stream().findFirst();
-            if (first.isPresent()) {
-                Game game = first.get();
-                game.addPlayer(player);
-                return;
-            }
-            sender.sendRichMessage("<dark_red>Нет доступных игр. Используйте /arena host");
+            game.get().removePlayer(player);
+            sender.sendRichMessage("<dark_green>Вы покинули игру");
+            Lobby.getInstance().sendPlayer(player);
+            return;
         }
         sender.sendRichMessage("<dark_red> Only players can use this command");
     }

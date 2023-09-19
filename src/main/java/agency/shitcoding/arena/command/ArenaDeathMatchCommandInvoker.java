@@ -1,5 +1,6 @@
-package agency.shitcoding.doublejump.command;
+package agency.shitcoding.arena.command;
 
+import agency.shitcoding.arena.ArenaDeathMatchTabCompleter;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -19,10 +20,7 @@ public class ArenaDeathMatchCommandInvoker extends Command implements TabComplet
         return INSTANCE;
     }
     private ArenaDeathMatchCommandInvoker() {
-        super("arenaDeathMatch".toLowerCase(),
-                "Arena Deathmatch Command",
-                "/arena [create|set|join|leave]",
-                List.of("arena"));
+        super("arenaDeathMatch".toLowerCase());
     }
 
 
@@ -42,7 +40,9 @@ public class ArenaDeathMatchCommandInvoker extends Command implements TabComplet
                   @NotNull Command command,
                   @NotNull String label,
                   @NotNull String[] args) {
-        return null;
+
+        return new ArenaDeathMatchTabCompleter(sender, args)
+                .onTabComplete();
     }
 
     @Override

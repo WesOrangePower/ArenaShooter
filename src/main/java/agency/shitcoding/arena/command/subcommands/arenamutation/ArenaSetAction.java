@@ -1,5 +1,5 @@
 package agency.shitcoding.arena.command.subcommands.arenamutation;
 
-public enum ArenaMutationAction {
-    SET, ADD, REMOVE
+public enum ArenaSetAction {
+    SET, ADD, REMOVE, GET
 }

@@ -1,4 +1,4 @@
-package agency.shitcoding.doublejump.models;
+package agency.shitcoding.arena.models;
 
 import lombok.Data;
 import lombok.RequiredArgsConstructor;

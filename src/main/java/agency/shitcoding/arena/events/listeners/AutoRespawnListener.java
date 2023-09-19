@@ -1,46 +1,40 @@
-package agency.shitcoding.doublejump.events.listeners;
+package agency.shitcoding.arena.events.listeners;
 
-import agency.shitcoding.doublejump.DoubleJump;
+import agency.shitcoding.arena.ArenaShooter;
+import agency.shitcoding.arena.gamestate.Game;
+import agency.shitcoding.arena.gamestate.GameOrchestrator;
+import agency.shitcoding.arena.gamestate.Lobby;
+import agency.shitcoding.arena.models.Ammo;
+import com.destroystokyo.paper.event.player.PlayerPostRespawnEvent;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.PlayerDeathEvent;
-import org.bukkit.event.player.PlayerJoinEvent;
-import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.PlayerInventory;
+import org.bukkit.event.player.PlayerRespawnEvent;
+
+import java.util.Optional;
 
 public class AutoRespawnListener implements Listener {
     @EventHandler
     public void onPlayerDeath(PlayerDeathEvent event) {
         event.getDrops().clear();
-        Bukkit.getScheduler().scheduleSyncDelayedTask(DoubleJump.getInstance(), () -> {
+        Ammo.setAmmoForPlayer(event.getPlayer(), 0);
+        Bukkit.getScheduler().scheduleSyncDelayedTask(ArenaShooter.getInstance(), () -> {
             Player player = event.getEntity();
             player.spigot().respawn();
         }, 20);
     }
 
     @EventHandler
-    public void onPlayerJoin(PlayerJoinEvent event) {
+    public void onPlayerRespawn(PlayerPostRespawnEvent event) {
         Player player = event.getPlayer();
-        player.setHealth(20);
-        player.setFoodLevel(20);
-        player.clearActivePotionEffects();
-        PlayerInventory inventory = player.getInventory();
-        inventory.clear();
-        inventory.setArmorContents(null);
-        inventory.setItem(0, new ItemStack(RocketListener.ROCKET_LAUNCHER));
-        inventory.setItem(1, new ItemStack(RailListener.RAILGUN));
-        inventory.setItem(2, new ItemStack(ShotgunListener.SHOTGUN));
-    }
-
-    @EventHandler
-    public void gibOnPlayerOverkill(EntityDamageEvent event) {
-        if (!(event.getEntity() instanceof Player player)) {
-            return;
-        }
-
-
+        Optional<Game> gameByPlayer = GameOrchestrator.getInstance().getGameByPlayer(player);
+        gameByPlayer.ifPresentOrElse(game -> {
+            game.getArena().spawn(player, game);
+        }, () -> {
+            Lobby.getInstance().sendPlayer(player);
+        });
     }
 }

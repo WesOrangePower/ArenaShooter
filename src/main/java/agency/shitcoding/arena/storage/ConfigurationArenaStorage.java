@@ -1,5 +1,6 @@
 package agency.shitcoding.arena.storage;
 
+import agency.shitcoding.arena.ArenaShooter;
 import agency.shitcoding.arena.command.Conf;
 import agency.shitcoding.arena.models.Arena;
 import agency.shitcoding.arena.models.LootPoint;
@@ -8,6 +9,7 @@ import lombok.RequiredArgsConstructor;
 import org.bukkit.Location;
 import org.bukkit.configuration.Configuration;
 import org.bukkit.configuration.ConfigurationSection;
+import org.bukkit.configuration.file.YamlConfiguration;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Collection;
@@ -15,7 +17,9 @@ import java.util.HashSet;
 import java.util.Set;
 
 @RequiredArgsConstructor
-public class YamlArenaStorage implements ArenaStorage {
+public class ConfigurationArenaStorage implements ArenaStorage {
+    public static final String FILE_NAME = "arenas.yml";
+
     private final Configuration configuration;
 
     public Collection<Arena> getArenas() {
@@ -93,6 +97,7 @@ public class YamlArenaStorage implements ArenaStorage {
         arenaSection.set(Conf.Arenas.lowerBound, arena.getLowerBound());
         arenaSection.set(Conf.Arenas.upperBound, arena.getUpperBound());
         setLootPointsSection(arenaSection, arena);
+        save();
     }
 
     private void setLootPointsSection(ConfigurationSection arenaSection, Arena arena) {
@@ -106,8 +111,18 @@ public class YamlArenaStorage implements ArenaStorage {
             if (lootPointSection == null) {
                 lootPointSection = allLootPointsSection.createSection("LP" + lootPoint.getId());
             }
-            lootPointSection.set(Conf.Arenas.LootPoints.type, lootPoint.getType());
+            lootPointSection.set(Conf.Arenas.LootPoints.type, lootPoint.getType().name());
             lootPointSection.set(Conf.Arenas.LootPoints.location, lootPoint.getLocation());
+        }
+    }
+
+    private void save() {
+        if (configuration instanceof YamlConfiguration yamlConfiguration) {
+            try {
+                yamlConfiguration.save(FILE_NAME);
+            } catch (Exception e) {
+                ArenaShooter.getInstance().getLogger().severe("Failed to save " + FILE_NAME);
+            }
         }
     }
 

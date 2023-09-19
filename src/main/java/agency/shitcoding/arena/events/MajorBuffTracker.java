@@ -1,22 +1,11 @@
-package agency.shitcoding.doublejump.events;
+package agency.shitcoding.arena.events;
 
+import lombok.Getter;
+import lombok.Setter;
+
+@Getter
+@Setter
 public class MajorBuffTracker {
-    private static Integer quadDamageTicks = null;
-    private static Integer protectionTicks = null;
-
-    public static Integer getProtectionTicks() {
-        return protectionTicks;
-    }
-
-    public static void setProtectionTicks(Integer protectionTicks) {
-        MajorBuffTracker.protectionTicks = protectionTicks;
-    }
-
-    public static Integer getQuadDamageTicks() {
-        return quadDamageTicks;
-    }
-
-    public static void setQuadDamageTicks(Integer quadDamageTicks) {
-        MajorBuffTracker.quadDamageTicks = quadDamageTicks;
-    }
+    private Integer quadDamageTicks = null;
+    private Integer protectionTicks = null;
 }

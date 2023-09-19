@@ -1,4 +1,4 @@
-package agency.shitcoding.doublejump.models;
+package agency.shitcoding.arena.models;
 
 import lombok.RequiredArgsConstructor;
 import org.bukkit.entity.Player;
@@ -16,7 +16,7 @@ public enum Ammo {
     public final int slot;
     public final int max;
 
-    static int[] getAmmoForPlayer(Player player) {
+    public static int[] getAmmoForPlayer(Player player) {
         int[] ammoValues = player.getPersistentDataContainer()
                 .get(Keys.getPlayerAmmoKey(), PersistentDataType.INTEGER_ARRAY);
         if (ammoValues == null) {
@@ -24,22 +24,22 @@ public enum Ammo {
         }
         return ammoValues;
     }
-    static int getAmmoForPlayer(Player player, Ammo ammoType) {
+    public static int getAmmoForPlayer(Player player, Ammo ammoType) {
         return getAmmoForPlayer(player)[ammoType.slot];
     }
-    static void setAmmoForPlayer(Player player, Ammo ammoType, int value) {
+    public static void setAmmoForPlayer(Player player, Ammo ammoType, int value) {
         int[] ammoValues = getAmmoForPlayer(player);
         ammoValues[ammoType.slot] = value;
         player.getPersistentDataContainer()
                 .set(Keys.getPlayerAmmoKey(), PersistentDataType.INTEGER_ARRAY, ammoValues);
     }
-    static void setAmmoForPlayer(Player player, int value) {
+    public static void setAmmoForPlayer(Player player, int value) {
         int[] ammoValues = new int[Ammo.values().length];
         Arrays.fill(ammoValues, value);
         player.getPersistentDataContainer()
                 .set(Keys.getPlayerAmmoKey(), PersistentDataType.INTEGER_ARRAY, ammoValues);
     }
-    static void maxAmmoForPlayer(Player player) {
+    public static void maxAmmoForPlayer(Player player) {
         int[] ammoValues = new int[Ammo.values().length];
         for (Ammo ammo : Ammo.values()) {
             ammoValues[ammo.slot] = ammo.max;

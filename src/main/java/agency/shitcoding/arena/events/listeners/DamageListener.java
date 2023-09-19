@@ -1,11 +1,10 @@
-package agency.shitcoding.doublejump.events.listeners;
+package agency.shitcoding.arena.events.listeners;
 
-import agency.shitcoding.doublejump.DoubleJump;
-import agency.shitcoding.doublejump.GameplayConstants;
-import agency.shitcoding.doublejump.events.GameDamageEvent;
-import agency.shitcoding.doublejump.models.Weapon;
+import agency.shitcoding.arena.ArenaShooter;
+import agency.shitcoding.arena.GameplayConstants;
+import agency.shitcoding.arena.events.GameDamageEvent;
+import agency.shitcoding.arena.models.Weapon;
 import org.bukkit.*;
-import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -17,6 +16,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.stream.Stream;
 
 public class DamageListener implements Listener {
+
     @EventHandler
     public void onDamage(GameDamageEvent event) {
         // if Has QuadDamage
@@ -34,6 +34,7 @@ public class DamageListener implements Listener {
                 event.setDamage(event.getDamage() * GameplayConstants.PROTECTION_FACTOR);
             }
         });
+        event.getVictim().setNoDamageTicks(0);
 
         // player only zone
         if (event.getVictim() instanceof Player player) {
@@ -45,20 +46,27 @@ public class DamageListener implements Listener {
             if (player.getHealth() - event.getDamage() <= GameplayConstants.GIBBING_THRESHOLD) {
                 gibbingSequence(player, event.getWeapon());
             }
+            player.damage(event.getDamage());
+            return;
         }
+
+        event.getVictim().damage(event.getDamage());
     }
 
     private double calculateDamage(Player victim, double damage) {
-        var armor = victim.getExpToLevel();
+        var armor = victim.getLevel();
+        if (armor <= 0) {
+            armor = 0;
+        }
         if (armor == 0) {
             return damage;
         }
         var armorDamage = damage * GameplayConstants.ARMOR_FACTOR;
         if (armorDamage > armor) {
-            victim.setExp(0);
+            victim.setLevel(0);
             return armor * GameplayConstants.ARMOR_FACTOR + (damage - armor);
         } else {
-            victim.setLevel((int)(armor - armorDamage));
+            victim.setLevel(Math.max((int)(armor - armorDamage), 0));
             return damage * GameplayConstants.ARMOR_FACTOR;
         }
     }
@@ -73,7 +81,7 @@ public class DamageListener implements Listener {
                 .map(itemStack -> world.dropItem(eyeLoc, itemStack) )
                 .peek(item -> item.setVelocity(victim.getVelocity().multiply(0.5)))
                 .peek(item -> item.setCanPlayerPickup(false))
-                .forEach(item -> Bukkit.getScheduler().runTaskLater(DoubleJump.getInstance(), item::remove, 20 * 3));
+                .forEach(item -> Bukkit.getScheduler().runTaskLater(ArenaShooter.getInstance(), item::remove, 20 * 3));
 
         world.playSound(eyeLoc, Sound.ENTITY_PLAYER_BIG_FALL, 1f, 1);
         world.spawnParticle(Particle.BLOCK_CRACK, eyeLoc, 15, .5,.5,.5, .5, Material.REDSTONE_BLOCK.createBlockData());

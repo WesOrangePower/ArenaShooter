@@ -1,5 +1,7 @@
-package agency.shitcoding.arena.command;
+package agency.shitcoding.arena.command.subcommands;
 
+import agency.shitcoding.arena.command.CommandInst;
+import agency.shitcoding.arena.command.HelpEntry;
 import org.bukkit.command.CommandSender;
 import org.jetbrains.annotations.NotNull;
 

@@ -3,11 +3,7 @@ package agency.shitcoding.arena.models;
 import java.util.List;
 import java.util.Map;
 
-public class DeathMatchGameRules implements GameRules {
-    @Override
-    public List<Weapon> spawnWeapon() {
-        return List.of(Weapon.GAUNTLET, Weapon.MACHINE_GUN);
-    }
+public class LMSGameRules implements GameRules {
 
     @Override
     public Map<Ammo, Integer> spawnAmmo() {
@@ -16,16 +12,16 @@ public class DeathMatchGameRules implements GameRules {
 
     @Override
     public List<Powerup> spawnPowerups() {
-        return List.of();
+        return List.of(Powerup.PROTECTION, Powerup.GAUNTLET, Powerup.MACHINE_GUN);
     }
 
     @Override
     public long gameTimerTicks() {
-        return 5L * 60L * 20L;
+        return 8L * 60L * 20L;
     }
 
     @Override
     public boolean doRespawn() {
-        return true;
+        return false;
     }
 }

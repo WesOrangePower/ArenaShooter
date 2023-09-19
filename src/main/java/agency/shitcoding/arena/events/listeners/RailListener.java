@@ -1,7 +1,9 @@
-package agency.shitcoding.doublejump.events.listeners;
+package agency.shitcoding.arena.events.listeners;
 
-import agency.shitcoding.doublejump.events.GameDamageEvent;
-import agency.shitcoding.doublejump.models.Weapon;
+import agency.shitcoding.arena.GameplayConstants;
+import agency.shitcoding.arena.events.GameDamageEvent;
+import agency.shitcoding.arena.events.GameShootEvent;
+import agency.shitcoding.arena.models.Weapon;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Particle;
@@ -10,40 +12,38 @@ import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
-import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.util.Vector;
 
 import java.util.HashSet;
 import java.util.Set;
 
+
 public class RailListener implements Listener {
-    public static final Material RAILGUN = Material.CROSSBOW;
     public static final int DENSITY_FACTOR = 5;
     public static final int SCAN_LEN = 32;
+    private static final Material RAILGUN = Weapon.RAILGUN.item;
 
     @EventHandler
-    public void onPlayerInteract(PlayerInteractEvent event) {
-        Player player = event.getPlayer();
+    public void onPlayerInteract(GameShootEvent event) {
+        Player player = event.getParentEvent().getPlayer();
         ItemStack itemInMainHand = player.getInventory().getItemInMainHand();
         if (itemInMainHand.getType().isAir()
                 || itemInMainHand.getType() != RAILGUN
                 || player.getCooldown(RAILGUN) > 0) {
             return;
         }
-        player.setCooldown(RAILGUN, 30);
+        player.setCooldown(RAILGUN, Weapon.RAILGUN.cooldown);
         Location eyeLocation = player.getEyeLocation();
         Vector lookingVector = eyeLocation.getDirection();
         World world = eyeLocation.getWorld();
 
         // row of particles
-        int iterations = 0;
         for (int i = 0; i < SCAN_LEN; i++) {
             // for DENSITY_FACTOR times/block in the direction of the player's looking direction
             // spawn a particle
 
             for (int j = 0; j < DENSITY_FACTOR; j++) {
-                iterations++;
                 var at = eyeLocation.add(lookingVector.clone().normalize().multiply(i / DENSITY_FACTOR));
                 world.spawnParticle(Particle.WAX_OFF, at, 1, 0, 0, 0, 0);
 
@@ -61,12 +61,10 @@ public class RailListener implements Listener {
                             affectedEntities.add((LivingEntity) entity);
                             world.spawnParticle(Particle.FLASH, at, 10, .2, .2, .2, 0);
                         });
-                affectedEntities.forEach(entity -> {
-                    new GameDamageEvent(player, entity, 10, Weapon.RAILGUN)
-                            .fire();
-                });
+                affectedEntities.forEach(entity ->
+                        new GameDamageEvent(player, entity, GameplayConstants.RAILGUN_DAMAGE, Weapon.RAILGUN)
+                        .fire());
             }
         }
-        player.sendRichMessage("<rainbow>iterations: " + iterations);
     }
 }

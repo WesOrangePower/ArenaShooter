@@ -1,6 +1,6 @@
-package agency.shitcoding.doublejump;
+package agency.shitcoding.arena;
 
-import agency.shitcoding.doublejump.models.Weapon;
+import agency.shitcoding.arena.models.Weapon;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.TextColor;
 import org.bukkit.entity.Player;
@@ -13,6 +13,6 @@ public class WeaponItemGenerator {
         item.editMeta(meta -> {
             meta.displayName(Component.text(weapon.name, TextColor.color(weapon.color.asRGB())));
         });
-        return item
+        return item;
     }
 }

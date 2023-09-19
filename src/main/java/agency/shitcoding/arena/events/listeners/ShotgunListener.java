@@ -1,5 +1,7 @@
-package agency.shitcoding.doublejump.events.listeners;
+package agency.shitcoding.arena.events.listeners;
 
+import agency.shitcoding.arena.GameplayConstants;
+import agency.shitcoding.arena.events.GameShootEvent;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Particle;
@@ -8,7 +10,6 @@ import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
-import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
@@ -25,8 +26,8 @@ public class ShotgunListener implements Listener {
     private static final double SPREAD = .25;
 
     @EventHandler
-    public void onPlayerInteract(PlayerInteractEvent event) {
-        Player player = event.getPlayer();
+    public void onShooting(GameShootEvent event) {
+        Player player = event.getParentEvent().getPlayer();
         ItemStack itemInMainHand = player.getInventory().getItemInMainHand();
         if (itemInMainHand.getType().isAir()
                 || itemInMainHand.getType() != SHOTGUN
@@ -43,7 +44,7 @@ public class ShotgunListener implements Listener {
         Map<LivingEntity, Double> knockbackMap = new HashMap<>();
 
         affectedEntities.forEach(entity -> {
-            damageMap.put(entity, damageMap.getOrDefault(entity, 0d) + 2);
+            damageMap.put(entity, damageMap.getOrDefault(entity, 0d) + GameplayConstants.SHOTGUN_PELLET_DAMAGE);
             knockbackMap.put(entity, knockbackMap.getOrDefault(entity, 0d) + .1);
         });
 
