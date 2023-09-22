@@ -3,6 +3,7 @@ package agency.shitcoding.arena;
 import agency.shitcoding.arena.command.ArenaDeathMatchCommandInvoker;
 import agency.shitcoding.arena.command.Conf;
 import agency.shitcoding.arena.events.listeners.*;
+import agency.shitcoding.arena.gamestate.Game;
 import agency.shitcoding.arena.gamestate.GameOrchestrator;
 import agency.shitcoding.arena.storage.ArenaStorage;
 import agency.shitcoding.arena.storage.StorageProvider;
@@ -32,6 +33,14 @@ public final class ArenaShooter extends JavaPlugin {
                 .setExecutor(ArenaDeathMatchCommandInvoker.getInstance());
     }
 
+    @Override
+    public void onDisable() {
+        for (Game game : GameOrchestrator.getInstance()
+                .getGames()) {
+            game.endGame("Server shutdown");
+        }
+    }
+
     private void registerListeners() {
         getServer().getPluginManager().registerEvents(new AutoRespawnListener(), this);
         getServer().getPluginManager().registerEvents(new BlockerListener(), this);
@@ -41,6 +50,7 @@ public final class ArenaShooter extends JavaPlugin {
         getServer().getPluginManager().registerEvents(new InteractListener(), this);
         getServer().getPluginManager().registerEvents(new LobbyListener(), this);
         getServer().getPluginManager().registerEvents(new MovementListener(), this);
+        getServer().getPluginManager().registerEvents(new AmmoListener(), this);
         getServer().getPluginManager().registerEvents(new NoAmmoListener(), this);
         getServer().getPluginManager().registerEvents(new RailListener(), this);
         getServer().getPluginManager().registerEvents(new RocketListener(), this);

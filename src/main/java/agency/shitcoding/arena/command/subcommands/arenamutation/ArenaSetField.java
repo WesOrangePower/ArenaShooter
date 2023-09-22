@@ -9,6 +9,8 @@ import agency.shitcoding.arena.storage.StorageProvider;
 import lombok.RequiredArgsConstructor;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.event.ClickEvent;
+import net.kyori.adventure.text.format.NamedTextColor;
+import net.kyori.adventure.text.format.TextDecoration;
 import org.bukkit.Location;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -55,20 +57,94 @@ public enum ArenaSetField {
                 p.sendRichMessage("<green>Powerup " + powerup.name() + " added to arena " + ar.getName() + " at " + centerLocation);
             }
             case GET -> {
-                ar.getLootPoints().forEach( lp ->
+                ar.getLootPoints().forEach(lp ->
                         p.sendMessage(Component.text("Point " + lp.getId() + ": " + lp.getType().name() + " at ")
-                                .append(Component.text("[" + lp.getLocation().getX() + ", " + lp.getLocation().getY() + ", " + lp.getLocation().getZ() + "]")
-                                        .clickEvent(ClickEvent.runCommand("/tp " + lp.getLocation().getX() + " " + lp.getLocation().getY() + " " + lp.getLocation().getZ()))
-                                )
+                                .append(locationComponent(lp.getLocation()))
                         )
                 );
             }
         }
         // TODO
+    }),
+    LBOUND(a -> a == GET || a == SET, (ar, a, v, s) -> {
+        if (a == GET) {
+            sendBoundaries(ar, s);
+            return;
+        }
+        if (a == SET) {
+            if (!(s instanceof Player player)) {
+                s.sendMessage("Players only");
+                return;
+            }
+            Location upper = ar.getUpperBound();
+            Location location = player.getLocation().toCenterLocation();
+
+            if (location.getBlockX() >= upper.getBlockX()
+                    || location.getBlockY() >= upper.getBlockY()
+                    || location.getBlockZ() >= upper.getBlockZ()) {
+                s.sendRichMessage("<dark_red>Lower boundary cannot have higher coordinates than upper boundary. Perhaps you meant UBOUND?");
+                s.sendMessage(
+                        locationComponent(location)
+                                .append(Component.text(" ≥ ", NamedTextColor.DARK_RED, TextDecoration.BOLD))
+                                .append(locationComponent(upper))
+                );
+                return;
+            }
+            ar.setLowerBound(location);
+            StorageProvider.getArenaStorage().storeArena(ar);
+            s.sendMessage(Component.text("OK. Set lower bound to ", NamedTextColor.GREEN)
+                    .append(locationComponent(location))
+            );
+        }
+    }),
+    UBOUND(a -> a == GET || a == SET, (ar, a, v, s) -> {
+        if (a == GET) {
+            sendBoundaries(ar, s);
+            return;
+        }
+        if (a == SET) {
+            if (!(s instanceof Player player)) {
+                s.sendMessage("Players only");
+                return;
+            }
+            Location lower = ar.getLowerBound();
+            Location location = player.getLocation().toCenterLocation();
+
+            if (location.getBlockX() <= lower.getBlockX()
+                    || location.getBlockY() <= lower.getBlockY()
+                    || location.getBlockZ() <= lower.getBlockZ()) {
+                s.sendRichMessage("<dark_red>Upper boundary cannot have lower coordinates than lower boundary. Perhaps you meant LBOUND?");
+                s.sendMessage(
+                        locationComponent(location)
+                                .append(Component.text(" ≤ ", NamedTextColor.DARK_RED, TextDecoration.BOLD))
+                                .append(locationComponent(lower))
+                );
+                return;
+            }
+
+            ar.setUpperBound(location);
+            StorageProvider.getArenaStorage().storeArena(ar);
+            s.sendMessage(Component.text("OK. Set upper bound to ", NamedTextColor.GREEN)
+                    .append(locationComponent(location))
+            );
+        }
     });
-
-
 
     public final Predicate<ArenaSetAction> supports;
     public final QuadConsumer<Arena, ArenaSetAction, @Nullable String, @NotNull CommandSender> applyValue;
+
+    private static void sendBoundaries(Arena ar, CommandSender sender) {
+        var l = ar.getLowerBound();
+        var u = ar.getUpperBound();
+        sender.sendMessage(Component.text("OK. Arena " + ar.getName() + " boundaries: ", NamedTextColor.GREEN)
+                .append(locationComponent(l))
+                .appendSpace()
+                .append(locationComponent(u))
+        );
+    }
+
+    private static Component locationComponent(Location l) {
+        return Component.text("[" + l.getX() + ", " + l.getY() + ", " + l.getZ() + "]")
+                .clickEvent(ClickEvent.runCommand("/tp " + l.getX() + " " + l.getY() + " " + l.getZ()));
+    }
 }

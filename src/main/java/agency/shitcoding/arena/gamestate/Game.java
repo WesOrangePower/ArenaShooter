@@ -6,6 +6,7 @@ import agency.shitcoding.arena.models.*;
 import lombok.Getter;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.Item;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -21,10 +22,10 @@ public abstract class Game {
     private final HashMap<Player, Integer> scores = new HashMap<>();
     private final boolean infiniteAmmo = false;
     private final MajorBuffTracker majorBuffTracker = new MajorBuffTracker();
-    private GameStage gamestage = GameStage.WAITING;
-    private List<LootPointInstance> lootPoints;
     protected RuleSet ruleSet;
     protected Arena arena;
+    private GameStage gamestage = GameStage.WAITING;
+    private List<LootPointInstance> lootPoints;
     private BukkitTask bukkitTask;
 
     public Game(Arena arena, RuleSet ruleSet) {
@@ -49,10 +50,12 @@ public abstract class Game {
         bukkitTask.cancel();
         players.forEach(p -> p.sendRichMessage("<green><bold>Игра закончилась: " + reason));
         players.forEach(Lobby.getInstance()::sendPlayer);
-        getLootPoints().forEach(i -> i.getSpawnTask().cancel()); // TODO: also kill all exisitng items
+        getLootPoints().forEach(i -> Optional.ofNullable(i.getSpawnTask()).ifPresent(BukkitTask::cancel));
+        removeLoot();
         getLootPoints().clear();
         GameOrchestrator.getInstance().removeGame(this);
     }
+
 
     public void startGame() {
         bukkitTask.cancel();
@@ -132,6 +135,17 @@ public abstract class Game {
                         String.format("<yellow>[%s/%s] <green>Ожидание игроков...", players.size(), ruleSet.getMinPlayers())
                 )
         );
+    }
+
+    private void removeLoot() {
+        getLootPoints()
+                .stream()
+                .map(lp -> lp.getLootPoint().getLocation())
+                .forEach(l -> l.getNearbyEntities(3, 3, 3)
+                        .stream()
+                        .filter(e -> e instanceof Item)
+                        .forEach(Entity::remove)
+                );
     }
 
 }

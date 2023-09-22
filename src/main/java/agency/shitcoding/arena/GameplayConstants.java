@@ -33,6 +33,11 @@ public class GameplayConstants {
     public static final int MEDIKIT_SPAWN_INTERVAL_TICKS = 60 * 20;
     public static final int MEDIKIT_SPAWN_OFFSET_TICKS = 0;
 
+    public static final int ARMOR_SHARD_SPAWN_INTERVAL_TICKS = 20 * 20;
+    public static final int ARMOR_SHARD_SPAWN_OFFSET_TICKS = 0;
+    public static final int LIGHT_ARMOR_SPAWN_INTERVAL_TICKS = 25 * 20;
+    public static final int LIGHT_ARMOR_SPAWN_OFFSET_TICKS = 0;
+
     public static final int GIBBING_THRESHOLD = -7;
     public static final double ARMOR_FACTOR = .35;
 
@@ -41,4 +46,6 @@ public class GameplayConstants {
     public static final double SHOTGUN_PELLET_DAMAGE = 2;
     public static final double ROCKET_DAMAGE = 10;
     public static final double RAILGUN_DAMAGE = 12;
+
+    public static final int MAX_ARMOR = 100;
 }

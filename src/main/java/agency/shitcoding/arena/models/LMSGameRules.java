@@ -16,6 +16,11 @@ public class LMSGameRules implements GameRules {
     }
 
     @Override
+    public int spawnArmor() {
+        return 0;
+    }
+
+    @Override
     public long gameTimerTicks() {
         return 8L * 60L * 20L;
     }

@@ -65,6 +65,10 @@ public class ArenaSetCmd extends CommandInst {
             return false;
         }
 
+        if (!field.supports.test(action)) {
+            sender.sendRichMessage("<red>Action not supported.");
+        }
+
         if (args.length < ARGS_WITH_VALUE && action != ArenaSetAction.GET) {
             sender.sendRichMessage("<red>Not enough arguments. Usage: /arena set <arena> <action> <field> [value]");
             return false;

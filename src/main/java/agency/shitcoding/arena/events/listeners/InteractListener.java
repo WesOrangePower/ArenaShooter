@@ -1,6 +1,7 @@
 package agency.shitcoding.arena.events.listeners;
 
 import agency.shitcoding.arena.ArenaShooter;
+import agency.shitcoding.arena.events.AmmoUpdateEvent;
 import agency.shitcoding.arena.events.GameNoAmmoEvent;
 import agency.shitcoding.arena.events.GameShootEvent;
 import agency.shitcoding.arena.gamestate.Game;
@@ -37,7 +38,10 @@ public class InteractListener implements Listener {
             new GameNoAmmoEvent(game, player).fire();
             return;
         }
-
+        if (player.hasCooldown(gun.item)) {
+            return;
+        }
+        new AmmoUpdateEvent(player, -gun.ammoPerShot, gun.ammo).fire();
         new GameShootEvent(event, game, gun).fire();
     }
 }

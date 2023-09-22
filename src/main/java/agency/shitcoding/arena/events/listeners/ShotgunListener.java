@@ -1,7 +1,9 @@
 package agency.shitcoding.arena.events.listeners;
 
 import agency.shitcoding.arena.GameplayConstants;
+import agency.shitcoding.arena.events.GameDamageEvent;
 import agency.shitcoding.arena.events.GameShootEvent;
+import agency.shitcoding.arena.models.Weapon;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Particle;
@@ -56,7 +58,7 @@ public class ShotgunListener implements Listener {
         }
 
         damageMap.forEach((entity, damage) -> {
-            entity.damage(damage, player);
+            new GameDamageEvent(player, entity, damage, Weapon.SHOTGUN).fire();
             Vector knockback = entity.getLocation()
                     .subtract(player.getLocation()).toVector().normalize().multiply(knockbackMap.get(entity));
             entity.setVelocity(knockback);

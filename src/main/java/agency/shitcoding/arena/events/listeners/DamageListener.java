@@ -20,8 +20,9 @@ public class DamageListener implements Listener {
     @EventHandler
     public void onDamage(GameDamageEvent event) {
         // if Has QuadDamage
-        if (event.getDealer() != null) {
-            event.getDealer().getActivePotionEffects().forEach(potionEffect -> {
+        Player dealer = event.getDealer();
+        if (dealer != null) {
+            dealer.getActivePotionEffects().forEach(potionEffect -> {
                 if (potionEffect.getType().equals(PotionEffectType.INCREASE_DAMAGE)) {
                     event.setDamage(event.getDamage() * GameplayConstants.QUAD_DAMAGE_MULTIPLIER);
                 }
@@ -46,11 +47,12 @@ public class DamageListener implements Listener {
             if (player.getHealth() - event.getDamage() <= GameplayConstants.GIBBING_THRESHOLD) {
                 gibbingSequence(player, event.getWeapon());
             }
-            player.damage(event.getDamage());
+
+            player.damage(event.getDamage(), dealer);
             return;
         }
 
-        event.getVictim().damage(event.getDamage());
+        event.getVictim().damage(event.getDamage(), dealer);
     }
 
     private double calculateDamage(Player victim, double damage) {

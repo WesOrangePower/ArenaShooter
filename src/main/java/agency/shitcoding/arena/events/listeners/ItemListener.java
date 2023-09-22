@@ -36,9 +36,8 @@ public class ItemListener implements Listener {
         Powerup type = lootPointInstance.getLootPoint().getType();
         boolean isPickedUp = type.getOnPickup().apply(player);
 
-        player.sendRichMessage("<green><bold>Вы подобрали " + type.name());
-
         if (isPickedUp) {
+            player.sendRichMessage("<green><bold>Вы подобрали " + type.name());
             item.remove();
             lootPointInstance.setLooted(true);
         }

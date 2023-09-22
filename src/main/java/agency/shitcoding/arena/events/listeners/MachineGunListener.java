@@ -37,6 +37,8 @@ public class MachineGunListener implements Listener {
         Vector lookingVector = eyeLocation.getDirection();
         World world = eyeLocation.getWorld();
 
+        world.playSound(eyeLocation, Sound.BLOCK_DISPENSER_DISPENSE, 1f, 2f);
+
         // row of particles
         int iterations = 0;
         outer:

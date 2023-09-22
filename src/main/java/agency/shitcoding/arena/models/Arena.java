@@ -73,6 +73,8 @@ public class Arena {
         GameRules gameRules = game.getRuleSet().getGameRules();
         List<Powerup> powerups = gameRules.spawnPowerups();
         Map<Ammo, Integer> ammoIntegerMap = gameRules.spawnAmmo();
+        int spawnArmor = gameRules.spawnArmor();
+        player.setLevel(spawnArmor);
 
         for (Powerup powerup : powerups) {
             powerup.getOnPickup().apply(player);

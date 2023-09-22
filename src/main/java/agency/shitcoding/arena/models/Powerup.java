@@ -166,6 +166,20 @@ public enum Powerup {
             player -> giveWeaponOrAmmo(player, Weapon.GAUNTLET),
             MACHINE_GUN_SPAWN_INTERVAL_TICKS,
             MACHINE_GUN_SPAWN_OFFSET_TICKS
+    ),
+    ARMOR_SHARD(
+            PowerupType.ARMOR,
+            new ItemStack(Material.SHIELD),
+            player -> giveArmor(player, 5),
+            ARMOR_SHARD_SPAWN_INTERVAL_TICKS,
+            ARMOR_SHARD_SPAWN_OFFSET_TICKS
+    ),
+    LIGHT_ARMOR(
+            PowerupType.ARMOR,
+            new ItemStack(Material.GOLDEN_CHESTPLATE),
+            player -> giveArmor(player, 50),
+            LIGHT_ARMOR_SPAWN_INTERVAL_TICKS,
+            LIGHT_ARMOR_SPAWN_OFFSET_TICKS
     );
 
     private final PowerupType type;
@@ -174,6 +188,14 @@ public enum Powerup {
     private final long spawnInterval;
     private final int offset;
 
+    private static boolean giveArmor(Player player, int amount) {
+        if (player.getLevel() == MAX_ARMOR) {
+            return false;
+        }
+        int armor = Math.min(player.getLevel() + amount, MAX_ARMOR);
+        player.setLevel(armor);
+        return true;
+    }
     private static boolean giveWeaponOrAmmo(Player player, Weapon weapon) {
         if (weapon == null) {
             return false;

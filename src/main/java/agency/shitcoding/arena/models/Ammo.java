@@ -1,9 +1,13 @@
 package agency.shitcoding.arena.models;
 
 import lombok.RequiredArgsConstructor;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.TextComponent;
+import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.entity.Player;
 import org.bukkit.persistence.PersistentDataType;
 
+import java.awt.*;
 import java.util.Arrays;
 
 @RequiredArgsConstructor
@@ -32,6 +36,13 @@ public enum Ammo {
         ammoValues[ammoType.slot] = value;
         player.getPersistentDataContainer()
                 .set(Keys.getPlayerAmmoKey(), PersistentDataType.INTEGER_ARRAY, ammoValues);
+
+        player.sendRichMessage("<green>[<yellow>" +
+                ammoValues[0] + "<green> | <gold>" +
+                ammoValues[1] + "<green> | <red>" +
+                ammoValues[2] + "<green> | <aqua>" +
+                ammoValues[3] + "<green>]"
+                );
     }
     public static void setAmmoForPlayer(Player player, int value) {
         int[] ammoValues = new int[Ammo.values().length];
