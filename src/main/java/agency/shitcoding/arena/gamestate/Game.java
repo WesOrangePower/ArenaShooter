@@ -4,6 +4,11 @@ import agency.shitcoding.arena.ArenaShooter;
 import agency.shitcoding.arena.events.MajorBuffTracker;
 import agency.shitcoding.arena.models.*;
 import lombok.Getter;
+import net.kyori.adventure.audience.Audience;
+import net.kyori.adventure.bossbar.BossBar;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.TextComponent;
+import net.kyori.adventure.text.format.TextColor;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.entity.Entity;
@@ -14,19 +19,25 @@ import org.bukkit.persistence.PersistentDataType;
 import org.bukkit.scheduler.BukkitTask;
 import org.bukkit.util.Vector;
 
+import java.time.Instant;
 import java.util.*;
+import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
 
 @Getter
 public abstract class Game {
     private final Set<Player> players = new HashSet<>();
     private final HashMap<Player, Integer> scores = new HashMap<>();
-    private final boolean infiniteAmmo = false;
     private final MajorBuffTracker majorBuffTracker = new MajorBuffTracker();
+    private final Set<Player> diedOnce = new HashSet<>();
     protected RuleSet ruleSet;
     protected Arena arena;
+    protected BukkitTask gameTimerTask;
     private GameStage gamestage = GameStage.WAITING;
     private List<LootPointInstance> lootPoints;
-    private BukkitTask bukkitTask;
+    private BukkitTask playerWaitingTimerTask;
+    private Instant gameStart;
+    private BossBar bossBar;
 
     public Game(Arena arena, RuleSet ruleSet) {
         this.arena = arena;
@@ -36,6 +47,7 @@ public abstract class Game {
     public void removePlayer(Player player) {
         players.remove(player);
         scores.remove(player);
+        if (bossBar != null) bossBar.removeViewer(Audience.audience(player));
         if (gamestage == GameStage.WAITING && players.isEmpty()) {
             endGame("Недостаточно игроков");
         } else if (gamestage == GameStage.IN_PROGRESS && players.size() < ruleSet.getMinPlayers()) {
@@ -47,18 +59,27 @@ public abstract class Game {
 
     public void endGame(String reason) {
         this.gamestage = GameStage.FINISHED;
-        bukkitTask.cancel();
+        playerWaitingTimerTask.cancel();
+        if (gameTimerTask != null) gameTimerTask.cancel();
+        if (bossBar != null) {
+            StreamSupport.stream(bossBar.viewers().spliterator(), false)
+                    .collect(Collectors.toUnmodifiableSet())
+                    .forEach(viewer -> bossBar.removeViewer((Audience) viewer));
+        }
+        if (gamestage == GameStage.IN_PROGRESS) {
+            getLootPoints().forEach(i -> Optional.ofNullable(i.getSpawnTask()).ifPresent(BukkitTask::cancel));
+            removeLoot();
+            getLootPoints().clear();
+        }
+
         players.forEach(p -> p.sendRichMessage("<green><bold>Игра закончилась: " + reason));
         players.forEach(Lobby.getInstance()::sendPlayer);
-        getLootPoints().forEach(i -> Optional.ofNullable(i.getSpawnTask()).ifPresent(BukkitTask::cancel));
-        removeLoot();
-        getLootPoints().clear();
         GameOrchestrator.getInstance().removeGame(this);
     }
 
 
     public void startGame() {
-        bukkitTask.cancel();
+        playerWaitingTimerTask.cancel();
         for (Player player : players) {
             player.sendRichMessage("<green><bold>Игра началась");
             arena.spawn(player, this);
@@ -69,6 +90,12 @@ public abstract class Game {
         arena.getLootPoints().stream()
                 .sorted(Comparator.comparingInt(LootPoint::getId))
                 .forEach(this::createLootPointInstance);
+        this.gameStart = Instant.now();
+        this.gameTimerTask = Bukkit.getScheduler().runTaskTimer(
+                ArenaShooter.getInstance(),
+                this::onGameSecondElapsed,
+                0L, 20L
+        );
     }
 
     private void createLootPointInstance(LootPoint lootPoint) {
@@ -105,11 +132,43 @@ public abstract class Game {
         this.lootPoints.add(instance.getLootPoint().getId(), instance);
     }
 
+    protected void onGameSecondElapsed() {
+        long remainingSeconds = ruleSet.getGameLenSeconds() - (Instant.now().getEpochSecond() - gameStart.getEpochSecond());
+        float fraction = ((float) remainingSeconds) / ruleSet.getGameLenSeconds();
+        fraction = Math.min(BossBar.MAX_PROGRESS, Math.max(BossBar.MIN_PROGRESS, fraction));
+        long minutes = (remainingSeconds % 3600) / 60;
+        long seconds = remainingSeconds % 60;
+        String timeString = String.format("%02d:%02d", minutes, seconds);
+        TextComponent title = Component.text("Осталось: " + timeString, TextColor.color(0xaa0000));
+        boolean fractionIsOne = fraction < Vector.getEpsilon();
+
+        if (fractionIsOne) {
+            endGame("Время вышло");
+        }
+
+        if (bossBar == null) {
+            this.bossBar = BossBar.bossBar(
+                    title,
+                    fraction,
+                    BossBar.Color.RED,
+                    BossBar.Overlay.PROGRESS
+            );
+            this.bossBar.addViewer(Audience.audience(players));
+        }
+
+        bossBar.progress(fraction);
+        bossBar.name(title);
+    }
+
     protected abstract void startGameStage2();
 
     public void addPlayer(Player player) {
         if (players.size() >= ruleSet.getMaxPlayers()) {
             player.sendRichMessage("<dark_red>Игра заполнена");
+        }
+        if (gamestage == GameStage.IN_PROGRESS) {
+            bossBar.addViewer(Audience.audience(player));
+            diedOnce.add(player);
         }
         players.add(player);
         scores.put(player, 0);
@@ -119,7 +178,7 @@ public abstract class Game {
     }
 
     public void startAwaiting() {
-        this.bukkitTask = Bukkit.getScheduler().runTaskTimer(ArenaShooter.getInstance(),
+        this.playerWaitingTimerTask = Bukkit.getScheduler().runTaskTimer(ArenaShooter.getInstance(),
                 this::awaitingCycle,
                 20,
                 20 * 5
@@ -148,4 +207,7 @@ public abstract class Game {
                 );
     }
 
+    public void onPlayerDeath(Player p) {
+        diedOnce.add(p);
+    }
 }

@@ -37,7 +37,7 @@ public class ShotgunListener implements Listener {
             return;
         }
 
-        player.setCooldown(SHOTGUN, 20);
+        Weapon.applyCooldown(player, Weapon.SHOTGUN.cooldown);
         player.playSound(player.getLocation(), Sound.ENTITY_DRAGON_FIREBALL_EXPLODE, 1, 1);
 
         List<LivingEntity> affectedEntities = calculatePellets(player);

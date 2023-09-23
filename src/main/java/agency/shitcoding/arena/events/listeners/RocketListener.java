@@ -30,7 +30,7 @@ public class RocketListener implements Listener {
             return;
         }
 
-        player.setCooldown(ROCKET_LAUNCHER, 16);
+        Weapon.applyCooldown(player, Weapon.ROCKET_LAUNCHER.cooldown);
 
         Vector lookingVector = player.getEyeLocation().getDirection();
 

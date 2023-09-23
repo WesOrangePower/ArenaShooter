@@ -1,6 +1,5 @@
 package agency.shitcoding.arena.events.listeners;
 
-import agency.shitcoding.arena.ArenaShooter;
 import agency.shitcoding.arena.events.AmmoUpdateEvent;
 import agency.shitcoding.arena.events.GameNoAmmoEvent;
 import agency.shitcoding.arena.events.GameShootEvent;

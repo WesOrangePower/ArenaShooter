@@ -1,6 +1,5 @@
 package agency.shitcoding.arena.events.listeners;
 
-import agency.shitcoding.arena.ArenaShooter;
 import agency.shitcoding.arena.events.GameDamageEvent;
 import agency.shitcoding.arena.events.GameShootEvent;
 import agency.shitcoding.arena.models.Weapon;
@@ -32,7 +31,7 @@ public class MachineGunListener implements Listener {
                 || player.getCooldown(MACHINE) > 0) {
             return;
         }
-        player.setCooldown(MACHINE, Weapon.MACHINE_GUN.cooldown);
+        Weapon.applyCooldown(player, Weapon.MACHINE_GUN.cooldown);
         Location eyeLocation = player.getEyeLocation();
         Vector lookingVector = eyeLocation.getDirection();
         World world = eyeLocation.getWorld();
@@ -68,10 +67,8 @@ public class MachineGunListener implements Listener {
                             affectedEntities.add((LivingEntity) entity);
                             world.spawnParticle(Particle.DAMAGE_INDICATOR, at, 1, 0, 0, 0);
                         });
-                affectedEntities.forEach(entity -> {
-                    new GameDamageEvent(player, entity, MACHINE_GUN_DAMAGE, Weapon.MACHINE_GUN)
-                            .fire();
-                });
+                affectedEntities.forEach(entity -> new GameDamageEvent(player, entity, MACHINE_GUN_DAMAGE, Weapon.MACHINE_GUN)
+                        .fire());
                 if (!affectedEntities.isEmpty()) {
                     break outer;
                 }

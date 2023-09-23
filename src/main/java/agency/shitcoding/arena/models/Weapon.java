@@ -3,6 +3,9 @@ package agency.shitcoding.arena.models;
 import lombok.RequiredArgsConstructor;
 import org.bukkit.Color;
 import org.bukkit.Material;
+import org.bukkit.entity.Player;
+
+import java.util.Arrays;
 
 @RequiredArgsConstructor
 public enum Weapon {
@@ -20,4 +23,10 @@ public enum Weapon {
     public final Ammo ammo;
     public final int ammoPerShot;
     public final int cooldown;
+
+    public static void applyCooldown(Player player, int ticks) {
+        Arrays.stream(values())
+                .map(w -> w.item)
+                .forEach(m -> player.setCooldown(m, ticks));
+    }
 }

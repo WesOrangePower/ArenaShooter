@@ -33,7 +33,7 @@ public class RailListener implements Listener {
                 || player.getCooldown(RAILGUN) > 0) {
             return;
         }
-        player.setCooldown(RAILGUN, Weapon.RAILGUN.cooldown);
+        Weapon.applyCooldown(player, Weapon.RAILGUN.cooldown);
         Location eyeLocation = player.getEyeLocation();
         Vector lookingVector = eyeLocation.getDirection();
         World world = eyeLocation.getWorld();

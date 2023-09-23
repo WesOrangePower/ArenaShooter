@@ -14,19 +14,19 @@ import org.jetbrains.annotations.Nullable;
 @AllArgsConstructor
 @Data
 public class GameDamageEvent extends GameEvent {
-    private  @Nullable Player dealer;
-    private  @NotNull LivingEntity victim;
-    private  double damage;
-    private  Weapon weapon;
-
     private static final HandlerList handlers = new HandlerList();
+    private @Nullable Player dealer;
+    private @NotNull LivingEntity victim;
+    private double damage;
+    private Weapon weapon;
 
-    @Override
-    public @NotNull HandlerList getHandlers() {
+    @SuppressWarnings("unused")
+    public static HandlerList getHandlerList() {
         return handlers;
     }
 
-    public static HandlerList getHandlerList() {
+    @Override
+    public @NotNull HandlerList getHandlers() {
         return handlers;
     }
 }

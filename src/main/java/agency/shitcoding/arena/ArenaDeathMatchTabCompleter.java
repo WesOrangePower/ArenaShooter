@@ -10,7 +10,6 @@ import lombok.RequiredArgsConstructor;
 import org.bukkit.command.CommandSender;
 import org.jetbrains.annotations.Nullable;
 
-import java.lang.reflect.Array;
 import java.util.Arrays;
 import java.util.List;
 
@@ -29,15 +28,15 @@ public class ArenaDeathMatchTabCompleter {
     }
 
     private List<String> resolveNonAdmin() {
-        if (args.length == 0) {
+        if (args.length == 1) {
             return List.of("host");
         }
-        if (args.length == 1) {
+        if (args.length == 2) {
             return StorageProvider.getArenaStorage().getArenas().stream()
                     .map(Arena::getName)
                     .toList();
         }
-        if (args.length == 2) {
+        if (args.length == 3) {
             return Arrays.stream(RuleSet.values())
                     .map(Enum::name)
                     .map(String::toLowerCase)
@@ -47,7 +46,7 @@ public class ArenaDeathMatchTabCompleter {
     }
 
     private List<String> resolveAdmin() {
-        if (args.length == 0) {
+        if (args.length == 1) {
             return List.of("set", "create", "host");
         }
 

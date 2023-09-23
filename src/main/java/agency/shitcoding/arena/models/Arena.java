@@ -2,7 +2,6 @@ package agency.shitcoding.arena.models;
 
 import agency.shitcoding.arena.ArenaShooter;
 import agency.shitcoding.arena.gamestate.Game;
-import agency.shitcoding.arena.gamestate.GameOrchestrator;
 import lombok.Getter;
 import lombok.Setter;
 import org.bukkit.GameMode;
@@ -67,8 +66,12 @@ public class Arena {
         }
         if (player.getGameMode() != GameMode.ADVENTURE) {
             player.setGameMode(GameMode.ADVENTURE);
+            player.setAllowFlight(true);
         }
-        player.teleportAsync(lootPoint.getLocation(), PlayerTeleportEvent.TeleportCause.PLUGIN);
+        if (!game.getRuleSet().getGameRules().doRespawn() && game.getDiedOnce().contains(player) && game.getGamestage() == GameStage.IN_PROGRESS) {
+            player.setGameMode(GameMode.SPECTATOR);
+        }
+        player.teleport(lootPoint.getLocation(), PlayerTeleportEvent.TeleportCause.PLUGIN);
 
         GameRules gameRules = game.getRuleSet().getGameRules();
         List<Powerup> powerups = gameRules.spawnPowerups();

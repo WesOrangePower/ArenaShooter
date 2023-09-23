@@ -29,7 +29,7 @@ public class GauntletListener implements Listener {
                 || player.getCooldown(GAUNTLET) > 0) {
             return;
         }
-        player.setCooldown(GAUNTLET, Weapon.GAUNTLET.cooldown);
+        Weapon.applyCooldown(player, Weapon.GAUNTLET.cooldown);
         Location eyeLocation = player.getEyeLocation();
         Vector lookingVector = eyeLocation.getDirection();
         World world = eyeLocation.getWorld();
@@ -48,9 +48,7 @@ public class GauntletListener implements Listener {
                     world.spawnParticle(Particle.ELECTRIC_SPARK, at, 1, 0, 0, 0);
                     world.playSound(at, Sound.ENTITY_GUARDIAN_ATTACK, 1f, 1f);
                 });
-        affectedEntities.forEach(entity -> {
-            new GameDamageEvent(player, entity, GAUNTLET_DAMAGE, Weapon.GAUNTLET)
-                    .fire();
-        });
+        affectedEntities.forEach(entity -> new GameDamageEvent(player, entity, GAUNTLET_DAMAGE, Weapon.GAUNTLET)
+                .fire());
     }
 }

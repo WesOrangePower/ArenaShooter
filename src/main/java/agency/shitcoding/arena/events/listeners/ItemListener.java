@@ -2,6 +2,7 @@ package agency.shitcoding.arena.events.listeners;
 
 import agency.shitcoding.arena.gamestate.Game;
 import agency.shitcoding.arena.gamestate.GameOrchestrator;
+import agency.shitcoding.arena.models.GameStage;
 import agency.shitcoding.arena.models.Keys;
 import agency.shitcoding.arena.models.LootPointInstance;
 import agency.shitcoding.arena.models.Powerup;
@@ -32,6 +33,9 @@ public class ItemListener implements Listener {
         }
 
         Game game = gameByPlayer.get();
+        if (game.getGamestage() != GameStage.IN_PROGRESS) {
+            return;
+        }
         LootPointInstance lootPointInstance = game.getLootPoints().get(i);
         Powerup type = lootPointInstance.getLootPoint().getType();
         boolean isPickedUp = type.getOnPickup().apply(player);

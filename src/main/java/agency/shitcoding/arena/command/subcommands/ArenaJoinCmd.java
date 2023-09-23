@@ -1,7 +1,7 @@
 package agency.shitcoding.arena.command.subcommands;
 
+import agency.shitcoding.arena.command.ArenaDeathMatchCommand;
 import agency.shitcoding.arena.command.CommandInst;
-import agency.shitcoding.arena.command.HelpEntry;
 import agency.shitcoding.arena.gamestate.Game;
 import agency.shitcoding.arena.gamestate.GameOrchestrator;
 import org.bukkit.command.CommandSender;
@@ -20,6 +20,13 @@ public class ArenaJoinCmd extends CommandInst {
     public void execute() {
         if (sender instanceof Player player) {
             GameOrchestrator gameOrchestrator = GameOrchestrator.getInstance();
+            if (args.length >= 2
+                    && args[1].equalsIgnoreCase("forceStart")
+                    && player.hasPermission(ArenaDeathMatchCommand.ADMIN_PERM)
+            ) {
+                forceStart(gameOrchestrator, player);
+                return;
+            }
             if (gameOrchestrator.getGameByPlayer(player).isPresent()) {
                 sender.sendRichMessage("<dark_red>Вы уже в игре");
                 return;
@@ -34,6 +41,11 @@ public class ArenaJoinCmd extends CommandInst {
             return;
         }
         sender.sendRichMessage("<dark_red> Only players can use this command");
+    }
+
+    private void forceStart(GameOrchestrator gameOrchestrator, Player player) {
+        gameOrchestrator.getGameByPlayer(player)
+                .ifPresent(Game::startGame);
     }
 
 }
