@@ -29,7 +29,7 @@ public class ArenaDeathMatchTabCompleter {
 
     private List<String> resolveNonAdmin() {
         if (args.length == 1) {
-            return List.of("host");
+            return List.of("join", "host", "leave");
         }
         if (args.length == 2) {
             return StorageProvider.getArenaStorage().getArenas().stream()
@@ -47,7 +47,7 @@ public class ArenaDeathMatchTabCompleter {
 
     private List<String> resolveAdmin() {
         if (args.length == 1) {
-            return List.of("set", "create", "host");
+            return List.of("set", "create", "host", "join", "leave");
         }
 
         return switch (args[0].toLowerCase()) {

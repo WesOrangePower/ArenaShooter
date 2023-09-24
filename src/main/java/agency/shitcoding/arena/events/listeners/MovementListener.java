@@ -9,9 +9,11 @@ import lombok.Getter;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.Particle;
+import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.event.player.PlayerRespawnEvent;
@@ -19,16 +21,11 @@ import org.bukkit.event.player.PlayerToggleFlightEvent;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.util.Vector;
 
-import java.util.HashSet;
-import java.util.Set;
-
 import static org.bukkit.potion.PotionEffect.INFINITE_DURATION;
 import static org.bukkit.potion.PotionEffectType.JUMP;
 
 @Getter
 public class MovementListener implements Listener {
-    Set<Player> flyingPlayers = new HashSet<>();
-    Set<Player> airbornePlayers = new HashSet<>();
 
     @EventHandler
     public void disableFlyOnPlayerQuit(PlayerQuitEvent event) {
@@ -36,11 +33,7 @@ public class MovementListener implements Listener {
             return;
         }
         Player player = event.getPlayer();
-        if (flyingPlayers.contains(player)) {
-            flyingPlayers.remove(player);
-            player.setAllowFlight(false);
-        }
-        airbornePlayers.remove(player);
+        player.setAllowFlight(false);
     }
 
 
@@ -51,7 +44,6 @@ public class MovementListener implements Listener {
         }
         Player player = event.getPlayer();
         player.setAllowFlight(true);
-        flyingPlayers.add(player);
     }
 
     @EventHandler
@@ -84,12 +76,7 @@ public class MovementListener implements Listener {
         if (event.getPlayer().getGameMode() != GameMode.ADVENTURE) {
             return;
         }
-        Player player = event.getPlayer();
-
-        if (!flyingPlayers.contains(player)) {
-            flyingPlayers.add(player);
-            player.setAllowFlight(true);
-        }
+        event.getPlayer().setAllowFlight(true);
     }
 
     @EventHandler
@@ -99,8 +86,8 @@ public class MovementListener implements Listener {
         }
         Player player = event.getPlayer();
         if (player.getLocation().subtract(0, 1, 0).getBlock().getType().isSolid()) {
-            airbornePlayers.remove(player);
-            player.setWalkSpeed(.2f);
+            player.setWalkSpeed(.3f);
+            event.getPlayer().setAllowFlight(true);
             var effect = new PotionEffect(JUMP, INFINITE_DURATION, 2, false, false, false);
             player.addPotionEffect(effect);
         }
@@ -117,17 +104,24 @@ public class MovementListener implements Listener {
         }
         event.setCancelled(true);
         player.setFlying(false);
-        if (airbornePlayers.contains(player)) {
-            return;
-        }
-        airbornePlayers.add(player);
+        player.setAllowFlight(false);
 
         Location loc = player.getLocation();
         Vector direction = loc.getDirection();
-        direction.multiply(1.02);
-        direction.setY(1.02);
+        direction.multiply(1.1);
+        direction.setY(0.95);
         player.setVelocity(direction);
 
         loc.getWorld().spawnParticle(Particle.FLAME, loc, 10, 0.5, 0.5, 0.5, 0.1);
+    }
+
+    @EventHandler
+    public void doubleJumpDamageHandler(EntityDamageEvent e) {
+        if (e.getEntity().getType() != EntityType.PLAYER) {
+            return;
+        }
+        if (e.getCause() == EntityDamageEvent.DamageCause.FALL) {
+            e.setCancelled(true);
+        }
     }
 }

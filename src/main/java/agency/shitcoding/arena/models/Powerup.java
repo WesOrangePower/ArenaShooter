@@ -16,7 +16,7 @@ import org.bukkit.inventory.meta.PotionMeta;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 
-import java.util.Objects;
+import java.util.Optional;
 import java.util.function.Function;
 
 import static agency.shitcoding.arena.GameplayConstants.*;
@@ -97,36 +97,52 @@ public enum Powerup {
             AMMO_DROP_SPAWN_OFFSET_TICKS
     ),
     QUAD_DAMAGE(
-            PowerupType.BUFF,
+            PowerupType.MAJOR_BUFF,
             new ItemStack(Material.NETHER_STAR),
             player -> {
-                Integer quadDamageTicks = Objects.requireNonNullElse(
-                        GameOrchestrator.getInstance().getGameByPlayer(player)
-                                .map(Game::getMajorBuffTracker)
-                                .map(MajorBuffTracker::getQuadDamageTicks)
-                                .orElse(null),
-                        QUAD_DAMAGE_DURATION
-                );
-                var effect = new PotionEffect(PotionEffectType.INCREASE_DAMAGE, quadDamageTicks, 4);
-                player.addPotionEffect(effect);
+                Optional<Game> gameByPlayer = GameOrchestrator.getInstance().getGameByPlayer(player);
+
+                Integer quadDamageTicks = gameByPlayer
+                    .map(Game::getMajorBuffTracker)
+                    .map(MajorBuffTracker::getQuadDamageTicks)
+                    .orElse(QUAD_DAMAGE_DURATION);
+
+                gameByPlayer.map(Game::getMajorBuffTracker).ifPresent(mbt -> {
+                    mbt.setQuadDamageTicks(null);
+                    mbt.getProtectionTeam().removePlayer(player);
+                    mbt.getQuadDamageTeam().addPlayer(player);
+                });
+
+                var effectDamage = new PotionEffect(QUAD_DAMAGE_POTION_EFFECT, quadDamageTicks, 4);
+                var effectGlowing = new PotionEffect(PotionEffectType.GLOWING, quadDamageTicks, 0);
+                player.addPotionEffect(effectDamage);
+                player.addPotionEffect(effectGlowing);
                 return true;
             },
             QUAD_DAMAGE_SPAWN_INTERVAL_TICKS,
             QUAD_DAMAGE_SPAWN_OFFSET_TICKS
     ),
     PROTECTION(
-            PowerupType.BUFF,
+            PowerupType.MAJOR_BUFF,
             new ItemStack(Material.DIAMOND_CHESTPLATE),
             player -> {
-                Integer protectionTicks = Objects.requireNonNullElse(
-                        GameOrchestrator.getInstance().getGameByPlayer(player)
-                                .map(Game::getMajorBuffTracker)
-                                .map(MajorBuffTracker::getProtectionTicks)
-                                .orElse(null),
-                        GameplayConstants.PROTECTION_DURATION
-                );
-                PotionEffect effect = new PotionEffect(PotionEffectType.DAMAGE_RESISTANCE, protectionTicks, 1);
-                player.addPotionEffect(effect);
+                Optional<Game> gameByPlayer = GameOrchestrator.getInstance().getGameByPlayer(player);
+
+                Integer protectionTicks = gameByPlayer
+                    .map(Game::getMajorBuffTracker)
+                    .map(MajorBuffTracker::getProtectionTicks)
+                    .orElse(PROTECTION_DURATION);
+
+                gameByPlayer.map(Game::getMajorBuffTracker).ifPresent(mbt -> {
+                    mbt.setProtectionTicks(null);
+                    mbt.getQuadDamageTeam().removePlayer(player);
+                    mbt.getProtectionTeam().addPlayer(player);
+                });
+
+                var effectResistance = new PotionEffect(PROTECTION_POTION_EFFECT, protectionTicks, 1);
+                var effectGlowing = new PotionEffect(PotionEffectType.GLOWING, protectionTicks, 0);
+                player.addPotionEffect(effectResistance);
+                player.addPotionEffect(effectGlowing);
                 return true;
             },
             GameplayConstants.PROTECTION_SPAWN_INTERVAL_TICKS,

@@ -1,13 +1,10 @@
 package agency.shitcoding.arena.models;
 
 import lombok.RequiredArgsConstructor;
-import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.TextComponent;
-import net.kyori.adventure.text.format.NamedTextColor;
+import net.kyori.adventure.text.minimessage.MiniMessage;
 import org.bukkit.entity.Player;
 import org.bukkit.persistence.PersistentDataType;
 
-import java.awt.*;
 import java.util.Arrays;
 
 @RequiredArgsConstructor
@@ -15,7 +12,7 @@ public enum Ammo {
     BULLETS(0, 200),
     SHELLS(1, 50),
     ROCKETS(2, 30),
-    CELLS(3, 100);
+    CELLS(3, 200);
 
     public final int slot;
     public final int max;
@@ -36,13 +33,7 @@ public enum Ammo {
         ammoValues[ammoType.slot] = value;
         player.getPersistentDataContainer()
                 .set(Keys.getPlayerAmmoKey(), PersistentDataType.INTEGER_ARRAY, ammoValues);
-
-        player.sendRichMessage("<green>[<yellow>" +
-                ammoValues[0] + "<green> | <gold>" +
-                ammoValues[1] + "<green> | <red>" +
-                ammoValues[2] + "<green> | <aqua>" +
-                ammoValues[3] + "<green>]"
-                );
+        displayAmmoActionBar(player);
     }
     public static void setAmmoForPlayer(Player player, int value) {
         int[] ammoValues = new int[Ammo.values().length];
@@ -57,5 +48,15 @@ public enum Ammo {
         }
         player.getPersistentDataContainer()
                 .set(Keys.getPlayerAmmoKey(), PersistentDataType.INTEGER_ARRAY, ammoValues);
+    }
+
+    public static void displayAmmoActionBar(Player p) {
+        int[] ammoValues = Ammo.getAmmoForPlayer(p);
+        String richTextStr = "<yellow>" +
+                ammoValues[0] + "<gray> | <gold>" +
+                ammoValues[1] + "<gray> | <red>" +
+                ammoValues[2] + "<gray> | <aqua>" +
+                ammoValues[3] + "<gray>";
+        p.sendActionBar(MiniMessage.miniMessage().deserialize(richTextStr));
     }
 }

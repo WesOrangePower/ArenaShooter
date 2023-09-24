@@ -1,6 +1,5 @@
 package agency.shitcoding.arena.command.subcommands;
 
-import agency.shitcoding.arena.command.ArenaDeathMatchCommand;
 import agency.shitcoding.arena.command.CommandInst;
 import agency.shitcoding.arena.gamestate.Game;
 import agency.shitcoding.arena.gamestate.GameOrchestrator;
@@ -35,6 +34,10 @@ public class ArenaHostCmd extends CommandInst {
     }
 
     private void hostGame() {
+        if (!GameOrchestrator.getInstance().getGames().isEmpty()) {
+            sender.sendRichMessage("<red>Игра уже создана. Присоединись к ней используя: <yellow><click:run_command:/arena join>/arena join</click>");
+            return;
+        }
         Game game = GameOrchestrator.getInstance().createGame(ruleSet, arena);
         game.addPlayer((Player) sender);
     }

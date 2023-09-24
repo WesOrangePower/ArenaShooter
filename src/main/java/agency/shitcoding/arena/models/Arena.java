@@ -82,6 +82,8 @@ public class Arena {
         for (Powerup powerup : powerups) {
             powerup.getOnPickup().apply(player);
         }
+
+        Ammo.setAmmoForPlayer(player, 0);
         for (Map.Entry<Ammo, Integer> entry : ammoIntegerMap.entrySet()) {
             Ammo ammo = entry.getKey();
             Integer amount = entry.getValue();

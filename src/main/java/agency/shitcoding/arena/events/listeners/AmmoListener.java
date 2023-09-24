@@ -1,7 +1,9 @@
 package agency.shitcoding.arena.events.listeners;
 
 import agency.shitcoding.arena.events.AmmoUpdateEvent;
+import agency.shitcoding.arena.gamestate.GameOrchestrator;
 import agency.shitcoding.arena.models.Ammo;
+import agency.shitcoding.arena.models.GameStage;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -28,7 +30,9 @@ public class AmmoListener implements Listener {
         if (sum > ammo.max) {
             return;
         }
-
-        Ammo.setAmmoForPlayer(player, ammo, sum);
+        if (GameOrchestrator.getInstance().getGameByPlayer(player)
+                .map(g -> g.getGamestage() == GameStage.IN_PROGRESS).orElse(false)) {
+            Ammo.setAmmoForPlayer(player, ammo, sum);
+        }
     }
 }

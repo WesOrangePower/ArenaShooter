@@ -3,7 +3,9 @@ package agency.shitcoding.arena.gamestate;
 import agency.shitcoding.arena.models.Arena;
 import agency.shitcoding.arena.models.RuleSet;
 import lombok.Getter;
+import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
+import org.bukkit.scoreboard.Scoreboard;
 
 import java.util.HashSet;
 import java.util.Optional;
@@ -12,9 +14,11 @@ import java.util.Set;
 public class GameOrchestrator {
     @Getter
     private final Set<Game> games = new HashSet<>();
+    @Getter
+    private final Scoreboard scoreboard;
 
     private GameOrchestrator() {
-
+        this.scoreboard = Bukkit.getScoreboardManager().getNewScoreboard();
     }
     @Getter
     private final static GameOrchestrator instance = new GameOrchestrator();

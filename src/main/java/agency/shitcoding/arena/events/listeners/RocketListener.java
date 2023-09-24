@@ -52,11 +52,14 @@ public class RocketListener implements Listener {
         Location at = rocket.getLocation();
         rocket.remove();
 
-        at.getWorld().createExplosion(at, 1f, false, false);
-        at.getNearbyLivingEntities(1.5, 1.5, 1.5)
+        at.getWorld().createExplosion(at, 1.5f, false, false);
+        at.getNearbyLivingEntities(3, 3, 3)
                 .forEach(entity -> {
+                    Location entityLoc = entity.getLocation();
+                    double damageFactor = 1d / (Math.max(1.5, entityLoc.distance(at)) - 0.5);
                     new GameDamageEvent((Player) rocket.getShooter(), entity,
-                            GameplayConstants.ROCKET_DAMAGE, Weapon.ROCKET_LAUNCHER)
+                            GameplayConstants.ROCKET_DAMAGE * damageFactor
+                            , Weapon.ROCKET_LAUNCHER)
                             .fire();
                     Vector away = entity.getLocation().toVector().subtract(at.toVector()).normalize();
                     entity.setVelocity(away.multiply(1.5));

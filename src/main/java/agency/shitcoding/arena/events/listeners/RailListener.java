@@ -4,10 +4,7 @@ import agency.shitcoding.arena.GameplayConstants;
 import agency.shitcoding.arena.events.GameDamageEvent;
 import agency.shitcoding.arena.events.GameShootEvent;
 import agency.shitcoding.arena.models.Weapon;
-import org.bukkit.Location;
-import org.bukkit.Material;
-import org.bukkit.Particle;
-import org.bukkit.World;
+import org.bukkit.*;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -38,6 +35,9 @@ public class RailListener implements Listener {
         Vector lookingVector = eyeLocation.getDirection();
         World world = eyeLocation.getWorld();
 
+        world.playSound(player, Sound.ITEM_TRIDENT_RETURN, .75f, 1f);
+
+        Set<LivingEntity> affectedEntities = new HashSet<>();
         // row of particles
         for (int i = 0; i < SCAN_LEN; i++) {
             // for DENSITY_FACTOR times/block in the direction of the player's looking direction
@@ -52,7 +52,6 @@ public class RailListener implements Listener {
                     break;
                 }
 
-                Set<LivingEntity> affectedEntities = new HashSet<>();
                 at.getWorld().getNearbyEntities(at, .2, .2, .2)
                         .stream()
                         .filter(entity -> entity instanceof LivingEntity)
@@ -61,10 +60,10 @@ public class RailListener implements Listener {
                             affectedEntities.add((LivingEntity) entity);
                             world.spawnParticle(Particle.FLASH, at, 10, .2, .2, .2, 0);
                         });
-                affectedEntities.forEach(entity ->
-                        new GameDamageEvent(player, entity, GameplayConstants.RAILGUN_DAMAGE, Weapon.RAILGUN)
-                        .fire());
             }
         }
+        affectedEntities.forEach(entity ->
+                new GameDamageEvent(player, entity, GameplayConstants.RAILGUN_DAMAGE, Weapon.RAILGUN).fire()
+        );
     }
 }

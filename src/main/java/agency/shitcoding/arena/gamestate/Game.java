@@ -8,15 +8,20 @@ import net.kyori.adventure.audience.Audience;
 import net.kyori.adventure.bossbar.BossBar;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;
+import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextColor;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
+import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Entity;
+import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Item;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.persistence.PersistentDataType;
 import org.bukkit.scheduler.BukkitTask;
+import org.bukkit.scoreboard.*;
+import org.bukkit.util.BoundingBox;
 import org.bukkit.util.Vector;
 
 import java.time.Instant;
@@ -30,23 +35,37 @@ public abstract class Game {
     private final HashMap<Player, Integer> scores = new HashMap<>();
     private final MajorBuffTracker majorBuffTracker = new MajorBuffTracker();
     private final Set<Player> diedOnce = new HashSet<>();
+    protected final Scoreboard scoreboard;
     protected RuleSet ruleSet;
     protected Arena arena;
     protected BukkitTask gameTimerTask;
+    protected BukkitTask ammoActionBarTask;
     private GameStage gamestage = GameStage.WAITING;
     private List<LootPointInstance> lootPoints;
     private BukkitTask playerWaitingTimerTask;
     private Instant gameStart;
     private BossBar bossBar;
+    private Objective scoreboardObjective;
 
     public Game(Arena arena, RuleSet ruleSet) {
         this.arena = arena;
         this.ruleSet = ruleSet;
+        this.scoreboard = GameOrchestrator.getInstance().getScoreboard();
+        arena.getLowerBound().getWorld().getNearbyEntities(BoundingBox.of(arena.getLowerBound(), arena.getUpperBound()))
+                .stream().filter(e -> e.getType() == EntityType.DROPPED_ITEM)
+                .map(e -> (Item) e)
+                .peek(i -> i.getChunk().setForceLoaded(true))
+                .peek(i -> i.getChunk().load())
+                .forEach(Entity::remove);
     }
 
     public void removePlayer(Player player) {
         players.remove(player);
         scores.remove(player);
+        majorBuffTracker.getQuadDamageTeam().removePlayer(player);
+        majorBuffTracker.getProtectionTeam().removePlayer(player);
+        Optional.ofNullable(scoreboardObjective).ifPresent(o -> o.getScore(player).resetScore());
+        player.setScoreboard(Bukkit.getScoreboardManager().getMainScoreboard());
         if (bossBar != null) bossBar.removeViewer(Audience.audience(player));
         if (gamestage == GameStage.WAITING && players.isEmpty()) {
             endGame("Недостаточно игроков");
@@ -61,20 +80,35 @@ public abstract class Game {
         this.gamestage = GameStage.FINISHED;
         playerWaitingTimerTask.cancel();
         if (gameTimerTask != null) gameTimerTask.cancel();
+        if (ammoActionBarTask != null) ammoActionBarTask.cancel();
         if (bossBar != null) {
             StreamSupport.stream(bossBar.viewers().spliterator(), false)
                     .collect(Collectors.toUnmodifiableSet())
                     .forEach(viewer -> bossBar.removeViewer((Audience) viewer));
         }
-        if (gamestage == GameStage.IN_PROGRESS) {
-            getLootPoints().forEach(i -> Optional.ofNullable(i.getSpawnTask()).ifPresent(BukkitTask::cancel));
-            removeLoot();
-            getLootPoints().clear();
+        if (gamestage == GameStage.IN_PROGRESS || gamestage == GameStage.FINISHED) {
+            Optional.ofNullable(getLootPoints())
+                    .ifPresent(lp -> {
+                        lp.forEach(i -> Optional.ofNullable(i.getSpawnTask()).ifPresent(BukkitTask::cancel));
+                        removeLoot();
+                        lp.clear();
+                    });
         }
+
+        Optional.ofNullable(scoreboardObjective).ifPresent(Objective::unregister);
+        players.forEach(this::sengGameStats);
 
         players.forEach(p -> p.sendRichMessage("<green><bold>Игра закончилась: " + reason));
         players.forEach(Lobby.getInstance()::sendPlayer);
         GameOrchestrator.getInstance().removeGame(this);
+    }
+
+    private void sengGameStats(CommandSender sender) {
+        sender.sendRichMessage("<green>-----Итоги----");
+        scores.entrySet()
+                .stream()
+                .sorted(Comparator.comparingInt(Map.Entry::getValue))
+                .forEach(kv -> sender.sendRichMessage("<green><bold>" + kv.getKey().getName() + "<gold>: <red>" + kv.getValue()));
     }
 
 
@@ -96,14 +130,34 @@ public abstract class Game {
                 this::onGameSecondElapsed,
                 0L, 20L
         );
+        this.ammoActionBarTask = Bukkit.getScheduler().runTaskTimerAsynchronously(
+                ArenaShooter.getInstance(),
+                () -> players.forEach(Ammo::displayAmmoActionBar),
+                0L, 30L
+        );
+
+        scoreboardObjective = scoreboard.registerNewObjective(arena.getName(), Criteria.DUMMY,
+                Component.text("Фраги", NamedTextColor.GOLD), RenderType.INTEGER);
+        scoreboardObjective.setDisplaySlot(DisplaySlot.SIDEBAR);
+
+        players.stream()
+                .peek(p -> p.setScoreboard(scoreboard))
+                .forEach(p -> scoreboardObjective.getScore(p).setScore(0));
     }
 
     private void createLootPointInstance(LootPoint lootPoint) {
         LootPointInstance instance = new LootPointInstance(lootPoint);
         Bukkit.getScheduler().runTaskTimer(ArenaShooter.getInstance(),
                 () -> {
-                    ItemStack itemStack = instance.getLootPoint().getType().getItemStack();
-                    Location location = instance.getLootPoint().getLocation().toCenterLocation().clone().add(0, 0, 0);
+                    Powerup powerup = instance.getLootPoint().getType();
+                    if (powerup == Powerup.QUAD_DAMAGE && getMajorBuffTracker().getQuadDamageTicks() != null) {
+                        return;
+                    }
+                    if (powerup == Powerup.PROTECTION && getMajorBuffTracker().getProtectionTicks() != null) {
+                        return;
+                    }
+                    ItemStack itemStack = powerup.getItemStack();
+                    Location location = instance.getLootPoint().getLocation().toCenterLocation().clone();
 
                     location.getNearbyEntities(1, 1, 1).stream()
                             .filter(e -> e instanceof Item)
@@ -169,6 +223,8 @@ public abstract class Game {
         if (gamestage == GameStage.IN_PROGRESS) {
             bossBar.addViewer(Audience.audience(player));
             diedOnce.add(player);
+            scoreboardObjective.getScore(player).setScore(0);
+            player.setScoreboard(scoreboard);
         }
         players.add(player);
         scores.put(player, 0);

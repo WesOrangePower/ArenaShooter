@@ -87,7 +87,7 @@ public class ShotgunListener implements Listener {
             Location at = startPoint.clone().add(normalizedVec.clone().multiply(i / DENSITY_FACTOR));
 
             // TRACES
-            at.getWorld().spawnParticle(Particle.WAX_ON, at, 1, 0, 0, 0, 0);
+//            at.getWorld().spawnParticle(Particle.WAX_ON, at, 1, 0, 0, 0, 0);
 
             if (at.getBlock().getType().isCollidable()) {
                 // spawn smoke at the surface of block

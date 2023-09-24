@@ -5,6 +5,9 @@ import agency.shitcoding.arena.events.listeners.*;
 import agency.shitcoding.arena.gamestate.Game;
 import agency.shitcoding.arena.gamestate.GameOrchestrator;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.bukkit.scoreboard.Objective;
+import org.bukkit.scoreboard.Scoreboard;
+import org.bukkit.scoreboard.Team;
 
 import java.util.Objects;
 
@@ -22,6 +25,10 @@ public final class ArenaShooter extends JavaPlugin {
 
         Objects.requireNonNull(getCommand("arenaDeathMatch".toLowerCase()))
                 .setExecutor(ArenaDeathMatchCommandInvoker.getInstance());
+
+        Scoreboard scoreboard = GameOrchestrator.getInstance().getScoreboard();
+        scoreboard.getObjectives().forEach(Objective::unregister);
+        scoreboard.getTeams().forEach(Team::unregister);
     }
 
     @Override

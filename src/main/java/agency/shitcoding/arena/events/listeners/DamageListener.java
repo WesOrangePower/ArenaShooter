@@ -9,7 +9,6 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.potion.PotionEffectType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -23,7 +22,7 @@ public class DamageListener implements Listener {
         Player dealer = event.getDealer();
         if (dealer != null) {
             dealer.getActivePotionEffects().forEach(potionEffect -> {
-                if (potionEffect.getType().equals(PotionEffectType.INCREASE_DAMAGE)) {
+                if (potionEffect.getType().equals(GameplayConstants.QUAD_DAMAGE_POTION_EFFECT)) {
                     event.setDamage(event.getDamage() * GameplayConstants.QUAD_DAMAGE_MULTIPLIER);
                 }
             });
@@ -31,7 +30,7 @@ public class DamageListener implements Listener {
 
         // if Has Protection
         event.getVictim().getActivePotionEffects().forEach(potionEffect -> {
-            if (potionEffect.getType().equals(PotionEffectType.DAMAGE_RESISTANCE)) {
+            if (potionEffect.getType().equals(GameplayConstants.PROTECTION_POTION_EFFECT)) {
                 event.setDamage(event.getDamage() * GameplayConstants.PROTECTION_FACTOR);
             }
         });
@@ -68,7 +67,7 @@ public class DamageListener implements Listener {
             victim.setLevel(0);
             return armor * GameplayConstants.ARMOR_FACTOR + (damage - armor);
         } else {
-            victim.setLevel(Math.max((int)(armor - armorDamage), 0));
+            victim.setLevel(Math.max((int)(armor - armorDamage * GameplayConstants.ARMOR_DAMAGE_FACTOR), 0));
             return damage * GameplayConstants.ARMOR_FACTOR;
         }
     }
