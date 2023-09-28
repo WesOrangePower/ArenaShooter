@@ -1,7 +1,6 @@
 package agency.shitcoding.arena.command.subcommands;
 
 import agency.shitcoding.arena.command.CommandInst;
-import agency.shitcoding.arena.command.HelpEntry;
 import agency.shitcoding.arena.gamestate.Game;
 import agency.shitcoding.arena.gamestate.GameOrchestrator;
 import agency.shitcoding.arena.gamestate.Lobby;

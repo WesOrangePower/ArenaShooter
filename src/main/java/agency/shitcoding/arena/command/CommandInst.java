@@ -12,5 +12,6 @@ public abstract class CommandInst {
         this.sender = sender;
         this.args = args;
     }
+
     public abstract void execute();
 }

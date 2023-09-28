@@ -25,9 +25,11 @@ public enum Ammo {
         }
         return ammoValues;
     }
+
     public static int getAmmoForPlayer(Player player, Ammo ammoType) {
         return getAmmoForPlayer(player)[ammoType.slot];
     }
+
     public static void setAmmoForPlayer(Player player, Ammo ammoType, int value) {
         int[] ammoValues = getAmmoForPlayer(player);
         ammoValues[ammoType.slot] = value;
@@ -35,12 +37,14 @@ public enum Ammo {
                 .set(Keys.getPlayerAmmoKey(), PersistentDataType.INTEGER_ARRAY, ammoValues);
         displayAmmoActionBar(player);
     }
+
     public static void setAmmoForPlayer(Player player, int value) {
         int[] ammoValues = new int[Ammo.values().length];
         Arrays.fill(ammoValues, value);
         player.getPersistentDataContainer()
                 .set(Keys.getPlayerAmmoKey(), PersistentDataType.INTEGER_ARRAY, ammoValues);
     }
+
     public static void maxAmmoForPlayer(Player player) {
         int[] ammoValues = new int[Ammo.values().length];
         for (Ammo ammo : Ammo.values()) {

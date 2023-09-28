@@ -1,6 +1,5 @@
 package agency.shitcoding.arena.command.subcommands;
 
-import agency.shitcoding.arena.ArenaShooter;
 import agency.shitcoding.arena.command.ArenaDeathMatchCommand;
 import agency.shitcoding.arena.command.CommandInst;
 import agency.shitcoding.arena.models.Arena;
@@ -14,6 +13,7 @@ import java.util.HashSet;
 public class ArenaCreateCmd extends CommandInst {
     public static final int ARG_NAME = 1;
     public static final int ARG_MIN_LEN = 2;
+
     public ArenaCreateCmd(@NotNull CommandSender sender, @NotNull String[] args) {
         super(sender, args);
     }

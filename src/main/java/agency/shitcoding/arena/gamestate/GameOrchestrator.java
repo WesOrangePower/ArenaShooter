@@ -13,6 +13,8 @@ import java.util.Set;
 
 public class GameOrchestrator {
     @Getter
+    private final static GameOrchestrator instance = new GameOrchestrator();
+    @Getter
     private final Set<Game> games = new HashSet<>();
     @Getter
     private final Scoreboard scoreboard;
@@ -20,13 +22,10 @@ public class GameOrchestrator {
     private GameOrchestrator() {
         this.scoreboard = Bukkit.getScoreboardManager().getNewScoreboard();
     }
-    @Getter
-    private final static GameOrchestrator instance = new GameOrchestrator();
 
     public Game createGame(RuleSet ruleSet, Arena arena) {
         Game game = ruleSet.getGameFactory().createGame(arena);
         games.add(game);
-        game.startAwaiting();
         return game;
     }
 

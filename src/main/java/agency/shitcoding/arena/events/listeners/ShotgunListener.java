@@ -1,13 +1,13 @@
 package agency.shitcoding.arena.events.listeners;
 
 import agency.shitcoding.arena.GameplayConstants;
+import agency.shitcoding.arena.SoundConstants;
 import agency.shitcoding.arena.events.GameDamageEvent;
 import agency.shitcoding.arena.events.GameShootEvent;
 import agency.shitcoding.arena.models.Weapon;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Particle;
-import org.bukkit.Sound;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -38,7 +38,7 @@ public class ShotgunListener implements Listener {
         }
 
         Weapon.applyCooldown(player, Weapon.SHOTGUN.cooldown);
-        player.playSound(player.getLocation(), Sound.ENTITY_DRAGON_FIREBALL_EXPLODE, 1, 1);
+        player.playSound(player.getLocation(), SoundConstants.SSG_FIRE, 1, 1);
 
         List<LivingEntity> affectedEntities = calculatePellets(player);
         // sum knockback and damage

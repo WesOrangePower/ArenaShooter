@@ -1,10 +1,14 @@
 package agency.shitcoding.arena.events.listeners;
 
 import agency.shitcoding.arena.GameplayConstants;
+import agency.shitcoding.arena.SoundConstants;
 import agency.shitcoding.arena.events.GameDamageEvent;
 import agency.shitcoding.arena.events.GameShootEvent;
 import agency.shitcoding.arena.models.Weapon;
-import org.bukkit.*;
+import org.bukkit.Location;
+import org.bukkit.Material;
+import org.bukkit.Particle;
+import org.bukkit.World;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -35,10 +39,11 @@ public class RailListener implements Listener {
         Vector lookingVector = eyeLocation.getDirection();
         World world = eyeLocation.getWorld();
 
-        world.playSound(player, Sound.ITEM_TRIDENT_RETURN, .75f, 1f);
+        world.playSound(player, SoundConstants.RAIL_FIRE, .75f, 1f);
 
         Set<LivingEntity> affectedEntities = new HashSet<>();
         // row of particles
+        outer:
         for (int i = 0; i < SCAN_LEN; i++) {
             // for DENSITY_FACTOR times/block in the direction of the player's looking direction
             // spawn a particle
@@ -49,7 +54,7 @@ public class RailListener implements Listener {
 
                 if (at.getBlock().getType().isCollidable()) {
                     // if the block is collidable, stop the loop
-                    break;
+                    break outer;
                 }
 
                 at.getWorld().getNearbyEntities(at, .2, .2, .2)

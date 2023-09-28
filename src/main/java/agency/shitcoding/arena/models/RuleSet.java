@@ -12,7 +12,7 @@ import lombok.RequiredArgsConstructor;
 public enum RuleSet {
     DM("Deathmatch", 10 * 60, 16, 2, new DeathMatchGameFactory(), new DMGameRules()),
     LMS("Last man standing", 7 * 60, 16, 2, new LMSGameFactory(), new LMSGameRules()),
-    INSTAGIB("Instagib", 8 * 60, 16, 3, new InstagibGameFactory(), new InstagibGameRules());
+    INSTAGIB("Instagib", 8 * 60, 16, 2, new InstagibGameFactory(), new InstagibGameRules());
 
     private final String name;
     private final int gameLenSeconds;

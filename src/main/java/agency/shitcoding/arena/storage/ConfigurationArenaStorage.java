@@ -71,7 +71,7 @@ public class ConfigurationArenaStorage implements ArenaStorage {
             LootPoint lootPoint = parseLootPoint(id, configurationSection);
             lootPoints.add(lootPoint);
         }
-        return new Arena( name, lowerBound, upperBound, lootPoints );
+        return new Arena(name, lowerBound, upperBound, lootPoints);
     }
 
     private LootPoint parseLootPoint(String lootPointId, ConfigurationSection lootPointSection) {
@@ -80,7 +80,7 @@ public class ConfigurationArenaStorage implements ArenaStorage {
         Location location = lootPointSection.getLocation(Conf.Arenas.LootPoints.location);
         Powerup type = Powerup.valueOf(lootPointSection.getString(Conf.Arenas.LootPoints.type));
 
-        return new LootPoint( id, location, type );
+        return new LootPoint(id, location, type);
     }
 
 

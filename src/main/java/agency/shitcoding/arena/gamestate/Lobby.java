@@ -10,9 +10,10 @@ import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.util.BoundingBox;
 
 public class Lobby {
+    private static Lobby instance;
+
     private Lobby() {
     }
-    private static Lobby instance;
 
     public static Lobby getInstance() {
         if (instance == null) {
@@ -25,6 +26,7 @@ public class Lobby {
         return ArenaShooter.getInstance().getConfig()
                 .getLocation(Conf.lobbyLocation, new Location(Bukkit.getWorld("world"), 0, 64, 0));
     }
+
     public BoundingBox getBoundaries() {
         return BoundingBox.of(getLocation(), 25d, 25d, 25d);
     }

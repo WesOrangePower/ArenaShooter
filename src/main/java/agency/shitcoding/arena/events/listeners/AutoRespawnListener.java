@@ -4,6 +4,7 @@ import agency.shitcoding.arena.ArenaShooter;
 import agency.shitcoding.arena.gamestate.Game;
 import agency.shitcoding.arena.gamestate.GameOrchestrator;
 import agency.shitcoding.arena.gamestate.Lobby;
+import agency.shitcoding.arena.gamestate.PlayerScore;
 import agency.shitcoding.arena.models.Ammo;
 import agency.shitcoding.arena.models.GameStage;
 import agency.shitcoding.arena.models.Keys;
@@ -30,6 +31,23 @@ import static agency.shitcoding.arena.GameplayConstants.PROTECTION_POTION_EFFECT
 import static agency.shitcoding.arena.GameplayConstants.QUAD_DAMAGE_POTION_EFFECT;
 
 public class AutoRespawnListener implements Listener {
+    private static void dropPowerup(Player p, ItemStack itemStack) {
+        Location location = p.getLocation().toCenterLocation().clone();
+
+        var item = location.getWorld().dropItem(location,
+                itemStack,
+                i -> {
+                    i.getPersistentDataContainer().set(
+                            Keys.LOOT_POINT_KEY,
+                            PersistentDataType.INTEGER,
+                            -1
+                    );
+                    i.setCanMobPickup(false);
+                }
+        );
+        item.setVelocity(new Vector(0f, .2f, 0f));
+    }
+
     @EventHandler
     public void onPlayerDeath(PlayerDeathEvent event) {
         event.setCancelled(true);
@@ -65,12 +83,11 @@ public class AutoRespawnListener implements Listener {
                             }
                             if (killedThemselves) {
                                 game.getPlayers().forEach(pl -> pl.sendRichMessage("<red>" + p.getName() + "<gold> не справился с управлением."));
-                                game.getScores().put(p, game.getScores().get(p) - 1);
-                                game.getScoreboardObjective().getScore(p).setScore(game.getScores().getOrDefault(p, 0));
+                                game.getScoreboardObjective().getScore(p).setScore(game.getOptScore(p).map(PlayerScore::getScore).orElse(0));
                             } else {
                                 game.getPlayers().forEach(pl -> pl.sendRichMessage("<red>" + killer.getName() + "<gold> затраллил <red>" + p.getName() + "<gold> насмерть."));
-                                game.getScores().put(killer, game.getScores().get(killer) + 1);
-                                game.getScoreboardObjective().getScore(killer).setScore(game.getScores().getOrDefault(killer, 0));
+                                game.recalculateScore(killer, 1);
+                                game.getScoreboardObjective().getScore(killer).setScore(game.getOptScore(killer).map(PlayerScore::getScore).orElse(0));
                             }
                         }
                 );
@@ -78,31 +95,16 @@ public class AutoRespawnListener implements Listener {
         p.clearActivePotionEffects();
         p.setGameMode(GameMode.SPECTATOR);
         p.showTitle(Title.title(
-                Component.text("Ты развалился лол", NamedTextColor.RED),
-                Component.text("Руками " + (killer == null ? "своими" : killer.getName() + "а"), NamedTextColor.YELLOW)
+                Component.text("Полный развал", NamedTextColor.RED),
+                Component.text(killer == null
+                        ? "по собственной глупости"
+                        : "от рук " + killer.getName() , NamedTextColor.YELLOW)
         ));
 
         Bukkit.getScheduler().runTaskLater(ArenaShooter.getInstance(), () -> {
             Optional<Game> gameByPlayer = GameOrchestrator.getInstance().getGameByPlayer(p);
             gameByPlayer.ifPresentOrElse(game -> game.getArena().spawn(p, game), () -> Lobby.getInstance().sendPlayer(p));
         }, 60);
-    }
-
-    private static void dropPowerup(Player p, ItemStack itemStack) {
-        Location location = p.getLocation().toCenterLocation().clone();
-
-        var item = location.getWorld().dropItem(location,
-                itemStack,
-                i -> {
-                    i.getPersistentDataContainer().set(
-                            Keys.LOOT_POINT_KEY,
-                            PersistentDataType.INTEGER,
-                            -1
-                    );
-                    i.setCanMobPickup(false);
-                }
-        );
-        item.setVelocity(new Vector(0f, .2f, 0f));
     }
 
     @EventHandler

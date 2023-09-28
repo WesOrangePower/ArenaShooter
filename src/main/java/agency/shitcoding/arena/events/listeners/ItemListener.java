@@ -2,10 +2,9 @@ package agency.shitcoding.arena.events.listeners;
 
 import agency.shitcoding.arena.gamestate.Game;
 import agency.shitcoding.arena.gamestate.GameOrchestrator;
-import agency.shitcoding.arena.models.GameStage;
-import agency.shitcoding.arena.models.Keys;
-import agency.shitcoding.arena.models.LootPointInstance;
-import agency.shitcoding.arena.models.Powerup;
+import agency.shitcoding.arena.gamestate.LootManager;
+import agency.shitcoding.arena.gamestate.LootManagerProvider;
+import agency.shitcoding.arena.models.*;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Item;
 import org.bukkit.entity.Player;
@@ -51,18 +50,34 @@ public class ItemListener implements Listener {
             if (first.isEmpty()) return;
             powerup = first.get();
         } else {
-            LootPointInstance lootPointInstance = game.getLootPoints().get(i);
+            LootManager lootManager = LootManagerProvider.get(game.getArena()).orElseThrow();
+            LootPointInstance lootPointInstance = lootManager.getLootPoints().get(i);
             powerup = lootPointInstance.getLootPoint().getType();
         }
 
         boolean isPickedUp = powerup.getOnPickup().apply(player);
 
         if (isPickedUp) {
-            player.sendRichMessage("<green><bold>Вы подобрали " + powerup.name());
+            player.playSound(player, powerup.getType().getSoundName(), .5f, 1f);
+            player.sendRichMessage("<green><bold>Вы подобрали " + powerup.getDisplayName());
+            if (powerup.getType() == PowerupType.MAJOR_BUFF) {
+                handleMajorBuff(player, game, powerup);
+            }
             item.remove();
             if (i > 0) {
-                game.getLootPoints().get(i).setLooted(true);
+                LootManager lootManager = LootManagerProvider.get(game.getArena()).orElseThrow();
+                LootPointInstance lootPointInstance = lootManager.getLootPoints().get(i);
+                lootPointInstance.setLooted(true);
             }
+        }
+    }
+
+    private void handleMajorBuff(Player player, Game game, Powerup powerup) {
+        for (Player gamePlayer : game.getPlayers()) {
+            if (gamePlayer == player) continue;
+            gamePlayer.sendRichMessage(
+                    String.format("<red>%s подобрал %s!", player.getName(), powerup.getDisplayName())
+            );
         }
     }
 
@@ -83,8 +98,7 @@ public class ItemListener implements Listener {
         if (e.getOldEffect().getType().equals(QUAD_DAMAGE_POTION_EFFECT)) {
             GameOrchestrator.getInstance().getGameByPlayer(player)
                     .ifPresent(game -> game.getMajorBuffTracker().getQuadDamageTeam().removePlayer(player));
-        }
-        else if (e.getOldEffect().getType().equals(PROTECTION_POTION_EFFECT)) {
+        } else if (e.getOldEffect().getType().equals(PROTECTION_POTION_EFFECT)) {
             GameOrchestrator.getInstance().getGameByPlayer(player)
                     .ifPresent(game -> game.getMajorBuffTracker().getProtectionTeam().removePlayer(player));
         }

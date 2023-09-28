@@ -2,8 +2,10 @@ package agency.shitcoding.arena.gamestate;
 
 import agency.shitcoding.arena.models.Arena;
 import agency.shitcoding.arena.models.GameStage;
+import agency.shitcoding.arena.models.LootPoint;
 import agency.shitcoding.arena.models.RuleSet;
 import org.bukkit.entity.Player;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -14,8 +16,12 @@ public class LMSGame extends Game {
     }
 
     @Override
-    protected void startGameStage2() {
+    protected @NotNull Set<LootPoint> preprocessLootPoints(Set<LootPoint> lootPoints) {
+        return lootPoints;
+    }
 
+    @Override
+    protected void startGameStage2() {
     }
 
     @Override
@@ -25,7 +31,6 @@ public class LMSGame extends Game {
             checkLms();
         }
     }
-
 
 
     public void checkLms() {

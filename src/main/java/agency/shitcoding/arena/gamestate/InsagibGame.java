@@ -1,7 +1,9 @@
 package agency.shitcoding.arena.gamestate;
 
 import agency.shitcoding.arena.models.*;
+import org.jetbrains.annotations.NotNull;
 
+import java.util.Set;
 import java.util.stream.Collectors;
 
 public class InsagibGame extends Game {
@@ -10,20 +12,27 @@ public class InsagibGame extends Game {
     }
 
     @Override
-    protected void startGameStage2() {
-        getArena().setLootPoints(
-        getArena().getLootPoints().stream()
-                .map(lp -> {
-                    PowerupType type = lp.getType().getType();
-                    if (type == PowerupType.WEAPON) {
-                        return new LootPoint(lp.getId(), lp.getLocation(), Powerup.RAILGUN);
-                    }
-                    if (type == PowerupType.ARMOR || type == PowerupType.AMMO) {
-                        return new LootPoint(lp.getId(), lp.getLocation(), Powerup.CELL_BOX);
-                    }
-                    return lp;
-                })
-                .collect(Collectors.toSet())
-        );
+    protected @NotNull Set<LootPoint> preprocessLootPoints(Set<LootPoint> lootPoints) {
+        return lootPoints.stream()
+                .map(this::changeLootPointType)
+                .collect(Collectors.toSet());
     }
+
+
+    @Override
+    protected void startGameStage2() {
+
+    }
+
+    private LootPoint changeLootPointType(LootPoint lootPoint) {
+        PowerupType type = lootPoint.getType().getType();
+        if (type == PowerupType.WEAPON) {
+            return new LootPoint(lootPoint.getId(), lootPoint.getLocation(), Powerup.RAILGUN);
+        }
+        if (type == PowerupType.ARMOR || type == PowerupType.AMMO) {
+            return new LootPoint(lootPoint.getId(), lootPoint.getLocation(), Powerup.CELL_BOX);
+        }
+        return lootPoint;
+    }
+
 }

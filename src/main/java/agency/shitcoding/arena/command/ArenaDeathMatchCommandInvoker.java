@@ -13,16 +13,16 @@ import java.util.List;
 public class ArenaDeathMatchCommandInvoker extends Command implements TabCompleter, CommandExecutor {
     public static ArenaDeathMatchCommandInvoker INSTANCE = null;
 
+    private ArenaDeathMatchCommandInvoker() {
+        super("arenaDeathMatch".toLowerCase());
+    }
+
     public static ArenaDeathMatchCommandInvoker getInstance() {
         if (INSTANCE == null) {
             INSTANCE = new ArenaDeathMatchCommandInvoker();
         }
         return INSTANCE;
     }
-    private ArenaDeathMatchCommandInvoker() {
-        super("arenaDeathMatch".toLowerCase());
-    }
-
 
     @Override
     public boolean

@@ -13,6 +13,9 @@ import java.util.Optional;
 @Getter
 @Setter
 public class MajorBuffTracker {
+    private Integer quadDamageTicks = null;
+    private Integer protectionTicks = null;
+
     public Team getQuadDamageTeam() {
         Scoreboard scoreboard = GameOrchestrator.getInstance().getScoreboard();
         return Optional.ofNullable(scoreboard.getTeam("powerup-quadDamage")).orElseGet(() -> {
@@ -30,7 +33,4 @@ public class MajorBuffTracker {
             return quadDamageTeam;
         });
     }
-
-    private Integer quadDamageTicks = null;
-    private Integer protectionTicks = null;
 }

@@ -1,7 +1,6 @@
 package agency.shitcoding.arena.events;
 
 import agency.shitcoding.arena.gamestate.Game;
-import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import org.bukkit.entity.Player;
@@ -21,12 +20,12 @@ public class GameNoAmmoEvent extends GameEvent {
         this.player = player;
     }
 
-    @Override
-    public @NotNull HandlerList getHandlers() {
+    public static HandlerList getHandlerList() {
         return handlers;
     }
 
-    public static HandlerList getHandlerList() {
+    @Override
+    public @NotNull HandlerList getHandlers() {
         return handlers;
     }
 }

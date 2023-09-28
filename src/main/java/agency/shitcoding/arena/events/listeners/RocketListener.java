@@ -2,12 +2,14 @@ package agency.shitcoding.arena.events.listeners;
 
 import agency.shitcoding.arena.ArenaShooter;
 import agency.shitcoding.arena.GameplayConstants;
+import agency.shitcoding.arena.SoundConstants;
 import agency.shitcoding.arena.events.GameDamageEvent;
 import agency.shitcoding.arena.events.GameShootEvent;
 import agency.shitcoding.arena.models.Weapon;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.Particle;
 import org.bukkit.entity.LargeFireball;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -32,8 +34,10 @@ public class RocketListener implements Listener {
 
         Weapon.applyCooldown(player, Weapon.ROCKET_LAUNCHER.cooldown);
 
-        Vector lookingVector = player.getEyeLocation().getDirection();
+        Location eyeLocation = player.getEyeLocation();
+        Vector lookingVector = eyeLocation.getDirection();
 
+        eyeLocation.getWorld().playSound(eyeLocation, SoundConstants.ROCKET_FIRE, .5f, 1f);
         player.launchProjectile(LargeFireball.class, lookingVector, rocket -> {
             rocket.setIsIncendiary(false);
             rocket.setYield(0f);
@@ -52,7 +56,10 @@ public class RocketListener implements Listener {
         Location at = rocket.getLocation();
         rocket.remove();
 
-        at.getWorld().createExplosion(at, 1.5f, false, false);
+//        at.getWorld().createExplosion(at, 1.5f, false, false);
+        at.getWorld().spawnParticle(Particle.EXPLOSION_NORMAL, at, 5, 1.5, 1.5, 1.5, 0);
+        at.getWorld().spawnParticle(Particle.EXPLOSION_HUGE, at, 5, 1.5, 1.5, 1.5, 0);
+        at.getWorld().playSound(at, SoundConstants.ROCKET_DET, .75f, 1f);
         at.getNearbyLivingEntities(3, 3, 3)
                 .forEach(entity -> {
                     Location entityLoc = entity.getLocation();

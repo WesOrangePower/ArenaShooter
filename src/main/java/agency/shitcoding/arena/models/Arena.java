@@ -19,11 +19,11 @@ import java.util.stream.Collectors;
 @Getter
 @Setter
 public class Arena {
+    public static final Random spawnPointRandomizer = new Random();
     public String name;
     public Location lowerBound;
     public Location upperBound;
     public Set<LootPoint> lootPoints;
-    public static final Random spawnPointRandomizer = new Random();
     private Set<LootPoint> weaponLootPoints = null;
 
     public Arena(String name, Location lowerBound, Location upperBound, Set<LootPoint> lootPoints) {
@@ -96,8 +96,7 @@ public class Arena {
         int size = weaponLootPoints.size();
         int item = spawnPointRandomizer.nextInt(size);
         int i = 0;
-        for(LootPoint point : lootPoints)
-        {
+        for (LootPoint point : lootPoints) {
             if (i == item) {
                 return point;
             }

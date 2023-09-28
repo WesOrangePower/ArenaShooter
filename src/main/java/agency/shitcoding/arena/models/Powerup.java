@@ -29,6 +29,7 @@ public enum Powerup {
      * Heals the player for 2 hp (1 heart)
      */
     STIM_PACK(
+            "<gradient:#11900a:#01b817>хилку</gradient>",
             PowerupType.BUFF,
             potionItem(Color.BLUE),
             player -> {
@@ -51,6 +52,7 @@ public enum Powerup {
      * Heals the player for 5 hp (2.5 hearts)
      */
     MEDICAL_KIT(
+            "<gradient:#d64343:#ec3f22>аптечку</gradient>",
             PowerupType.BUFF,
             potionItem(Color.RED),
             player -> {
@@ -69,6 +71,7 @@ public enum Powerup {
             MEDIKIT_SPAWN_OFFSET_TICKS
     ),
     ROCKET_BOX(
+            "<red>коробку ракет</red>",
             PowerupType.AMMO,
             new ItemStack(Material.RED_SHULKER_BOX),
             player -> giveAmmo(player, Ammo.ROCKETS, 5),
@@ -76,6 +79,7 @@ public enum Powerup {
             AMMO_DROP_SPAWN_OFFSET_TICKS
     ),
     BULLET_BOX(
+            "<yellow>коробку пуль</yellow>",
             PowerupType.AMMO,
             new ItemStack(Material.YELLOW_SHULKER_BOX),
             player -> giveAmmo(player, Ammo.BULLETS, 50),
@@ -83,6 +87,7 @@ public enum Powerup {
             AMMO_DROP_SPAWN_OFFSET_TICKS
     ),
     SHELL_BOX(
+            "<gold>коробку дробовых</gold>",
             PowerupType.AMMO,
             new ItemStack(Material.ORANGE_SHULKER_BOX),
             player -> giveAmmo(player, Ammo.SHELLS, 10),
@@ -90,6 +95,7 @@ public enum Powerup {
             AMMO_DROP_SPAWN_OFFSET_TICKS
     ),
     CELL_BOX(
+            "<aqua>батарею</aqua>",
             PowerupType.AMMO,
             new ItemStack(Material.CYAN_SHULKER_BOX),
             player -> giveAmmo(player, Ammo.CELLS, 50),
@@ -97,15 +103,16 @@ public enum Powerup {
             AMMO_DROP_SPAWN_OFFSET_TICKS
     ),
     QUAD_DAMAGE(
+            "<i><aqua>quad damage</aqua></i>",
             PowerupType.MAJOR_BUFF,
             new ItemStack(Material.NETHER_STAR),
             player -> {
                 Optional<Game> gameByPlayer = GameOrchestrator.getInstance().getGameByPlayer(player);
 
                 Integer quadDamageTicks = gameByPlayer
-                    .map(Game::getMajorBuffTracker)
-                    .map(MajorBuffTracker::getQuadDamageTicks)
-                    .orElse(QUAD_DAMAGE_DURATION);
+                        .map(Game::getMajorBuffTracker)
+                        .map(MajorBuffTracker::getQuadDamageTicks)
+                        .orElse(QUAD_DAMAGE_DURATION);
 
                 gameByPlayer.map(Game::getMajorBuffTracker).ifPresent(mbt -> {
                     mbt.setQuadDamageTicks(null);
@@ -123,15 +130,16 @@ public enum Powerup {
             QUAD_DAMAGE_SPAWN_OFFSET_TICKS
     ),
     PROTECTION(
+            "<i><green>protection</green></i>",
             PowerupType.MAJOR_BUFF,
             new ItemStack(Material.DIAMOND_CHESTPLATE),
             player -> {
                 Optional<Game> gameByPlayer = GameOrchestrator.getInstance().getGameByPlayer(player);
 
                 Integer protectionTicks = gameByPlayer
-                    .map(Game::getMajorBuffTracker)
-                    .map(MajorBuffTracker::getProtectionTicks)
-                    .orElse(PROTECTION_DURATION);
+                        .map(Game::getMajorBuffTracker)
+                        .map(MajorBuffTracker::getProtectionTicks)
+                        .orElse(PROTECTION_DURATION);
 
                 gameByPlayer.map(Game::getMajorBuffTracker).ifPresent(mbt -> {
                     mbt.setProtectionTicks(null);
@@ -149,6 +157,7 @@ public enum Powerup {
             GameplayConstants.PROTECTION_SPAWN_OFFSET_TICKS
     ),
     SHOTGUN(
+            "<gold>дробовик</gold>",
             PowerupType.WEAPON,
             new ItemStack(Weapon.SHOTGUN.item),
             player -> giveWeaponOrAmmo(player, Weapon.SHOTGUN),
@@ -156,6 +165,7 @@ public enum Powerup {
             SHOTGUN_SPAWN_OFFSET_TICKS
     ),
     ROCKET_LAUNCHER(
+            "<red>ракетницу</red>",
             PowerupType.WEAPON,
             new ItemStack(Weapon.ROCKET_LAUNCHER.item),
             player -> giveWeaponOrAmmo(player, Weapon.ROCKET_LAUNCHER),
@@ -163,6 +173,7 @@ public enum Powerup {
             ROCKET_LAUNCHER_SPAWN_OFFSET_TICKS
     ),
     RAILGUN(
+            "<aqua>рельсотрон</aqua>",
             PowerupType.WEAPON,
             new ItemStack(Weapon.RAILGUN.item),
             player -> giveWeaponOrAmmo(player, Weapon.RAILGUN),
@@ -170,6 +181,7 @@ public enum Powerup {
             RAILGUN_SPAWN_OFFSET_TICKS
     ),
     MACHINE_GUN(
+            "<yellow>пулемёт</yellow>",
             PowerupType.WEAPON,
             new ItemStack(Weapon.MACHINE_GUN.item),
             player -> giveWeaponOrAmmo(player, Weapon.MACHINE_GUN),
@@ -177,6 +189,7 @@ public enum Powerup {
             MACHINE_GUN_SPAWN_OFFSET_TICKS
     ),
     GAUNTLET(
+            "<blue>перчатку</blue>",
             PowerupType.WEAPON,
             new ItemStack(Weapon.GAUNTLET.item),
             player -> giveWeaponOrAmmo(player, Weapon.GAUNTLET),
@@ -184,6 +197,7 @@ public enum Powerup {
             MACHINE_GUN_SPAWN_OFFSET_TICKS
     ),
     ARMOR_SHARD(
+            "<dark_purple>осколок брони</dark_purple>",
             PowerupType.ARMOR,
             new ItemStack(Material.SHIELD),
             player -> giveArmor(player, 5),
@@ -191,6 +205,7 @@ public enum Powerup {
             ARMOR_SHARD_SPAWN_OFFSET_TICKS
     ),
     LIGHT_ARMOR(
+            "<yellow>броню</yellow>",
             PowerupType.ARMOR,
             new ItemStack(Material.GOLDEN_CHESTPLATE),
             player -> giveArmor(player, 50),
@@ -198,6 +213,10 @@ public enum Powerup {
             LIGHT_ARMOR_SPAWN_OFFSET_TICKS
     );
 
+    /**
+     * Minimessage
+     */
+    private final String displayName;
     private final PowerupType type;
     private final ItemStack itemStack;
     private final Function<Player, Boolean> onPickup;
@@ -212,6 +231,7 @@ public enum Powerup {
         player.setLevel(armor);
         return true;
     }
+
     private static boolean giveWeaponOrAmmo(Player player, Weapon weapon) {
         if (weapon == null) {
             return false;

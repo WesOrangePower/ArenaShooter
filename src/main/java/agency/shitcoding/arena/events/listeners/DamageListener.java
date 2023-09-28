@@ -2,6 +2,7 @@ package agency.shitcoding.arena.events.listeners;
 
 import agency.shitcoding.arena.ArenaShooter;
 import agency.shitcoding.arena.GameplayConstants;
+import agency.shitcoding.arena.SoundConstants;
 import agency.shitcoding.arena.events.GameDamageEvent;
 import agency.shitcoding.arena.models.Weapon;
 import org.bukkit.*;
@@ -26,6 +27,9 @@ public class DamageListener implements Listener {
                     event.setDamage(event.getDamage() * GameplayConstants.QUAD_DAMAGE_MULTIPLIER);
                 }
             });
+            if (event.getVictim() instanceof Player) {
+                dealer.playSound(dealer, SoundConstants.HITSOUND, 1f, 1f);
+            }
         }
 
         // if Has Protection
@@ -67,7 +71,7 @@ public class DamageListener implements Listener {
             victim.setLevel(0);
             return armor * GameplayConstants.ARMOR_FACTOR + (damage - armor);
         } else {
-            victim.setLevel(Math.max((int)(armor - armorDamage * GameplayConstants.ARMOR_DAMAGE_FACTOR), 0));
+            victim.setLevel(Math.max((int) (armor - armorDamage * GameplayConstants.ARMOR_DAMAGE_FACTOR), 0));
             return damage * GameplayConstants.ARMOR_FACTOR;
         }
     }
@@ -79,13 +83,13 @@ public class DamageListener implements Listener {
         ItemStack bone = new ItemStack(Material.BONE);
         ItemStack meat = new ItemStack(Material.ROTTEN_FLESH);
         Stream.of(head, bone, meat)
-                .map(itemStack -> world.dropItem(eyeLoc, itemStack) )
+                .map(itemStack -> world.dropItem(eyeLoc, itemStack))
                 .peek(item -> item.setVelocity(victim.getVelocity().multiply(0.5)))
                 .peek(item -> item.setCanPlayerPickup(false))
                 .forEach(item -> Bukkit.getScheduler().runTaskLater(ArenaShooter.getInstance(), item::remove, 20 * 3));
 
         world.playSound(eyeLoc, Sound.ENTITY_PLAYER_BIG_FALL, 1f, 1);
-        world.spawnParticle(Particle.BLOCK_CRACK, eyeLoc, 15, .5,.5,.5, .5, Material.REDSTONE_BLOCK.createBlockData());
+        world.spawnParticle(Particle.BLOCK_CRACK, eyeLoc, 15, .5, .5, .5, .5, Material.REDSTONE_BLOCK.createBlockData());
 
         if (weapon == null) return;
 
@@ -103,5 +107,5 @@ public class DamageListener implements Listener {
                 world.playSound(eyeLoc, Sound.ENTITY_PLAYER_ATTACK_SWEEP, .4f, 2);
             }
         }
-        }
+    }
 }

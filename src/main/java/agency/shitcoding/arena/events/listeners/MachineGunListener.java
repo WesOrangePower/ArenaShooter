@@ -1,9 +1,13 @@
 package agency.shitcoding.arena.events.listeners;
 
+import agency.shitcoding.arena.SoundConstants;
 import agency.shitcoding.arena.events.GameDamageEvent;
 import agency.shitcoding.arena.events.GameShootEvent;
 import agency.shitcoding.arena.models.Weapon;
-import org.bukkit.*;
+import org.bukkit.Location;
+import org.bukkit.Material;
+import org.bukkit.Particle;
+import org.bukkit.World;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -36,7 +40,7 @@ public class MachineGunListener implements Listener {
         Vector lookingVector = eyeLocation.getDirection();
         World world = eyeLocation.getWorld();
 
-        world.playSound(eyeLocation, Sound.BLOCK_DISPENSER_DISPENSE, 1f, 2f);
+        world.playSound(eyeLocation, SoundConstants.MACHINE_FIRE, .5f, 2f);
 
         // row of particles
         int iterations = 0;
