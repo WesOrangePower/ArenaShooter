@@ -57,6 +57,7 @@ public final class ArenaShooter extends JavaPlugin {
         getServer().getPluginManager().registerEvents(new MachineGunListener(), this);
         getServer().getPluginManager().registerEvents(new InstagibListener(), this);
         getServer().getPluginManager().registerEvents(new ItemListener(), this);
+        getServer().getPluginManager().registerEvents(new GameStreakListener(), this);
     }
 
 }

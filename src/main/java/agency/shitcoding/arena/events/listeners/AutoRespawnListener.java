@@ -1,6 +1,7 @@
 package agency.shitcoding.arena.events.listeners;
 
 import agency.shitcoding.arena.ArenaShooter;
+import agency.shitcoding.arena.events.GameStreakUpdateEvent;
 import agency.shitcoding.arena.gamestate.Game;
 import agency.shitcoding.arena.gamestate.GameOrchestrator;
 import agency.shitcoding.arena.gamestate.Lobby;
@@ -81,6 +82,8 @@ public class AutoRespawnListener implements Listener {
                             if (game.getGamestage() != GameStage.IN_PROGRESS) {
                                 return;
                             }
+                            resetStreak(p, game);
+                            resetStreak(killer, game);
                             if (killedThemselves) {
                                 game.getPlayers().forEach(pl -> pl.sendRichMessage("<red>" + p.getName() + "<gold> не справился с управлением."));
                                 game.getScoreboardObjective().getScore(p).setScore(game.getOptScore(p).map(PlayerScore::getScore).orElse(0));
@@ -98,7 +101,7 @@ public class AutoRespawnListener implements Listener {
                 Component.text("Полный развал", NamedTextColor.RED),
                 Component.text(killer == null
                         ? "по собственной глупости"
-                        : "от рук " + killer.getName() , NamedTextColor.YELLOW)
+                        : "от рук " + killer.getName(), NamedTextColor.YELLOW)
         ));
 
         Bukkit.getScheduler().runTaskLater(ArenaShooter.getInstance(), () -> {
@@ -112,5 +115,15 @@ public class AutoRespawnListener implements Listener {
         Player player = event.getPlayer();
         Optional<Game> gameByPlayer = GameOrchestrator.getInstance().getGameByPlayer(player);
         gameByPlayer.ifPresentOrElse(game -> game.getArena().spawn(player, game), () -> Lobby.getInstance().sendPlayer(player));
+    }
+
+    private void resetStreak(Player p, Game g) {
+        PlayerScore score = g.getScore(p);
+        if (score != null) {
+            score.getStreak().setConsequentRailHit(0);
+            score.getStreak().setFragStreak(0);
+            new GameStreakUpdateEvent(score.getStreak(), p, g)
+                    .fire();
+        }
     }
 }

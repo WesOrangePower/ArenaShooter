@@ -54,7 +54,7 @@ public abstract class Game {
         this.scoreboard = GameOrchestrator.getInstance().getScoreboard();
         arena.getLowerBound().getWorld().getNearbyEntities(BoundingBox.of(arena.getLowerBound(), arena.getUpperBound()))
                 .stream().filter(e -> e.getType() == EntityType.DROPPED_ITEM)
-                .map(e -> (Item) e)
+                .map(Item.class::cast)
                 .forEach(item -> {
                     item.getChunk().setForceLoaded(true);
                     item.getChunk().load();
@@ -81,7 +81,7 @@ public abstract class Game {
 
     public void endGame(String reason) {
         this.gamestage = GameStage.FINISHED;
-        waitingManager.cleanup();
+        if (waitingManager != null) waitingManager.cleanup();
         if (gameTimerTask != null) gameTimerTask.cancel();
         if (ammoActionBarTask != null) ammoActionBarTask.cancel();
         if (bossBar != null) {
@@ -113,9 +113,8 @@ public abstract class Game {
                 );
     }
 
-
     public void startGame() {
-        waitingManager.cleanup();
+        if (waitingManager != null) waitingManager.cleanup();
         for (Player player : players) {
             player.sendRichMessage("<green><bold>Игра началась");
             announcer.accept(SoundConstants.FIGHT);
@@ -214,7 +213,7 @@ public abstract class Game {
             player.setScoreboard(scoreboard);
         }
         players.add(player);
-        scores.add(new PlayerScore(0, player));
+        scores.add(new PlayerScore(0, player, new PlayerStreak()));
         player.sendRichMessage("<green>Вы присоединились к игре");
         players.forEach(p -> p.sendRichMessage("<green>" + player.getName() + " присоединился к игре"));
         getArena().spawn(player, this);
@@ -225,11 +224,12 @@ public abstract class Game {
                 .filter(sc -> sc.getPlayer().equals(p))
                 .findFirst();
     }
-    public @Nullable PlayerScore getScore(Player p) {
+
+    public @Nullable PlayerScore getScore(@Nullable Player p) {
         PlayerScore pScore = null;
         for (PlayerScore score : scores) {
             if (score.getPlayer().equals(p)) {
-                pScore = new PlayerScore(0, p);
+                pScore = score;
                 break;
             }
         }
@@ -239,12 +239,12 @@ public abstract class Game {
     public void recalculateScore(Player p, int delta) {
         Collections.sort(scores);
         if (scores.isEmpty()) {
-            scores.add(new PlayerScore(delta, p));
+            scores.add(new PlayerScore(delta, p, new PlayerStreak()));
             return;
         }
         PlayerScore first = scores.get(0);
         PlayerScore pScore = getScore(p);
-        pScore = pScore == null ? new PlayerScore(0, p) : pScore;
+        pScore = pScore == null ? new PlayerScore(0, p, new PlayerStreak()) : pScore;
 
         // ==Sound zone
         Player firstPlayer = first.getPlayer();

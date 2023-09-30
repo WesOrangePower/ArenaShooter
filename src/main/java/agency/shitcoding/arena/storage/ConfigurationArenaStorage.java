@@ -22,6 +22,7 @@ public class ConfigurationArenaStorage implements ArenaStorage {
 
     private final Configuration configuration;
 
+    @Override
     public Collection<Arena> getArenas() {
         var allArenasSection = configuration.getConfigurationSection(Conf.arenasSection);
         if (allArenasSection == null) {
@@ -38,6 +39,7 @@ public class ConfigurationArenaStorage implements ArenaStorage {
     }
 
 
+    @Override
     public @Nullable Arena getArena(String name) {
         var allArenasSection = configuration.getConfigurationSection(Conf.arenasSection);
         if (allArenasSection == null) {
@@ -83,7 +85,7 @@ public class ConfigurationArenaStorage implements ArenaStorage {
         return new LootPoint(id, location, type);
     }
 
-
+    @Override
     public void storeArena(Arena arena) {
         var allArenasSection = configuration.getConfigurationSection(Conf.arenasSection);
         if (allArenasSection == null) {

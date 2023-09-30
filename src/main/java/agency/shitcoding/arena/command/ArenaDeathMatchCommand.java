@@ -6,11 +6,12 @@ import org.jetbrains.annotations.NotNull;
 
 public final class ArenaDeathMatchCommand extends CommandInst {
     public static final String ADMIN_PERM = "jelly.arena.admin";
-    public static final HelpEntry[] HELP = new HelpEntry[]{
+    private static final HelpEntry[] HELP = new HelpEntry[]{
             new HelpEntry("join", "Join an arena"),
+            new HelpEntry("host", "Host a game"),
             new HelpEntry("leave", "Leave an arena")
     };
-    public static final HelpEntry[] HELP_ADMIN = new HelpEntry[]{
+    private static final HelpEntry[] HELP_ADMIN = new HelpEntry[]{
             new HelpEntry("set", "Set the arena's spawn points"),
             new HelpEntry("create", "Create a new arena"),
             new HelpEntry("join", "Join an arena"),
