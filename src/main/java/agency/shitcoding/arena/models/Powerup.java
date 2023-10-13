@@ -90,7 +90,7 @@ public enum Powerup {
             "<gold>коробку дробовых</gold>",
             PowerupType.AMMO,
             new ItemStack(Material.ORANGE_SHULKER_BOX),
-            player -> giveAmmo(player, Ammo.SHELLS, 10),
+            player -> giveAmmo(player, Ammo.SHELLS, 6),
             AMMO_DROP_SPAWN_INTERVAL_TICKS,
             AMMO_DROP_SPAWN_OFFSET_TICKS
     ),
@@ -114,11 +114,8 @@ public enum Powerup {
                         .map(MajorBuffTracker::getQuadDamageTicks)
                         .orElse(QUAD_DAMAGE_DURATION);
 
-                gameByPlayer.map(Game::getMajorBuffTracker).ifPresent(mbt -> {
-                    mbt.setQuadDamageTicks(null);
-                    mbt.getProtectionTeam().removePlayer(player);
-                    mbt.getQuadDamageTeam().addPlayer(player);
-                });
+                gameByPlayer.map(Game::getMajorBuffTracker)
+                        .ifPresent(mbt -> mbt.setQuadDamageTicks(null));
 
                 var effectDamage = new PotionEffect(QUAD_DAMAGE_POTION_EFFECT, quadDamageTicks, 4);
                 var effectGlowing = new PotionEffect(PotionEffectType.GLOWING, quadDamageTicks, 0);
@@ -141,11 +138,8 @@ public enum Powerup {
                         .map(MajorBuffTracker::getProtectionTicks)
                         .orElse(PROTECTION_DURATION);
 
-                gameByPlayer.map(Game::getMajorBuffTracker).ifPresent(mbt -> {
-                    mbt.setProtectionTicks(null);
-                    mbt.getQuadDamageTeam().removePlayer(player);
-                    mbt.getProtectionTeam().addPlayer(player);
-                });
+                gameByPlayer.map(Game::getMajorBuffTracker)
+                        .ifPresent(mbt -> mbt.setProtectionTicks(null));
 
                 var effectResistance = new PotionEffect(PROTECTION_POTION_EFFECT, protectionTicks, 1);
                 var effectGlowing = new PotionEffect(PotionEffectType.GLOWING, protectionTicks, 0);

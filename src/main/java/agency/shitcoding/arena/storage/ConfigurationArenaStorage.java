@@ -59,6 +59,7 @@ public class ConfigurationArenaStorage implements ArenaStorage {
         var lowerBound = arenaSection.getLocation(Conf.Arenas.lowerBound);
         var upperBound = arenaSection.getLocation(Conf.Arenas.upperBound);
         var lootPointsSection = arenaSection.getConfigurationSection(Conf.Arenas.lootPointsSection);
+        var allowHost = arenaSection.getBoolean(Conf.Arenas.allowHost, true);
 
         if (lootPointsSection == null) {
             lootPointsSection = arenaSection.createSection(Conf.Arenas.lootPointsSection);
@@ -73,7 +74,7 @@ public class ConfigurationArenaStorage implements ArenaStorage {
             LootPoint lootPoint = parseLootPoint(id, configurationSection);
             lootPoints.add(lootPoint);
         }
-        return new Arena(name, lowerBound, upperBound, lootPoints);
+        return new Arena(name, lowerBound, upperBound, lootPoints, allowHost);
     }
 
     private LootPoint parseLootPoint(String lootPointId, ConfigurationSection lootPointSection) {
@@ -98,6 +99,7 @@ public class ConfigurationArenaStorage implements ArenaStorage {
 
         arenaSection.set(Conf.Arenas.lowerBound, arena.getLowerBound());
         arenaSection.set(Conf.Arenas.upperBound, arena.getUpperBound());
+        arenaSection.set(Conf.Arenas.allowHost, arena.isAllowHost());
         setLootPointsSection(arenaSection, arena);
         save();
     }

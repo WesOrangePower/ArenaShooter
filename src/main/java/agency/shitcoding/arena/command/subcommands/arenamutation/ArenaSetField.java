@@ -56,13 +56,11 @@ public enum ArenaSetField {
                 arenaStorage.storeArena(ar);
                 p.sendRichMessage("<green>Powerup " + powerup.name() + " added to arena " + ar.getName() + " at " + centerLocation);
             }
-            case GET -> {
-                ar.getLootPoints().forEach(lp ->
-                        p.sendMessage(Component.text("Point " + lp.getId() + ": " + lp.getType().name() + " at ")
-                                .append(locationComponent(lp.getLocation()))
-                        )
-                );
-            }
+            case GET -> ar.getLootPoints().forEach(lp ->
+                    p.sendMessage(Component.text("Point " + lp.getId() + ": " + lp.getType().name() + " at ")
+                            .append(locationComponent(lp.getLocation()))
+                    )
+            );
         }
         // TODO
     }),
@@ -127,6 +125,22 @@ public enum ArenaSetField {
             s.sendMessage(Component.text("OK. Set upper bound to ", NamedTextColor.GREEN)
                     .append(locationComponent(location))
             );
+        }
+    }),
+    ALLOW_HOST(a -> a == SET || a == GET, (ar, a, v, s) -> {
+        if (a == GET) {
+            s.sendMessage("Allow host: " + ar.isAllowHost());
+            return;
+        }
+        if (a == SET) {
+            if (v == null || !v.matches("true|false")) {
+                s.sendRichMessage("<red>Invalid value. Must be `true` or `false`.");
+                return;
+            }
+            boolean allowHost = Boolean.parseBoolean(v);
+            ar.setAllowHost(allowHost);
+            StorageProvider.getArenaStorage().storeArena(ar);
+            s.sendRichMessage("<green>Allow host set to " + allowHost);
         }
     });
 

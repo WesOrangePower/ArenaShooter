@@ -9,6 +9,10 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.util.BoundingBox;
 
+import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
+
 public class Lobby {
     private static Lobby instance;
 
@@ -24,11 +28,11 @@ public class Lobby {
 
     public Location getLocation() {
         return ArenaShooter.getInstance().getConfig()
-                .getLocation(Conf.lobbyLocation, new Location(Bukkit.getWorld("world"), 0, 64, 0));
+                .getLocation(Conf.lobbyLocation, new Location(Bukkit.getWorld("world"), -0.5d, 64, -0.5d));
     }
 
     public BoundingBox getBoundaries() {
-        return BoundingBox.of(getLocation(), 25d, 25d, 25d);
+        return BoundingBox.of(getLocation(), 100d, 50d, 100d);
     }
 
     public void sendPlayer(Player player) {
@@ -40,5 +44,15 @@ public class Lobby {
         PlayerInventory inventory = player.getInventory();
         inventory.clear();
         inventory.setArmorContents(null);
+    }
+
+    public Set<Player> getPlayersInLobby() {
+        List<Player> gamePlayers = GameOrchestrator.getInstance().getGames().stream()
+                .flatMap(game -> game.getPlayers().stream())
+                .toList();
+        return Bukkit.getOnlinePlayers()
+                .stream()
+                .filter(player -> !gamePlayers.contains(player))
+                .collect(Collectors.toUnmodifiableSet());
     }
 }

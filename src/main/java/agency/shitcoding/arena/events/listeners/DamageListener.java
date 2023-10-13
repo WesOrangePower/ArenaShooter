@@ -4,8 +4,13 @@ import agency.shitcoding.arena.ArenaShooter;
 import agency.shitcoding.arena.GameplayConstants;
 import agency.shitcoding.arena.SoundConstants;
 import agency.shitcoding.arena.events.GameDamageEvent;
+import agency.shitcoding.arena.gamestate.Game;
+import agency.shitcoding.arena.gamestate.GameOrchestrator;
+import agency.shitcoding.arena.gamestate.team.TeamGame;
+import agency.shitcoding.arena.gamestate.team.TeamManager;
 import agency.shitcoding.arena.models.Weapon;
 import org.bukkit.*;
+import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -13,35 +18,53 @@ import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.Optional;
 import java.util.stream.Stream;
 
 public class DamageListener implements Listener {
 
-    @EventHandler
+    @EventHandler()
     public void onDamage(GameDamageEvent event) {
+
+        // if Teammate
+        @Nullable Player dealer = event.getDealer();
+        LivingEntity victim = event.getVictim();
+        if (dealer != null && victim instanceof Player victimPlayer) {
+            Optional<Game> gameByPlayer = GameOrchestrator.getInstance().getGameByPlayer(victimPlayer);
+            if (gameByPlayer.isPresent()) {
+                Game game = gameByPlayer.get();
+                if (game instanceof TeamGame teamGame) {
+                    TeamManager teamManager = teamGame.getTeamManager();
+                    if (teamManager.getTeam(dealer).equals(teamManager.getTeam(victimPlayer))) {
+                        event.setCancelled(true);
+                        return;
+                    }
+                }
+            }
+        }
+
         // if Has QuadDamage
-        Player dealer = event.getDealer();
         if (dealer != null) {
             dealer.getActivePotionEffects().forEach(potionEffect -> {
                 if (potionEffect.getType().equals(GameplayConstants.QUAD_DAMAGE_POTION_EFFECT)) {
                     event.setDamage(event.getDamage() * GameplayConstants.QUAD_DAMAGE_MULTIPLIER);
                 }
             });
-            if (event.getVictim() instanceof Player) {
+            if (victim instanceof Player) {
                 dealer.playSound(dealer, SoundConstants.HITSOUND, 1f, 1f);
             }
         }
 
         // if Has Protection
-        event.getVictim().getActivePotionEffects().forEach(potionEffect -> {
+        victim.getActivePotionEffects().forEach(potionEffect -> {
             if (potionEffect.getType().equals(GameplayConstants.PROTECTION_POTION_EFFECT)) {
                 event.setDamage(event.getDamage() * GameplayConstants.PROTECTION_FACTOR);
             }
         });
-        event.getVictim().setNoDamageTicks(0);
+        victim.setNoDamageTicks(0);
 
         // player only zone
-        if (event.getVictim() instanceof Player player) {
+        if (victim instanceof Player player) {
             // apply armor
             double damage = calculateDamage(player, event.getDamage());
             event.setDamage(damage);
@@ -55,7 +78,7 @@ public class DamageListener implements Listener {
             return;
         }
 
-        event.getVictim().damage(event.getDamage(), dealer);
+        victim.damage(event.getDamage(), dealer);
     }
 
     private double calculateDamage(Player victim, double damage) {

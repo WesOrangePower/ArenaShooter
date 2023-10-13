@@ -5,20 +5,15 @@ import agency.shitcoding.arena.gamestate.GameOrchestrator;
 import agency.shitcoding.arena.gamestate.LootManager;
 import agency.shitcoding.arena.gamestate.LootManagerProvider;
 import agency.shitcoding.arena.models.*;
-import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Item;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
-import org.bukkit.event.entity.EntityPotionEffectEvent;
 import org.bukkit.event.player.PlayerAttemptPickupItemEvent;
 import org.bukkit.persistence.PersistentDataType;
 
 import java.util.Arrays;
 import java.util.Optional;
-
-import static agency.shitcoding.arena.GameplayConstants.PROTECTION_POTION_EFFECT;
-import static agency.shitcoding.arena.GameplayConstants.QUAD_DAMAGE_POTION_EFFECT;
 
 public class ItemListener implements Listener {
 
@@ -78,29 +73,6 @@ public class ItemListener implements Listener {
             gamePlayer.sendRichMessage(
                     String.format("<red>%s подобрал %s!", player.getName(), powerup.getDisplayName())
             );
-        }
-    }
-
-    @EventHandler
-    public void onEffectExpire(EntityPotionEffectEvent e) {
-        if (e.getEntity().getType() != EntityType.PLAYER) {
-            return;
-        }
-        Player player = (Player) e.getEntity();
-
-
-        if (e.getCause() != EntityPotionEffectEvent.Cause.EXPIRATION
-                || e.getAction() != EntityPotionEffectEvent.Action.REMOVED
-                || e.getOldEffect() == null) {
-            return;
-        }
-
-        if (e.getOldEffect().getType().equals(QUAD_DAMAGE_POTION_EFFECT)) {
-            GameOrchestrator.getInstance().getGameByPlayer(player)
-                    .ifPresent(game -> game.getMajorBuffTracker().getQuadDamageTeam().removePlayer(player));
-        } else if (e.getOldEffect().getType().equals(PROTECTION_POTION_EFFECT)) {
-            GameOrchestrator.getInstance().getGameByPlayer(player)
-                    .ifPresent(game -> game.getMajorBuffTracker().getProtectionTeam().removePlayer(player));
         }
     }
 }

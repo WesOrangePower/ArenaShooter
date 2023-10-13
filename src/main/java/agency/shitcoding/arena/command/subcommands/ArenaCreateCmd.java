@@ -31,7 +31,8 @@ public class ArenaCreateCmd extends CommandInst {
         Arena arena = new Arena(name,
                 player.getLocation().subtract(20, 20, 20),
                 player.getLocation().add(20, 20, 20),
-                new HashSet<>()
+                new HashSet<>(),
+                true
         );
         StorageProvider.getArenaStorage().storeArena(arena);
         sender.sendRichMessage("<green>Арена <yellow>" + name + "<green> создана");
@@ -41,6 +42,7 @@ public class ArenaCreateCmd extends CommandInst {
         String adminPerm = ArenaDeathMatchCommand.getAdminPerm();
         if (!sender.hasPermission(adminPerm)) {
             sender.sendRichMessage("<red>У вас нет прав на создание арены");
+            return false;
         }
         if (args.length < ARG_MIN_LEN) {
             sender.sendRichMessage("<red>Вы не указали название арены");

@@ -1,5 +1,6 @@
 package agency.shitcoding.arena.command.subcommands;
 
+import agency.shitcoding.arena.command.ArenaDeathMatchCommand;
 import agency.shitcoding.arena.command.CommandInst;
 import agency.shitcoding.arena.command.subcommands.arenamutation.ArenaSetAction;
 import agency.shitcoding.arena.command.subcommands.arenamutation.ArenaSetField;
@@ -39,6 +40,11 @@ public class ArenaSetCmd extends CommandInst {
     }
 
     private boolean validate() {
+        String adminPerm = ArenaDeathMatchCommand.getAdminPerm();
+        if (!sender.hasPermission(adminPerm)) {
+            sender.sendRichMessage("<dark_red>У вас нет прав на использование этой подкоманды.");
+            return false;
+        }
         if (args.length < MIN_ARGS) {
             sender.sendRichMessage("<red>Not enough arguments. Usage: /arena set <arena> <action> <field> [value]");
             return false;

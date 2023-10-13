@@ -63,9 +63,6 @@ public class AutoRespawnListener implements Listener {
         GameOrchestrator.getInstance().getGameByPlayer(p)
                 .ifPresent(
                         game -> {
-                            game.getMajorBuffTracker().getQuadDamageTeam().removePlayer(p);
-                            game.getMajorBuffTracker().getProtectionTeam().removePlayer(p);
-
                             PotionEffect quadDamagePotionEffect = p.getPotionEffect(QUAD_DAMAGE_POTION_EFFECT);
                             if (quadDamagePotionEffect != null) {
                                 game.getMajorBuffTracker().setQuadDamageTicks(quadDamagePotionEffect.getDuration());
@@ -86,11 +83,12 @@ public class AutoRespawnListener implements Listener {
                             resetStreak(killer, game);
                             if (killedThemselves) {
                                 game.getPlayers().forEach(pl -> pl.sendRichMessage("<red>" + p.getName() + "<gold> не справился с управлением."));
-                                game.getScoreboardObjective().getScore(p).setScore(game.getOptScore(p).map(PlayerScore::getScore).orElse(0));
+                                game.updateScore(p, -1);
+//                                game.getScoreboardObjective().getScore(p).setScore(game.getOptScore(p).map(PlayerScore::getScore).orElse(0));
                             } else {
-                                game.getPlayers().forEach(pl -> pl.sendRichMessage("<red>" + killer.getName() + "<gold> затраллил <red>" + p.getName() + "<gold> насмерть."));
-                                game.recalculateScore(killer, 1);
-                                game.getScoreboardObjective().getScore(killer).setScore(game.getOptScore(killer).map(PlayerScore::getScore).orElse(0));
+                                game.getPlayers().forEach(pl -> pl.sendRichMessage("<red>" + killer.getName() + "<gold> фрагнул <red>" + p.getName()));
+                                game.updateScore(killer, 1);
+//                                game.getScoreboardObjective().getScore(killer).setScore(game.getOptScore(killer).map(PlayerScore::getScore).orElse(0));
                             }
                         }
                 );
@@ -98,9 +96,9 @@ public class AutoRespawnListener implements Listener {
         p.clearActivePotionEffects();
         p.setGameMode(GameMode.SPECTATOR);
         p.showTitle(Title.title(
-                Component.text("Полный развал", NamedTextColor.RED),
+                Component.text("Развал", NamedTextColor.RED),
                 Component.text(killer == null
-                        ? "по собственной глупости"
+                        ? "по собственной неуклюжести"
                         : "от рук " + killer.getName(), NamedTextColor.YELLOW)
         ));
 

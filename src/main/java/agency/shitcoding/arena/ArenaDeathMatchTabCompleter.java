@@ -31,18 +31,12 @@ public class ArenaDeathMatchTabCompleter {
         if (args.length == 1) {
             return List.of("join", "host", "leave");
         }
-        if (args.length == 2) {
-            return StorageProvider.getArenaStorage().getArenas().stream()
-                    .map(Arena::getName)
-                    .toList();
-        }
-        if (args.length == 3) {
-            return Arrays.stream(RuleSet.values())
-                    .map(Enum::name)
-                    .map(String::toLowerCase)
-                    .toList();
-        }
-        return null;
+
+        return switch (args[0].toLowerCase()) {
+            case "host" -> resolveHost();
+            default -> null;
+        };
+
     }
 
     private List<String> resolveAdmin() {

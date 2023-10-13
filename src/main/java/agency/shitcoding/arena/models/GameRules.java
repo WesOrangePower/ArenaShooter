@@ -13,4 +13,8 @@ public interface GameRules {
     long gameTimerTicks();
 
     boolean doRespawn();
+
+    boolean hasTeams();
+
+    boolean allowPlayAfterStart();
 }

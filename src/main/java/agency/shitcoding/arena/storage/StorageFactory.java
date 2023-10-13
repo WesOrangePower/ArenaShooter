@@ -8,26 +8,28 @@ import java.io.File;
 import java.io.IOException;
 import java.util.logging.Logger;
 
-import static agency.shitcoding.arena.storage.ConfigurationArenaStorage.FILE_NAME;
-
 public class StorageFactory {
 
     private static final Logger LOG = Logger.getLogger(StorageFactory.class.getName());
 
 
     public static ArenaStorage createArenaStorage() {
-        return new ConfigurationArenaStorage(getConfiguration());
+        return new ConfigurationArenaStorage(getConfiguration(ConfigurationArenaStorage.FILE_NAME));
     }
 
-    private static Configuration getConfiguration() {
+    public static FaqStorage createFaqStorage() {
+        return new ConfigurationFaqStorage(getConfiguration(ConfigurationFaqStorage.FILE_NAME));
+    }
+
+    private static Configuration getConfiguration(String name) {
         try {
-            File file = new File(FILE_NAME);
+            File file = new File(name);
             if (file.createNewFile()) {
-                LOG.info("Created new file " + FILE_NAME);
+                LOG.info("Created new file " + name);
             }
             return YamlConfiguration.loadConfiguration(file);
         } catch (IOException e) {
-            LOG.severe("Could not create file " + FILE_NAME);
+            LOG.severe("Could not create file " + name);
             LOG.severe(e.getMessage());
             LOG.severe("Using memory configuration instead");
             return new MemoryConfiguration();

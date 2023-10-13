@@ -6,13 +6,12 @@ import lombok.Getter;
 import lombok.Setter;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
+import org.bukkit.attribute.Attribute;
+import org.bukkit.attribute.AttributeInstance;
 import org.bukkit.entity.Player;
 import org.bukkit.event.player.PlayerTeleportEvent;
 
-import java.util.List;
-import java.util.Map;
-import java.util.Random;
-import java.util.Set;
+import java.util.*;
 import java.util.logging.Level;
 import java.util.stream.Collectors;
 
@@ -25,12 +24,14 @@ public class Arena {
     public Location upperBound;
     public Set<LootPoint> lootPoints;
     private Set<LootPoint> weaponLootPoints = null;
+    private boolean allowHost;
 
-    public Arena(String name, Location lowerBound, Location upperBound, Set<LootPoint> lootPoints) {
+    public Arena(String name, Location lowerBound, Location upperBound, Set<LootPoint> lootPoints, boolean allowHost) {
         this.name = name;
         this.lowerBound = lowerBound;
         this.upperBound = upperBound;
         this.lootPoints = lootPoints;
+        this.allowHost = allowHost;
     }
 
     public boolean isInside(Location location) {
@@ -68,6 +69,9 @@ public class Arena {
             player.setGameMode(GameMode.ADVENTURE);
             player.setAllowFlight(true);
         }
+        Optional.ofNullable(player.getAttribute(Attribute.GENERIC_MAX_HEALTH))
+                .map(AttributeInstance::getBaseValue)
+                .ifPresent(player::setHealth);
         if (!game.getRuleSet().getGameRules().doRespawn() && game.getDiedOnce().contains(player) && game.getGamestage() == GameStage.IN_PROGRESS) {
             player.setGameMode(GameMode.SPECTATOR);
         }

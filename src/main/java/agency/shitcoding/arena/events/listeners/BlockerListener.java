@@ -2,6 +2,7 @@ package agency.shitcoding.arena.events.listeners;
 
 import agency.shitcoding.arena.gamestate.GameOrchestrator;
 import org.bukkit.GameMode;
+import org.bukkit.entity.HumanEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -39,18 +40,26 @@ public class BlockerListener implements Listener {
 
     @EventHandler
     private void onInventoryOpen(InventoryOpenEvent event) {
-        if (event.getPlayer().getGameMode() != GameMode.ADVENTURE) {
+        HumanEntity entity = event.getPlayer();
+        if (!(entity instanceof Player player)) {
             return;
         }
-        event.setCancelled(true);
+        boolean isInGame = GameOrchestrator.getInstance().getGameByPlayer(player).isPresent();
+        if (isInGame) {
+            event.setCancelled(true);
+        }
     }
 
     @EventHandler
-    private void onInventoryOpen(InventoryInteractEvent event) {
-        if (event.getWhoClicked().getGameMode() != GameMode.ADVENTURE) {
+    private void onInventoryInteract(InventoryInteractEvent event) {
+        HumanEntity entity = event.getWhoClicked();
+        if (!(entity instanceof Player player)) {
             return;
         }
-        event.setCancelled(true);
+        boolean isInGame = GameOrchestrator.getInstance().getGameByPlayer(player).isPresent();
+        if (isInGame) {
+            event.setCancelled(true);
+        }
     }
 
     @EventHandler

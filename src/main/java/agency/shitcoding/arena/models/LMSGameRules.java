@@ -29,4 +29,14 @@ public class LMSGameRules implements GameRules {
     public boolean doRespawn() {
         return false;
     }
+
+    @Override
+    public boolean hasTeams() {
+        return false;
+    }
+
+    @Override
+    public boolean allowPlayAfterStart() {
+        return false;
+    }
 }

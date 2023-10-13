@@ -29,4 +29,14 @@ public class InstagibGameRules implements GameRules {
     public boolean doRespawn() {
         return true;
     }
+
+    @Override
+    public boolean hasTeams() {
+        return false;
+    }
+
+    @Override
+    public boolean allowPlayAfterStart() {
+        return true;
+    }
 }

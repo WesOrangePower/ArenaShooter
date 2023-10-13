@@ -1,6 +1,5 @@
 package agency.shitcoding.arena.events.listeners;
 
-import agency.shitcoding.arena.SoundConstants;
 import agency.shitcoding.arena.events.GameDamageEvent;
 import agency.shitcoding.arena.events.GameStreakUpdateEvent;
 import agency.shitcoding.arena.gamestate.Game;
@@ -49,11 +48,11 @@ public class GameStreakListener implements Listener {
     public void onStreakUpdate(GameStreakUpdateEvent event) {
         Player p = event.getPlayer();
         int fragStreak = event.getStreak().getFragStreak();
-        switch (fragStreak) {
-            case 1, 2 -> {}
-            case 3, 4 -> playSound(p, SoundConstants.EXCELLENT);
-            default -> playSound(p, SoundConstants.HOLYSHIT);
-        }
+//        switch (fragStreak) {
+//            case 1, 2 -> {}
+//            case 3, 4 -> playSound(p, SoundConstants.EXCELLENT);
+//            default -> playSound(p, SoundConstants.HOLYSHIT);
+//        }
     }
 
     private void playSound(Player p, String sound) {

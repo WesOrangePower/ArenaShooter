@@ -4,6 +4,7 @@ import agency.shitcoding.arena.GameplayConstants;
 import agency.shitcoding.arena.SoundConstants;
 import agency.shitcoding.arena.events.GameDamageEvent;
 import agency.shitcoding.arena.events.GameShootEvent;
+import agency.shitcoding.arena.gamestate.GameOrchestrator;
 import agency.shitcoding.arena.models.Weapon;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -17,6 +18,7 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.util.Vector;
 
 import java.util.HashSet;
+import java.util.Optional;
 import java.util.Set;
 
 
@@ -70,5 +72,10 @@ public class RailListener implements Listener {
         affectedEntities.forEach(entity ->
                 new GameDamageEvent(player, entity, GameplayConstants.RAILGUN_DAMAGE, Weapon.RAILGUN).fire()
         );
+        if (affectedEntities.isEmpty()) {
+            GameOrchestrator.getInstance().getGameByPlayer(player)
+                    .flatMap(g -> Optional.ofNullable(g.getScore(player)))
+                    .ifPresent(score -> score.getStreak().setConsequentRailHit(0));
+        }
     }
 }

@@ -34,6 +34,7 @@ import java.util.stream.StreamSupport;
 public abstract class Game {
     protected final Scoreboard scoreboard;
     private final Set<Player> players = new HashSet<>();
+    private final Set<Player> spectators = new HashSet<>();
     private final List<PlayerScore> scores = new ArrayList<>();
     private final MajorBuffTracker majorBuffTracker = new MajorBuffTracker();
     private final Set<Player> diedOnce = new HashSet<>();
@@ -42,7 +43,7 @@ public abstract class Game {
     protected Arena arena;
     protected BukkitTask gameTimerTask;
     protected BukkitTask ammoActionBarTask;
-    private GameStage gamestage = GameStage.WAITING;
+    protected GameStage gamestage = GameStage.WAITING;
     private Instant gameStart;
     private BossBar bossBar;
     private Objective scoreboardObjective;
@@ -65,8 +66,6 @@ public abstract class Game {
     public void removePlayer(Player player) {
         players.remove(player);
         scores.removeIf(p -> p.getPlayer().equals(player));
-        majorBuffTracker.getQuadDamageTeam().removePlayer(player);
-        majorBuffTracker.getProtectionTeam().removePlayer(player);
         Optional.ofNullable(scoreboardObjective).ifPresent(o -> o.getScore(player).resetScore());
         player.setScoreboard(Bukkit.getScoreboardManager().getMainScoreboard());
         if (bossBar != null) bossBar.removeViewer(Audience.audience(player));
@@ -101,16 +100,16 @@ public abstract class Game {
         GameOrchestrator.getInstance().removeGame(this);
     }
 
-    private void sendGameStats(CommandSender sender) {
+    protected void sendGameStats(CommandSender sender) {
         sender.sendRichMessage("<green>-----Итоги----");
-        scores.stream()
-                .sorted()
-                .forEach(score -> sender.sendRichMessage(
-                        String.format("<green><bold>%s<gold>: <red>%d",
-                                score.getPlayer().getName(),
-                                score.getScore()
-                        ))
-                );
+        Collections.sort(scores);
+        for (PlayerScore score : scores) {
+            String message = String.format("<green><bold>%s<gold>: <red>%d",
+                    score.getPlayer().getName(),
+                    score.getScore()
+            );
+            sender.sendRichMessage(message);
+        }
     }
 
     public void startGame() {
@@ -134,7 +133,13 @@ public abstract class Game {
                 () -> players.forEach(Ammo::displayAmmoActionBar),
                 0L, 30L
         );
+        createScoreboardObjective();
+    }
 
+    /**
+     * Creates and sets main scoreboard objective
+     */
+    protected void createScoreboardObjective() {
         scoreboardObjective = scoreboard.registerNewObjective(arena.getName(), Criteria.DUMMY,
                 Component.text("Счёт", NamedTextColor.GOLD), RenderType.INTEGER);
         scoreboardObjective.setDisplaySlot(DisplaySlot.SIDEBAR);
@@ -145,7 +150,9 @@ public abstract class Game {
         }
     }
 
-    protected abstract @NotNull Set<LootPoint> preprocessLootPoints(Set<LootPoint> lootPoints);
+    protected @NotNull Set<LootPoint> preprocessLootPoints(Set<LootPoint> lootPoints) {
+        return lootPoints;
+    }
 
     protected void onGameSecondElapsed() {
         long remainingSeconds = ruleSet.getGameLenSeconds() - (Instant.now().getEpochSecond() - gameStart.getEpochSecond());
@@ -236,43 +243,98 @@ public abstract class Game {
         return pScore;
     }
 
-    public void recalculateScore(Player p, int delta) {
+    public void recalculateScore() {
+        var leadersBefore = leaders();
         Collections.sort(scores);
+        var leadersAfter = leaders();
+        updateScoreBoard();
+        scoreSoundClue(leadersBefore, leadersAfter);
+    }
+
+    protected void updateScoreBoard() {
+        if (scoreboardObjective == null) return;
+        for (PlayerScore score : scores) {
+            scoreboardObjective.getScore(score.getPlayer()).setScore(score.getScore());
+        }
+    }
+
+    public void updateScore(Player p, int delta) {
+        Collections.sort(scores);
+        var leadersBefore = leaders();
+        updateScoreWithoutSound(p, delta);
+        var leadersAfter = leaders();
+
+        scoreSoundClue(leadersBefore, leadersAfter);
+    }
+
+    protected void scoreSoundClue(Leaders leadersBefore, Leaders leadersAfter) {
+        var lostLeaders = new HashSet<Player>();
+        lostLeaders.addAll(leadersBefore.taken);
+        lostLeaders.addAll(leadersBefore.tied);
+        lostLeaders.removeAll(leadersAfter.taken);
+        lostLeaders.removeAll(leadersAfter.tied);
+
+        var takenLeaders = new HashSet<>(leadersAfter.taken);
+        takenLeaders.removeAll(leadersBefore.taken);
+
+        var tiedLeaders = new HashSet<>(leadersAfter.tied);
+        tiedLeaders.removeAll(leadersBefore.tied);
+
+        for (Player pl : takenLeaders) {
+            playSound(pl, SoundConstants.TAKEN_LEAD);
+        }
+        for (Player pl : tiedLeaders) {
+            playSound(pl, SoundConstants.TIED_LEAD);
+        }
+        for (Player pl : lostLeaders) {
+            playSound(pl, SoundConstants.LOSTLEAD);
+        }
+    }
+
+    public void updateScoreWithoutSound(Player p, int delta) {
         if (scores.isEmpty()) {
             scores.add(new PlayerScore(delta, p, new PlayerStreak()));
             return;
         }
-        PlayerScore first = scores.get(0);
-        PlayerScore pScore = getScore(p);
-        pScore = pScore == null ? new PlayerScore(0, p, new PlayerStreak()) : pScore;
+        PlayerScore pScore = Objects.requireNonNullElseGet(getScore(p),
+                () -> new PlayerScore(0, p, new PlayerStreak()));
+        // Don't go below 0
+        if (pScore.getScore() + delta < 0) {
+            return;
+        }
+        pScore.setScore(pScore.getScore() + delta);
+        Collections.sort(scores);
+        updateScoreBoard();
+    }
 
-        // ==Sound zone
-        Player firstPlayer = first.getPlayer();
-        if (!firstPlayer.equals(p)) {
-            // if tied
-            if (pScore.getScore() + delta == first.getScore()) {
-                p.playSound(p, SoundConstants.TIED_LEAD, SoundCategory.VOICE, .8f, 1f);
-                firstPlayer.playSound(firstPlayer, SoundConstants.TIED_LEAD, SoundCategory.VOICE, .8f, 1f);
+    protected record Leaders(Set<Player> taken, Set<Player> tied) {
+    }
+
+    private Leaders leaders() {
+        Set<Player> leaders = new HashSet<>();
+        if (!scores.isEmpty()) {
+            int topScore = scores.get(0).getScore();
+            if (topScore == 0) {
+                return new Leaders(Collections.emptySet(), Collections.emptySet());
             }
-            // if lead taken
-            else if (pScore.getScore() + delta > first.getScore()) {
-                p.playSound(p, SoundConstants.TAKEN_LEAD, SoundCategory.VOICE, .8f, 1f);
-                firstPlayer.playSound(firstPlayer, SoundConstants.LOSTLEAD, SoundCategory.VOICE, .8f, 1f);
-            }
-            // if lead lost (-1)
-            else if (pScore.getScore() + delta < first.getScore()) {
-                p.playSound(p, SoundConstants.LOSTLEAD, SoundCategory.VOICE, .8f, 1f);
-                firstPlayer.playSound(firstPlayer, SoundConstants.TAKEN_LEAD, SoundCategory.VOICE, .8f, 1f);
+            for (PlayerScore score : scores) {
+                if (score.getScore() != topScore) {
+                    break;
+                }
+                leaders.add(score.getPlayer());
             }
         }
-        // ==Sound zone end
-
-        pScore.setScore(pScore.getScore() + delta);
-
-        Collections.sort(scores);
+        if (leaders.size() == 1) {
+            return new Leaders(leaders, Collections.emptySet());
+        }
+        return new Leaders(Collections.emptySet(), leaders);
     }
 
     public void onPlayerDeath(Player p) {
         diedOnce.add(p);
+    }
+
+    protected void playSound(Player p, String sound) {
+        p.playSound(p, sound, SoundCategory.VOICE, .8f, 1f);
     }
 }
