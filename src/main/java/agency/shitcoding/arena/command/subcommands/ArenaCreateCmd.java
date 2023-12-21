@@ -32,6 +32,8 @@ public class ArenaCreateCmd extends CommandInst {
                 player.getLocation().subtract(20, 20, 20),
                 player.getLocation().add(20, 20, 20),
                 new HashSet<>(),
+                new HashSet<>(),
+                new HashSet<>(),
                 true
         );
         StorageProvider.getArenaStorage().storeArena(arena);

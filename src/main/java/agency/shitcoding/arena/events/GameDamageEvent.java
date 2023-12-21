@@ -1,8 +1,12 @@
 package agency.shitcoding.arena.events;
 
+import agency.shitcoding.arena.gamestate.GameOrchestrator;
+import agency.shitcoding.arena.gamestate.team.TeamGame;
+import agency.shitcoding.arena.gamestate.team.TeamManager;
 import agency.shitcoding.arena.models.Weapon;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import org.bukkit.Bukkit;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Cancellable;
@@ -35,5 +39,34 @@ public class GameDamageEvent extends GameEvent implements Cancellable {
         this.victim = victim;
         this.damage = damage;
         this.weapon = weapon;
+    }
+
+
+    @Override
+    public void fire() {
+        if (checkBeforeFire()) {
+            Bukkit.getPluginManager().callEvent(this);
+        }
+    }
+
+
+    private boolean checkBeforeFire() {
+        if (victim.isDead() || cancelled) {
+            return false;
+        }
+        if (dealer != null) {
+            if (dealer.equals(victim)) {
+                return true;
+            }
+            TeamGame game = GameOrchestrator.getInstance().getGameByPlayer(dealer)
+                    .filter(TeamGame.class::isInstance)
+                    .map(TeamGame.class::cast)
+                    .orElse(null);
+            if (game != null && victim instanceof Player victimPlayer) {
+                TeamManager teamManager = game.getTeamManager();
+                return !teamManager.getTeam(dealer).equals(teamManager.getTeam(victimPlayer));
+            }
+        }
+        return true;
     }
 }

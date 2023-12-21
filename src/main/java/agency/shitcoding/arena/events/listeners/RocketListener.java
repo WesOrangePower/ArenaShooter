@@ -41,7 +41,7 @@ public class RocketListener implements Listener {
         player.launchProjectile(LargeFireball.class, lookingVector, rocket -> {
             rocket.setIsIncendiary(false);
             rocket.setYield(0f);
-            rocket.setDirection(lookingVector.clone().multiply(1.5));
+            rocket.setDirection(lookingVector.clone().multiply(1.85));
             Bukkit.getScheduler().runTaskLater(ArenaShooter.getInstance(), rocket::remove, 20 * 10);
         });
     }
@@ -64,9 +64,10 @@ public class RocketListener implements Listener {
                 .forEach(entity -> {
                     Location entityLoc = entity.getLocation();
                     double damageFactor = 1d / (Math.max(1.5, entityLoc.distance(at)) - 0.5);
+                    if (entity == rocket.getShooter()) damageFactor *= 0.75;
                     new GameDamageEvent((Player) rocket.getShooter(), entity,
-                            GameplayConstants.ROCKET_DAMAGE * damageFactor
-                            , Weapon.ROCKET_LAUNCHER)
+                            GameplayConstants.ROCKET_DAMAGE * damageFactor,
+                            Weapon.ROCKET_LAUNCHER)
                             .fire();
                     Vector away = entity.getLocation().toVector().subtract(at.toVector()).normalize();
                     entity.setVelocity(away.multiply(1.5));

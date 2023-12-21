@@ -1,7 +1,9 @@
 package agency.shitcoding.arena.command;
 
 import agency.shitcoding.arena.command.subcommands.*;
+import agency.shitcoding.arena.gui.ArenaMainMenu;
 import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
 public final class ArenaDeathMatchCommand extends CommandInst {
@@ -30,6 +32,10 @@ public final class ArenaDeathMatchCommand extends CommandInst {
     @Override
     public void execute() {
         if (args.length == 0) {
+            if (sender instanceof Player p) {
+                new ArenaMainMenu(p).render();
+                return;
+            }
             if (sender.hasPermission(ADMIN_PERM)) {
                 new ArenaHelpCmd(sender, args, HELP_ADMIN)
                         .execute();

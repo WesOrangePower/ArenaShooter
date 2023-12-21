@@ -91,6 +91,10 @@ public class MovementListener implements Listener {
             var effect = new PotionEffect(JUMP, INFINITE_DURATION, 2, false, false, false);
             player.addPotionEffect(effect);
         }
+        GameOrchestrator.getInstance().getGameByPlayer(player)
+                .ifPresent(game -> game.getArena().getRamps().stream()
+                        .filter(ramp -> ramp.isTouching(player))
+                        .forEach(ramp -> ramp.apply(player)));
     }
 
     @EventHandler
@@ -109,7 +113,7 @@ public class MovementListener implements Listener {
         Location loc = player.getLocation();
         Vector direction = loc.getDirection();
         direction.multiply(1.1);
-        direction.setY(0.95);
+        direction.setY(0.65);
         player.setVelocity(direction);
 
         loc.getWorld().spawnParticle(Particle.FLAME, loc, 10, 0.5, 0.5, 0.5, 0.1);

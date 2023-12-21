@@ -1,6 +1,7 @@
 package agency.shitcoding.arena;
 
 import agency.shitcoding.arena.command.ArenaDeathMatchCommandInvoker;
+import agency.shitcoding.arena.events.PortalListener;
 import agency.shitcoding.arena.events.listeners.*;
 import agency.shitcoding.arena.gamestate.Game;
 import agency.shitcoding.arena.gamestate.GameOrchestrator;
@@ -50,6 +51,7 @@ public final class ArenaShooter extends JavaPlugin {
         getServer().getPluginManager().registerEvents(new MovementListener(), this);
         getServer().getPluginManager().registerEvents(new AmmoListener(), this);
         getServer().getPluginManager().registerEvents(new NoAmmoListener(), this);
+        getServer().getPluginManager().registerEvents(new PlasmaListener(), this);
         getServer().getPluginManager().registerEvents(new RailListener(), this);
         getServer().getPluginManager().registerEvents(new RocketListener(), this);
         getServer().getPluginManager().registerEvents(new ShotgunListener(), this);
@@ -58,6 +60,6 @@ public final class ArenaShooter extends JavaPlugin {
         getServer().getPluginManager().registerEvents(new InstagibListener(), this);
         getServer().getPluginManager().registerEvents(new ItemListener(), this);
         getServer().getPluginManager().registerEvents(new GameStreakListener(), this);
+        getServer().getPluginManager().registerEvents(new PortalListener(), this);
     }
-
 }

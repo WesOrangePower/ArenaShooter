@@ -72,7 +72,7 @@ public class LootManager {
         ItemStack itemStack = powerup.getItemStack();
         Location location = instance.getLootPoint().getLocation().toCenterLocation().clone();
 
-        location.getNearbyEntities(1, 1, 1).stream()
+        location.getNearbyEntities(.5, .5, .5).stream()
                 .filter(Item.class::isInstance)
                 .map(e -> (Item) e)
                 .forEach(Item::remove);

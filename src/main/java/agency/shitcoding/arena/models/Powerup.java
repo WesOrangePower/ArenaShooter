@@ -174,6 +174,14 @@ public enum Powerup {
             RAILGUN_SPAWN_INTERVAL_TICKS,
             RAILGUN_SPAWN_OFFSET_TICKS
     ),
+    PLASMA_GUN(
+            "<color:#00cc00>плазмострел</color>",
+            PowerupType.WEAPON,
+            new ItemStack(Weapon.PLASMA_GUN.item),
+            player -> giveWeaponOrAmmo(player, Weapon.PLASMA_GUN),
+            PLASMA_GUN_SPAWN_INTERVAL_TICKS,
+            PLASMA_GUN_SPAWN_OFFSET_TICKS
+    ),
     MACHINE_GUN(
             "<yellow>пулемёт</yellow>",
             PowerupType.WEAPON,
@@ -232,7 +240,7 @@ public enum Powerup {
         }
         if (!hasWeapon(player, weapon)) {
             giveWeapon(player, weapon);
-            return true;
+//            return true;
         }
         int amount = weapon.ammoPerShot * 3;
         return giveAmmo(player, weapon.ammo, amount);

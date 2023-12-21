@@ -16,5 +16,5 @@ public interface GameRules {
 
     boolean hasTeams();
 
-    boolean allowPlayAfterStart();
+    boolean allowJoinAfterStart();
 }

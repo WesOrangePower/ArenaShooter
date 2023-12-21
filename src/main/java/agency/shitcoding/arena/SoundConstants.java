@@ -76,4 +76,6 @@ public class SoundConstants {
     public static String ROCKET_FIRE = "jelly:q3.weapon.rocket_fire";
     public static String ROCKET_DET = "jelly:q3.weapon.rocket_det";
     public static String SSG_FIRE = "jelly:q3.weapon.ssg_fire";
+    public static String PLASMA_FIRE = "jelly:q3.weapon.plasma_fire";
+    public static String PLASMA_HIT = "jelly:q3.weapon.plasma_hit";
 }

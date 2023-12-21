@@ -2,9 +2,11 @@ package agency.shitcoding.arena.gui;
 
 import agency.shitcoding.arena.gamestate.Game;
 import agency.shitcoding.arena.gamestate.GameOrchestrator;
+import agency.shitcoding.arena.gamestate.team.TeamGame;
 import lombok.RequiredArgsConstructor;
 import net.jellycraft.guiapi.api.InventorySize;
 import net.jellycraft.guiapi.api.ItemSlot;
+import net.jellycraft.guiapi.api.ViewRegistry;
 import net.jellycraft.guiapi.api.ViewRenderer;
 import net.jellycraft.guiapi.api.fluent.ItemBuilder;
 import net.jellycraft.guiapi.api.fluent.ViewBuilder;
@@ -13,7 +15,6 @@ import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextColor;
 import net.kyori.adventure.text.format.TextDecoration;
-import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 
@@ -42,7 +43,8 @@ public class ArenaMainMenu {
 
         int rowBase = 2 * 8 + 1;
         for (ItemSlot itemSlot : itemSlots) {
-            itemSlot.setSlot(rowBase += 2);
+            rowBase += 2;
+            itemSlot.setSlot(rowBase);
             viewBuilder.addItemSlot(itemSlot);
         }
 
@@ -94,7 +96,6 @@ public class ArenaMainMenu {
 
     private ItemSlot joinGameButton(Game game) {
         Component name = Component.text(game.getRuleSet().getName(), NamedTextColor.GREEN)
-                .appendSpace()
                 .append(Component.text(" на ", NamedTextColor.GRAY))
                 .append(Component.text(game.getArena().getName(), NamedTextColor.RED));
 
@@ -103,17 +104,37 @@ public class ArenaMainMenu {
             case WAITING -> Material.GREEN_WOOL;
             case FINISHED -> Material.PURPLE_WOOL;
         };
-        String[] playerNames = game.getPlayers().stream().map(Player::displayName)
-                .map(c -> PlainTextComponentSerializer.plainText().serialize(c))
+//        Component name = switch (game.getGamestage()) {
+//            case IN_PROGRESS -> Component.text("Присоединиться к начатой игре", NamedTextColor.YELLOW);
+//            case WAITING -> Component.text("Присоединиться", NamedTextColor.GREEN);
+//            case FINISHED -> Component.text("Закончена", NamedTextColor.DARK_PURPLE);
+//        };
+        String[] playerNames = game.getPlayers().stream()
+                .map(Player::getName)
                 .toArray(String[]::new);
 
-        ItemBuilder itemBuilder = ItemBuilder.builder()
+        ItemSlot item = ItemBuilder.builder()
                 .withName(name)
                 .withMaterial(material)
                 .withLoreLine(Component.text("Игроков: " + game.getPlayers().size() + "/" + game.getRuleSet().getMaxPlayers()))
-                .withLoreLine(Component.text(Arrays.toString(playerNames)));
+                .withLoreLine(Component.text(Arrays.toString(playerNames)))
+                .withClickAction((type, ctx) -> arenaJoinClickAction(game))
+                .build();
 
-        return itemBuilder.build();
+        // This is needed for some reason
+        item.getItemStack().editMeta(m -> m.displayName(name));
+
+        return item;
+    }
+
+    private void arenaJoinClickAction(Game game) {
+        ViewRegistry.closeForPlayer(player);
+        if (game instanceof TeamGame teamGame) {
+            // TODO: implement team selection
+            player.performCommand("arena join red");
+        } else {
+            player.performCommand("arena join");
+        }
     }
 
     private ItemSlot hostGameButton() {

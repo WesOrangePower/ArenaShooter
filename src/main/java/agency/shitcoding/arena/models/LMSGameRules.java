@@ -36,7 +36,7 @@ public class LMSGameRules implements GameRules {
     }
 
     @Override
-    public boolean allowPlayAfterStart() {
+    public boolean allowJoinAfterStart() {
         return false;
     }
 }

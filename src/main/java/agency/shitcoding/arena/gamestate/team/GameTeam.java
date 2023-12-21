@@ -9,4 +9,12 @@ import java.util.Set;
 @Getter
 public abstract class GameTeam {
     private final Set<Player> players = new HashSet<>();
+
+    protected GameTeam() {
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        return obj.getClass().equals(this.getClass());
+    }
 }

@@ -33,6 +33,7 @@ import java.util.stream.StreamSupport;
 @Getter
 public abstract class Game {
     protected final Scoreboard scoreboard;
+    private final RespawnInvulnerability respawnInvulnerability = new RespawnInvulnerability();
     private final Set<Player> players = new HashSet<>();
     private final Set<Player> spectators = new HashSet<>();
     private final List<PlayerScore> scores = new ArrayList<>();
@@ -74,7 +75,7 @@ public abstract class Game {
         if (isEmptyWaiting || isTooFewPlayers) {
             endGame("Недостаточно игроков");
         }
-        players.forEach(p -> p.sendRichMessage("<red>" + player.getName() + " вышел из игры"));
+        players.forEach(p -> p.sendRichMessage(leaveBroadcastMessage(player)));
         Lobby.getInstance().sendPlayer(player);
     }
 
@@ -221,9 +222,20 @@ public abstract class Game {
         }
         players.add(player);
         scores.add(new PlayerScore(0, player, new PlayerStreak()));
-        player.sendRichMessage("<green>Вы присоединились к игре");
-        players.forEach(p -> p.sendRichMessage("<green>" + player.getName() + " присоединился к игре"));
+        player.sendRichMessage(youJoinedGameMessage(player));
+        players.forEach(p -> p.sendRichMessage(joinBroadcastMessage(player)));
         getArena().spawn(player, this);
+    }
+
+    public String youJoinedGameMessage(Player p) {
+        return "<green>Вы присоединились к игре";
+    }
+    public String joinBroadcastMessage(Player player) {
+        return "<green>" + player.getName() + " присоединился к игре";
+    }
+
+    public String leaveBroadcastMessage(Player player) {
+        return "<red>" + player.getName() + " вышел из игры";
     }
 
     public Optional<PlayerScore> getOptScore(Player p) {

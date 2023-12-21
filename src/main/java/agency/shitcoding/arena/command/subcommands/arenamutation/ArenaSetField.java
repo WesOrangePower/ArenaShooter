@@ -1,9 +1,7 @@
 package agency.shitcoding.arena.command.subcommands.arenamutation;
 
 import agency.shitcoding.arena.QuadConsumer;
-import agency.shitcoding.arena.models.Arena;
-import agency.shitcoding.arena.models.LootPoint;
-import agency.shitcoding.arena.models.Powerup;
+import agency.shitcoding.arena.models.*;
 import agency.shitcoding.arena.storage.ArenaStorage;
 import agency.shitcoding.arena.storage.StorageProvider;
 import lombok.RequiredArgsConstructor;
@@ -14,6 +12,7 @@ import net.kyori.adventure.text.format.TextDecoration;
 import org.bukkit.Location;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+import org.bukkit.util.Vector;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -127,6 +126,131 @@ public enum ArenaSetField {
             );
         }
     }),
+    PORTAL(a -> a == SET || a == GET || a == REMOVE, (ar, a, v, s) -> {
+        if (a == SET) {
+            Component usage = Component.text("Usage: /arena set <arena> portal <action> <id>,<x1>,<y1>,<z1>,<x2>,<y2>,<z2>,<xt>,<yt>,<zt>", NamedTextColor.DARK_RED);
+            if (v == null) {
+                s.sendMessage(usage);
+                return;
+            }
+            String[] split = v.split(",");
+            if (split.length < 10) {
+                s.sendMessage(usage);
+                return;
+            }
+            String id = split[0];
+            Location firstLocation = new Location(ar.getLowerBound().getWorld(),
+                    Integer.parseInt(split[1]),
+                    Integer.parseInt(split[2]),
+                    Integer.parseInt(split[3]));
+            Location secondLocation = new Location(ar.getLowerBound().getWorld(),
+                    Integer.parseInt(split[4]),
+                    Integer.parseInt(split[5]),
+                    Integer.parseInt(split[6]));
+            Location targetLocation = new Location(ar.getLowerBound().getWorld(),
+                    Integer.parseInt(split[7]),
+                    Integer.parseInt(split[8]),
+                    Integer.parseInt(split[9]));
+            Portal portal = new Portal(id, firstLocation, secondLocation, targetLocation);
+            ar.getPortals().add(portal);
+            StorageProvider.getArenaStorage().storeArena(ar);
+            s.sendRichMessage("<green>Portal " + id + " added.");
+            return;
+        }
+        if (a == GET) {
+            for (Portal portal : ar.getPortals()) {
+                Component component = Component.text("Portal " + portal.getId() + " at ")
+                        .append(locationComponent(portal.getFirstLocation()))
+                        .append(Component.text(" and "))
+                        .append(locationComponent(portal.getSecondLocation()))
+                        .append(Component.text(" leads to "))
+                        .append(locationComponent(portal.getTargetLocation()));
+                s.sendMessage(component);
+            }
+            return;
+        }
+        if (a == REMOVE) {
+            if (v == null) {
+                s.sendRichMessage("<red>Portal ID must be specified.");
+                return;
+            }
+            ar.getPortals().stream().filter(p -> p.getId().equals(v)).findFirst().ifPresentOrElse(
+                    portal -> {
+                        ar.getPortals().remove(portal);
+                        StorageProvider.getArenaStorage().storeArena(ar);
+                        s.sendRichMessage("<green>Portal " + v + " removed.");
+                    },
+                    () -> s.sendRichMessage("<red>Portal " + v + " not found.")
+            );
+        }
+    } ),
+    RAMP(a -> a == SET || a == GET || a == REMOVE, (ar, a, v, s) -> {
+        if (a == SET) {
+            Component usage = Component.text("Usage: /arena set <arena> ramp <action> <id>,<x1>,<y1>,<z1>,<x2>,<y2>,<z2>,<MUL/NOMUL>,<vx>,<vy>,<vz>", NamedTextColor.DARK_RED);
+            if (v == null) {
+                s.sendMessage(usage);
+                return;
+            }
+            String[] split = v.split(",");
+            if (split.length < 11) {
+                s.sendMessage(usage);
+                return;
+            }
+            String id = "RP_" + split[0];
+            Location firstLocation = new Location(ar.getLowerBound().getWorld(),
+                    Integer.parseInt(split[1]),
+                    Integer.parseInt(split[2]),
+                    Integer.parseInt(split[3]));
+            Location secondLocation = new Location(ar.getLowerBound().getWorld(),
+                    Integer.parseInt(split[4]),
+                    Integer.parseInt(split[5]),
+                    Integer.parseInt(split[6]));
+            Boolean multiply = switch (split[7].toUpperCase()) {
+                case "MUL" -> true;
+                case "NOMUL" -> false;
+                default -> {
+                    s.sendRichMessage("<red>Invalid value for MUL/NOMUL. Must be either MUL or NOMUL.");
+                    yield null;
+                }
+            };
+            Vector vector = new Vector(
+                    Double.parseDouble(split[8]),
+                    Double.parseDouble(split[9]),
+                    Double.parseDouble(split[10])
+            );
+            Ramp ramp = new Ramp(id, firstLocation, secondLocation, multiply, vector);
+            ar.getRamps().add(ramp);
+            StorageProvider.getArenaStorage().storeArena(ar);
+            s.sendRichMessage("<green>ramp " + id + " added.");
+            return;
+        }
+        if (a == GET) {
+            for (Ramp ramp : ar.getRamps()) {
+                Component component = Component.text("Ramp " + ramp.getId() + " at ")
+                        .append(locationComponent(ramp.getFirstLocation()))
+                        .append(Component.text(" and "))
+                        .append(locationComponent(ramp.getSecondLocation()))
+                        .append(Component.text(ramp.isMultiply() ? " multiplies by " : " sets velocity to "))
+                        .append(Component.text(ramp.getVector().toString()));
+                s.sendMessage(component);
+            }
+            return;
+        }
+        if (a == REMOVE) {
+            if (v == null) {
+                s.sendRichMessage("<red>Ramp ID must be specified.");
+                return;
+            }
+            ar.getRamps().stream().filter(r -> r.getId().equals(v)).findFirst().ifPresentOrElse(
+                    ramp -> {
+                        ar.getRamps().remove(ramp);
+                        StorageProvider.getArenaStorage().storeArena(ar);
+                        s.sendRichMessage("<green>Ramp " + v + " removed.");
+                    },
+                    () -> s.sendRichMessage("<red>Ramp " + v + " not found.")
+            );
+        }
+    } ),
     ALLOW_HOST(a -> a == SET || a == GET, (ar, a, v, s) -> {
         if (a == GET) {
             s.sendMessage("Allow host: " + ar.isAllowHost());

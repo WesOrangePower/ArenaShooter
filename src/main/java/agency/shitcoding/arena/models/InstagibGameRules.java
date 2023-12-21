@@ -36,7 +36,7 @@ public class InstagibGameRules implements GameRules {
     }
 
     @Override
-    public boolean allowPlayAfterStart() {
+    public boolean allowJoinAfterStart() {
         return true;
     }
 }

@@ -1,5 +1,8 @@
 package agency.shitcoding.arena.gui;
 
+import agency.shitcoding.arena.gamestate.team.ETeam;
+import agency.shitcoding.arena.gamestate.team.GameTeam;
+import agency.shitcoding.arena.gamestate.team.PlayingTeam;
 import agency.shitcoding.arena.models.Arena;
 import agency.shitcoding.arena.models.RuleSet;
 import agency.shitcoding.arena.storage.StorageProvider;
@@ -16,7 +19,9 @@ import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
@@ -26,6 +31,7 @@ public class HostGameMenu {
     private final Player player;
     Arena chosenArena;
     RuleSet chosenRuleSet;
+    String chosenTeam;
 
     public void render() {
         chooseArena();
@@ -57,7 +63,11 @@ public class HostGameMenu {
 
     private void execute() {
         ViewRegistry.closeForPlayer(player);
-        player.performCommand(String.format("arena host %s %s", chosenRuleSet.name(), chosenArena.getName()));
+        if (chosenTeam == null) {
+            player.performCommand(String.format("arena host %s %s", chosenRuleSet.name(), chosenArena.getName()));
+            return;
+        }
+        player.performCommand(String.format("arena host %s %s %s", chosenRuleSet.name(), chosenArena.getName(), chosenTeam));
     }
 
     private List<Item> getArenaItems() {
@@ -100,6 +110,54 @@ public class HostGameMenu {
     private ClickAction ruleSetClickAction(RuleSet ruleSet) {
         return (clickType, clickContext) -> {
             this.chosenRuleSet = ruleSet;
+            if (ruleSet.getGameRules().hasTeams()) {
+                chooseTeam();
+            } else {
+                execute();
+            }
+        };
+    }
+
+    private void chooseTeam() {
+        PaginatedView view = ViewBuilder.builder()
+                .withHolder(player)
+                .withTitle("Выберите команду...")
+                .build()
+                .toPaginatedView()
+                .withItems(getTeamItems())
+                .build();
+
+        new ViewRenderer(view).render();
+    }
+
+    private List<Item> getTeamItems() {
+        return Arrays.stream(ETeam.values())
+                .map(team -> {
+                            GameTeam gameTeam = null;
+                            try {
+                                gameTeam = team.getTeamClass().getConstructor().newInstance();
+                            } catch (InstantiationException | IllegalAccessException | InvocationTargetException |
+                                     NoSuchMethodException e) {
+                                throw new RuntimeException(e);
+                            }
+                            if (gameTeam instanceof PlayingTeam playingTeam) {
+                                ItemSlot build = ItemBuilder.builder()
+                                        .withMaterial(team.getIcon())
+                                        .withClickAction(teamClickAction(team))
+                                        .build();
+                                ItemStack itemStack = build.getItemStack();
+                                itemStack.editMeta(meta -> meta.displayName(playingTeam.getDisplayComponent()));
+                                return new Item(itemStack, build.getOverrideClickAction());
+                            }
+                            return null;
+                        }
+                )
+                .toList();
+    }
+
+    private ClickAction teamClickAction(ETeam team) {
+        return (clickType, clickContext) -> {
+            this.chosenTeam = team.name();
             execute();
         };
     }

@@ -54,7 +54,7 @@ public class ItemListener implements Listener {
 
         if (isPickedUp) {
             player.playSound(player, powerup.getType().getSoundName(), .5f, 1f);
-            player.sendRichMessage("<green><bold>Вы подобрали " + powerup.getDisplayName());
+            player.sendRichMessage("<green>Вы подобрали " + powerup.getDisplayName());
             if (powerup.getType() == PowerupType.MAJOR_BUFF) {
                 handleMajorBuff(player, game, powerup);
             }
@@ -71,7 +71,7 @@ public class ItemListener implements Listener {
         for (Player gamePlayer : game.getPlayers()) {
             if (gamePlayer == player) continue;
             gamePlayer.sendRichMessage(
-                    String.format("<red>%s подобрал %s!", player.getName(), powerup.getDisplayName())
+                    String.format("<red><bold>%s подобрал %s!", player.getName(), powerup.getDisplayName())
             );
         }
     }

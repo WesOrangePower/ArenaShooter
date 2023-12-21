@@ -13,7 +13,8 @@ public enum Weapon {
     MACHINE_GUN("Machine Gun", Color.YELLOW, 1, Material.STONE_PICKAXE, Ammo.BULLETS, 1, 2),
     SHOTGUN("Shotgun", Color.ORANGE, 2, Material.WOODEN_PICKAXE, Ammo.SHELLS, 2, 16),
     ROCKET_LAUNCHER("Rocket Launcher", Color.RED, 3, Material.BOW, Ammo.ROCKETS, 1, 20),
-    RAILGUN("Railgun", Color.AQUA, 5, Material.CROSSBOW, Ammo.CELLS, 20, 30);
+    RAILGUN("Railgun", Color.AQUA, 5, Material.CROSSBOW, Ammo.CELLS, 20, 30),
+    PLASMA_GUN("Plasma Gun", Color.LIME, 4, Material.GOLDEN_HOE, Ammo.CELLS, 10, 5);
 
 
     public final String name;

@@ -20,14 +20,18 @@ public class GameplayConstants {
 
     public static final int MACHINE_GUN_SPAWN_INTERVAL_TICKS = 30 * 20;
     public static final int MACHINE_GUN_SPAWN_OFFSET_TICKS = 0;
-    public static final int SHOTGUN_SPAWN_INTERVAL_TICKS = 30 * 20;
+    public static final int SHOTGUN_SPAWN_INTERVAL_TICKS = 10 * 20;
     public static final int SHOTGUN_SPAWN_OFFSET_TICKS = 0;
 
-    public static final int ROCKET_LAUNCHER_SPAWN_INTERVAL_TICKS = 60 * 20;
+    public static final int ROCKET_LAUNCHER_SPAWN_INTERVAL_TICKS = 15 * 20;
     public static final int ROCKET_LAUNCHER_SPAWN_OFFSET_TICKS = 0;
 
-    public static final int RAILGUN_SPAWN_INTERVAL_TICKS = 60 * 20;
+    public static final int RAILGUN_SPAWN_INTERVAL_TICKS = 20 * 20;
     public static final int RAILGUN_SPAWN_OFFSET_TICKS = 10 * 20;
+
+
+    public static final int PLASMA_GUN_SPAWN_INTERVAL_TICKS = 45 * 20;
+    public static final int PLASMA_GUN_SPAWN_OFFSET_TICKS = 0;
 
     public static final int STIM_PACK_SPAWN_INTERVAL_TICKS = 30 * 20;
     public static final int STIM_PACK_SPAWN_OFFSET_TICKS = 0;
@@ -48,6 +52,7 @@ public class GameplayConstants {
     public static final double SHOTGUN_PELLET_DAMAGE = 2;
     public static final double ROCKET_DAMAGE = 15;
     public static final double RAILGUN_DAMAGE = 18;
-
     public static final int MAX_ARMOR = 100;
+    public static final long RESPAWN_INVULNERABILITY_DURATION_MS = 2000L; // Milliseconds
+    public static final boolean RESPAWN_INVULNERABILITY_DISABLE_ON_SHOOT = true;
 }

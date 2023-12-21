@@ -10,10 +10,13 @@ import agency.shitcoding.arena.gamestate.team.TeamGame;
 import agency.shitcoding.arena.gamestate.team.TeamManager;
 import agency.shitcoding.arena.models.Weapon;
 import org.bukkit.*;
+import org.bukkit.entity.EntityType;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.event.entity.EntityDamageByEntityEvent;
+import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -23,16 +26,21 @@ import java.util.stream.Stream;
 
 public class DamageListener implements Listener {
 
-    @EventHandler()
+    @EventHandler
     public void onDamage(GameDamageEvent event) {
 
-        // if Teammate
         @Nullable Player dealer = event.getDealer();
         LivingEntity victim = event.getVictim();
         if (dealer != null && victim instanceof Player victimPlayer) {
             Optional<Game> gameByPlayer = GameOrchestrator.getInstance().getGameByPlayer(victimPlayer);
             if (gameByPlayer.isPresent()) {
                 Game game = gameByPlayer.get();
+                // if Invulnerable
+                if (game.getRespawnInvulnerability().hasInvulnerability(victimPlayer)) {
+                    event.setCancelled(true);
+                    return;
+                }
+                // if Teammate
                 if (game instanceof TeamGame teamGame) {
                     TeamManager teamManager = teamGame.getTeamManager();
                     if (teamManager.getTeam(dealer).equals(teamManager.getTeam(victimPlayer))) {
@@ -79,6 +87,14 @@ public class DamageListener implements Listener {
         }
 
         victim.damage(event.getDamage(), dealer);
+    }
+
+    @EventHandler
+    public void onEntityDamage(EntityDamageByEntityEvent event) {
+        if (event.getDamager().getType() == EntityType.PLAYER) {
+            // Ignore all armor
+            event.setDamage(EntityDamageEvent.DamageModifier.ARMOR, 0);
+        }
     }
 
     private double calculateDamage(Player victim, double damage) {

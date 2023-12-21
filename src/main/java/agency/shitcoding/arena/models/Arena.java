@@ -2,6 +2,8 @@ package agency.shitcoding.arena.models;
 
 import agency.shitcoding.arena.ArenaShooter;
 import agency.shitcoding.arena.gamestate.Game;
+import agency.shitcoding.arena.gamestate.team.PlayingTeam;
+import agency.shitcoding.arena.gamestate.team.TeamGame;
 import lombok.Getter;
 import lombok.Setter;
 import org.bukkit.GameMode;
@@ -23,21 +25,25 @@ public class Arena {
     public Location lowerBound;
     public Location upperBound;
     public Set<LootPoint> lootPoints;
+    public Set<Portal> portals;
+    public Set<Ramp> ramps;
     private Set<LootPoint> weaponLootPoints = null;
     private boolean allowHost;
 
-    public Arena(String name, Location lowerBound, Location upperBound, Set<LootPoint> lootPoints, boolean allowHost) {
+    public Arena(String name, Location lowerBound, Location upperBound, Set<LootPoint> lootPoints, Set<Portal> portals, Set<Ramp> ramps, boolean allowHost) {
         this.name = name;
         this.lowerBound = lowerBound;
         this.upperBound = upperBound;
         this.lootPoints = lootPoints;
+        this.portals = portals;
+        this.ramps = ramps;
         this.allowHost = allowHost;
     }
 
     public boolean isInside(Location location) {
         return location.getX() >= lowerBound.getX() && location.getX() <= upperBound.getX() &&
-                location.getY() >= lowerBound.getY() && location.getY() <= upperBound.getY() &&
-                location.getZ() >= lowerBound.getZ() && location.getZ() <= upperBound.getZ();
+               location.getY() >= lowerBound.getY() && location.getY() <= upperBound.getY() &&
+               location.getZ() >= lowerBound.getZ() && location.getZ() <= upperBound.getZ();
     }
 
     public Set<LootPoint> getWeaponLootPoints() {
@@ -75,6 +81,20 @@ public class Arena {
         if (!game.getRuleSet().getGameRules().doRespawn() && game.getDiedOnce().contains(player) && game.getGamestage() == GameStage.IN_PROGRESS) {
             player.setGameMode(GameMode.SPECTATOR);
         }
+        if (player.getGameMode() != GameMode.SPECTATOR && game instanceof TeamGame teamGame) {
+            teamGame.getTeamManager().getTeam(player)
+                    .filter(PlayingTeam.class::isInstance)
+                    .map(PlayingTeam.class::cast)
+                    .ifPresent(team -> {
+                        player.getInventory().setHelmet(team.getHelmet());
+                        player.getInventory().setChestplate(team.getChest());
+                        player.getInventory().setLeggings(team.getLeggings());
+                        player.getInventory().setBoots(team.getBoots());
+                    });
+        }
+
+        game.getRespawnInvulnerability().registerRespawn(player);
+
         player.teleport(lootPoint.getLocation(), PlayerTeleportEvent.TeleportCause.PLUGIN);
 
         GameRules gameRules = game.getRuleSet().getGameRules();
