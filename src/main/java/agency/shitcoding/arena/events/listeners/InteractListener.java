@@ -20,55 +20,58 @@ import java.util.Arrays;
 import java.util.Optional;
 
 public class InteractListener implements Listener {
-    @EventHandler
-    public void onShoot(PlayerInteractEvent event) {
-        Player player = event.getPlayer();
 
-        if (player.getGameMode() != GameMode.ADVENTURE) {
-            return;
-        }
+  @EventHandler
+  public void onShoot(PlayerInteractEvent event) {
+    Player player = event.getPlayer();
 
-        if (event.getAction() != Action.RIGHT_CLICK_AIR && event.getAction() != Action.RIGHT_CLICK_BLOCK) {
-            return;
-        }
-
-        ItemStack itemInMainHand = player.getInventory().getItemInMainHand();
-        Optional<Weapon> weaponOptional = Arrays.stream(Weapon.values())
-                .filter(weapon -> weapon.item == itemInMainHand.getType())
-                .findAny();
-        Optional<Game> gameByPlayer = GameOrchestrator.getInstance()
-                .getGameByPlayer(event.getPlayer());
-        if (gameByPlayer.isEmpty() || weaponOptional.isEmpty())
-            return;
-        Game game = gameByPlayer.get();
-
-        Weapon gun = weaponOptional.get();
-
-        int ammoForPlayer = Ammo.getAmmoForPlayer(player, gun.ammo);
-        if (gun.ammoPerShot > ammoForPlayer) {
-            new GameNoAmmoEvent(game, player).fire();
-            return;
-        }
-        if (player.hasCooldown(gun.item)) {
-            return;
-        }
-        game.getRespawnInvulnerability().onShoot(player);
-        new AmmoUpdateEvent(player, -gun.ammoPerShot, gun.ammo).fire();
-        new GameShootEvent(event, game, gun).fire();
+    if (player.getGameMode() != GameMode.ADVENTURE) {
+      return;
     }
 
-    @EventHandler
-    public void onLobbyMenuOpen(PlayerInteractEvent event) {
-        var player = event.getPlayer();
-        var instance = Lobby.getInstance();
-        if (!instance.getPlayersInLobby().contains(player)) {
-            return;
-        }
-        var itemInMainHand = player.getInventory().getItemInMainHand();
-        if (!itemInMainHand.equals(instance.getLobbyItem())) {
-            return;
-        }
-
-        player.performCommand("arena");
+    if (event.getAction() != Action.RIGHT_CLICK_AIR
+        && event.getAction() != Action.RIGHT_CLICK_BLOCK) {
+      return;
     }
+
+    ItemStack itemInMainHand = player.getInventory().getItemInMainHand();
+    Optional<Weapon> weaponOptional = Arrays.stream(Weapon.values())
+        .filter(weapon -> weapon.item == itemInMainHand.getType())
+        .findAny();
+    Optional<Game> gameByPlayer = GameOrchestrator.getInstance()
+        .getGameByPlayer(event.getPlayer());
+    if (gameByPlayer.isEmpty() || weaponOptional.isEmpty()) {
+      return;
+    }
+    Game game = gameByPlayer.get();
+
+    Weapon gun = weaponOptional.get();
+
+    int ammoForPlayer = Ammo.getAmmoForPlayer(player, gun.ammo);
+    if (gun.ammoPerShot > ammoForPlayer) {
+      new GameNoAmmoEvent(game, player).fire();
+      return;
+    }
+    if (player.hasCooldown(gun.item)) {
+      return;
+    }
+    game.getRespawnInvulnerability().onShoot(player);
+    new AmmoUpdateEvent(player, -gun.ammoPerShot, gun.ammo).fire();
+    new GameShootEvent(event, game, gun).fire();
+  }
+
+  @EventHandler
+  public void onLobbyMenuOpen(PlayerInteractEvent event) {
+    var player = event.getPlayer();
+    var instance = Lobby.getInstance();
+    if (!instance.getPlayersInLobby().contains(player)) {
+      return;
+    }
+    var itemInMainHand = player.getInventory().getItemInMainHand();
+    if (!itemInMainHand.equals(instance.getLobbyItem())) {
+      return;
+    }
+
+    player.performCommand("arena");
+  }
 }

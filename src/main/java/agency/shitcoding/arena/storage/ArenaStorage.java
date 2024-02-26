@@ -5,11 +5,12 @@ import agency.shitcoding.arena.models.Arena;
 import java.util.Collection;
 
 public interface ArenaStorage {
-    void storeArena(Arena arena);
 
-    Arena getArena(String name);
+  void storeArena(Arena arena);
 
-    Collection<Arena> getArenas();
+  Arena getArena(String name);
 
-    void deleteArena(Arena arena);
+  Collection<Arena> getArenas();
+
+  void deleteArena(Arena arena);
 }

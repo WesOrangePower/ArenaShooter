@@ -1,15 +1,14 @@
 package agency.shitcoding.arena.gamestate.team;
 
-import org.bukkit.Color;
+import org.bukkit.scoreboard.Team;
 
-public class RedTeam extends PlayingTeam {
-    @Override
-    public String getDisplayName() {
-        return "Красные";
-    }
+public class RedTeam extends GameTeam {
+  public RedTeam(Team scoreboardTeam) {
+    super(scoreboardTeam, new RedTeamMeta());
+  }
 
-    @Override
-    public Color getBukkitColor() {
-        return Color.RED;
-    }
+  @Override
+  public ETeam getETeam() {
+    return ETeam.RED;
+  }
 }

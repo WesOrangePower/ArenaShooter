@@ -5,13 +5,13 @@ import org.jetbrains.annotations.NotNull;
 
 public abstract class CommandInst {
 
-    protected final @NotNull CommandSender sender;
-    protected final @NotNull String[] args;
+  protected final @NotNull CommandSender sender;
+  protected final @NotNull String[] args;
 
-    public CommandInst(@NotNull CommandSender sender, @NotNull String[] args) {
-        this.sender = sender;
-        this.args = args;
-    }
+  public CommandInst(@NotNull CommandSender sender, @NotNull String[] args) {
+    this.sender = sender;
+    this.args = args;
+  }
 
-    public abstract void execute();
+  public abstract void execute();
 }

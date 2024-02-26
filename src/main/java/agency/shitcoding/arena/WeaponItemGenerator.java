@@ -8,11 +8,11 @@ import org.bukkit.inventory.ItemStack;
 
 public class WeaponItemGenerator {
 
-    public static ItemStack generate(Player player, Weapon weapon) {
-        ItemStack item = new ItemStack(weapon.item, 1);
-        item.editMeta(meta -> {
-            meta.displayName(Component.text(weapon.name, TextColor.color(weapon.color.asRGB())));
-        });
-        return item;
-    }
+  public static ItemStack generate(Player player, Weapon weapon) {
+    ItemStack item = new ItemStack(weapon.item, 1);
+    item.editMeta(meta -> {
+      meta.displayName(Component.text(weapon.name, TextColor.color(weapon.color.asRGB())));
+    });
+    return item;
+  }
 }

@@ -13,67 +13,70 @@ import java.util.logging.Logger;
 
 @RequiredArgsConstructor
 public class ConfigurationFaqStorage implements FaqStorage {
-    private static final Logger LOG = ArenaShooter.getInstance().getLogger();
-    public static final String FILE_NAME = "faq.yml";
 
-    private final Configuration configuration;
+  private static final Logger LOG = ArenaShooter.getInstance().getLogger();
+  public static final String FILE_NAME = "faq.yml";
+
+  private final Configuration configuration;
 
 
-    @Override
-    public void store(Faq faq) {
-        ConfigurationSection allFaqsSection = configuration.getConfigurationSection(Conf.faqSection);
-        if (allFaqsSection == null) {
-            allFaqsSection = configuration.createSection(Conf.faqSection);
-        }
-        ConfigurationSection faqSection = allFaqsSection.createSection(UUID.randomUUID().toString());
-
-        faqSection.set(Conf.Faqs.title, faq.getTitle());
-        faqSection.set(Conf.Faqs.content, faq.getContent());
-        save();
+  @Override
+  public void store(Faq faq) {
+    ConfigurationSection allFaqsSection = configuration.getConfigurationSection(Conf.faqSection);
+    if (allFaqsSection == null) {
+      allFaqsSection = configuration.createSection(Conf.faqSection);
     }
+    ConfigurationSection faqSection = allFaqsSection.createSection(UUID.randomUUID().toString());
 
-    @Override
-    public Collection<Faq> getAll() {
-        ConfigurationSection allFaqsSection = configuration.getConfigurationSection(Conf.faqSection);
-        if (allFaqsSection == null) {
-            allFaqsSection = configuration.createSection(Conf.faqSection);
-        }
-        Set<String> keys = allFaqsSection.getKeys(false);
-        List<Faq> faqs = new ArrayList<>();
-        for (String key : keys) {
-            ConfigurationSection faqSection = allFaqsSection.getConfigurationSection(key);
-            if (faqSection == null) {
-                LOG.warning("Failed to read FAQ: " + key);
-                continue;
-            }
-            Faq faq = parseFaq(faqSection);
-            if (faq == null) continue;
-            faqs.add(faq);
-        }
-        return faqs;
-    }
+    faqSection.set(Conf.Faqs.title, faq.getTitle());
+    faqSection.set(Conf.Faqs.content, faq.getContent());
+    save();
+  }
 
-    private Faq parseFaq(ConfigurationSection section) {
-        String title = section.getString(Conf.Faqs.title);
-        String content = section.getString(Conf.Faqs.content);
-        if (title == null) {
-            LOG.warning("No title for FAQ: " + section.getCurrentPath());
-            return null;
-        }
-        if (content == null) {
-            LOG.warning("No content for FAQ: " + title);
-            return null;
-        }
-        return new Faq(title, content);
+  @Override
+  public Collection<Faq> getAll() {
+    ConfigurationSection allFaqsSection = configuration.getConfigurationSection(Conf.faqSection);
+    if (allFaqsSection == null) {
+      allFaqsSection = configuration.createSection(Conf.faqSection);
     }
+    Set<String> keys = allFaqsSection.getKeys(false);
+    List<Faq> faqs = new ArrayList<>();
+    for (String key : keys) {
+      ConfigurationSection faqSection = allFaqsSection.getConfigurationSection(key);
+      if (faqSection == null) {
+        LOG.warning("Failed to read FAQ: " + key);
+        continue;
+      }
+      Faq faq = parseFaq(faqSection);
+      if (faq == null) {
+        continue;
+      }
+      faqs.add(faq);
+    }
+    return faqs;
+  }
 
-    private void save() {
-        if (configuration instanceof YamlConfiguration yamlConfiguration) {
-            try {
-                yamlConfiguration.save(FILE_NAME);
-            } catch (Exception e) {
-                ArenaShooter.getInstance().getLogger().severe("Failed to save " + FILE_NAME);
-            }
-        }
+  private Faq parseFaq(ConfigurationSection section) {
+    String title = section.getString(Conf.Faqs.title);
+    String content = section.getString(Conf.Faqs.content);
+    if (title == null) {
+      LOG.warning("No title for FAQ: " + section.getCurrentPath());
+      return null;
     }
+    if (content == null) {
+      LOG.warning("No content for FAQ: " + title);
+      return null;
+    }
+    return new Faq(title, content);
+  }
+
+  private void save() {
+    if (configuration instanceof YamlConfiguration yamlConfiguration) {
+      try {
+        yamlConfiguration.save(FILE_NAME);
+      } catch (Exception e) {
+        ArenaShooter.getInstance().getLogger().severe("Failed to save " + FILE_NAME);
+      }
+    }
+  }
 }

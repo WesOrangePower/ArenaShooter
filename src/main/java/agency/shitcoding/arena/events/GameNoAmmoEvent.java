@@ -10,22 +10,23 @@ import org.jetbrains.annotations.NotNull;
 @EqualsAndHashCode(callSuper = true)
 @Data
 public class GameNoAmmoEvent extends GameEvent {
-    private static final HandlerList handlers = new HandlerList();
-    private final Game gameByPlayer;
-    private final Player player;
 
-    public GameNoAmmoEvent(Game gameByPlayer, Player player) {
-        super();
-        this.gameByPlayer = gameByPlayer;
-        this.player = player;
-    }
+  private static final HandlerList handlers = new HandlerList();
+  private final Game gameByPlayer;
+  private final Player player;
 
-    public static HandlerList getHandlerList() {
-        return handlers;
-    }
+  public GameNoAmmoEvent(Game gameByPlayer, Player player) {
+    super();
+    this.gameByPlayer = gameByPlayer;
+    this.player = player;
+  }
 
-    @Override
-    public @NotNull HandlerList getHandlers() {
-        return handlers;
-    }
+  public static HandlerList getHandlerList() {
+    return handlers;
+  }
+
+  @Override
+  public @NotNull HandlerList getHandlers() {
+    return handlers;
+  }
 }

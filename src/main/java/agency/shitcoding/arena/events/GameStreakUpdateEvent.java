@@ -11,18 +11,19 @@ import org.jetbrains.annotations.NotNull;
 @RequiredArgsConstructor
 @Getter
 public class GameStreakUpdateEvent extends GameEvent {
-    private static final HandlerList handlers = new HandlerList();
-    private final PlayerStreak streak;
-    private final Player player;
-    private final Game game;
 
-    @Override
-    public @NotNull HandlerList getHandlers() {
-        return handlers;
-    }
+  private static final HandlerList handlers = new HandlerList();
+  private final PlayerStreak streak;
+  private final Player player;
+  private final Game game;
 
-    @SuppressWarnings("unused")
-    public static HandlerList getHandlerList() {
-        return handlers;
-    }
+  @Override
+  public @NotNull HandlerList getHandlers() {
+    return handlers;
+  }
+
+  @SuppressWarnings("unused")
+  public static HandlerList getHandlerList() {
+    return handlers;
+  }
 }

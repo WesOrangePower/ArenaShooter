@@ -12,25 +12,25 @@ import java.util.Optional;
 
 public class ArenaLeaveCmd extends CommandInst {
 
-    public ArenaLeaveCmd(@NotNull CommandSender sender, @NotNull String[] args) {
-        super(sender, args);
-    }
+  public ArenaLeaveCmd(@NotNull CommandSender sender, @NotNull String[] args) {
+    super(sender, args);
+  }
 
-    @Override
-    public void execute() {
-        if (sender instanceof Player player) {
-            GameOrchestrator gameOrchestrator = GameOrchestrator.getInstance();
-            Optional<Game> game = gameOrchestrator.getGameByPlayer(player);
-            if (game.isEmpty()) {
-                sender.sendRichMessage("<dark_red>Вы не в игре");
-                return;
-            }
-            game.get().removePlayer(player);
-            sender.sendRichMessage("<dark_green>Вы покинули игру");
-            Lobby.getInstance().sendPlayer(player);
-            return;
-        }
-        sender.sendRichMessage("<dark_red> Only players can use this command");
+  @Override
+  public void execute() {
+    if (sender instanceof Player player) {
+      GameOrchestrator gameOrchestrator = GameOrchestrator.getInstance();
+      Optional<Game> game = gameOrchestrator.getGameByPlayer(player);
+      if (game.isEmpty()) {
+        sender.sendRichMessage("<dark_red>Вы не в игре");
+        return;
+      }
+      game.get().removePlayer(player);
+      sender.sendRichMessage("<dark_green>Вы покинули игру");
+      Lobby.getInstance().sendPlayer(player);
+      return;
     }
+    sender.sendRichMessage("<dark_red> Only players can use this command");
+  }
 
 }

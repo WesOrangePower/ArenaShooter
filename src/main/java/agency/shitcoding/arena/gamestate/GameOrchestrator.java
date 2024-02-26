@@ -12,28 +12,29 @@ import java.util.Optional;
 import java.util.Set;
 
 public class GameOrchestrator {
-    @Getter
-    private final static GameOrchestrator instance = new GameOrchestrator();
-    @Getter
-    private final Set<Game> games = new HashSet<>();
-    @Getter
-    private final Scoreboard scoreboard;
 
-    private GameOrchestrator() {
-        this.scoreboard = Bukkit.getScoreboardManager().getNewScoreboard();
-    }
+  @Getter
+  private final static GameOrchestrator instance = new GameOrchestrator();
+  @Getter
+  private final Set<Game> games = new HashSet<>();
+  @Getter
+  private final Scoreboard scoreboard;
 
-    public Game createGame(RuleSet ruleSet, Arena arena) {
-        Game game = ruleSet.getGameFactory().createGame(arena);
-        games.add(game);
-        return game;
-    }
+  private GameOrchestrator() {
+    this.scoreboard = Bukkit.getScoreboardManager().getNewScoreboard();
+  }
 
-    public Optional<Game> getGameByPlayer(Player player) {
-        return games.stream().filter(game -> game.getPlayers().contains(player)).findFirst();
-    }
+  public Game createGame(RuleSet ruleSet, Arena arena) {
+    Game game = ruleSet.getGameFactory().createGame(arena);
+    games.add(game);
+    return game;
+  }
 
-    public void removeGame(Game game) {
-        games.remove(game);
-    }
+  public Optional<Game> getGameByPlayer(Player player) {
+    return games.stream().filter(game -> game.getPlayers().contains(player)).findFirst();
+  }
+
+  public void removeGame(Game game) {
+    games.remove(game);
+  }
 }

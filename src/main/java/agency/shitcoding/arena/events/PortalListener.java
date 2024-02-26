@@ -7,13 +7,15 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerMoveEvent;
 
 public class PortalListener implements Listener {
-    @EventHandler
-    public void onPortalEnter(PlayerMoveEvent e) {
-        Player player = e.getPlayer();
-        GameOrchestrator.getInstance().getGameByPlayer(player)
-                .ifPresent(game -> game.getArena().getPortals().stream()
-                        .filter(portal -> portal.getBoundingBox().contains(player.getLocation().toCenterLocation().toVector()))
-                        .findFirst()
-                        .ifPresent(portal -> portal.teleport(player)));
-    }
+
+  @EventHandler
+  public void onPortalEnter(PlayerMoveEvent e) {
+    Player player = e.getPlayer();
+    GameOrchestrator.getInstance().getGameByPlayer(player)
+        .ifPresent(game -> game.getArena().getPortals().stream()
+            .filter(portal -> portal.getBoundingBox()
+                .contains(player.getLocation().toCenterLocation().toVector()))
+            .findFirst()
+            .ifPresent(portal -> portal.teleport(player)));
+  }
 }

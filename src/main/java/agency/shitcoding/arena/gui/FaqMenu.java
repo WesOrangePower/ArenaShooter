@@ -19,48 +19,50 @@ import java.util.Collection;
 import java.util.List;
 
 public class FaqMenu {
-    private final Player player;
-    private final Collection<Faq> faqs;
 
-    public FaqMenu(Player player) {
-        this.player = player;
-        faqs = StorageProvider.getFaqStorage().getAll();
+  private final Player player;
+  private final Collection<Faq> faqs;
+
+  public FaqMenu(Player player) {
+    this.player = player;
+    faqs = StorageProvider.getFaqStorage().getAll();
+  }
+
+  public void render() {
+    PaginatedViewBuilder builder = ViewBuilder.builder()
+        .withHolder(player)
+        .withTitle("Помощь")
+        .withRows(3)
+        .addItemSlot(backButton())
+        .build()
+        .toPaginatedView();
+
+    PaginatedView view = builder
+        .withItems(getBookItems())
+        .build();
+
+    new ViewRenderer(view).render();
+  }
+
+  private List<Item> getBookItems() {
+    ArrayList<Item> items = new ArrayList<>();
+    for (Faq faq : faqs) {
+      ItemSlot build = ItemBuilder.builder()
+          .withMaterial(Material.WRITTEN_BOOK)
+          .withName(Component.text(faq.getTitle(), NamedTextColor.GOLD))
+          .build();
+      Item item = new Item(build.getItemStack(),
+          ((clickType, clickContext) -> player.openBook(faq.getBook())));
+      items.add(item);
     }
+    return items;
+  }
 
-    public void render() {
-        PaginatedViewBuilder builder = ViewBuilder.builder()
-                .withHolder(player)
-                .withTitle("Помощь")
-                .withRows(3)
-                .addItemSlot(backButton())
-                .build()
-                .toPaginatedView();
-
-        PaginatedView view = builder
-                .withItems(getBookItems())
-                .build();
-
-        new ViewRenderer(view).render();
-    }
-
-    private List<Item> getBookItems() {
-        ArrayList<Item> items = new ArrayList<>();
-        for (Faq faq : faqs) {
-            ItemSlot build = ItemBuilder.builder()
-                    .withMaterial(Material.WRITTEN_BOOK)
-                    .withName(Component.text(faq.getTitle(), NamedTextColor.GOLD))
-                    .build();
-            Item item = new Item(build.getItemStack(), ((clickType, clickContext) -> player.openBook(faq.getBook())));
-            items.add(item);
-        }
-        return items;
-    }
-
-    private ItemSlot backButton() {
-        return ItemBuilder.builder()
-                .withName(Component.text("Назад", NamedTextColor.GRAY))
-                .withPersistItalics()
-                .withSlot(2, 0)
-                .build();
-    }
+  private ItemSlot backButton() {
+    return ItemBuilder.builder()
+        .withName(Component.text("Назад", NamedTextColor.GRAY))
+        .withPersistItalics()
+        .withSlot(2, 0)
+        .build();
+  }
 }

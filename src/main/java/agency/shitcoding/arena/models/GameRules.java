@@ -4,17 +4,18 @@ import java.util.List;
 import java.util.Map;
 
 public interface GameRules {
-    Map<Ammo, Integer> spawnAmmo();
 
-    List<Powerup> spawnPowerups();
+  Map<Ammo, Integer> spawnAmmo();
 
-    int spawnArmor();
+  List<Powerup> spawnPowerups();
 
-    long gameTimerTicks();
+  int spawnArmor();
 
-    boolean doRespawn();
+  long gameTimerTicks();
 
-    boolean hasTeams();
+  boolean doRespawn();
 
-    boolean allowJoinAfterStart();
+  boolean hasTeams();
+
+  boolean allowJoinAfterStart();
 }

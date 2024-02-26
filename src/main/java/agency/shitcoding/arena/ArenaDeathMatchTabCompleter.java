@@ -15,82 +15,82 @@ import java.util.List;
 
 @RequiredArgsConstructor
 public class ArenaDeathMatchTabCompleter {
-    private final CommandSender sender;
-    private final String[] args;
+
+  private final CommandSender sender;
+  private final String[] args;
 
 
-    public @Nullable List<String> onTabComplete() {
-        boolean isAdmin = sender.hasPermission(ArenaDeathMatchCommand.ADMIN_PERM);
-        if (isAdmin) {
-            return resolveAdmin();
-        }
-        return resolveNonAdmin();
+  public @Nullable List<String> onTabComplete() {
+    boolean isAdmin = sender.hasPermission(ArenaDeathMatchCommand.ADMIN_PERM);
+    if (isAdmin) {
+      return resolveAdmin();
+    }
+    return resolveNonAdmin();
+  }
+
+  private List<String> resolveNonAdmin() {
+    if (args.length == 1) {
+      return List.of("join", "host", "leave");
     }
 
-    private List<String> resolveNonAdmin() {
-        if (args.length == 1) {
-            return List.of("join", "host", "leave");
-        }
+    return args[0].toLowerCase().equals("host")
+        ? resolveHost()
+        : null;
 
-        return switch (args[0].toLowerCase()) {
-            case "host" -> resolveHost();
-            default -> null;
-        };
+  }
 
+  private List<String> resolveAdmin() {
+    if (args.length == 1) {
+      return List.of("set", "create", "host", "join", "leave");
     }
 
-    private List<String> resolveAdmin() {
-        if (args.length == 1) {
-            return List.of("set", "create", "host", "join", "leave");
-        }
-
-        return switch (args[0].toLowerCase()) {
-            case "set" -> resolveSet();
+    return switch (args[0].toLowerCase()) {
+      case "set" -> resolveSet();
 //            case "create" -> List.of("name");
-            case "host" -> resolveHost();
-            default -> null;
-        };
-    }
+      case "host" -> resolveHost();
+      default -> null;
+    };
+  }
 
-    private List<String> resolveHost() {
-        if (args.length == 2) {
-            return Arrays.stream(RuleSet.values())
-                    .map(Enum::name)
-                    .map(String::toLowerCase)
-                    .toList();
-        }
-        if (args.length == 3) {
-            return StorageProvider.getArenaStorage().getArenas().stream()
-                    .map(Arena::getName)
-                    .toList();
-        }
-        return null;
+  private List<String> resolveHost() {
+    if (args.length == 2) {
+      return Arrays.stream(RuleSet.values())
+          .map(Enum::name)
+          .map(String::toLowerCase)
+          .toList();
     }
+    if (args.length == 3) {
+      return StorageProvider.getArenaStorage().getArenas().stream()
+          .map(Arena::getName)
+          .toList();
+    }
+    return null;
+  }
 
-    private List<String> resolveSet() {
-        if (args.length == 2) {
-            return StorageProvider.getArenaStorage().getArenas().stream()
-                    .map(Arena::getName)
-                    .toList();
-        }
-        if (args.length == 3) {
-            return Arrays.stream(ArenaSetAction.values())
-                    .map(Enum::name)
-                    .map(String::toLowerCase)
-                    .toList();
-        }
-        if (args.length == 4) {
-            ArenaSetAction action;
-            try {
-                action = ArenaSetAction.valueOf(args[2].toUpperCase());
-            } catch (IllegalArgumentException e) {
-                return null;
-            }
-            return Arrays.stream(ArenaSetField.values())
-                    .filter(f -> f.supports.test(action))
-                    .map(Enum::name)
-                    .toList();
-        }
-        return null;
+  private List<String> resolveSet() {
+    if (args.length == 2) {
+      return StorageProvider.getArenaStorage().getArenas().stream()
+          .map(Arena::getName)
+          .toList();
     }
+    if (args.length == 3) {
+      return Arrays.stream(ArenaSetAction.values())
+          .map(Enum::name)
+          .map(String::toLowerCase)
+          .toList();
+    }
+    if (args.length == 4) {
+      ArenaSetAction action;
+      try {
+        action = ArenaSetAction.valueOf(args[2].toUpperCase());
+      } catch (IllegalArgumentException e) {
+        return null;
+      }
+      return Arrays.stream(ArenaSetField.values())
+          .filter(f -> f.supports.test(action))
+          .map(Enum::name)
+          .toList();
+    }
+    return null;
+  }
 }

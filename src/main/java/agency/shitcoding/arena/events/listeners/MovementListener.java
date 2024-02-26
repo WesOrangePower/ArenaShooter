@@ -27,105 +27,106 @@ import static org.bukkit.potion.PotionEffectType.JUMP;
 @Getter
 public class MovementListener implements Listener {
 
-    @EventHandler
-    public void disableFlyOnPlayerQuit(PlayerQuitEvent event) {
-        if (event.getPlayer().getGameMode() != GameMode.ADVENTURE) {
-            return;
-        }
-        Player player = event.getPlayer();
-        player.setAllowFlight(false);
+  @EventHandler
+  public void disableFlyOnPlayerQuit(PlayerQuitEvent event) {
+    if (event.getPlayer().getGameMode() != GameMode.ADVENTURE) {
+      return;
     }
+    Player player = event.getPlayer();
+    player.setAllowFlight(false);
+  }
 
 
-    @EventHandler
-    public void onPlayerSpawn(PlayerRespawnEvent event) {
-        if (event.getPlayer().getGameMode() != GameMode.ADVENTURE) {
-            return;
-        }
-        Player player = event.getPlayer();
-        player.setAllowFlight(true);
+  @EventHandler
+  public void onPlayerSpawn(PlayerRespawnEvent event) {
+    if (event.getPlayer().getGameMode() != GameMode.ADVENTURE) {
+      return;
     }
+    Player player = event.getPlayer();
+    player.setAllowFlight(true);
+  }
 
-    @EventHandler
-    public void playerMoveOutsideArena(PlayerMoveEvent event) {
-        Player player = event.getPlayer();
-        Location location = player.getLocation();
-        GameOrchestrator.getInstance().getGameByPlayer(player).map(Game::getArena)
-                .ifPresent(arena -> {
-                    if (!arena.isInside(location)) {
-                        if (player.getGameMode() == GameMode.ADVENTURE && Math.random() > .9) {
-                            new GameDamageEvent(null, player, 100, Weapon.GAUNTLET)
-                                    .fire();
-                            return;
-                        }
-                        if (player.getGameMode() == GameMode.SPECTATOR) {
-                            // midway between lower and upperbounds
-                            Location lower = arena.getLowerBound();
-                            Location upper = arena.getUpperBound();
-                            double x = (lower.getX() + upper.getX()) / 2;
-                            double y = (lower.getY() + upper.getY()) / 2;
-                            double z = (lower.getZ() + upper.getZ()) / 2;
-                            player.teleport(new Location(lower.getWorld(), x, y, z));
-                        }
-                    }
-                });
+  @EventHandler
+  public void playerMoveOutsideArena(PlayerMoveEvent event) {
+    Player player = event.getPlayer();
+    Location location = player.getLocation();
+    GameOrchestrator.getInstance().getGameByPlayer(player).map(Game::getArena)
+        .ifPresent(arena -> {
+          if (!arena.isInside(location)) {
+            if (player.getGameMode() == GameMode.ADVENTURE && Math.random() > .9) {
+              new GameDamageEvent(null, player, 100, Weapon.GAUNTLET)
+                  .fire();
+              return;
+            }
+            if (player.getGameMode() == GameMode.SPECTATOR) {
+              // midway between lower and upperbounds
+              Location lower = arena.getLowerBound();
+              Location upper = arena.getUpperBound();
+              double x = (lower.getX() + upper.getX()) / 2;
+              double y = (lower.getY() + upper.getY()) / 2;
+              double z = (lower.getZ() + upper.getZ()) / 2;
+              player.teleport(new Location(lower.getWorld(), x, y, z));
+            }
+          }
+        });
+  }
+
+  @EventHandler
+  public void enableFlyOnPlayerJump(PlayerJumpEvent event) {
+    if (event.getPlayer().getGameMode() != GameMode.ADVENTURE) {
+      return;
     }
+    event.getPlayer().setAllowFlight(true);
+  }
 
-    @EventHandler
-    public void enableFlyOnPlayerJump(PlayerJumpEvent event) {
-        if (event.getPlayer().getGameMode() != GameMode.ADVENTURE) {
-            return;
-        }
-        event.getPlayer().setAllowFlight(true);
+  @EventHandler
+  public void playerOnGroundMove(PlayerMoveEvent event) {
+    if (event.getPlayer().getGameMode() != GameMode.ADVENTURE) {
+      return;
     }
-
-    @EventHandler
-    public void playerOnGroundMove(PlayerMoveEvent event) {
-        if (event.getPlayer().getGameMode() != GameMode.ADVENTURE) {
-            return;
-        }
-        Player player = event.getPlayer();
-        if (player.getLocation().subtract(0, 1, 0).getBlock().getType().isSolid()) {
-            player.setWalkSpeed(.3f);
-            event.getPlayer().setAllowFlight(true);
-            var effect = new PotionEffect(JUMP, INFINITE_DURATION, 2, false, false, false);
-            player.addPotionEffect(effect);
-        }
-        GameOrchestrator.getInstance().getGameByPlayer(player)
-                .ifPresent(game -> game.getArena().getRamps().stream()
-                        .filter(ramp -> ramp.isTouching(player))
-                        .forEach(ramp -> ramp.apply(player)));
+    Player player = event.getPlayer();
+    if (player.getLocation().subtract(0, 1, 0).getBlock().getType().isSolid()) {
+      player.setWalkSpeed(.3f);
+      event.getPlayer().setAllowFlight(true);
+      var effect = new PotionEffect(JUMP, INFINITE_DURATION, 2, false, false, false);
+      player.addPotionEffect(effect);
     }
+    GameOrchestrator.getInstance().getGameByPlayer(player)
+        .ifPresent(game -> game.getArena().getRamps().stream()
+            .filter(ramp -> ramp.isTouching(player))
+            .forEach(ramp -> ramp.apply(player)));
+  }
 
-    @EventHandler
-    public void doubleJumpOnPlayerFlight(PlayerToggleFlightEvent event) {
-        if (event.getPlayer().getGameMode() != GameMode.ADVENTURE) {
-            return;
-        }
-        Player player = event.getPlayer();
-        if (!event.isFlying()) {
-            return;
-        }
-        event.setCancelled(true);
-        player.setFlying(false);
-        player.setAllowFlight(false);
-
-        Location loc = player.getLocation();
-        Vector direction = loc.getDirection();
-        direction.multiply(1.1);
-        direction.setY(0.65);
-        player.setVelocity(direction);
-
-        loc.getWorld().spawnParticle(Particle.FLAME, loc, 10, 0.5, 0.5, 0.5, 0.1);
+  @EventHandler
+  public void doubleJumpOnPlayerFlight(PlayerToggleFlightEvent event) {
+    if (event.getPlayer().getGameMode() != GameMode.ADVENTURE) {
+      return;
     }
-
-    @EventHandler
-    public void doubleJumpDamageHandler(EntityDamageEvent e) {
-        if (e.getEntity().getType() != EntityType.PLAYER) {
-            return;
-        }
-        if (e.getCause() == EntityDamageEvent.DamageCause.FALL) {
-            e.setCancelled(true);
-        }
+    Player player = event.getPlayer();
+    if (!event.isFlying()) {
+      return;
     }
+    event.setCancelled(true);
+    player.setFlying(false);
+    player.setAllowFlight(false);
+
+    Location loc = player.getLocation();
+    Vector direction = loc.getDirection();
+    direction.multiply(1.1);
+    direction.setY(0.65);
+    player.setVelocity(direction);
+
+    loc.getWorld().spawnParticle(Particle.FLAME, loc, 10, 0.5, 0.5, 0.5, 0.1);
+  }
+
+  @EventHandler
+  public void fallCanceller(EntityDamageEvent e) {
+    if (e.getEntity().getType() != EntityType.PLAYER) {
+      return;
+    }
+    if (e.getCause() == EntityDamageEvent.DamageCause.FALL) {
+      e.setCancelled(true);
+    }
+  }
+
 }

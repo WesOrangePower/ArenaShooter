@@ -8,6 +8,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class PlayerStreak {
-    private int consequentRailHit = 0;
-    private int fragStreak = 0;
+
+  private int consequentRailHit = 0;
+  private int fragStreak = 0;
 }

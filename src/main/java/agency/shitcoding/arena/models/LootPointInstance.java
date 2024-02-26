@@ -7,7 +7,8 @@ import org.bukkit.scheduler.BukkitTask;
 @Data
 @RequiredArgsConstructor
 public class LootPointInstance {
-    private final LootPoint lootPoint;
-    private boolean looted = false;
-    private BukkitTask spawnTask;
+
+  private final LootPoint lootPoint;
+  private boolean looted = false;
+  private BukkitTask spawnTask;
 }

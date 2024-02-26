@@ -11,24 +11,25 @@ import org.jetbrains.annotations.NotNull;
 @EqualsAndHashCode(callSuper = true)
 @Data
 public class GameShootEvent extends GameEvent {
-    private static final HandlerList handlers = new HandlerList();
-    private final PlayerInteractEvent parentEvent;
-    private final Game game;
-    private final Weapon weapon;
+
+  private static final HandlerList handlers = new HandlerList();
+  private final PlayerInteractEvent parentEvent;
+  private final Game game;
+  private final Weapon weapon;
 
 
-    public GameShootEvent(PlayerInteractEvent playerInteractEvent, Game game, Weapon weapon) {
-        this.parentEvent = playerInteractEvent;
-        this.game = game;
-        this.weapon = weapon;
-    }
+  public GameShootEvent(PlayerInteractEvent playerInteractEvent, Game game, Weapon weapon) {
+    this.parentEvent = playerInteractEvent;
+    this.game = game;
+    this.weapon = weapon;
+  }
 
-    public static HandlerList getHandlerList() {
-        return handlers;
-    }
+  public static HandlerList getHandlerList() {
+    return handlers;
+  }
 
-    @Override
-    public @NotNull HandlerList getHandlers() {
-        return handlers;
-    }
+  @Override
+  public @NotNull HandlerList getHandlers() {
+    return handlers;
+  }
 }

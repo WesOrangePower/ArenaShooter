@@ -11,12 +11,13 @@ import org.jetbrains.annotations.NotNull;
 @Data
 @AllArgsConstructor
 public class PlayerScore implements Comparable<PlayerScore> {
-    private int score;
-    private Player player;
-    private PlayerStreak streak;
 
-    @Override
-    public int compareTo(@NotNull PlayerScore o) {
-        return Integer.compare(o.score, this.score); // Reversed
-    }
+  private int score;
+  private Player player;
+  private PlayerStreak streak;
+
+  @Override
+  public int compareTo(@NotNull PlayerScore o) {
+    return Integer.compare(o.score, this.score); // Reversed
+  }
 }

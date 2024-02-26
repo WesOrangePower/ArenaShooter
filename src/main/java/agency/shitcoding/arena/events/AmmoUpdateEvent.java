@@ -11,17 +11,18 @@ import org.jetbrains.annotations.Nullable;
 @AllArgsConstructor
 @Getter
 public class AmmoUpdateEvent extends GameEvent {
-    private static final HandlerList handlers = new HandlerList();
-    private Player player;
-    private int ammoDelta;
-    private @Nullable Ammo ammo;
 
-    public static HandlerList getHandlerList() {
-        return handlers;
-    }
+  private static final HandlerList handlers = new HandlerList();
+  private Player player;
+  private int ammoDelta;
+  private @Nullable Ammo ammo;
 
-    @Override
-    public @NotNull HandlerList getHandlers() {
-        return handlers;
-    }
+  public static HandlerList getHandlerList() {
+    return handlers;
+  }
+
+  @Override
+  public @NotNull HandlerList getHandlers() {
+    return handlers;
+  }
 }
