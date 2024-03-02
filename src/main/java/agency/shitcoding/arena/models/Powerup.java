@@ -34,9 +34,9 @@ public enum Powerup {
         if (attribute == null) {
           return false;
         }
-        attribute.setBaseValue(40d);
+        attribute.setBaseValue(MEGA_HEALTH_VALUE);
         player.setLevel(MAX_ARMOR);
-        player.setHealth(40d);
+        player.setHealth(MEGA_HEALTH_VALUE);
         return true;
       },
       MEGA_HEALTH_SPAWN_INTERVAL_TICKS,
