@@ -58,7 +58,7 @@ public class GameplayConstants {
   public static final double MACHINE_GUN_DAMAGE = 1;
   public static final double SHOTGUN_PELLET_DAMAGE = 2;
   public static final double ROCKET_DAMAGE = 15;
-  public static final double LIGHTNING_DAMAGE = .5;
+  public static final double LIGHTNING_DAMAGE = .35;
   public static final double RAILGUN_DAMAGE = 18;
   public static final int MAX_ARMOR = 100;
   public static final int RESPAWN_INVULNERABILITY_DURATION = 20 * 2; // Milliseconds

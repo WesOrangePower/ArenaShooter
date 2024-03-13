@@ -28,7 +28,7 @@ public enum Powerup {
   MEGA_HEALTH(
       "<gradient:#a64dff:#8c1aff>Mega health</gradient>",
       PowerupType.BUFF,
-      potionItem(Color.PURPLE),
+      new ItemStack(Material.PUFFERFISH),
       player -> {
         var attribute = player.getAttribute(Attribute.GENERIC_MAX_HEALTH);
         if (attribute == null) {

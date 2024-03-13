@@ -65,6 +65,10 @@
             <id>sonatype</id>
             <url>https://oss.sonatype.org/content/groups/public/</url>
         </repository>
+        <repository>
+          <id>eldonexus</id>
+          <url>https://eldonexus.de/repository/maven-releases/</url>
+        </repository>
     </repositories>
 
     <dependencies>
@@ -86,10 +90,24 @@
             <version>1.0</version>
             <scope>provided</scope>
         </dependency>
+      <dependency>
+        <groupId>net.jellycraft</groupId>
+        <artifactId>JellyCommandApi</artifactId>
+        <version>1.0</version>
+        <scope>provided</scope>
+      </dependency>
         <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
             <version>1.18.28</version>
         </dependency>
+
+      <dependency>
+        <groupId>com.github.yannicklamprecht</groupId>
+        <artifactId>worldborderapi</artifactId>
+        <version>1.204.0</version>
+        <classifier>dev</classifier>
+        <scope>provided</scope>
+      </dependency>
     </dependencies>
 </project>

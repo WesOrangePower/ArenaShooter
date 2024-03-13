@@ -44,8 +44,9 @@ public class LightningGunListener implements Listener {
     if (itemInMainHand.getType().isAir()
         || itemInMainHand.getType() != LIGHTNING
         || player.getCooldown(LIGHTNING) > 0) {
-      return;
+        return;
     }
+
     Weapon.applyCooldown(player, Weapon.LIGHTNING_GUN.cooldown);
 
 

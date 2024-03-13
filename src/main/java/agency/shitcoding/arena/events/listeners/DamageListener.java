@@ -1,5 +1,7 @@
 package agency.shitcoding.arena.events.listeners;
 
+import static org.bukkit.Sound.ENTITY_PLAYER_HURT;
+
 import agency.shitcoding.arena.ArenaShooter;
 import agency.shitcoding.arena.GameplayConstants;
 import agency.shitcoding.arena.SoundConstants;
@@ -11,13 +13,16 @@ import agency.shitcoding.arena.gamestate.team.TeamGame;
 import agency.shitcoding.arena.gamestate.team.TeamManager;
 import agency.shitcoding.arena.models.Weapon;
 import java.util.Optional;
+import java.util.Random;
 import java.util.stream.Stream;
+import net.kyori.adventure.key.Key;
+import net.kyori.adventure.sound.Sound;
+import net.kyori.adventure.sound.Sound.Source;
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Particle;
-import org.bukkit.Sound;
 import org.bukkit.World;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.entity.EntityType;
@@ -30,6 +35,8 @@ import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.SkullMeta;
+import org.bukkit.util.Vector;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -102,10 +109,23 @@ public class DamageListener implements Listener {
   }
 
   private void applyDamage(LivingEntity victim, Player dealer, double damage) {
+    if (victim instanceof Player victimPlayer) {
+      if (victimPlayer.getGameMode() != GameMode.ADVENTURE) {
+        return;
+      }
+      Optional.ofNullable(ArenaShooter.getInstance().getWorldBorderApi())
+          .ifPresent(api -> api.sendRedScreen(victimPlayer, (long) damage * 4));
+    }
     var entityDamageEvent = new EntityDamageEvent(victim, DamageCause.ENTITY_ATTACK, damage);
     victim.setLastDamageCause(entityDamageEvent);
     victim.setKiller(dealer);
+    victim.playSound(Sound.sound().type(ENTITY_PLAYER_HURT)
+        .source(Source.VOICE)
+        .volume(1f)
+        .build());
     victim.setHealth(Math.max(victim.getHealth() - damage, 0));
+
+
   }
 
   @SuppressWarnings("deprecation")
@@ -172,17 +192,31 @@ public class DamageListener implements Listener {
   private void gibbingSequence(@NotNull Player victim, @Nullable Weapon weapon) {
     Location eyeLoc = victim.getEyeLocation();
     World world = eyeLoc.getWorld();
-    ItemStack head = new ItemStack(Material.PLAYER_HEAD); // HDB perhaps
+
+    Sound gibbingSound = Sound.sound().source(Source.VOICE)
+        .type(Key.key("entity.player.big_fall"))
+        .volume(.5f).build();
+    eyeLoc.getWorld().playSound(gibbingSound, eyeLoc.getX(), eyeLoc.getY(), eyeLoc.getZ());
+
+    ItemStack head = new ItemStack(Material.PLAYER_HEAD);
+    head.editMeta(SkullMeta.class, meta -> meta.setOwningPlayer(victim));
     ItemStack bone = new ItemStack(Material.BONE);
     ItemStack meat = new ItemStack(Material.ROTTEN_FLESH);
-    Stream.of(head, bone, meat)
+    Random rng = new Random();
+    Stream.of(head, bone, meat, meat.clone(), meat.clone(), meat.clone())
         .map(itemStack -> world.dropItem(eyeLoc, itemStack))
-        .peek(item -> item.setVelocity(victim.getVelocity().multiply(0.5)))
-        .peek(item -> item.setCanPlayerPickup(false))
-        .forEach(item -> Bukkit.getScheduler()
-            .runTaskLater(ArenaShooter.getInstance(), item::remove, 20 * 3));
+        .forEach(item -> {
+          item.setCanPlayerPickup(false);
+          item.setVelocity(item.getVelocity().add(
+              new Vector(rng.nextDouble() - .5,
+                  rng.nextDouble() - .5,
+                  rng.nextDouble() - .5)
+          ));
+          Bukkit.getScheduler()
+              .runTaskLater(ArenaShooter.getInstance(), item::remove, 20 * 3);
+        });
 
-    world.playSound(eyeLoc, Sound.ENTITY_PLAYER_BIG_FALL, 1f, 1);
+    world.playSound(eyeLoc, org.bukkit.Sound.ENTITY_PLAYER_BIG_FALL, 1f, 1);
     world.spawnParticle(Particle.BLOCK_CRACK, eyeLoc, 15, .5, .5, .5, .5,
         Material.REDSTONE_BLOCK.createBlockData());
 
@@ -193,15 +227,15 @@ public class DamageListener implements Listener {
     switch (weapon) {
       case ROCKET_LAUNCHER -> {
         world.spawnParticle(Particle.EXPLOSION_HUGE, eyeLoc, 1);
-        world.playSound(eyeLoc, Sound.ENTITY_GENERIC_EXPLODE, 1f, 2);
+        world.playSound(eyeLoc, org.bukkit.Sound.ENTITY_GENERIC_EXPLODE, 1f, 2);
       }
       case RAILGUN -> {
         world.spawnParticle(Particle.ELECTRIC_SPARK, eyeLoc, 10, 0, 0, 0, .8);
-        world.playSound(eyeLoc, Sound.ENTITY_LIGHTNING_BOLT_THUNDER, .4f, 2);
+        world.playSound(eyeLoc, org.bukkit.Sound.ENTITY_LIGHTNING_BOLT_THUNDER, .4f, 2);
       }
       case GAUNTLET -> {
         world.spawnParticle(Particle.VILLAGER_ANGRY, eyeLoc, 10, .5, .5, .5, .8);
-        world.playSound(eyeLoc, Sound.ENTITY_PLAYER_ATTACK_SWEEP, .4f, 2);
+        world.playSound(eyeLoc, org.bukkit.Sound.ENTITY_PLAYER_ATTACK_SWEEP, .4f, 2);
       }
     }
   }
