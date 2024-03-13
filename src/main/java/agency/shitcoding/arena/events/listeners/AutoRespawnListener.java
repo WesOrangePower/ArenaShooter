@@ -6,6 +6,7 @@ import agency.shitcoding.arena.gamestate.Game;
 import agency.shitcoding.arena.gamestate.GameOrchestrator;
 import agency.shitcoding.arena.gamestate.Lobby;
 import agency.shitcoding.arena.gamestate.PlayerScore;
+import agency.shitcoding.arena.localization.LangPlayer;
 import agency.shitcoding.arena.models.Ammo;
 import agency.shitcoding.arena.models.GameStage;
 import agency.shitcoding.arena.models.Keys;
@@ -83,26 +84,27 @@ public class AutoRespawnListener implements Listener {
               resetStreak(p, game);
               resetStreak(killer, game);
               if (killedThemselves) {
-                game.getPlayers().forEach(pl -> pl.sendRichMessage(
-                    "<red>" + p.getName() + "<gold> не справился с управлением."));
+                game.getPlayers().stream().map(LangPlayer::new)
+                    .forEach(pl -> pl.sendRichLocalized("game.death.chat.self", p.getName()));
                 game.updateScore(p, -1);
 //                                game.getScoreboardObjective().getScore(p).setScore(game.getOptScore(p).map(PlayerScore::getScore).orElse(0));
               } else {
-                game.getPlayers().forEach(pl -> pl.sendRichMessage(
-                    "<red>" + killer.getName() + "<gold> фрагнул <red>" + p.getName()));
+                game.getPlayers().stream().map(LangPlayer::new)
+                    .forEach(pl -> pl.sendRichLocalized("game.death.chat.other",
+                        killer.getName(), p.getName()));
                 game.updateScore(killer, 1);
-//                                game.getScoreboardObjective().getScore(killer).setScore(game.getOptScore(killer).map(PlayerScore::getScore).orElse(0));
               }
             }
         );
 
     p.clearActivePotionEffects();
     p.setGameMode(GameMode.SPECTATOR);
+    var l = LangPlayer.of(p);
     p.showTitle(Title.title(
-        Component.text("Развал", NamedTextColor.RED),
+        Component.text(l.getLocalized("game.death.title.title"), NamedTextColor.RED),
         Component.text(killer == null
-            ? "по собственной неуклюжести"
-            : "от рук " + killer.getName(), NamedTextColor.YELLOW)
+            ? l.getLocalized("game.death.title.self")
+            : l.getLocalized("game.death.title.other", killer.getName()), NamedTextColor.YELLOW)
     ));
 
     Bukkit.getScheduler().runTaskLater(ArenaShooter.getInstance(), () -> {

@@ -68,7 +68,7 @@ public class InteractListener implements Listener {
       return;
     }
     var itemInMainHand = player.getInventory().getItemInMainHand();
-    if (!itemInMainHand.equals(instance.getLobbyItem())) {
+    if (!itemInMainHand.equals(instance.getLobbyItem(player))) {
       return;
     }
 

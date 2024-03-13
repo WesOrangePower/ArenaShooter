@@ -13,7 +13,7 @@ public final class RedTeamMeta extends ColoredArmorTeamMeta {
 
   @Override
   public String getDisplayName() {
-    return "Красные";
+    return "team.red";
   }
 
   @Override

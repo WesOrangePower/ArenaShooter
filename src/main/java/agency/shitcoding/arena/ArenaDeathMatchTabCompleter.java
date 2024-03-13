@@ -33,7 +33,7 @@ public class ArenaDeathMatchTabCompleter {
       return List.of("join", "host", "leave");
     }
 
-    return args[0].toLowerCase().equals("host")
+    return args[0].equalsIgnoreCase("host")
         ? resolveHost()
         : null;
 
@@ -41,7 +41,7 @@ public class ArenaDeathMatchTabCompleter {
 
   private List<String> resolveAdmin() {
     if (args.length == 1) {
-      return List.of("set", "create", "host", "join", "leave");
+      return List.of("set", "create", "host", "join", "leave", "test");
     }
 
     return switch (args[0].toLowerCase()) {

@@ -26,7 +26,7 @@ import static agency.shitcoding.arena.GameplayConstants.*;
 public enum Powerup {
 
   MEGA_HEALTH(
-      "<gradient:#a64dff:#8c1aff>Mega health</gradient>",
+      "powerup.megaHealth",
       PowerupType.BUFF,
       new ItemStack(Material.PUFFERFISH),
       player -> {
@@ -46,7 +46,7 @@ public enum Powerup {
    * Buff Heals the player for 2 hp (1 heart)
    */
   STIM_PACK(
-      "<gradient:#11900a:#01b817>хилку</gradient>",
+      "powerup.stimPack",
       PowerupType.BUFF,
       potionItem(Color.BLUE),
       player -> genericHealth(player, 2),
@@ -57,7 +57,7 @@ public enum Powerup {
    * Buff Heals the player for 5 hp (2.5 hearts)
    */
   MEDICAL_KIT(
-      "<gradient:#d64343:#ec3f22>аптечку</gradient>",
+      "powerup.medicalKit",
       PowerupType.BUFF,
       potionItem(Color.RED),
       player -> genericHealth(player, 5),
@@ -65,7 +65,7 @@ public enum Powerup {
       MEDIKIT_SPAWN_OFFSET_TICKS
   ),
   ROCKET_BOX(
-      "<red>коробку ракет</red>",
+      "powerup.rocketBox",
       PowerupType.AMMO,
       new ItemStack(Material.RED_SHULKER_BOX),
       player -> giveAmmo(player, Ammo.ROCKETS, 5),
@@ -73,7 +73,7 @@ public enum Powerup {
       AMMO_DROP_SPAWN_OFFSET_TICKS
   ),
   LIGHTNING_BOX(
-      "<white>коробку молнии</white>",
+      "powerup.lightningBox",
       PowerupType.AMMO,
       new ItemStack(Material.WHITE_SHULKER_BOX),
       player -> giveAmmo(player, Ammo.LIGHTNING, 200),
@@ -81,7 +81,7 @@ public enum Powerup {
       AMMO_DROP_SPAWN_OFFSET_TICKS
   ),
   BULLET_BOX(
-      "<yellow>коробку пуль</yellow>",
+      "powerup.bulletBox",
       PowerupType.AMMO,
       new ItemStack(Material.YELLOW_SHULKER_BOX),
       player -> giveAmmo(player, Ammo.BULLETS, 50),
@@ -89,7 +89,7 @@ public enum Powerup {
       AMMO_DROP_SPAWN_OFFSET_TICKS
   ),
   SHELL_BOX(
-      "<gold>коробку дробовых</gold>",
+      "powerup.shellBox",
       PowerupType.AMMO,
       new ItemStack(Material.ORANGE_SHULKER_BOX),
       player -> giveAmmo(player, Ammo.SHELLS, 6),
@@ -97,7 +97,7 @@ public enum Powerup {
       AMMO_DROP_SPAWN_OFFSET_TICKS
   ),
   CELL_BOX(
-      "<aqua>батарею</aqua>",
+      "powerup.cellBox",
       PowerupType.AMMO,
       new ItemStack(Material.CYAN_SHULKER_BOX),
       player -> giveAmmo(player, Ammo.CELLS, 50),
@@ -105,7 +105,7 @@ public enum Powerup {
       AMMO_DROP_SPAWN_OFFSET_TICKS
   ),
   QUAD_DAMAGE(
-      "<i><aqua>quad damage</aqua></i>",
+      "powerup.quadDamage",
       PowerupType.MAJOR_BUFF,
       new ItemStack(Material.NETHER_STAR),
       player -> {
@@ -129,7 +129,7 @@ public enum Powerup {
       QUAD_DAMAGE_SPAWN_OFFSET_TICKS
   ),
   PROTECTION(
-      "<i><green>protection</green></i>",
+      "powerup.protection",
       PowerupType.MAJOR_BUFF,
       new ItemStack(Material.DIAMOND_CHESTPLATE),
       player -> {
@@ -153,7 +153,7 @@ public enum Powerup {
       GameplayConstants.PROTECTION_SPAWN_OFFSET_TICKS
   ),
   SHOTGUN(
-      "<gold>дробовик</gold>",
+      "powerup.shotgun",
       PowerupType.WEAPON,
       new ItemStack(Weapon.SHOTGUN.item),
       player -> giveWeaponOrAmmo(player, Weapon.SHOTGUN),
@@ -161,7 +161,7 @@ public enum Powerup {
       SHOTGUN_SPAWN_OFFSET_TICKS
   ),
   ROCKET_LAUNCHER(
-      "<red>ракетницу</red>",
+      "powerup.rocketLauncher",
       PowerupType.WEAPON,
       new ItemStack(Weapon.ROCKET_LAUNCHER.item),
       player -> giveWeaponOrAmmo(player, Weapon.ROCKET_LAUNCHER),
@@ -169,7 +169,7 @@ public enum Powerup {
       ROCKET_LAUNCHER_SPAWN_OFFSET_TICKS
   ),
   LIGHTNING_GUN(
-      "<white>громовержец</white>",
+      "powerup.lightningGun",
       PowerupType.WEAPON,
       new ItemStack(Weapon.LIGHTNING_GUN.item),
       player -> giveWeaponOrAmmo(player, Weapon.LIGHTNING_GUN),
@@ -177,7 +177,7 @@ public enum Powerup {
       LIGHTNING_GUN_SPAWN_OFFSET_TICKS
   ),
   RAILGUN(
-      "<aqua>рельсотрон</aqua>",
+      "powerup.railgun",
       PowerupType.WEAPON,
       new ItemStack(Weapon.RAILGUN.item),
       player -> giveWeaponOrAmmo(player, Weapon.RAILGUN),
@@ -185,7 +185,7 @@ public enum Powerup {
       RAILGUN_SPAWN_OFFSET_TICKS
   ),
   PLASMA_GUN(
-      "<color:#00cc00>плазмострел</color>",
+      "powerup.plasmaGun",
       PowerupType.WEAPON,
       new ItemStack(Weapon.PLASMA_GUN.item),
       player -> giveWeaponOrAmmo(player, Weapon.PLASMA_GUN),
@@ -193,7 +193,7 @@ public enum Powerup {
       PLASMA_GUN_SPAWN_OFFSET_TICKS
   ),
   MACHINE_GUN(
-      "<yellow>пулемёт</yellow>",
+      "powerup.machineGun",
       PowerupType.WEAPON,
       new ItemStack(Weapon.MACHINE_GUN.item),
       player -> giveWeaponOrAmmo(player, Weapon.MACHINE_GUN),
@@ -201,7 +201,7 @@ public enum Powerup {
       MACHINE_GUN_SPAWN_OFFSET_TICKS
   ),
   GAUNTLET(
-      "<blue>перчатку</blue>",
+      "powerup.gauntlet",
       PowerupType.WEAPON,
       new ItemStack(Weapon.GAUNTLET.item),
       player -> giveWeaponOrAmmo(player, Weapon.GAUNTLET),
@@ -209,7 +209,7 @@ public enum Powerup {
       MACHINE_GUN_SPAWN_OFFSET_TICKS
   ),
   ARMOR_SHARD(
-      "<dark_purple>осколок брони</dark_purple>",
+      "powerup.armorShard",
       PowerupType.ARMOR,
       new ItemStack(Material.SHIELD),
       player -> giveArmor(player, 5),
@@ -217,7 +217,7 @@ public enum Powerup {
       ARMOR_SHARD_SPAWN_OFFSET_TICKS
   ),
   LIGHT_ARMOR(
-      "<yellow>броню</yellow>",
+      "powerup.lightArmor",
       PowerupType.ARMOR,
       new ItemStack(Material.GOLDEN_CHESTPLATE),
       player -> giveArmor(player, 50),

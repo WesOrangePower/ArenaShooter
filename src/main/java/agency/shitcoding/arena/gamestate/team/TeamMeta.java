@@ -1,5 +1,6 @@
 package agency.shitcoding.arena.gamestate.team;
 
+import agency.shitcoding.arena.localization.LangContext;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.TextColor;
 import org.bukkit.ChatColor;
@@ -17,7 +18,7 @@ public interface TeamMeta {
   @SuppressWarnings("deprecation")
   ChatColor getChatColor();
 
-  default Component getDisplayComponent() {
-    return Component.text(getDisplayName()).color(getTextColor());
+  default Component getDisplayComponent(LangContext langContext) {
+    return Component.text(langContext.getLocalized(getDisplayName())).color(getTextColor());
   }
 }

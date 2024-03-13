@@ -4,6 +4,7 @@ import agency.shitcoding.arena.command.CommandInst;
 import agency.shitcoding.arena.gamestate.Game;
 import agency.shitcoding.arena.gamestate.GameOrchestrator;
 import agency.shitcoding.arena.gamestate.Lobby;
+import agency.shitcoding.arena.localization.LangPlayer;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
@@ -21,12 +22,13 @@ public class ArenaLeaveCmd extends CommandInst {
     if (sender instanceof Player player) {
       GameOrchestrator gameOrchestrator = GameOrchestrator.getInstance();
       Optional<Game> game = gameOrchestrator.getGameByPlayer(player);
+      LangPlayer lang = new LangPlayer(player);
       if (game.isEmpty()) {
-        sender.sendRichMessage("<dark_red>Вы не в игре");
+        sender.sendRichMessage(lang.getLocalized("command.leave.notInGame"));
         return;
       }
       game.get().removePlayer(player);
-      sender.sendRichMessage("<dark_green>Вы покинули игру");
+      sender.sendRichMessage(lang.getLocalized("command.leave.success"));
       Lobby.getInstance().sendPlayer(player);
       return;
     }

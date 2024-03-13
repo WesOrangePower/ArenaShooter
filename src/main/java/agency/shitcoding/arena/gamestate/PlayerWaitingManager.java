@@ -1,9 +1,9 @@
 package agency.shitcoding.arena.gamestate;
 
 import agency.shitcoding.arena.ArenaShooter;
+import agency.shitcoding.arena.localization.LangPlayer;
 import lombok.RequiredArgsConstructor;
 import org.bukkit.Bukkit;
-import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitTask;
 
 @RequiredArgsConstructor
@@ -45,13 +45,14 @@ public class PlayerWaitingManager {
       return;
     }
 
-    game.getPlayers().forEach(p -> p.sendRichMessage(
-            String.format("<yellow>[%s/%s] <green>Ожидание игроков...",
+    game.getPlayers().stream()
+        .map(LangPlayer::new)
+        .forEach(p -> p.sendRichLocalized(
+            "game.waiting.waitingForPlayers",
                 game.getPlayers().size(),
                 game.getRuleSet().getMinPlayers()
             )
-        )
-    );
+        );
   }
 
   int secondsElapsed;
@@ -59,14 +60,13 @@ public class PlayerWaitingManager {
   private void startGameCycle() {
     int untilStart = SECONDS_TO_START - secondsElapsed++;
     if (untilStart % 5 == 0 || untilStart <= 5) {
-      for (Player player : game.getPlayers()) {
-        player.sendRichMessage(
-            String.format("<yellow>[%s/%s] <dark_red>Стартуем через: %ds...",
-                game.getPlayers().size(),
-                game.getRuleSet().getMaxPlayers(),
-                untilStart
-            ));
-      }
+      game.getPlayers().stream().map(LangPlayer::new)
+          .forEach(p -> p.sendRichLocalized(
+              "game.waiting.startTimer",
+              game.getPlayers().size(),
+              game.getRuleSet().getMaxPlayers(),
+              untilStart
+          ));
     }
 
     if (secondsElapsed >= SECONDS_TO_START) {
