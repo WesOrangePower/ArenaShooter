@@ -21,7 +21,17 @@ public class LangPlayer {
         )
         .ifPresentOrElse(
             locale -> this.langContext = new LangContext(locale),
-            () -> langContext = new LangContext()
+            () -> {
+              if (player == null) {
+                langContext = new LangContext();
+                return;
+              }
+              var locale = player.locale().getLanguage();
+              if (!LocalizationService.getInstance().isSupported(locale)) {
+                locale = LocalizationService.getInstance().getDefaultLocale();
+              }
+              setLocale(locale);
+            }
         );
   }
 

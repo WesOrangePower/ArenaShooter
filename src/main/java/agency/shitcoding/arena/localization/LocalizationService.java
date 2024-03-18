@@ -56,4 +56,13 @@ public class LocalizationService {
   public String getDefaultLocale() {
     return "en";
   }
+
+  public boolean isSupported(String locale) {
+    for (String supportedLocale : SUPPORTED_LOCALES) {
+      if (supportedLocale.equals(locale)) {
+        return true;
+      }
+    }
+    return false;
+  }
 }
