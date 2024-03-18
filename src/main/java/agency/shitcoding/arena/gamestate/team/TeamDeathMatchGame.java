@@ -3,6 +3,9 @@ package agency.shitcoding.arena.gamestate.team;
 import agency.shitcoding.arena.models.Arena;
 import agency.shitcoding.arena.models.LootPoint;
 import agency.shitcoding.arena.models.RuleSet;
+import agency.shitcoding.arena.statistics.GameOutcome;
+import java.util.ArrayList;
+import java.util.List;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 

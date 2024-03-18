@@ -1,10 +1,12 @@
 package agency.shitcoding.arena.gui;
 
+import agency.shitcoding.arena.ArenaShooter;
 import agency.shitcoding.arena.gamestate.Game;
 import agency.shitcoding.arena.gamestate.GameOrchestrator;
 import agency.shitcoding.arena.gamestate.team.TeamGame;
 import agency.shitcoding.arena.gui.settings.TeamSelectGui;
 import agency.shitcoding.arena.localization.LangPlayer;
+import agency.shitcoding.arena.statistics.Statistics;
 import java.util.Arrays;
 import java.util.Set;
 import net.jellycraft.guiapi.api.InventorySize;
@@ -68,25 +70,51 @@ public class ArenaMainMenu {
   }
 
   private ItemSlot statsButton() {
-    return soonTmButton(player.getLocalized("menu.stat.title"));
+    var itemBuilder = ItemBuilder.builder()
+        .withMaterial(Material.ENCHANTED_BOOK)
+        .withName(Component.text(
+            player.getLocalized("menu.stat.title"), TextColor.color(0xa94366)
+        ))
+        .withLore(getStatsLore())
+        .withClickAction(((clickType, clickContext) -> new StatsMenu(player.getPlayer()).open()));
+
+    return itemBuilder.build();
+  }
+
+  private Component[] getStatsLore() {
+    Statistics statistics = ArenaShooter.getInstance()
+        .getStatisticsService()
+        .getStatistics(player.getPlayer());
+
+    MiniMessage mm = MiniMessage.miniMessage();
+
+    var totalKills = player.getLocalized("menu.stat.totalKills", statistics.totalKills);
+    var totalGames = player.getLocalized("menu.stat.totalGames", statistics.totalGames);
+    var matchesWon = player.getLocalized("menu.stat.matchesWon", statistics.matchesWon);
+    var killDeathRatio = player.getLocalized("menu.stat.killDeathRatio", statistics.killDeathRatio);
+
+    var open = player.getLocalized("menu.lore.open");
+
+    return new Component[]{
+        mm.deserialize(totalKills),
+        mm.deserialize(totalGames),
+        mm.deserialize(matchesWon),
+        mm.deserialize(killDeathRatio),
+        Component.text(""),
+        mm.deserialize("<gray><i>" + open)
+    };
+
   }
 
   private ItemSlot settingsButton() {
     return ItemBuilder.builder().
         withMaterial(Material.REDSTONE).
-        withName(Component.text(player.getLocalized("menu.settings.title"), TextColor.color(0xa94366))).
+        withName(
+            Component.text(player.getLocalized("menu.settings.title"), TextColor.color(0xa94366))).
         withLoreLine(player.getLocalized("menu.lore.open")).
         withLoreLine(player.getLocalized("menu.settings.description")).
         withClickAction(((clickType, clickContext) -> new SettingsMenu(player.getPlayer()).open())).
         build();
-  }
-
-  private ItemSlot soonTmButton(String name) {
-    return ItemBuilder.builder()
-        .withMaterial(Material.BARRIER)
-        .withName(Component.text(name, TextColor.color(0xa94366)))
-        .withLoreLine(player.getLocalized("menu.soon"))
-        .build();
   }
 
   private ItemSlot hostGameOrJoinButton() {

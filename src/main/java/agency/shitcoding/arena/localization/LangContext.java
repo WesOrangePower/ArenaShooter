@@ -1,7 +1,9 @@
 package agency.shitcoding.arena.localization;
 
 import java.util.Locale;
+import lombok.Getter;
 
+@Getter
 public class LangContext {
 
   private final String locale;

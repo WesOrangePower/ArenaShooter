@@ -24,8 +24,6 @@ public class Lobby {
 
   private static Lobby instance;
 
-  private ItemStack itemStack;
-
   private Lobby() {
   }
 
@@ -49,6 +47,7 @@ public class Lobby {
     DamageListener.setBaseHealth(player);
     player.setHealth(20);
     player.setFoodLevel(20);
+    player.setLevel(0);
     player.setExp(0f);
     player.clearActivePotionEffects();
     player.teleport(getLocation());
@@ -70,10 +69,6 @@ public class Lobby {
   }
 
   public ItemStack getLobbyItem(Player player) {
-    if (itemStack != null) {
-      return itemStack;
-    }
-
     var langPlayer = new LangPlayer(player);
 
     var material = Material.NETHER_STAR;
@@ -86,8 +81,6 @@ public class Lobby {
       ));
     });
 
-    itemStack = item;
-
-    return itemStack;
+    return item;
   }
 }

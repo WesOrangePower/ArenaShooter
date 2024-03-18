@@ -78,11 +78,12 @@ public class AutoRespawnListener implements Listener {
               }
 
               game.onPlayerDeath(p);
+              if (killer != null) game.onKill(killer);
               if (game.getGamestage() != GameStage.IN_PROGRESS) {
                 return;
               }
               resetStreak(p, game);
-              resetStreak(killer, game);
+              resetStreak(killer, game); // TODO: wtf?
               if (killedThemselves) {
                 game.getPlayers().stream().map(LangPlayer::new)
                     .forEach(pl -> pl.sendRichLocalized("game.death.chat.self", p.getName()));

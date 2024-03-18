@@ -10,15 +10,19 @@ import agency.shitcoding.arena.models.GameStage;
 import agency.shitcoding.arena.models.LootPoint;
 import agency.shitcoding.arena.models.PlayerStreak;
 import agency.shitcoding.arena.models.RuleSet;
+import agency.shitcoding.arena.statistics.GameOutcome;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.stream.Collectors;
 import lombok.Getter;
 import net.kyori.adventure.audience.Audience;
 import net.kyori.adventure.bossbar.BossBar;
@@ -44,16 +48,18 @@ import org.jetbrains.annotations.Nullable;
 
 @Getter
 public abstract class Game {
-
   protected final Scoreboard scoreboard;
   private final RespawnInvulnerability respawnInvulnerability = new RespawnInvulnerability();
   private final Set<Player> spectators = new HashSet<>();
+  protected final Map<Player, Integer> statKills = new HashMap<>();
+  protected final Map<Player, Integer> statDeaths = new HashMap<>();
   protected final Set<Player> players = new HashSet<>();
   protected final List<PlayerScore> scores = new ArrayList<>();
   protected final MajorBuffTracker majorBuffTracker = new MajorBuffTracker();
   protected final Set<Player> diedOnce = new HashSet<>();
   protected final Consumer<String> announcer = s -> players.forEach(
       p -> p.playSound(p, s, SoundCategory.VOICE, .8f, 1f));
+  protected Map<Player, BossBar> bossBarMap = new ConcurrentHashMap<>();
   protected RuleSet ruleSet;
   protected Arena arena;
   protected BukkitTask gameTimerTask;
@@ -83,18 +89,20 @@ public abstract class Game {
     scores.removeIf(p -> p.getPlayer().equals(player));
     Optional.ofNullable(scoreboardObjective).ifPresent(o -> o.getScore(player).resetScore());
     player.setScoreboard(Bukkit.getScoreboardManager().getMainScoreboard());
-    player.activeBossBars().forEach(bb -> bb.removeViewer(player));
+    bossBarMap.get(player).removeViewer(player);
+    bossBarMap.remove(player);
     boolean isEmptyWaiting = gamestage == GameStage.WAITING && players.isEmpty();
     boolean isTooFewPlayers =
         gamestage == GameStage.IN_PROGRESS && players.size() < ruleSet.getMinPlayers();
     if (isEmptyWaiting || isTooFewPlayers) {
-      endGame("game.end.notEnoughPlayers");
+      endGame("game.end.notEnoughPlayers", false);
     }
     players.forEach(p -> p.sendRichMessage(leaveBroadcastMessage(LangPlayer.of(p), player)));
     Lobby.getInstance().sendPlayer(player);
   }
 
-  public void endGame(String reason) {
+
+  public void endGame(String reason, boolean intendedEnding, Object... toFormat) {
     this.gamestage = GameStage.FINISHED;
     if (waitingManager != null) {
       waitingManager.cleanup();
@@ -108,20 +116,31 @@ public abstract class Game {
     LootManagerProvider.cleanup(arena);
 
     Optional.ofNullable(scoreboardObjective).ifPresent(Objective::unregister);
+    Bukkit.getScheduler().runTaskLater(ArenaShooter.getInstance(), () -> {
+      bossBarMap.forEach((player, bossBar) -> bossBar.removeViewer(player));
+      bossBarMap.clear();
+    },20L);
+
+    if (intendedEnding) {
+      Bukkit.getScheduler().runTaskAsynchronously(ArenaShooter.getInstance(), () ->
+          ArenaShooter.getInstance().getStatisticsService().endGame(getGameOutcomes())
+      );
+    }
 
     for (Player player : players) {
-      player.activeBossBars().forEach(bb -> bb.removeViewer(player));
       var langPlayer = new LangPlayer(player);
       langPlayer.sendRichLocalized("game.end.header");
       var stats = getGameStatComponent();
       player.sendMessage(stats);
 
-      var localizedReason = langPlayer.getLocalized("game.end.timeup");
+      var localizedReason = langPlayer.getLocalized(reason, toFormat);
       langPlayer.sendRichLocalized("game.end.message", localizedReason);
       Lobby.getInstance().sendPlayer(player);
     }
     GameOrchestrator.getInstance().removeGame(this);
   }
+
+  protected abstract GameOutcome[] getGameOutcomes();
 
   protected abstract Component getGameStatComponent();
 
@@ -172,14 +191,14 @@ public abstract class Game {
   protected void onGameSecondElapsed() {
     long remainingSeconds =
         ruleSet.getGameLenSeconds() - (Instant.now().getEpochSecond() - gameStart.getEpochSecond());
-    float fraction = ((float) remainingSeconds) / ruleSet.getGameLenSeconds();
-    fraction = Math.min(BossBar.MAX_PROGRESS, Math.max(BossBar.MIN_PROGRESS, fraction));
+    float fractionBase = ((float) remainingSeconds) / ruleSet.getGameLenSeconds();
+    float fraction = Math.min(BossBar.MAX_PROGRESS, Math.max(BossBar.MIN_PROGRESS, fractionBase));
     boolean fractionIsOne = fraction < Vector.getEpsilon();
 
     timeEvents(remainingSeconds);
 
     if (fractionIsOne) {
-      endGame("game.end.timeup");
+      endGame("game.end.timeup", true);
     }
 
     long minutes = (remainingSeconds % 3600) / 60;
@@ -191,17 +210,18 @@ public abstract class Game {
       LangPlayer langPlayer = new LangPlayer(player);
       var name = mm.deserialize(langPlayer.getLocalized("game.bossbar.title", timeString));
 
-      Iterator<? extends BossBar> iterator = player.activeBossBars().iterator();
-      BossBar bossBar = iterator.hasNext() ? iterator.next() : null;
-      if (bossBar == null) {
-        bossBar = BossBar.bossBar(
-            name,
-            fraction,
-            BossBar.Color.RED,
-            BossBar.Overlay.PROGRESS
-        );
-        bossBar.addViewer(Audience.audience(players));
-      }
+      BossBar bossBar = bossBarMap.computeIfAbsent(player,
+          p -> {
+            var bb =
+                BossBar.bossBar(
+                    name,
+                    fraction,
+                    BossBar.Color.RED,
+                    BossBar.Overlay.PROGRESS
+                );
+            bb.addViewer(Audience.audience(p));
+            return bb;
+          });
       bossBar.name(name);
       bossBar.progress(fraction);
     }
@@ -246,8 +266,10 @@ public abstract class Game {
     players.add(player);
     scores.add(new PlayerScore(0, player, new PlayerStreak()));
     player.sendRichMessage(youJoinedGameMessage(player));
-    players.stream().filter(p -> !p.getName().equals(player.getName()))
-        .forEach(p -> sendJoinMessage(player, players));
+    Set<Player> filteredPlayers = players.stream()
+        .filter(p -> !p.getName().equals(player.getName()))
+        .collect(Collectors.toUnmodifiableSet());
+    sendJoinMessage(player, filteredPlayers);
     getArena().spawn(player, this);
   }
 
@@ -368,7 +390,18 @@ public abstract class Game {
   }
 
   public void onPlayerDeath(Player p) {
+    incrementStat(statDeaths, p);
     diedOnce.add(p);
+  }
+
+  public void onKill(Player p) {
+    incrementStat(statKills, p);
+  }
+
+  private void incrementStat(Map<Player, Integer> map, Player p) {
+    Integer stat = map.get(p);
+    if (stat == null) stat = 0;
+    map.put(p, ++stat);
   }
 
   protected void playSound(Player p, String sound) {

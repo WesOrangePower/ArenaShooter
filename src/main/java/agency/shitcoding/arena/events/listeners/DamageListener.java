@@ -131,7 +131,8 @@ public class DamageListener implements Listener {
   @SuppressWarnings("deprecation")
   @EventHandler
   public void onEntityDamage(EntityDamageByEntityEvent event) {
-    if (event.getDamager().getType() == EntityType.PLAYER) {
+    if (event.getDamager().getType() == EntityType.PLAYER
+    && event.getEntityType() == EntityType.PLAYER) {
       // Ignore all armor
       event.setDamage(EntityDamageEvent.DamageModifier.ARMOR, 0);
     }

@@ -6,6 +6,11 @@ import agency.shitcoding.arena.localization.LangPlayer;
 import agency.shitcoding.arena.models.Arena;
 import agency.shitcoding.arena.models.GameStage;
 import agency.shitcoding.arena.models.RuleSet;
+import agency.shitcoding.arena.statistics.GameOutcome;
+import java.time.Instant;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 import lombok.Getter;
 import net.kyori.adventure.text.Component;
@@ -98,10 +103,11 @@ public abstract class TeamGame extends Game {
     throw new IllegalStateException("Use addPlayer(Player player, GameTeam team) instead");
   }
 
+
   @Override
-  public void endGame(String reason) {
+  public void endGame(String reason, boolean intendedEnding, Object... toFormat) {
     scoreboard.getTeams().forEach(Team::unregister);
-    super.endGame(reason);
+    super.endGame(reason, intendedEnding, toFormat);
   }
 
   @Override
@@ -113,4 +119,27 @@ public abstract class TeamGame extends Game {
     return builder.build();
   }
 
+  @Override
+  protected GameOutcome[] getGameOutcomes() {
+    List<GameOutcome> gameOutcomes = new ArrayList<>();
+    var winnerTeam = teamManager.getScores().stream().findFirst().map(TeamScore::getTeam);
+
+    for (Player player : players) {
+      var team = teamManager.getTeam(player).orElse(null);
+      var score = team == null ? 0 : teamManager.getScore(team);
+      var isWon = team != null && winnerTeam.map(t -> t.getETeam() == team.getETeam())
+          .orElse(false);
+      gameOutcomes.add(new GameOutcome(
+          player.getName(),
+          getRuleSet(),
+          getStatKills().getOrDefault(player, 0),
+          getStatDeaths().getOrDefault(player, 0),
+          score,
+          isWon,
+          Instant.now(),
+          arena.getName()
+      ));
+    }
+    return gameOutcomes.toArray(GameOutcome[]::new);
+  }
 }
