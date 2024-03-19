@@ -4,16 +4,20 @@ import agency.shitcoding.arena.gamestate.Game;
 import agency.shitcoding.arena.gamestate.GameOrchestrator;
 import agency.shitcoding.arena.gamestate.LootManager;
 import agency.shitcoding.arena.gamestate.LootManagerProvider;
-import agency.shitcoding.arena.models.*;
+import agency.shitcoding.arena.localization.LangPlayer;
+import agency.shitcoding.arena.models.GameStage;
+import agency.shitcoding.arena.models.Keys;
+import agency.shitcoding.arena.models.LootPointInstance;
+import agency.shitcoding.arena.models.Powerup;
+import agency.shitcoding.arena.models.PowerupType;
+import java.util.Arrays;
+import java.util.Optional;
 import org.bukkit.entity.Item;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerAttemptPickupItemEvent;
 import org.bukkit.persistence.PersistentDataType;
-
-import java.util.Arrays;
-import java.util.Optional;
 
 public class ItemListener implements Listener {
 
@@ -56,7 +60,9 @@ public class ItemListener implements Listener {
 
     if (isPickedUp) {
       player.playSound(player, powerup.getType().getSoundName(), .5f, 1f);
-      player.sendRichMessage("<green>Вы подобрали " + powerup.getDisplayName());
+      var langPlayer = LangPlayer.of(player);
+      var powerupName = langPlayer.getLocalized(powerup.getDisplayName());
+      langPlayer.sendRichLocalized("powerup.pickup.self", powerupName);
       if (powerup.getType() == PowerupType.MAJOR_BUFF) {
         handleMajorBuff(player, game, powerup);
       }
@@ -74,8 +80,10 @@ public class ItemListener implements Listener {
       if (gamePlayer == player) {
         continue;
       }
-      gamePlayer.sendRichMessage(
-          String.format("<red><bold>%s подобрал %s!", player.getName(), powerup.getDisplayName())
+      var lang = LangPlayer.of(gamePlayer);
+      lang.sendRichLocalized(
+          "powerup.pickup.other", player.getName(),
+          lang.getLocalized(powerup.getDisplayName())
       );
     }
   }

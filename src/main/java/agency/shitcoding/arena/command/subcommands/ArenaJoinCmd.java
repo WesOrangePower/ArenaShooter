@@ -6,6 +6,7 @@ import agency.shitcoding.arena.gamestate.Game;
 import agency.shitcoding.arena.gamestate.GameOrchestrator;
 import agency.shitcoding.arena.gamestate.team.ETeam;
 import agency.shitcoding.arena.gamestate.team.TeamGame;
+import agency.shitcoding.arena.localization.LangPlayer;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
@@ -36,8 +37,10 @@ public class ArenaJoinCmd extends CommandInst {
       forceStart(gameOrchestrator, player);
       return;
     }
+    LangPlayer lang = new LangPlayer(player);
+
     if (gameOrchestrator.getGameByPlayer(player).isPresent()) {
-      sender.sendRichMessage("<dark_red>Вы уже в игре");
+      lang.sendRichLocalized("command.host.alreadyInGame");
       return;
     }
     Optional<Game> first = gameOrchestrator.getGames().stream().findFirst();
@@ -47,9 +50,7 @@ public class ArenaJoinCmd extends CommandInst {
         Optional<ETeam> team = parseTeam();
         if (team.isEmpty()) {
           String values = String.join(", ", Arrays.stream(ETeam.values()).map(Enum::name).toList());
-          sender.sendRichMessage("<dark_red>Запущена командная игра. " +
-              "Выберите команду: <yellow>/arena join <команда><dark_red>. " +
-              "Доступные команды: <yellow>[" + String.join(", ", values) + "]");
+          lang.sendRichLocalized("command.join.teamRequired", String.join(", ", values));
           return;
         }
         teamGame.addPlayer(player, team.get());
@@ -58,7 +59,7 @@ public class ArenaJoinCmd extends CommandInst {
       }
       return;
     }
-    sender.sendRichMessage("<dark_red>Нет доступных игр. Используйте /arena host");
+    lang.sendRichLocalized("command.join.noGames");
   }
 
   private Optional<ETeam> parseTeam() {

@@ -11,4 +11,8 @@ public class Keys {
   public static NamespacedKey getPlayerAmmoKey() {
     return new NamespacedKey(ArenaShooter.getInstance(), "ammoValues");
   }
+
+  public static NamespacedKey getPlayerLocalizationKey() {
+    return new NamespacedKey(ArenaShooter.getInstance(), "locale");
+  }
 }

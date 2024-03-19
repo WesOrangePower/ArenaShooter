@@ -21,7 +21,9 @@ public class InstagibGame extends DeathMatchGame {
 
   private LootPoint changeLootPointType(LootPoint lootPoint) {
     PowerupType type = lootPoint.getType().getType();
-    if (type == PowerupType.WEAPON || lootPoint.getType() == Powerup.MEGA_HEALTH) {
+    if (type == PowerupType.WEAPON
+        || lootPoint.getType() == Powerup.MEGA_HEALTH
+        || type == PowerupType.MAJOR_BUFF) {
       return new LootPoint(lootPoint.getId(), lootPoint.getLocation(), Powerup.RAILGUN);
     }
     if (type == PowerupType.ARMOR || type == PowerupType.AMMO ) {

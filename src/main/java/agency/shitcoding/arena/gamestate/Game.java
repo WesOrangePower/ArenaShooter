@@ -3,44 +3,63 @@ package agency.shitcoding.arena.gamestate;
 import agency.shitcoding.arena.ArenaShooter;
 import agency.shitcoding.arena.SoundConstants;
 import agency.shitcoding.arena.events.MajorBuffTracker;
-import agency.shitcoding.arena.models.*;
+import agency.shitcoding.arena.localization.LangPlayer;
+import agency.shitcoding.arena.models.Ammo;
+import agency.shitcoding.arena.models.Arena;
+import agency.shitcoding.arena.models.GameStage;
+import agency.shitcoding.arena.models.LootPoint;
+import agency.shitcoding.arena.models.PlayerStreak;
+import agency.shitcoding.arena.models.RuleSet;
+import agency.shitcoding.arena.statistics.GameOutcome;
+import java.time.Instant;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.stream.Collectors;
 import lombok.Getter;
 import net.kyori.adventure.audience.Audience;
 import net.kyori.adventure.bossbar.BossBar;
 import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.TextComponent;
 import net.kyori.adventure.text.format.NamedTextColor;
-import net.kyori.adventure.text.format.TextColor;
+import net.kyori.adventure.text.minimessage.MiniMessage;
 import org.bukkit.Bukkit;
 import org.bukkit.SoundCategory;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Item;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitTask;
-import org.bukkit.scoreboard.*;
+import org.bukkit.scoreboard.Criteria;
+import org.bukkit.scoreboard.DisplaySlot;
+import org.bukkit.scoreboard.Objective;
+import org.bukkit.scoreboard.RenderType;
+import org.bukkit.scoreboard.Scoreboard;
 import org.bukkit.util.BoundingBox;
 import org.bukkit.util.Consumer;
 import org.bukkit.util.Vector;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.time.Instant;
-import java.util.*;
-import java.util.stream.Collectors;
-import java.util.stream.StreamSupport;
-
 @Getter
 public abstract class Game {
-
   protected final Scoreboard scoreboard;
   private final RespawnInvulnerability respawnInvulnerability = new RespawnInvulnerability();
   private final Set<Player> spectators = new HashSet<>();
+  protected final Map<Player, Integer> statKills = new HashMap<>();
+  protected final Map<Player, Integer> statDeaths = new HashMap<>();
   protected final Set<Player> players = new HashSet<>();
   protected final List<PlayerScore> scores = new ArrayList<>();
   protected final MajorBuffTracker majorBuffTracker = new MajorBuffTracker();
   protected final Set<Player> diedOnce = new HashSet<>();
   protected final Consumer<String> announcer = s -> players.forEach(
       p -> p.playSound(p, s, SoundCategory.VOICE, .8f, 1f));
+  protected Map<Player, BossBar> bossBarMap = new ConcurrentHashMap<>();
   protected RuleSet ruleSet;
   protected Arena arena;
   protected BukkitTask gameTimerTask;
@@ -48,7 +67,6 @@ public abstract class Game {
   protected GameStage gamestage = GameStage.WAITING;
   protected Objective scoreboardObjective;
   private Instant gameStart;
-  private BossBar bossBar;
   private PlayerWaitingManager waitingManager = null;
 
   protected Game(Arena arena, RuleSet ruleSet) {
@@ -71,57 +89,67 @@ public abstract class Game {
     scores.removeIf(p -> p.getPlayer().equals(player));
     Optional.ofNullable(scoreboardObjective).ifPresent(o -> o.getScore(player).resetScore());
     player.setScoreboard(Bukkit.getScoreboardManager().getMainScoreboard());
-      if (bossBar != null) {
-          bossBar.removeViewer(Audience.audience(player));
-      }
+    bossBarMap.get(player).removeViewer(player);
+    bossBarMap.remove(player);
     boolean isEmptyWaiting = gamestage == GameStage.WAITING && players.isEmpty();
     boolean isTooFewPlayers =
         gamestage == GameStage.IN_PROGRESS && players.size() < ruleSet.getMinPlayers();
     if (isEmptyWaiting || isTooFewPlayers) {
-      endGame("Недостаточно игроков");
+      endGame("game.end.notEnoughPlayers", false);
     }
-    players.forEach(p -> p.sendRichMessage(leaveBroadcastMessage(player)));
+    players.forEach(p -> p.sendRichMessage(leaveBroadcastMessage(LangPlayer.of(p), player)));
     Lobby.getInstance().sendPlayer(player);
   }
 
-  public void endGame(String reason) {
+
+  public void endGame(String reason, boolean intendedEnding, Object... toFormat) {
     this.gamestage = GameStage.FINISHED;
-      if (waitingManager != null) {
-          waitingManager.cleanup();
-      }
-      if (gameTimerTask != null) {
-          gameTimerTask.cancel();
-      }
-      if (ammoActionBarTask != null) {
-          ammoActionBarTask.cancel();
-      }
-    if (bossBar != null) {
-      StreamSupport.stream(bossBar.viewers().spliterator(), false)
-          .collect(Collectors.toUnmodifiableSet())
-          .forEach(viewer -> bossBar.removeViewer((Audience) viewer));
+    if (waitingManager != null) {
+      waitingManager.cleanup();
+    }
+    if (gameTimerTask != null) {
+      gameTimerTask.cancel();
+    }
+    if (ammoActionBarTask != null) {
+      ammoActionBarTask.cancel();
     }
     LootManagerProvider.cleanup(arena);
 
     Optional.ofNullable(scoreboardObjective).ifPresent(Objective::unregister);
+    Bukkit.getScheduler().runTaskLater(ArenaShooter.getInstance(), () -> {
+      bossBarMap.forEach((player, bossBar) -> bossBar.removeViewer(player));
+      bossBarMap.clear();
+    },20L);
 
-    Component statHeader = Component.text("-----Итоги----", NamedTextColor.GREEN);
-    players.forEach(p -> p.sendMessage(statHeader));
-    var stats = getGameStatComponent();
-    players.forEach(p -> p.sendMessage(stats));
+    if (intendedEnding) {
+      Bukkit.getScheduler().runTaskAsynchronously(ArenaShooter.getInstance(), () ->
+          ArenaShooter.getInstance().getStatisticsService().endGame(getGameOutcomes())
+      );
+    }
 
-    players.forEach(p -> p.sendRichMessage("<green><bold>Игра закончилась: " + reason));
-    players.forEach(Lobby.getInstance()::sendPlayer);
+    for (Player player : players) {
+      var langPlayer = new LangPlayer(player);
+      langPlayer.sendRichLocalized("game.end.header");
+      var stats = getGameStatComponent();
+      player.sendMessage(stats);
+
+      var localizedReason = langPlayer.getLocalized(reason, toFormat);
+      langPlayer.sendRichLocalized("game.end.message", localizedReason);
+      Lobby.getInstance().sendPlayer(player);
+    }
     GameOrchestrator.getInstance().removeGame(this);
   }
+
+  protected abstract GameOutcome[] getGameOutcomes();
 
   protected abstract Component getGameStatComponent();
 
   public void startGame() {
-      if (waitingManager != null) {
-          waitingManager.cleanup();
-      }
+    if (waitingManager != null) {
+      waitingManager.cleanup();
+    }
     for (Player player : players) {
-      player.sendRichMessage("<green><bold>Игра началась");
+      LangPlayer.of(player).sendRichLocalized("game.start.message");
       announcer.accept(SoundConstants.FIGHT);
       arena.spawn(player, this);
     }
@@ -147,7 +175,7 @@ public abstract class Game {
    */
   protected void createScoreboardObjective() {
     scoreboardObjective = scoreboard.registerNewObjective(arena.getName(), Criteria.DUMMY,
-        Component.text("Счёт", NamedTextColor.GOLD), RenderType.INTEGER);
+        Component.text("Score", NamedTextColor.GOLD), RenderType.INTEGER);
     scoreboardObjective.setDisplaySlot(DisplaySlot.SIDEBAR);
 
     for (Player p : players) {
@@ -163,32 +191,40 @@ public abstract class Game {
   protected void onGameSecondElapsed() {
     long remainingSeconds =
         ruleSet.getGameLenSeconds() - (Instant.now().getEpochSecond() - gameStart.getEpochSecond());
-    float fraction = ((float) remainingSeconds) / ruleSet.getGameLenSeconds();
-    fraction = Math.min(BossBar.MAX_PROGRESS, Math.max(BossBar.MIN_PROGRESS, fraction));
-    long minutes = (remainingSeconds % 3600) / 60;
-    long seconds = remainingSeconds % 60;
-    String timeString = String.format("%02d:%02d", minutes, seconds);
-    TextComponent title = Component.text("Осталось: " + timeString, TextColor.color(0xaa0000));
+    float fractionBase = ((float) remainingSeconds) / ruleSet.getGameLenSeconds();
+    float fraction = Math.min(BossBar.MAX_PROGRESS, Math.max(BossBar.MIN_PROGRESS, fractionBase));
     boolean fractionIsOne = fraction < Vector.getEpsilon();
 
     timeEvents(remainingSeconds);
 
     if (fractionIsOne) {
-      endGame("Время вышло");
+      endGame("game.end.timeup", true);
     }
 
-    if (bossBar == null) {
-      this.bossBar = BossBar.bossBar(
-          title,
-          fraction,
-          BossBar.Color.RED,
-          BossBar.Overlay.PROGRESS
-      );
-      this.bossBar.addViewer(Audience.audience(players));
-    }
+    long minutes = (remainingSeconds % 3600) / 60;
+    long seconds = remainingSeconds % 60;
 
-    bossBar.progress(fraction);
-    bossBar.name(title);
+    String timeString = String.format("%02d:%02d", minutes, seconds);
+    var mm = MiniMessage.miniMessage();
+    for (Player player : players) {
+      LangPlayer langPlayer = new LangPlayer(player);
+      var name = mm.deserialize(langPlayer.getLocalized("game.bossbar.title", timeString));
+
+      BossBar bossBar = bossBarMap.computeIfAbsent(player,
+          p -> {
+            var bb =
+                BossBar.bossBar(
+                    name,
+                    fraction,
+                    BossBar.Color.RED,
+                    BossBar.Overlay.PROGRESS
+                );
+            bb.addViewer(Audience.audience(p));
+            return bb;
+          });
+      bossBar.name(name);
+      bossBar.progress(fraction);
+    }
   }
 
   private void timeEvents(long remainingSeconds) {
@@ -216,14 +252,13 @@ public abstract class Game {
 
   public void addPlayer(Player player) {
     if (players.size() >= ruleSet.getMaxPlayers()) {
-      player.sendRichMessage("<dark_red>Игра заполнена");
+      LangPlayer.of(player).sendRichLocalized("game.full");
     }
     if (waitingManager == null) {
       waitingManager = new PlayerWaitingManager(this);
       waitingManager.startAwaiting();
     }
     if (gamestage == GameStage.IN_PROGRESS) {
-      bossBar.addViewer(Audience.audience(player));
       diedOnce.add(player);
       updateScoreBoard();
       player.setScoreboard(scoreboard);
@@ -231,22 +266,26 @@ public abstract class Game {
     players.add(player);
     scores.add(new PlayerScore(0, player, new PlayerStreak()));
     player.sendRichMessage(youJoinedGameMessage(player));
-    players.stream().filter(p -> !p.getName().equals(player.getName()))
-        .forEach(p -> p.sendRichMessage(joinBroadcastMessage(player)));
+    Set<Player> filteredPlayers = players.stream()
+        .filter(p -> !p.getName().equals(player.getName()))
+        .collect(Collectors.toUnmodifiableSet());
+    sendJoinMessage(player, filteredPlayers);
     getArena().spawn(player, this);
   }
 
 
   public String youJoinedGameMessage(Player p) {
-    return "<green>Вы присоединились к игре";
+    return LangPlayer.of(p).getLocalized("game.youJoined");
   }
 
-  public String joinBroadcastMessage(Player player) {
-    return "<green>" + player.getName() + " присоединился к игре";
+  public void sendJoinMessage(Player player, Set<Player> players) {
+    for (Player aPlayer : players) {
+      LangPlayer.of(aPlayer).sendRichLocalized("game.playerJoined", player.getName());
+    }
   }
 
-  public String leaveBroadcastMessage(Player player) {
-    return "<red>" + player.getName() + " вышел из игры";
+  public String leaveBroadcastMessage(LangPlayer audience, Player player) {
+    return audience.getLocalized("game.playerLeft", player.getName());
   }
 
   public @Nullable PlayerScore getScore(@Nullable Player p) {
@@ -269,9 +308,9 @@ public abstract class Game {
   }
 
   protected void updateScoreBoard() {
-      if (scoreboardObjective == null) {
-          return;
-      }
+    if (scoreboardObjective == null) {
+      return;
+    }
     for (PlayerScore score : scores) {
       scoreboardObjective.getScore(score.getPlayer()).setScore(score.getScore());
     }
@@ -351,7 +390,18 @@ public abstract class Game {
   }
 
   public void onPlayerDeath(Player p) {
+    incrementStat(statDeaths, p);
     diedOnce.add(p);
+  }
+
+  public void onKill(Player p) {
+    incrementStat(statKills, p);
+  }
+
+  private void incrementStat(Map<Player, Integer> map, Player p) {
+    Integer stat = map.get(p);
+    if (stat == null) stat = 0;
+    map.put(p, ++stat);
   }
 
   protected void playSound(Player p, String sound) {

@@ -22,8 +22,11 @@ import agency.shitcoding.arena.events.listeners.RocketListener;
 import agency.shitcoding.arena.events.listeners.ShotgunListener;
 import agency.shitcoding.arena.gamestate.Game;
 import agency.shitcoding.arena.gamestate.GameOrchestrator;
+import agency.shitcoding.arena.statistics.StatisticsService;
+import agency.shitcoding.arena.statistics.StatisticsServiceImpl;
 import com.github.yannicklamprecht.worldborder.api.WorldBorderApi;
 import com.github.yannicklamprecht.worldborder.plugin.PersistenceWrapper;
+import java.io.File;
 import java.util.Objects;
 import lombok.Getter;
 import org.bukkit.plugin.RegisteredServiceProvider;
@@ -36,6 +39,7 @@ import org.bukkit.scoreboard.Team;
 public final class ArenaShooter extends JavaPlugin {
 
   private ArenaWorldBorderApi worldBorderApi = null;
+  private StatisticsService statisticsService = null;
 
   public static ArenaShooter getInstance() {
     return getPlugin(ArenaShooter.class);
@@ -44,7 +48,6 @@ public final class ArenaShooter extends JavaPlugin {
 
   @Override
   public void onEnable() {
-
     registerListeners();
 
     Objects.requireNonNull(getCommand("arenaDeathMatch".toLowerCase()))
@@ -53,6 +56,8 @@ public final class ArenaShooter extends JavaPlugin {
     Scoreboard scoreboard = GameOrchestrator.getInstance().getScoreboard();
     scoreboard.getObjectives().forEach(Objective::unregister);
     scoreboard.getTeams().forEach(Team::unregister);
+
+    initStatistics();
 
     RegisteredServiceProvider<WorldBorderApi> worldBorderApiRegisteredServiceProvider
         = getServer().getServicesManager().getRegistration(WorldBorderApi.class);
@@ -64,11 +69,18 @@ public final class ArenaShooter extends JavaPlugin {
         (PersistenceWrapper) worldBorderApiRegisteredServiceProvider.getProvider());
   }
 
+  private void initStatistics() {
+    //noinspection ResultOfMethodCallIgnored
+    getDataFolder().mkdirs();
+    var stats = new File(getDataFolder(), "stats.csv");
+    statisticsService = new StatisticsServiceImpl(stats);
+  }
+
   @Override
   public void onDisable() {
     for (Game game : GameOrchestrator.getInstance()
         .getGames()) {
-      game.endGame("Server shutdown");
+      game.endGame("game.end.shutdown", false);
     }
   }
 

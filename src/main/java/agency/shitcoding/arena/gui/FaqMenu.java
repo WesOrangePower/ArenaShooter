@@ -1,5 +1,6 @@
 package agency.shitcoding.arena.gui;
 
+import agency.shitcoding.arena.localization.LangPlayer;
 import agency.shitcoding.arena.models.Faq;
 import agency.shitcoding.arena.storage.StorageProvider;
 import net.jellycraft.guiapi.Item;
@@ -20,18 +21,18 @@ import java.util.List;
 
 public class FaqMenu {
 
-  private final Player player;
+  private final LangPlayer player;
   private final Collection<Faq> faqs;
 
   public FaqMenu(Player player) {
-    this.player = player;
+    this.player = new LangPlayer(player);
     faqs = StorageProvider.getFaqStorage().getAll();
   }
 
   public void render() {
     PaginatedViewBuilder builder = ViewBuilder.builder()
-        .withHolder(player)
-        .withTitle("Помощь")
+        .withHolder(player.getPlayer())
+        .withTitle(player.getLocalized("menu.help.title"))
         .withRows(3)
         .addItemSlot(backButton())
         .build()
@@ -52,7 +53,7 @@ public class FaqMenu {
           .withName(Component.text(faq.getTitle(), NamedTextColor.GOLD))
           .build();
       Item item = new Item(build.getItemStack(),
-          ((clickType, clickContext) -> player.openBook(faq.getBook())));
+          ((clickType, clickContext) -> player.getPlayer().openBook(faq.getBook())));
       items.add(item);
     }
     return items;
@@ -60,7 +61,7 @@ public class FaqMenu {
 
   private ItemSlot backButton() {
     return ItemBuilder.builder()
-        .withName(Component.text("Назад", NamedTextColor.GRAY))
+        .withName(Component.text(player.getLocalized("menu.backButton.name"), NamedTextColor.GRAY))
         .withPersistItalics()
         .withSlot(2, 0)
         .build();

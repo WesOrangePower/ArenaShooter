@@ -2,13 +2,13 @@ package agency.shitcoding.arena.gui;
 
 import agency.shitcoding.arena.gamestate.team.ETeam;
 import agency.shitcoding.arena.gamestate.team.TeamMeta;
+import agency.shitcoding.arena.localization.LangPlayer;
 import agency.shitcoding.arena.models.Arena;
 import agency.shitcoding.arena.models.RuleSet;
 import agency.shitcoding.arena.storage.StorageProvider;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
-import lombok.RequiredArgsConstructor;
 import net.jellycraft.guiapi.Item;
 import net.jellycraft.guiapi.api.ClickAction;
 import net.jellycraft.guiapi.api.ItemSlot;
@@ -23,13 +23,15 @@ import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
-@RequiredArgsConstructor
 public class HostGameMenu {
-
-  private final Player player;
+  private final LangPlayer player;
   Arena chosenArena;
   RuleSet chosenRuleSet;
   String chosenTeam;
+
+  public HostGameMenu(Player player) {
+    this.player = new LangPlayer(player);
+  }
 
   public void render() {
     chooseArena();
@@ -37,8 +39,8 @@ public class HostGameMenu {
 
   private void chooseArena() {
     PaginatedView view = ViewBuilder.builder()
-        .withHolder(player)
-        .withTitle("Выберите арену...")
+        .withHolder(player.getPlayer())
+        .withTitle(player.getLocalized("menu.host.chooseArenaButton.title"))
         .build()
         .toPaginatedView()
         .withItems(getArenaItems())
@@ -49,8 +51,8 @@ public class HostGameMenu {
 
   private void chooseRuleSet() {
     PaginatedView view = ViewBuilder.builder()
-        .withHolder(player)
-        .withTitle("Выберите режим...")
+        .withHolder(player.getPlayer())
+        .withTitle(player.getLocalized("menu.host.chooseRulesetButton.title"))
         .build()
         .toPaginatedView()
         .withItems(getRuleSetItems())
@@ -60,13 +62,13 @@ public class HostGameMenu {
   }
 
   private void execute() {
-    ViewRegistry.closeForPlayer(player);
+    ViewRegistry.closeForPlayer(player.getPlayer());
     if (chosenTeam == null) {
-      player.performCommand(
+      player.getPlayer().performCommand(
           String.format("arena host %s %s", chosenRuleSet.name(), chosenArena.getName()));
       return;
     }
-    player.performCommand(
+    player.getPlayer().performCommand(
         String.format("arena host %s %s %s", chosenRuleSet.name(), chosenArena.getName(),
             chosenTeam));
   }
@@ -99,7 +101,7 @@ public class HostGameMenu {
         .map(ruleSet -> {
               ItemSlot build = ItemBuilder.builder()
                   .withMaterial(Material.GOLDEN_PICKAXE)
-                  .withName(Component.text(ruleSet.getName(), NamedTextColor.GOLD))
+                  .withName(Component.text(player.getLocalized(ruleSet.getName()), NamedTextColor.GOLD))
                   .withClickAction(ruleSetClickAction(ruleSet))
                   .build();
               return new Item(build.getItemStack(), build.getOverrideClickAction());
@@ -121,8 +123,8 @@ public class HostGameMenu {
 
   private void chooseTeam() {
     PaginatedView view = ViewBuilder.builder()
-        .withHolder(player)
-        .withTitle("Выберите команду...")
+        .withHolder(player.getPlayer())
+        .withTitle(player.getLocalized("menu.host.chooseTeamButton.title"))
         .build()
         .toPaginatedView()
         .withItems(getTeamItems())
@@ -140,7 +142,7 @@ public class HostGameMenu {
                   .withClickAction(teamClickAction(team))
                   .build();
               ItemStack itemStack = build.getItemStack();
-              itemStack.editMeta(meta -> meta.displayName(teamMeta.getDisplayComponent()));
+              itemStack.editMeta(meta -> meta.displayName(teamMeta.getDisplayComponent(player.getLangContext())));
               return new Item(itemStack, build.getOverrideClickAction());
             }
         )

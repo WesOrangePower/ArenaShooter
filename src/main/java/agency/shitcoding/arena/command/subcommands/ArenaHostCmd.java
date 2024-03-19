@@ -7,14 +7,14 @@ import agency.shitcoding.arena.gamestate.GameOrchestrator;
 import agency.shitcoding.arena.gamestate.Lobby;
 import agency.shitcoding.arena.gamestate.team.ETeam;
 import agency.shitcoding.arena.gamestate.team.TeamGame;
+import agency.shitcoding.arena.localization.LangPlayer;
 import agency.shitcoding.arena.models.Arena;
 import agency.shitcoding.arena.models.RuleSet;
 import agency.shitcoding.arena.storage.StorageProvider;
+import java.util.Arrays;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
-
-import java.util.Arrays;
 
 public class ArenaHostCmd extends CommandInst {
 
@@ -41,8 +41,9 @@ public class ArenaHostCmd extends CommandInst {
 
   private void hostGame() {
     if (!GameOrchestrator.getInstance().getGames().isEmpty()) {
-      sender.sendRichMessage(
-          "<red>Игра уже создана. Присоединись к ней используя: <yellow><click:run_command:/arena join>/arena join</click>");
+      if (sender instanceof Player player) {
+        LangPlayer.of(player).sendRichLocalized("command.host.alreadyCreated");
+      }
       return;
     }
     Game game = GameOrchestrator.getInstance().createGame(ruleSet, arena);
@@ -51,11 +52,12 @@ public class ArenaHostCmd extends CommandInst {
     } else {
       game.addPlayer((Player) sender);
     }
-    String message = String.format(
-        "<gold>%s <green>захостил <gold>%s <green>на карте <gold>%s<green>. " +
-            "Присоединись к ней используя: <yellow><click:run_command:/arena join>/arena join</click>",
-        sender.getName(), ruleSet.getName(), arena.getName());
-    Lobby.getInstance().getPlayersInLobby().forEach(player -> player.sendRichMessage(message));
+
+    Lobby.getInstance().getPlayersInLobby().stream().map(LangPlayer::new)
+        .forEach(player -> player.sendRichLocalized(
+            "command.host.broadcast",
+            sender.getName(), player.getLocalized(ruleSet.getName()), arena.getName()
+        ));
   }
 
   private boolean validate() {
@@ -68,35 +70,30 @@ public class ArenaHostCmd extends CommandInst {
       sender.sendRichMessage("<red>Only players can host games.");
       return false;
     }
+    LangPlayer lang = new LangPlayer((Player) sender);
 
     try {
       ruleSet = RuleSet.valueOf(args[ARG_RULESET].toUpperCase());
     } catch (IllegalArgumentException e) {
-      sender.sendRichMessage(
-          "<red>Режим не найден. Используйте один из: <yellow>" + Arrays.toString(
-              RuleSet.values()));
+      lang.sendRichLocalized("command.host.ruleSetNotFound", Arrays.toString(RuleSet.values()));
       return false;
     }
 
     arena = StorageProvider.getArenaStorage().getArena(args[ARG_ARENA]);
     if (arena == null) {
       Arena[] arenas = StorageProvider.getArenaStorage().getArenas().toArray(Arena[]::new);
-      sender.sendRichMessage(
-          "<red>Арена не найдена. Используйте одну из: <yellow>" + Arrays.toString(arenas));
+      lang.sendRichLocalized("command.host.arenaNotFound", Arrays.toString(arenas));
       return false;
     }
 
     if (!arena.isAllowHost() && !sender.hasPermission(ArenaDeathMatchCommand.ADMIN_PERM)) {
-      sender.sendRichMessage(
-          "<red>В данный момент, хост этой арены доступен только администрации.");
+      lang.sendRichLocalized("command.host.arenaNotAllowed");
       return false;
     }
 
     boolean isTeamGame = ruleSet.getGameRules().hasTeams();
     if (isTeamGame && args.length < ARG_TEAM + 1) {
-      sender.sendRichMessage(
-          "<red>Командная игра. Выберите команду: <yellow>/arena host " + ruleSet.name() + " "
-              + arena.getName() + " <команда><red>.");
+      lang.sendRichLocalized("command.host.teamArgumentRequired", ruleSet.name(), arena.getName());
       return false;
     }
     if (isTeamGame) {

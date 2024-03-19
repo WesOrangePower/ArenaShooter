@@ -3,6 +3,7 @@ package agency.shitcoding.arena.gamestate;
 import agency.shitcoding.arena.ArenaShooter;
 import agency.shitcoding.arena.command.Conf;
 import agency.shitcoding.arena.events.listeners.DamageListener;
+import agency.shitcoding.arena.localization.LangPlayer;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextDecoration;
@@ -22,8 +23,6 @@ import java.util.stream.Collectors;
 public class Lobby {
 
   private static Lobby instance;
-
-  private ItemStack itemStack;
 
   private Lobby() {
   }
@@ -48,6 +47,7 @@ public class Lobby {
     DamageListener.setBaseHealth(player);
     player.setHealth(20);
     player.setFoodLevel(20);
+    player.setLevel(0);
     player.setExp(0f);
     player.clearActivePotionEffects();
     player.teleport(getLocation());
@@ -55,7 +55,7 @@ public class Lobby {
     PlayerInventory inventory = player.getInventory();
     inventory.clear();
     inventory.setArmorContents(null);
-    inventory.setItem(4, getLobbyItem());
+    inventory.setItem(4, getLobbyItem(player));
   }
 
   public Set<Player> getPlayersInLobby() {
@@ -68,23 +68,19 @@ public class Lobby {
         .collect(Collectors.toUnmodifiableSet());
   }
 
-  public ItemStack getLobbyItem() {
-    if (itemStack != null) {
-      return itemStack;
-    }
+  public ItemStack getLobbyItem(Player player) {
+    var langPlayer = new LangPlayer(player);
 
     var material = Material.NETHER_STAR;
     var item = new ItemStack(material);
 
     item.editMeta(meta -> {
-      meta.displayName(Component.text("Меню", NamedTextColor.AQUA, TextDecoration.BOLD));
+      meta.displayName(Component.text(langPlayer.getLocalized("lobby.menu"), NamedTextColor.AQUA, TextDecoration.BOLD));
       meta.lore(List.of(
-          Component.text("Нажмите ПКМ, чтобы открыть меню", NamedTextColor.GRAY)
+          Component.text(langPlayer.getLocalized("menu.lore.open"), NamedTextColor.GRAY)
       ));
     });
 
-    itemStack = item;
-
-    return itemStack;
+    return item;
   }
 }
