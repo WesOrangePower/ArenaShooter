@@ -3,20 +3,16 @@ package agency.shitcoding.arena.gui;
 import agency.shitcoding.arena.ArenaShooter;
 import agency.shitcoding.arena.localization.LangPlayer;
 import agency.shitcoding.arena.statistics.GameOutcome;
-import com.sun.istack.localization.Localizer;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.time.format.FormatStyle;
-import java.util.Collection;
 import java.util.Comparator;
 import java.util.Locale;
 import net.jellycraft.guiapi.Item;
-import net.jellycraft.guiapi.api.DefaultClickActions;
 import net.jellycraft.guiapi.api.InventorySize;
 import net.jellycraft.guiapi.api.ViewRenderer;
 import net.jellycraft.guiapi.api.fluent.ItemBuilder;
 import net.jellycraft.guiapi.api.fluent.ViewBuilder;
-import net.jellycraft.guiapi.api.views.PaginatedView;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import org.bukkit.Material;
@@ -36,6 +32,10 @@ public class StatsMenu {
         .sorted(Comparator.comparing(GameOutcome::time))
         .map(this::gameOutcomeToItem)
         .toList();
+
+    if (gameOutcomes.isEmpty()) {
+      return;
+    }
 
     var view = ViewBuilder.builder()
         .withTitle(Component.text(player.getLocalized("menu.stat.title")))

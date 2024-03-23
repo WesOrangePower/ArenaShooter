@@ -3,6 +3,7 @@ package agency.shitcoding.arena;
 import agency.shitcoding.arena.command.ArenaDeathMatchCommandInvoker;
 import agency.shitcoding.arena.events.PortalListener;
 import agency.shitcoding.arena.events.listeners.AmmoListener;
+import agency.shitcoding.arena.events.listeners.AutoClickerBlocker;
 import agency.shitcoding.arena.events.listeners.AutoRespawnListener;
 import agency.shitcoding.arena.events.listeners.BlockerListener;
 import agency.shitcoding.arena.events.listeners.DamageListener;
@@ -29,6 +30,7 @@ import com.github.yannicklamprecht.worldborder.plugin.PersistenceWrapper;
 import java.io.File;
 import java.util.Objects;
 import lombok.Getter;
+import org.bukkit.event.Listener;
 import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scoreboard.Objective;
@@ -85,26 +87,17 @@ public final class ArenaShooter extends JavaPlugin {
   }
 
   private void registerListeners() {
-    getServer().getPluginManager().registerEvents(new AutoRespawnListener(), this);
-    getServer().getPluginManager().registerEvents(new BlockerListener(), this);
-    getServer().getPluginManager().registerEvents(new DamageListener(), this);
-    getServer().getPluginManager().registerEvents(new InteractListener(), this);
-    getServer().getPluginManager().registerEvents(new LobbyListener(), this);
-    getServer().getPluginManager().registerEvents(new InteractListener(), this);
-    getServer().getPluginManager().registerEvents(new LobbyListener(), this);
-    getServer().getPluginManager().registerEvents(new MovementListener(), this);
-    getServer().getPluginManager().registerEvents(new AmmoListener(), this);
-    getServer().getPluginManager().registerEvents(new NoAmmoListener(), this);
-    getServer().getPluginManager().registerEvents(new PlasmaListener(), this);
-    getServer().getPluginManager().registerEvents(new RailListener(), this);
-    getServer().getPluginManager().registerEvents(new RocketListener(), this);
-    getServer().getPluginManager().registerEvents(new LightningGunListener(), this);
-    getServer().getPluginManager().registerEvents(new ShotgunListener(), this);
-    getServer().getPluginManager().registerEvents(new GauntletListener(), this);
-    getServer().getPluginManager().registerEvents(new MachineGunListener(), this);
-    getServer().getPluginManager().registerEvents(new InstagibListener(), this);
-    getServer().getPluginManager().registerEvents(new ItemListener(), this);
-    getServer().getPluginManager().registerEvents(new GameStreakListener(), this);
-    getServer().getPluginManager().registerEvents(new PortalListener(), this);
+    var listeners = new Listener[] {
+    new AutoRespawnListener(), new BlockerListener(), new DamageListener(), new InteractListener(),
+    new LobbyListener(), new InteractListener(), new LobbyListener(), new MovementListener(),
+    new AmmoListener(), new NoAmmoListener(), new PlasmaListener(), new RailListener(),
+    new RocketListener(), new LightningGunListener(), new ShotgunListener(), new GauntletListener(),
+    new MachineGunListener(), new InstagibListener(), new ItemListener(), new GameStreakListener(),
+    new PortalListener(), new AutoClickerBlocker()
+    };
+
+    for (Listener listener : listeners) {
+      getServer().getPluginManager().registerEvents(listener, this);
+    }
   }
 }

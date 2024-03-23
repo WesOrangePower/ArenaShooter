@@ -56,6 +56,7 @@ public class ConfigurationArenaStorage implements ArenaStorage {
 
   private Arena parseArena(ConfigurationSection arenaSection) {
     String name = arenaSection.getName();
+    var authors = arenaSection.getStringList(Conf.Arenas.authors);
     var lowerBound = arenaSection.getLocation(Conf.Arenas.lowerBound);
     var upperBound = arenaSection.getLocation(Conf.Arenas.upperBound);
     var lootPointsSection = arenaSection.getConfigurationSection(Conf.Arenas.lootPointsSection);
@@ -103,7 +104,7 @@ public class ConfigurationArenaStorage implements ArenaStorage {
       ramps.add(ramp);
     }
 
-    return new Arena(name, lowerBound, upperBound, lootPoints, portals, ramps, allowHost);
+    return new Arena(name, authors, lowerBound, upperBound, lootPoints, portals, ramps, allowHost);
   }
 
 
@@ -152,6 +153,7 @@ public class ConfigurationArenaStorage implements ArenaStorage {
       arenaSection = allArenasSection.createSection(arena.getName());
     }
 
+    arenaSection.set(Conf.Arenas.authors, arena.getAuthors());
     arenaSection.set(Conf.Arenas.lowerBound, arena.getLowerBound());
     arenaSection.set(Conf.Arenas.upperBound, arena.getUpperBound());
     arenaSection.set(Conf.Arenas.allowHost, arena.isAllowHost());

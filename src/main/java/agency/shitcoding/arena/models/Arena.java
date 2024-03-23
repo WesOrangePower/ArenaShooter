@@ -23,6 +23,7 @@ public class Arena {
 
   public static final Random spawnPointRandomizer = new Random();
   public String name;
+  private List<String> authors;
   public Location lowerBound;
   public Location upperBound;
   public Set<LootPoint> lootPoints;
@@ -31,9 +32,11 @@ public class Arena {
   private Set<LootPoint> weaponLootPoints = null;
   private boolean allowHost;
 
-  public Arena(String name, Location lowerBound, Location upperBound, Set<LootPoint> lootPoints,
+  public Arena(String name, List<String> authors,
+      Location lowerBound, Location upperBound, Set<LootPoint> lootPoints,
       Set<Portal> portals, Set<Ramp> ramps, boolean allowHost) {
     this.name = name;
+    this.authors = authors;
     this.lowerBound = lowerBound;
     this.upperBound = upperBound;
     this.lootPoints = lootPoints;

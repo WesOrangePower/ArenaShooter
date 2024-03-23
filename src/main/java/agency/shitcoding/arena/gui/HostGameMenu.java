@@ -24,6 +24,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
 public class HostGameMenu {
+
   private final LangPlayer player;
   Arena chosenArena;
   RuleSet chosenRuleSet;
@@ -81,12 +82,20 @@ public class HostGameMenu {
               ItemSlot build = ItemBuilder.builder()
                   .withMaterial(Material.IRON_SWORD)
                   .withName(Component.text(arena.getName(), NamedTextColor.GOLD))
+                  .withLore(getArenaDescription(arena))
                   .withClickAction(arenaClickAction(arena))
                   .build();
               return new Item(build.getItemStack(), build.getOverrideClickAction());
             }
         )
         .toList();
+  }
+
+  private List<Component> getArenaDescription(Arena arena) {
+    var authorPrefix = player.getLocalized("menu.host.arenaAuthors");
+    var authorRepresentation = String.join(", ", arena.getAuthors());
+    var authors = Component.text(authorPrefix + " " + authorRepresentation, NamedTextColor.GRAY);
+    return List.of(authors);
   }
 
   private ClickAction arenaClickAction(Arena arena) {
@@ -142,7 +151,8 @@ public class HostGameMenu {
                   .withClickAction(teamClickAction(team))
                   .build();
               ItemStack itemStack = build.getItemStack();
-              itemStack.editMeta(meta -> meta.displayName(teamMeta.getDisplayComponent(player.getLangContext())));
+              itemStack.editMeta(
+                  meta -> meta.displayName(teamMeta.getDisplayComponent(player.getLangContext())));
               return new Item(itemStack, build.getOverrideClickAction());
             }
         )

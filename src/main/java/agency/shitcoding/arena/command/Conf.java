@@ -9,6 +9,7 @@ public class Conf {
 
   public static class Arenas {
 
+    public static final String authors = "authors";
     public static final String lowerBound = "lower_bound";
     public static final String upperBound = "upper_bound";
     public static final String lootPointsSection = "loot_points";

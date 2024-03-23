@@ -1,9 +1,21 @@
 package agency.shitcoding.arena.command.subcommands.arenamutation;
 
+import static agency.shitcoding.arena.command.subcommands.arenamutation.ArenaSetAction.ADD;
+import static agency.shitcoding.arena.command.subcommands.arenamutation.ArenaSetAction.GET;
+import static agency.shitcoding.arena.command.subcommands.arenamutation.ArenaSetAction.REMOVE;
+import static agency.shitcoding.arena.command.subcommands.arenamutation.ArenaSetAction.SET;
+
 import agency.shitcoding.arena.QuadConsumer;
-import agency.shitcoding.arena.models.*;
+import agency.shitcoding.arena.models.Arena;
+import agency.shitcoding.arena.models.LootPoint;
+import agency.shitcoding.arena.models.Portal;
+import agency.shitcoding.arena.models.Powerup;
+import agency.shitcoding.arena.models.Ramp;
 import agency.shitcoding.arena.storage.ArenaStorage;
 import agency.shitcoding.arena.storage.StorageProvider;
+import java.util.Arrays;
+import java.util.List;
+import java.util.function.Predicate;
 import lombok.RequiredArgsConstructor;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.event.ClickEvent;
@@ -15,11 +27,6 @@ import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-
-import java.util.Arrays;
-import java.util.function.Predicate;
-
-import static agency.shitcoding.arena.command.subcommands.arenamutation.ArenaSetAction.*;
 
 @RequiredArgsConstructor
 public enum ArenaSetField {
@@ -64,8 +71,28 @@ public enum ArenaSetField {
               .append(locationComponent(lp.getLocation()))
           )
       );
+      case REMOVE -> {
+        if (v == null) {
+          p.sendRichMessage("<red>Powerup ID must be specified.");
+          return;
+        }
+        int id;
+        try {
+          id = Integer.parseInt(v);
+        } catch (NumberFormatException e) {
+          p.sendRichMessage("<red>Invalid powerup ID. Must be a number.");
+          return;
+        }
+        ar.getLootPoints().stream().filter(lp -> lp.getId() == id).findFirst().ifPresentOrElse(
+            lp -> {
+              ar.getLootPoints().remove(lp);
+              arenaStorage.storeArena(ar);
+              p.sendRichMessage("<green>Powerup " + lp.getType().name() + " removed.");
+            },
+            () -> p.sendRichMessage("<red>Powerup " + id + " not found.")
+        );
+      }
     }
-    // TODO
   }),
   LBOUND(a -> a == GET || a == SET, (ar, a, v, s) -> {
     if (a == GET) {
@@ -228,7 +255,9 @@ public enum ArenaSetField {
           Double.parseDouble(split[9]),
           Double.parseDouble(split[10])
       );
-      Ramp ramp = new Ramp(id, firstLocation, secondLocation, Boolean.TRUE.equals(multiply), vector);
+      Ramp ramp = new Ramp(id, firstLocation, secondLocation, Boolean.TRUE.equals(multiply),
+          vector);
+      ar.getRamps().removeIf(r -> r.getId().equals(id));
       ar.getRamps().add(ramp);
       StorageProvider.getArenaStorage().storeArena(ar);
       s.sendRichMessage("<green>ramp " + id + " added.");
@@ -275,6 +304,22 @@ public enum ArenaSetField {
       ar.setAllowHost(allowHost);
       StorageProvider.getArenaStorage().storeArena(ar);
       s.sendRichMessage("<green>Allow host set to " + allowHost);
+    }
+  }),
+  AUTHORS(a -> a == SET || a == GET, (ar, a, v,s) -> {
+    if (a == GET) {
+      s.sendMessage("Authors: " + ar.getAuthors());
+      return;
+    }
+    if (a == SET) {
+      if (v == null) {
+        s.sendRichMessage("<red>Authors must be specified. Use /arena set <arena> authors <author1,author2,...>.");
+        return;
+      }
+      List<String> newAuthors = Arrays.asList(v.split(","));
+      ar.setAuthors(newAuthors);
+      StorageProvider.getArenaStorage().storeArena(ar);
+      s.sendRichMessage("<green>Authors set to " + newAuthors);
     }
   });
 

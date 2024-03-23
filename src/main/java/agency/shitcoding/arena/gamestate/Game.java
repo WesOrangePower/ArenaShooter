@@ -89,8 +89,10 @@ public abstract class Game {
     scores.removeIf(p -> p.getPlayer().equals(player));
     Optional.ofNullable(scoreboardObjective).ifPresent(o -> o.getScore(player).resetScore());
     player.setScoreboard(Bukkit.getScoreboardManager().getMainScoreboard());
-    bossBarMap.get(player).removeViewer(player);
-    bossBarMap.remove(player);
+    Optional.ofNullable(bossBarMap.get(player)).ifPresent(bb -> {
+      bb.removeViewer(player);
+      bossBarMap.remove(player);
+    });
     boolean isEmptyWaiting = gamestage == GameStage.WAITING && players.isEmpty();
     boolean isTooFewPlayers =
         gamestage == GameStage.IN_PROGRESS && players.size() < ruleSet.getMinPlayers();

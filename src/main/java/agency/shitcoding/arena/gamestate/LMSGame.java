@@ -5,8 +5,6 @@ import agency.shitcoding.arena.models.GameStage;
 import agency.shitcoding.arena.models.RuleSet;
 import agency.shitcoding.arena.statistics.GameOutcome;
 import java.time.Instant;
-import java.util.Comparator;
-import java.util.Optional;
 import org.bukkit.entity.Player;
 
 import java.util.Set;

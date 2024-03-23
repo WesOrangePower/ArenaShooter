@@ -14,6 +14,7 @@ import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.inventory.InventoryInteractEvent;
 import org.bukkit.event.inventory.InventoryOpenEvent;
+import org.bukkit.event.player.PlayerCommandPreprocessEvent;
 import org.bukkit.event.player.PlayerDropItemEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerItemDamageEvent;
@@ -124,6 +125,26 @@ public class BlockerListener implements Listener {
   @EventHandler
   private void onItemHandCheck(PlayerSwapHandItemsEvent event) {
     if (event.getPlayer().getGameMode() == GameMode.ADVENTURE) {
+      event.setCancelled(true);
+    }
+  }
+
+  @EventHandler
+  private void disableTrapdoors(PlayerInteractEvent event) {
+    if (event.getPlayer().getGameMode() != GameMode.ADVENTURE) {
+      return;
+    }
+
+    if (event.getClickedBlock() != null
+        && event.getClickedBlock().getType().name().contains("TRAPDOOR")) {
+      event.setCancelled(true);
+    }
+  }
+
+  @EventHandler
+  private void disableKillCommand(PlayerCommandPreprocessEvent event) {
+    if (event.getMessage().startsWith("/kill")) {
+      event.getPlayer().sendRichMessage("<red>Gubami");
       event.setCancelled(true);
     }
   }

@@ -113,7 +113,7 @@ public class MovementListener implements Listener {
     Location loc = player.getLocation();
     Vector direction = loc.getDirection();
     direction.multiply(1.1);
-    direction.setY(0.65);
+    direction.setY(0.60);
     player.setVelocity(direction);
 
     loc.getWorld().spawnParticle(Particle.FLAME, loc, 10, 0.5, 0.5, 0.5, 0.1);

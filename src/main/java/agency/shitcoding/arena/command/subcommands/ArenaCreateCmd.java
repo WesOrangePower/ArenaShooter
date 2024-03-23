@@ -4,6 +4,7 @@ import agency.shitcoding.arena.command.ArenaDeathMatchCommand;
 import agency.shitcoding.arena.command.CommandInst;
 import agency.shitcoding.arena.models.Arena;
 import agency.shitcoding.arena.storage.StorageProvider;
+import java.util.List;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
@@ -30,6 +31,7 @@ public class ArenaCreateCmd extends CommandInst {
     String name = args[ARG_NAME];
     Player player = (Player) sender;
     Arena arena = new Arena(name,
+        List.of(),
         player.getLocation().subtract(20, 20, 20),
         player.getLocation().add(20, 20, 20),
         new HashSet<>(),
