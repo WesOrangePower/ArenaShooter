@@ -24,6 +24,7 @@ public class ArenaHelpCmd extends CommandInst {
     if (!(sender instanceof Player)) {
       return;
     }
+    // TODO
   }
 
 }

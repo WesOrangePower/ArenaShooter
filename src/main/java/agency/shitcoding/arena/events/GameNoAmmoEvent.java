@@ -27,6 +27,6 @@ public class GameNoAmmoEvent extends GameEvent {
 
   @Override
   public @NotNull HandlerList getHandlers() {
-    return handlers;
+    return getHandlerList();
   }
 }

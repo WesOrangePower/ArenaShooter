@@ -46,7 +46,6 @@ public class ArenaDeathMatchTabCompleter {
 
     return switch (args[0].toLowerCase()) {
       case "set" -> resolveSet();
-//            case "create" -> List.of("name");
       case "host" -> resolveHost();
       default -> null;
     };

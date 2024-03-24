@@ -1,6 +1,6 @@
 package agency.shitcoding.arena.storage;
 
-public class StorageProvider {
+public final class StorageProvider {
 
   private static ArenaStorage arenaStorage;
   private static FaqStorage faqStorage;

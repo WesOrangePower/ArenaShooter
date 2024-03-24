@@ -22,8 +22,8 @@ public class Portal {
   @Getter
   private final Location targetLocation;
 
-  private Block lowerBlock = null;
-  private Block upperBlock = null;
+  private Block lowerBlock;
+  private Block upperBlock;
 
   public Block getLowerBlock() {
     if (lowerBlock == null) {

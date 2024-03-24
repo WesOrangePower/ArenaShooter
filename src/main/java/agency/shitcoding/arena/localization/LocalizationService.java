@@ -1,19 +1,16 @@
 package agency.shitcoding.arena.localization;
 
 import agency.shitcoding.arena.models.Keys;
-import java.util.HashMap;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Optional;
-import java.util.ResourceBundle;
 import org.bukkit.entity.Player;
 import org.bukkit.persistence.PersistentDataType;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.*;
+
 public class LocalizationService {
-  private static LocalizationService instance = null;
+  private static LocalizationService instance;
   public static LocalizationService getInstance() {
     if (instance == null) {
       instance = new LocalizationService();
@@ -32,7 +29,7 @@ public class LocalizationService {
 
   public @NotNull String getLocalized(@Nullable String key, @Nullable String locale, Object... args) {
     if (key == null) {
-      return "" + null;
+      return "null";
     }
     var bundle = Optional.ofNullable(locale)
         .map(bundles::get)

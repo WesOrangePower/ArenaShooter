@@ -9,7 +9,7 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.function.UnaryOperator;
 
-public class LootManagerProvider {
+public final class LootManagerProvider {
 
   private static final Map<String, LootManager> map = new HashMap<>();
 

@@ -1,6 +1,7 @@
 package agency.shitcoding.arena.statistics;
 
 import agency.shitcoding.arena.models.RuleSet;
+
 import java.time.Instant;
 
 public record GameOutcome(
@@ -16,7 +17,7 @@ public record GameOutcome(
 
   @Override
   public String toString() {
-    return String.format("%s,%s,%d,%d,%d,%b,%s,%s\n",
+    return String.format("%s,%s,%d,%d,%d,%b,%s,%s%n",
         playerName,
         ruleSet.name(),
         kills,

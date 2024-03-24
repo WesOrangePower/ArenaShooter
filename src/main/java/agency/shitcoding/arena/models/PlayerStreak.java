@@ -9,6 +9,6 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class PlayerStreak {
 
-  private int consequentRailHit = 0;
-  private int fragStreak = 0;
+  private int consequentRailHit;
+  private int fragStreak;
 }

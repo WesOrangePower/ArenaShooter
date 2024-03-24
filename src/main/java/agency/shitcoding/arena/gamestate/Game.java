@@ -4,25 +4,8 @@ import agency.shitcoding.arena.ArenaShooter;
 import agency.shitcoding.arena.SoundConstants;
 import agency.shitcoding.arena.events.MajorBuffTracker;
 import agency.shitcoding.arena.localization.LangPlayer;
-import agency.shitcoding.arena.models.Ammo;
-import agency.shitcoding.arena.models.Arena;
-import agency.shitcoding.arena.models.GameStage;
-import agency.shitcoding.arena.models.LootPoint;
-import agency.shitcoding.arena.models.PlayerStreak;
-import agency.shitcoding.arena.models.RuleSet;
+import agency.shitcoding.arena.models.*;
 import agency.shitcoding.arena.statistics.GameOutcome;
-import java.time.Instant;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.Set;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.stream.Collectors;
 import lombok.Getter;
 import net.kyori.adventure.audience.Audience;
 import net.kyori.adventure.bossbar.BossBar;
@@ -35,16 +18,17 @@ import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Item;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitTask;
-import org.bukkit.scoreboard.Criteria;
-import org.bukkit.scoreboard.DisplaySlot;
-import org.bukkit.scoreboard.Objective;
-import org.bukkit.scoreboard.RenderType;
-import org.bukkit.scoreboard.Scoreboard;
+import org.bukkit.scoreboard.*;
 import org.bukkit.util.BoundingBox;
 import org.bukkit.util.Consumer;
 import org.bukkit.util.Vector;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+
+import java.time.Instant;
+import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.stream.Collectors;
 
 @Getter
 public abstract class Game {
@@ -67,7 +51,7 @@ public abstract class Game {
   protected GameStage gamestage = GameStage.WAITING;
   protected Objective scoreboardObjective;
   private Instant gameStart;
-  private PlayerWaitingManager waitingManager = null;
+  private PlayerWaitingManager waitingManager;
 
   protected Game(Arena arena, RuleSet ruleSet) {
     this.arena = arena;
@@ -249,7 +233,6 @@ public abstract class Game {
   }
 
   protected void startGameStage2() {
-
   }
 
   public void addPlayer(Player player) {

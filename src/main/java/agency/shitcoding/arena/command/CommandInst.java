@@ -8,7 +8,7 @@ public abstract class CommandInst {
   protected final @NotNull CommandSender sender;
   protected final @NotNull String[] args;
 
-  public CommandInst(@NotNull CommandSender sender, @NotNull String[] args) {
+  protected CommandInst(@NotNull CommandSender sender, @NotNull String[] args) {
     this.sender = sender;
     this.args = args;
   }

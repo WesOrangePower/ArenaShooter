@@ -4,12 +4,12 @@ import agency.shitcoding.arena.command.ArenaDeathMatchCommand;
 import agency.shitcoding.arena.command.CommandInst;
 import agency.shitcoding.arena.models.Arena;
 import agency.shitcoding.arena.storage.StorageProvider;
-import java.util.List;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.HashSet;
+import java.util.List;
 
 public class ArenaCreateCmd extends CommandInst {
 
@@ -58,7 +58,7 @@ public class ArenaCreateCmd extends CommandInst {
       sender.sendRichMessage("<red>Название арены должно быть от 3 до 16 символов");
       return false;
     }
-    if (!args[ARG_NAME].matches("[a-zA-Z0-9_]{3,16}")) {
+    if (!args[ARG_NAME].matches("\\w{3,16}")) {
       sender.sendRichMessage("<red>Название арены должно состоять из букв и цифр");
       return false;
     }

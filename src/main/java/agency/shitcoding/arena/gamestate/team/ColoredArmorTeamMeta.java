@@ -9,7 +9,7 @@ public abstract class ColoredArmorTeamMeta implements TeamMeta {
 
   private final Color color;
 
-  public ColoredArmorTeamMeta(Color color) {
+  protected ColoredArmorTeamMeta(Color color) {
     this.color = color;
   }
 

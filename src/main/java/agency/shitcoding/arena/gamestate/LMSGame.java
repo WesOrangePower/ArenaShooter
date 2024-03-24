@@ -4,15 +4,15 @@ import agency.shitcoding.arena.models.Arena;
 import agency.shitcoding.arena.models.GameStage;
 import agency.shitcoding.arena.models.RuleSet;
 import agency.shitcoding.arena.statistics.GameOutcome;
-import java.time.Instant;
 import org.bukkit.entity.Player;
 
+import java.time.Instant;
 import java.util.Set;
 import java.util.stream.Collectors;
 
 public class LMSGame extends DeathMatchGame {
 
-  private Player winner = null;
+  private Player winner;
 
   public LMSGame(Arena arena) {
     super(arena, RuleSet.LMS);

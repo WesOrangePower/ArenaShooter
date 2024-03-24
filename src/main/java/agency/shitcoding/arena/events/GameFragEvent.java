@@ -26,7 +26,7 @@ public class GameFragEvent extends GameEvent implements Cancellable {
 
   @Override
   public @NotNull HandlerList getHandlers() {
-    return handlers;
+    return getHandlerList();
   }
 
   public GameFragEvent(@NotNull Player victim, @Nullable Player killer, @Nullable Weapon weapon) {

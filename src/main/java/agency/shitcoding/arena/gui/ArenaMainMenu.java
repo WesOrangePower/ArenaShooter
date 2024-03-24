@@ -7,8 +7,6 @@ import agency.shitcoding.arena.gamestate.team.TeamGame;
 import agency.shitcoding.arena.gui.settings.TeamSelectGui;
 import agency.shitcoding.arena.localization.LangPlayer;
 import agency.shitcoding.arena.statistics.Statistics;
-import java.util.Arrays;
-import java.util.Set;
 import net.jellycraft.guiapi.api.InventorySize;
 import net.jellycraft.guiapi.api.ItemSlot;
 import net.jellycraft.guiapi.api.ViewRegistry;
@@ -22,6 +20,9 @@ import net.kyori.adventure.text.format.TextDecoration;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
+
+import java.util.Arrays;
+import java.util.Set;
 
 public class ArenaMainMenu {
 
@@ -124,14 +125,9 @@ public class ArenaMainMenu {
     }
 
     Set<Game> games = orchestrator.getGames();
-    if (games.isEmpty()) {
-      return hostGameButton();
-    } else {
-      for (Game game : games) {
-        return joinGameButton(game);
-      }
-    }
-    throw new IllegalStateException();
+    return games.stream().findFirst()
+            .map(this::joinGameButton)
+            .orElseGet(this::hostGameButton);
   }
 
   private ItemSlot joinGameButton(Game game) {
@@ -146,11 +142,6 @@ public class ArenaMainMenu {
       case WAITING -> Material.GREEN_WOOL;
       case FINISHED -> Material.PURPLE_WOOL;
     };
-//        Component name = switch (game.getGamestage()) {
-//            case IN_PROGRESS -> Component.text("Присоединиться к начатой игре", NamedTextColor.YELLOW);
-//            case WAITING -> Component.text("Присоединиться", NamedTextColor.GREEN);
-//            case FINISHED -> Component.text("Закончена", NamedTextColor.DARK_PURPLE);
-//        };
     String[] playerNames = game.getPlayers().stream()
         .map(Player::getName)
         .toArray(String[]::new);

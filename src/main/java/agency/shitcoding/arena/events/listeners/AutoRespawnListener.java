@@ -88,7 +88,6 @@ public class AutoRespawnListener implements Listener {
                 game.getPlayers().stream().map(LangPlayer::new)
                     .forEach(pl -> pl.sendRichLocalized("game.death.chat.self", p.getName()));
                 game.updateScore(p, -1);
-//                                game.getScoreboardObjective().getScore(p).setScore(game.getOptScore(p).map(PlayerScore::getScore).orElse(0));
               } else {
                 game.getPlayers().stream().map(LangPlayer::new)
                     .forEach(pl -> pl.sendRichLocalized("game.death.chat.other",

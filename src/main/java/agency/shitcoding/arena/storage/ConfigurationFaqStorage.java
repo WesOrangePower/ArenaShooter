@@ -7,6 +7,8 @@ import lombok.RequiredArgsConstructor;
 import org.bukkit.configuration.Configuration;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;
+import org.jetbrains.annotations.Contract;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
 import java.util.logging.Logger;
@@ -43,12 +45,9 @@ public class ConfigurationFaqStorage implements FaqStorage {
     List<Faq> faqs = new ArrayList<>();
     for (String key : keys) {
       ConfigurationSection faqSection = allFaqsSection.getConfigurationSection(key);
-      if (faqSection == null) {
-        LOG.warning("Failed to read FAQ: " + key);
-        continue;
-      }
       Faq faq = parseFaq(faqSection);
       if (faq == null) {
+        LOG.warning(() -> "Failed to read FAQ: " + key);
         continue;
       }
       faqs.add(faq);
@@ -56,7 +55,11 @@ public class ConfigurationFaqStorage implements FaqStorage {
     return faqs;
   }
 
-  private Faq parseFaq(ConfigurationSection section) {
+  @Contract("null -> null")
+  private Faq parseFaq(@Nullable ConfigurationSection section) {
+    if (section == null ) {
+      return null;
+    }
     String title = section.getString(Conf.Faqs.title);
     String content = section.getString(Conf.Faqs.content);
     if (title == null) {
@@ -64,7 +67,7 @@ public class ConfigurationFaqStorage implements FaqStorage {
       return null;
     }
     if (content == null) {
-      LOG.warning("No content for FAQ: " + title);
+      LOG.warning(() -> "No content for FAQ: " + title);
       return null;
     }
     return new Faq(title, content);

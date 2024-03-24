@@ -42,7 +42,7 @@ public class RocketListener implements Listener {
       rocket.setIsIncendiary(false);
       rocket.setYield(0f);
       rocket.setDirection(lookingVector.clone().multiply(2.4));
-      Bukkit.getScheduler().runTaskLater(ArenaShooter.getInstance(), rocket::remove, 20 * 10);
+      Bukkit.getScheduler().runTaskLater(ArenaShooter.getInstance(), rocket::remove, 20 * 10L);
     });
   }
 
@@ -56,7 +56,6 @@ public class RocketListener implements Listener {
     Location at = rocket.getLocation();
     rocket.remove();
 
-//        at.getWorld().createExplosion(at, 1.5f, false, false);
     at.getWorld().spawnParticle(Particle.EXPLOSION_NORMAL, at, 5, .75, .75, .75, 0);
     at.getWorld().spawnParticle(Particle.EXPLOSION_HUGE, at, 5, .75, .75, .75, 0);
     at.getWorld().playSound(at, SoundConstants.ROCKET_DET, .75f, 1f);

@@ -2,33 +2,13 @@ package agency.shitcoding.arena;
 
 import agency.shitcoding.arena.command.ArenaDeathMatchCommandInvoker;
 import agency.shitcoding.arena.events.PortalListener;
-import agency.shitcoding.arena.events.listeners.AmmoListener;
-import agency.shitcoding.arena.events.listeners.AutoClickerBlocker;
-import agency.shitcoding.arena.events.listeners.AutoRespawnListener;
-import agency.shitcoding.arena.events.listeners.BlockerListener;
-import agency.shitcoding.arena.events.listeners.DamageListener;
-import agency.shitcoding.arena.events.listeners.GameStreakListener;
-import agency.shitcoding.arena.events.listeners.GauntletListener;
-import agency.shitcoding.arena.events.listeners.InstagibListener;
-import agency.shitcoding.arena.events.listeners.InteractListener;
-import agency.shitcoding.arena.events.listeners.ItemListener;
-import agency.shitcoding.arena.events.listeners.LightningGunListener;
-import agency.shitcoding.arena.events.listeners.LobbyListener;
-import agency.shitcoding.arena.events.listeners.MachineGunListener;
-import agency.shitcoding.arena.events.listeners.MovementListener;
-import agency.shitcoding.arena.events.listeners.NoAmmoListener;
-import agency.shitcoding.arena.events.listeners.PlasmaListener;
-import agency.shitcoding.arena.events.listeners.RailListener;
-import agency.shitcoding.arena.events.listeners.RocketListener;
-import agency.shitcoding.arena.events.listeners.ShotgunListener;
+import agency.shitcoding.arena.events.listeners.*;
 import agency.shitcoding.arena.gamestate.Game;
 import agency.shitcoding.arena.gamestate.GameOrchestrator;
 import agency.shitcoding.arena.statistics.StatisticsService;
 import agency.shitcoding.arena.statistics.StatisticsServiceImpl;
 import com.github.yannicklamprecht.worldborder.api.WorldBorderApi;
 import com.github.yannicklamprecht.worldborder.plugin.PersistenceWrapper;
-import java.io.File;
-import java.util.Objects;
 import lombok.Getter;
 import org.bukkit.event.Listener;
 import org.bukkit.plugin.RegisteredServiceProvider;
@@ -37,11 +17,14 @@ import org.bukkit.scoreboard.Objective;
 import org.bukkit.scoreboard.Scoreboard;
 import org.bukkit.scoreboard.Team;
 
+import java.io.File;
+import java.util.Objects;
+
 @Getter
 public final class ArenaShooter extends JavaPlugin {
 
-  private ArenaWorldBorderApi worldBorderApi = null;
-  private StatisticsService statisticsService = null;
+  private ArenaWorldBorderApi worldBorderApi;
+  private StatisticsService statisticsService;
 
   public static ArenaShooter getInstance() {
     return getPlugin(ArenaShooter.class);

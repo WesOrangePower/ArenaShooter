@@ -7,14 +7,15 @@ import agency.shitcoding.arena.models.Arena;
 import agency.shitcoding.arena.models.GameStage;
 import agency.shitcoding.arena.models.RuleSet;
 import agency.shitcoding.arena.statistics.GameOutcome;
-import java.time.Instant;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Set;
 import lombok.Getter;
 import net.kyori.adventure.text.Component;
 import org.bukkit.entity.Player;
 import org.bukkit.scoreboard.Team;
+
+import java.time.Instant;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
 
 @Getter
 public abstract class TeamGame extends Game {
@@ -38,11 +39,6 @@ public abstract class TeamGame extends Game {
         team.getTeamMeta().getTextColor().asHexString(),
         teamName
     );
-  }
-
-  @Override
-  public void updateScore(Player p, int delta) {
-    super.updateScore(p, delta);
   }
 
   @Override

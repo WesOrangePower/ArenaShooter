@@ -1,17 +1,13 @@
 package agency.shitcoding.arena.gamestate.team;
 
 import agency.shitcoding.arena.ArenaShooter;
-import java.lang.reflect.InvocationTargetException;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Optional;
-import java.util.PriorityQueue;
-import java.util.Queue;
-import java.util.Set;
 import lombok.Getter;
 import org.bukkit.entity.Player;
 import org.bukkit.scoreboard.Scoreboard;
 import org.bukkit.scoreboard.Team;
+
+import java.lang.reflect.InvocationTargetException;
+import java.util.*;
 
 @Getter
 public class TeamManager {
@@ -24,7 +20,7 @@ public class TeamManager {
 
   public TeamManager(int maxPerTeam, Scoreboard scoreboard) {
     this.maxPerTeam = maxPerTeam;
-    teams = new HashMap<>();
+    teams = new EnumMap<>(ETeam.class);
     try {
       for (ETeam value : ETeam.values()) {
         var nac = value.getTeamClass().getConstructor(Team.class);

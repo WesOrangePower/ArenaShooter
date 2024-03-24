@@ -81,10 +81,8 @@ public class PlasmaListener implements Listener {
     if (hitEntity == null) {
       at.getWorld().spawnParticle(Particle.ELECTRIC_SPARK, at, 5, 1.5, 1.5, 1.5, 0);
       for (LivingEntity nearbyEntity : at.getNearbyLivingEntities(.2, .2, .2)) {
-        if (nearbyEntity instanceof Player player) {
-          if (player.getGameMode() == GameMode.ADVENTURE) {
+        if (nearbyEntity instanceof Player player && (player.getGameMode() == GameMode.ADVENTURE)) {
             new GameDamageEvent(player, nearbyEntity, 1.3, Weapon.PLASMA_GUN).fire();
-          }
         }
       }
       return;

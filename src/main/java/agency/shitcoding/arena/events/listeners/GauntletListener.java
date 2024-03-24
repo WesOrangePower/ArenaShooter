@@ -42,7 +42,7 @@ public class GauntletListener implements Listener {
     Set<LivingEntity> affectedEntities = new HashSet<>();
     at.getWorld().getNearbyEntities(at, 1, 1, 1)
         .stream()
-        .filter(entity -> entity instanceof LivingEntity)
+        .filter(LivingEntity.class::isInstance)
         .filter(entity -> entity != player)
         .forEach(entity -> {
           affectedEntities.add((LivingEntity) entity);

@@ -4,17 +4,18 @@ import agency.shitcoding.arena.ArenaShooter;
 import agency.shitcoding.arena.events.GameShootEvent;
 import agency.shitcoding.arena.gamestate.GameOrchestrator;
 import agency.shitcoding.arena.localization.LangPlayer;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.logging.Logger;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerQuitEvent;
 
+import java.util.HashMap;
+import java.util.Map;
+import java.util.logging.Logger;
+
 public class AutoClickerBlocker implements Listener {
-  private final Logger logger = ArenaShooter.getInstance().getLogger();
+  private static final Logger logger = ArenaShooter.getInstance().getLogger();
   public static final int MAX_WARNINGS = 10;
   Map<Player, Long> lastShoot = new HashMap<>();
   Map<Player, Integer> warningCounter = new HashMap<>();

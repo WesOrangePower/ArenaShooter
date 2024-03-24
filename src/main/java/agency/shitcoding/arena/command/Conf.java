@@ -1,7 +1,7 @@
 package agency.shitcoding.arena.command;
 
 
-public class Conf {
+public final class Conf {
 
   public static final String arenasSection = "arena.arenas";
   public static final String lobbyLocation = "arena.lobby_location";
@@ -21,6 +21,10 @@ public class Conf {
 
       public static final String location = "location";
       public static final String type = "type";
+
+      private LootPoints() {
+
+      }
     }
 
     public static class Portals {
@@ -28,6 +32,9 @@ public class Conf {
       public static final String firstLocation = "first_location";
       public static final String secondLocation = "second_location";
       public static final String targetLocation = "target_location";
+
+      private Portals() {
+      }
     }
 
     public static class Ramps {
@@ -36,12 +43,22 @@ public class Conf {
       public static final String secondLocation = "second_location";
       public static final String multiply = "multiply";
       public static final String vector = "vector";
+
+      private Ramps() {
+      }
     }
+
   }
 
   public static class Faqs {
 
     public static final String title = "title";
     public static final String content = "content";
+
+    private Faqs() {
+    }
+  }
+
+  private Conf() {
   }
 }

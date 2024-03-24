@@ -62,7 +62,7 @@ public class RailListener implements Listener {
 
         at.getWorld().getNearbyEntities(at, .2, .2, .2)
             .stream()
-            .filter(entity -> entity instanceof LivingEntity)
+            .filter(LivingEntity.class::isInstance)
             .filter(entity -> entity != player)
             .forEach(entity -> {
               affectedEntities.add((LivingEntity) entity);

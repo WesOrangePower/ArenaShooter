@@ -33,9 +33,7 @@ public class SettingsMenu {
         .withItemStack(HeadDatabaseUtil.getHead("47254"))
         .withName(player.getLocalized("menu.settings.langButton.title"))
         .withLoreLine(player.getLocalized("menu.settings.langButton.lore"))
-        .withClickAction((type, ctx) -> {
-          new LangChooserMenu(player.getPlayer()).open();
-        })
+        .withClickAction((type, ctx) -> new LangChooserMenu(player.getPlayer()).open())
         .build();
   }
 }

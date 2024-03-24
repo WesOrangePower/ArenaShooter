@@ -22,14 +22,14 @@ import java.util.stream.Collectors;
 public class Arena {
 
   public static final Random spawnPointRandomizer = new Random();
-  public String name;
+  private String name;
   private List<String> authors;
-  public Location lowerBound;
-  public Location upperBound;
-  public Set<LootPoint> lootPoints;
-  public Set<Portal> portals;
-  public Set<Ramp> ramps;
-  private Set<LootPoint> weaponLootPoints = null;
+  private Location lowerBound;
+  private Location upperBound;
+  private Set<LootPoint> lootPoints;
+  private Set<Portal> portals;
+  private Set<Ramp> ramps;
+  private Set<LootPoint> weaponLootPoints;
   private boolean allowHost;
 
   public Arena(String name, List<String> authors,
@@ -64,7 +64,7 @@ public class Arena {
     LootPoint lootPoint = findLootPointToSpawn();
     if (lootPoint == null) {
       ArenaShooter.getInstance().getLogger()
-          .log(Level.SEVERE, "Failed to spawn player " + player.getName() + " in arena " + name);
+          .log(Level.SEVERE, () -> "Failed to spawn player " + player.getName() + " in arena " + name);
       return null;
     }
 

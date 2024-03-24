@@ -8,7 +8,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.logging.Logger;
 
-public class StorageFactory {
+public final class StorageFactory {
 
   private static final Logger LOG = Logger.getLogger(StorageFactory.class.getName());
 
@@ -25,7 +25,7 @@ public class StorageFactory {
     try {
       File file = new File(name);
       if (file.createNewFile()) {
-        LOG.info("Created new file " + name);
+        LOG.info(() -> "Created new file " + name);
       }
       return YamlConfiguration.loadConfiguration(file);
     } catch (IOException e) {
@@ -34,5 +34,8 @@ public class StorageFactory {
       LOG.severe("Using memory configuration instead");
       return new MemoryConfiguration();
     }
+  }
+
+  private StorageFactory() {
   }
 }

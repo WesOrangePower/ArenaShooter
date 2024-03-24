@@ -1,22 +1,5 @@
 package agency.shitcoding.arena.gamestate;
 
-import java.lang.reflect.Constructor;
-import java.lang.reflect.Field;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
-import java.util.UUID;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ThreadLocalRandom;
-import java.util.concurrent.atomic.AtomicInteger;
-import java.util.logging.Level;
-import java.util.logging.LogRecord;
-import java.util.logging.Logger;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.entity.Entity;
@@ -26,6 +9,18 @@ import org.bukkit.plugin.Plugin;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.scheduler.BukkitTask;
 import org.bukkit.util.Vector;
+
+import java.lang.reflect.Constructor;
+import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ThreadLocalRandom;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.logging.Level;
+import java.util.logging.LogRecord;
+import java.util.logging.Logger;
 
 /**
  * A whole class to create Guardian Lasers and Ender Crystal Beams using packets and reflection.<br>
@@ -42,7 +37,7 @@ public abstract class Laser {
 
   protected final int distanceSquared;
   protected final int duration;
-  protected boolean durationInTicks = false;
+  protected boolean durationInTicks;
   protected Location start;
   protected Location end;
 
@@ -109,7 +104,7 @@ public abstract class Laser {
     }
     this.plugin = plugin;
     main = new BukkitRunnable() {
-      int time = 0;
+      int time;
 
       @Override
       public void run() {
@@ -255,7 +250,7 @@ public abstract class Laser {
       final double yPerTick = (location.getY() - from.getY()) / ticks;
       final double zPerTick = (location.getZ() - from.getZ()) / ticks;
       final Location loc = from.clone();
-      int elapsed = 0;
+      int elapsed;
 
       @Override
       public void run() {
@@ -793,7 +788,7 @@ public abstract class Laser {
 
     private static Object nmsWorld;
 
-    public static boolean enabled = false;
+    public static boolean enabled;
 
     static {
       try {

@@ -2,7 +2,7 @@ package agency.shitcoding.arena;
 
 import org.bukkit.potion.PotionEffectType;
 
-public class GameplayConstants {
+public final class GameplayConstants {
 
   public static final int QUAD_DAMAGE_DURATION = 30 * 20;
   public static final int QUAD_DAMAGE_MULTIPLIER = 4;
@@ -64,4 +64,7 @@ public class GameplayConstants {
   public static final int RESPAWN_INVULNERABILITY_DURATION = 20 * 2; // Milliseconds
   public static final boolean RESPAWN_INVULNERABILITY_DISABLE_ON_SHOOT = true;
   public static final double BASE_HEALTH = 20d;
+
+  private GameplayConstants() {
+  }
 }

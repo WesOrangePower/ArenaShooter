@@ -1,26 +1,23 @@
 package agency.shitcoding.arena.events.listeners;
 
-import static agency.shitcoding.arena.GameplayConstants.MACHINE_GUN_DAMAGE;
-
 import agency.shitcoding.arena.ArenaShooter;
 import agency.shitcoding.arena.SoundConstants;
 import agency.shitcoding.arena.events.GameDamageEvent;
 import agency.shitcoding.arena.events.GameShootEvent;
 import agency.shitcoding.arena.models.Ammo;
 import agency.shitcoding.arena.models.Weapon;
-import java.util.HashSet;
-import java.util.Set;
-import org.bukkit.Bukkit;
-import org.bukkit.Location;
-import org.bukkit.Material;
-import org.bukkit.Particle;
-import org.bukkit.World;
+import org.bukkit.*;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.util.Vector;
+
+import java.util.HashSet;
+import java.util.Set;
+
+import static agency.shitcoding.arena.GameplayConstants.MACHINE_GUN_DAMAGE;
 
 
 public class MachineGunListener implements Listener {
@@ -78,7 +75,7 @@ public class MachineGunListener implements Listener {
         Set<LivingEntity> affectedEntities = new HashSet<>();
         at.getWorld().getNearbyEntities(at, .2, .2, .2)
             .stream()
-            .filter(entity -> entity instanceof LivingEntity)
+            .filter(LivingEntity.class::isInstance)
             .filter(entity -> entity != player)
             .forEach(entity -> {
               affectedEntities.add((LivingEntity) entity);

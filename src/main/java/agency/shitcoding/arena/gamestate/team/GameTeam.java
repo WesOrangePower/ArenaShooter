@@ -2,12 +2,13 @@ package agency.shitcoding.arena.gamestate.team;
 
 import lombok.Getter;
 import org.bukkit.entity.Player;
-
-import java.util.HashSet;
-import java.util.Set;
 import org.bukkit.scoreboard.Team;
 import org.bukkit.scoreboard.Team.Option;
 import org.bukkit.scoreboard.Team.OptionStatus;
+
+import java.util.HashSet;
+import java.util.Objects;
+import java.util.Set;
 
 @Getter
 public abstract class GameTeam {
@@ -32,6 +33,11 @@ public abstract class GameTeam {
 
   @Override
   public boolean equals(Object obj) {
-    return obj.getClass().equals(this.getClass());
+    return obj != null && obj.getClass().equals(this.getClass());
+  }
+
+  @Override
+  public int hashCode() {
+    return Objects.hash(getETeam());
   }
 }

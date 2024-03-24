@@ -1,7 +1,5 @@
 package agency.shitcoding.arena.events.listeners;
 
-import static org.bukkit.Sound.ENTITY_PLAYER_HURT;
-
 import agency.shitcoding.arena.ArenaShooter;
 import agency.shitcoding.arena.GameplayConstants;
 import agency.shitcoding.arena.SoundConstants;
@@ -12,18 +10,10 @@ import agency.shitcoding.arena.gamestate.GameOrchestrator;
 import agency.shitcoding.arena.gamestate.team.TeamGame;
 import agency.shitcoding.arena.gamestate.team.TeamManager;
 import agency.shitcoding.arena.models.Weapon;
-import java.util.Optional;
-import java.util.Random;
-import java.util.stream.Stream;
 import net.kyori.adventure.key.Key;
 import net.kyori.adventure.sound.Sound;
 import net.kyori.adventure.sound.Sound.Source;
-import org.bukkit.Bukkit;
-import org.bukkit.GameMode;
-import org.bukkit.Location;
-import org.bukkit.Material;
-import org.bukkit.Particle;
-import org.bukkit.World;
+import org.bukkit.*;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.LivingEntity;
@@ -40,7 +30,15 @@ import org.bukkit.util.Vector;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.Optional;
+import java.util.Random;
+import java.util.stream.Stream;
+
+import static org.bukkit.Sound.ENTITY_PLAYER_HURT;
+
 public class DamageListener implements Listener {
+
+  private Random rng;
 
   @EventHandler
   public void onDamage(GameDamageEvent event) {
@@ -203,7 +201,9 @@ public class DamageListener implements Listener {
     head.editMeta(SkullMeta.class, meta -> meta.setOwningPlayer(victim));
     ItemStack bone = new ItemStack(Material.BONE);
     ItemStack meat = new ItemStack(Material.ROTTEN_FLESH);
-    Random rng = new Random();
+    if (rng == null) {
+      rng = new Random();
+    }
     Stream.of(head, bone, meat, meat.clone(), meat.clone(), meat.clone())
         .map(itemStack -> world.dropItem(eyeLoc, itemStack))
         .forEach(item -> {
@@ -214,7 +214,7 @@ public class DamageListener implements Listener {
                   rng.nextDouble() - .5)
           ));
           Bukkit.getScheduler()
-              .runTaskLater(ArenaShooter.getInstance(), item::remove, 20 * 3);
+              .runTaskLater(ArenaShooter.getInstance(), item::remove, 20 * 3L);
         });
 
     world.playSound(eyeLoc, org.bukkit.Sound.ENTITY_PLAYER_BIG_FALL, 1f, 1);

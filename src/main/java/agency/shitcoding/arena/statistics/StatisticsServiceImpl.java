@@ -3,22 +3,23 @@ package agency.shitcoding.arena.statistics;
 import agency.shitcoding.arena.ArenaShooter;
 import com.google.common.io.FileWriteMode;
 import com.google.common.io.Files;
+import org.bukkit.entity.Player;
+
 import java.io.File;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import org.bukkit.entity.Player;
 
 public class StatisticsServiceImpl implements
     StatisticsService {
 
-  private final Logger logger = ArenaShooter.getInstance().getLogger();
+  private static final Logger logger = ArenaShooter.getInstance().getLogger();
 
   private final File file;
 
-  private boolean disabled = false;
+  private boolean disabled;
 
   @SuppressWarnings("ResultOfMethodCallIgnored")
   public StatisticsServiceImpl(File file) {

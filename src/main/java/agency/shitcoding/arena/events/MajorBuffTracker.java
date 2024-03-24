@@ -8,7 +8,7 @@ import lombok.Setter;
 @Setter
 public class MajorBuffTracker {
 
-  private Integer quadDamageTicks = null;
-  private Integer protectionTicks = null;
+  private Integer quadDamageTicks;
+  private Integer protectionTicks;
 
 }

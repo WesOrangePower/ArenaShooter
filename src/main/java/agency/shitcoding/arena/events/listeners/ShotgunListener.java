@@ -110,9 +110,9 @@ public class ShotgunListener implements Listener {
 
       Optional<LivingEntity> first = at.getWorld().getNearbyEntities(at, .2, .2, .2)
           .stream()
-          .filter(entity -> entity instanceof LivingEntity)
+          .filter(LivingEntity.class::isInstance)
           .filter(entity -> entity != player)
-          .map(entity -> (LivingEntity) entity)
+          .map(LivingEntity.class::cast)
           .findFirst();
       if (first.isPresent()) {
         at.getWorld().spawnParticle(Particle.BLOCK_DUST, at, 10, .2, .2, .2,

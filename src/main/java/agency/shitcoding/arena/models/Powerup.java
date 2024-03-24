@@ -250,7 +250,6 @@ public enum Powerup {
     }
     if (!hasWeapon(player, weapon)) {
       giveWeapon(player, weapon);
-//            return true;
     }
     int amount = weapon.ammoPerShot * 3;
     if (weapon.ammo == Ammo.LIGHTNING) {

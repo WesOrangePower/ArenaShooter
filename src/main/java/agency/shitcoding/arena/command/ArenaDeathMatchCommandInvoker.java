@@ -10,20 +10,20 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
-public class ArenaDeathMatchCommandInvoker extends Command implements TabCompleter,
+public final class ArenaDeathMatchCommandInvoker extends Command implements TabCompleter,
     CommandExecutor {
 
-  public static ArenaDeathMatchCommandInvoker INSTANCE = null;
+  private static ArenaDeathMatchCommandInvoker instance;
 
   private ArenaDeathMatchCommandInvoker() {
     super("arenaDeathMatch".toLowerCase());
   }
 
   public static ArenaDeathMatchCommandInvoker getInstance() {
-    if (INSTANCE == null) {
-      INSTANCE = new ArenaDeathMatchCommandInvoker();
+    if (instance == null) {
+      instance = new ArenaDeathMatchCommandInvoker();
     }
-    return INSTANCE;
+    return instance;
   }
 
   @Override

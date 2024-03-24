@@ -7,7 +7,7 @@ import net.kyori.adventure.text.format.TextColor;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
-public class WeaponItemGenerator {
+public final class WeaponItemGenerator {
 
   public static ItemStack generate(Player player, Weapon weapon) {
     ItemStack item = new ItemStack(weapon.item, 1);
@@ -15,5 +15,8 @@ public class WeaponItemGenerator {
     item.editMeta(meta ->
         meta.displayName(Component.text(name, TextColor.color(weapon.color.asRGB()))));
     return item;
+  }
+
+  private WeaponItemGenerator() {
   }
 }
