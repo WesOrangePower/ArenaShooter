@@ -42,7 +42,7 @@ public class AutoClickerBlocker implements Listener {
     var now = System.currentTimeMillis();
     var lastShootTime = lastShoot.put(player, now);
     var warning = warningCounter.getOrDefault(player, 0);
-    if (lastShootTime != null && now - lastShootTime < 150) {
+    if (lastShootTime != null && now - lastShootTime < 90) {
       warningCounter.put(player, warning + 1);
       if (warning > MAX_WARNINGS) {
         onTrigger(player);
