@@ -18,7 +18,8 @@ public final class ArenaDeathMatchCommand extends CommandInst {
       new HelpEntry("set", "Set the arena's spawn points"),
       new HelpEntry("create", "Create a new arena"),
       new HelpEntry("join", "Join an arena"),
-      new HelpEntry("leave", "Leave an arena")
+      new HelpEntry("leave", "Leave an arena"),
+      new HelpEntry("forcestart", "Force start a game")
   };
 
   public ArenaDeathMatchCommand(@NotNull CommandSender sender,
@@ -51,6 +52,7 @@ public final class ArenaDeathMatchCommand extends CommandInst {
       case "create" -> new ArenaCreateCmd(sender, args);
       case "host" -> new ArenaHostCmd(sender, args);
       case "join" -> new ArenaJoinCmd(sender, args);
+      case "forcestart" -> new ArenaForcestartCmd(sender, args);
       case "leave" -> new ArenaLeaveCmd(sender, args);
       case "test" -> new ArenaTestCmd(sender, args);
       default -> new ArenaHelpCmd(sender, args, HELP);

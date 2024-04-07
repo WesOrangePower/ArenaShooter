@@ -54,7 +54,7 @@ public class TeamSelectGui {
         .withSlot(slot)
         .withClickAction((type, ctx) -> {
           ViewRegistry.closeForPlayer(player.getPlayer());
-          player.getPlayer().performCommand("arena join " + eTeam.name());
+          player.getPlayer().performCommand("arena join " + game.getArena().getName() + " " + eTeam.name());
         })
         .build();
   }

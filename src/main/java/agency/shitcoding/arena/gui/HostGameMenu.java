@@ -1,5 +1,6 @@
 package agency.shitcoding.arena.gui;
 
+import agency.shitcoding.arena.gamestate.GameOrchestrator;
 import agency.shitcoding.arena.gamestate.team.ETeam;
 import agency.shitcoding.arena.gamestate.team.TeamMeta;
 import agency.shitcoding.arena.localization.LangPlayer;
@@ -75,9 +76,11 @@ public class HostGameMenu {
   }
 
   private List<Item> getArenaItems() {
+    var usedArenaNames = GameOrchestrator.getInstance().getUsedArenaNames();
     Collection<Arena> arenas = StorageProvider.getArenaStorage().getArenas();
     return arenas.stream()
         .filter(Arena::isAllowHost)
+        .filter(arena -> !usedArenaNames.contains(arena.getName()))
         .map(arena -> {
               ItemSlot build = ItemBuilder.builder()
                   .withMaterial(Material.IRON_SWORD)

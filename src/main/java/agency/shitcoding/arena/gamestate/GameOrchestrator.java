@@ -2,6 +2,7 @@ package agency.shitcoding.arena.gamestate;
 
 import agency.shitcoding.arena.models.Arena;
 import agency.shitcoding.arena.models.RuleSet;
+import java.util.List;
 import lombok.Getter;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
@@ -34,7 +35,21 @@ public final class GameOrchestrator {
     return games.stream().filter(game -> game.getPlayers().contains(player)).findFirst();
   }
 
+  public List<Arena> getUsedArenas() {
+    return games.stream().map(Game::getArena).toList();
+  }
+
   public void removeGame(Game game) {
     games.remove(game);
+  }
+
+  public List<String> getUsedArenaNames() {
+    return games.stream().map(Game::getArena).map(Arena::getName).toList();
+  }
+
+  public Optional<Game> getGameByArena(String arenaName) {
+    return games.stream()
+        .filter(game -> game.getArena().getName().equalsIgnoreCase(arenaName))
+        .findFirst();
   }
 }

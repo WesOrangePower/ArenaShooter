@@ -43,7 +43,8 @@ public final class GameplayConstants {
   public static final int MEDIKIT_SPAWN_OFFSET_TICKS = 0;
   public static final int MEGA_HEALTH_SPAWN_INTERVAL_TICKS = 35 * 20;
   public static final int MEGA_HEALTH_SPAWN_OFFSET_TICKS = 0;
-  public static final double MEGA_HEALTH_VALUE = 30d;
+  public static final double MEGA_HEALTH_VALUE = 40d;
+  public static final int MEGA_HEALTH_ARMOR = 200;
 
   public static final int ARMOR_SHARD_SPAWN_INTERVAL_TICKS = 20 * 20;
   public static final int ARMOR_SHARD_SPAWN_OFFSET_TICKS = 0;
@@ -64,6 +65,8 @@ public final class GameplayConstants {
   public static final int RESPAWN_INVULNERABILITY_DURATION = 20 * 2; // Milliseconds
   public static final boolean RESPAWN_INVULNERABILITY_DISABLE_ON_SHOOT = true;
   public static final double BASE_HEALTH = 20d;
+  public static final boolean OVERDRIVE_HEALTH_TICK = true;
+  public static final boolean OVERDRIVE_ARMOR_TICK = true;
 
   private GameplayConstants() {
   }

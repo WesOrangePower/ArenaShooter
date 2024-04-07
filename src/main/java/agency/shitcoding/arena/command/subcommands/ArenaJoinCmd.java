@@ -1,22 +1,25 @@
 package agency.shitcoding.arena.command.subcommands;
 
-import agency.shitcoding.arena.command.ArenaDeathMatchCommand;
 import agency.shitcoding.arena.command.CommandInst;
 import agency.shitcoding.arena.gamestate.Game;
 import agency.shitcoding.arena.gamestate.GameOrchestrator;
 import agency.shitcoding.arena.gamestate.team.ETeam;
 import agency.shitcoding.arena.gamestate.team.TeamGame;
 import agency.shitcoding.arena.localization.LangPlayer;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Optional;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.Arrays;
-import java.util.Optional;
-
 public class ArenaJoinCmd extends CommandInst {
 
-  public static final int OPT_ARG = 1;
+  public static final int ARENA_ARG = 1;
+  public static final int OPT_ARG = 2;
+  public static final int MIN_ARGS = 2;
+  private final GameOrchestrator gameOrchestrator = GameOrchestrator.getInstance();
+  private LangPlayer lang;
 
   public ArenaJoinCmd(@NotNull CommandSender sender, @NotNull String[] args) {
     super(sender, args);
@@ -29,21 +32,20 @@ public class ArenaJoinCmd extends CommandInst {
       return;
     }
 
-    GameOrchestrator gameOrchestrator = GameOrchestrator.getInstance();
-    if (args.length >= 2
-        && args[OPT_ARG].equalsIgnoreCase("forceStart")
-        && player.hasPermission(ArenaDeathMatchCommand.ADMIN_PERM)
-    ) {
-      forceStart(gameOrchestrator, player);
+    this.lang = new LangPlayer(player);
+
+    if (notValid()) {
       return;
     }
-    LangPlayer lang = new LangPlayer(player);
 
-    if (gameOrchestrator.getGameByPlayer(player).isPresent()) {
+    if (gameOrchestrator.getGameByPlayer(lang.getPlayer()).isPresent()) {
       lang.sendRichLocalized("command.host.alreadyInGame");
       return;
     }
-    Optional<Game> first = gameOrchestrator.getGames().stream().findFirst();
+
+    Optional<Game> first = gameOrchestrator.getGames().stream()
+        .filter(game -> game.getArena().getName().equalsIgnoreCase(args[ARENA_ARG]))
+        .findFirst();
     if (first.isPresent()) {
       Game game = first.get();
       if (game instanceof TeamGame teamGame) {
@@ -57,9 +59,29 @@ public class ArenaJoinCmd extends CommandInst {
       } else {
         game.addPlayer(player);
       }
-      return;
     }
-    lang.sendRichLocalized("command.join.noGames");
+  }
+
+  private boolean notValid() {
+    List<String> arenaNames = gameOrchestrator.getUsedArenaNames();
+    String joined = String.join(", ", arenaNames);
+    if (arenaNames.isEmpty()) {
+      lang.sendRichLocalized("command.join.noGames");
+      return true;
+    }
+
+    if (args.length < MIN_ARGS) {
+      lang.sendRichLocalized("command.join.arenaRequired", joined);
+      return true;
+    }
+
+    String arena = args[ARENA_ARG];
+    if (gameOrchestrator.getUsedArenas().stream().noneMatch(a -> a.getName().equalsIgnoreCase(arena))) {
+      lang.sendRichLocalized("command.join.arenaNotFound", joined);
+      return true;
+    }
+
+    return false;
   }
 
   private Optional<ETeam> parseTeam() {
@@ -71,11 +93,6 @@ public class ArenaJoinCmd extends CommandInst {
     } catch (IllegalArgumentException e) {
       return Optional.empty();
     }
-  }
-
-  private void forceStart(GameOrchestrator gameOrchestrator, Player player) {
-    gameOrchestrator.getGameByPlayer(player)
-        .ifPresent(Game::startGame);
   }
 
 }

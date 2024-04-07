@@ -5,6 +5,7 @@ import agency.shitcoding.arena.WeaponItemGenerator;
 import agency.shitcoding.arena.events.MajorBuffTracker;
 import agency.shitcoding.arena.gamestate.Game;
 import agency.shitcoding.arena.gamestate.GameOrchestrator;
+import agency.shitcoding.arena.gamestate.OverdriveManager;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.bukkit.Color;
@@ -30,13 +31,8 @@ public enum Powerup {
       PowerupType.BUFF,
       new ItemStack(Material.PUFFERFISH),
       player -> {
-        var attribute = player.getAttribute(Attribute.GENERIC_MAX_HEALTH);
-        if (attribute == null) {
-          return false;
-        }
-        attribute.setBaseValue(MEGA_HEALTH_VALUE);
-        player.setLevel(MAX_ARMOR);
-        player.setHealth(MEGA_HEALTH_VALUE);
+        OverdriveManager.setHealth(player, MEGA_HEALTH_VALUE);
+        OverdriveManager.setArmor(player, MEGA_HEALTH_ARMOR);
         return true;
       },
       MEGA_HEALTH_SPAWN_INTERVAL_TICKS,

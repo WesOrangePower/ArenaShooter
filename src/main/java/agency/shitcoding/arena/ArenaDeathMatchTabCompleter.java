@@ -3,6 +3,9 @@ package agency.shitcoding.arena;
 import agency.shitcoding.arena.command.ArenaDeathMatchCommand;
 import agency.shitcoding.arena.command.subcommands.arenamutation.ArenaSetAction;
 import agency.shitcoding.arena.command.subcommands.arenamutation.ArenaSetField;
+import agency.shitcoding.arena.gamestate.GameOrchestrator;
+import agency.shitcoding.arena.gamestate.team.ETeam;
+import agency.shitcoding.arena.gamestate.team.TeamGame;
 import agency.shitcoding.arena.models.Arena;
 import agency.shitcoding.arena.models.RuleSet;
 import agency.shitcoding.arena.storage.StorageProvider;
@@ -33,22 +36,48 @@ public class ArenaDeathMatchTabCompleter {
       return List.of("join", "host", "leave");
     }
 
-    return args[0].equalsIgnoreCase("host")
-        ? resolveHost()
-        : null;
-
+    return switch (args[0].toLowerCase()) {
+      case "host" -> resolveHost();
+      case "join" -> resolveJoin();
+      default -> null;
+    };
   }
 
   private List<String> resolveAdmin() {
     if (args.length == 1) {
-      return List.of("set", "create", "host", "join", "leave", "test");
+      return List.of("set", "create", "host", "join", "leave", "test", "forceStart");
     }
 
     return switch (args[0].toLowerCase()) {
       case "set" -> resolveSet();
       case "host" -> resolveHost();
-      default -> null;
+      case "join" -> resolveJoin();
+      case "forcestart" -> resolveForceStart();
+      default -> List.of();
     };
+  }
+
+  private List<String> resolveForceStart() {
+    if (args.length == 2) {
+      return GameOrchestrator.getInstance().getUsedArenaNames();
+    }
+    return List.of();
+  }
+
+  private List<String> resolveJoin() {
+    if (args.length == 2) {
+      return GameOrchestrator.getInstance().getUsedArenaNames();
+    }
+    if (args.length == 3) {
+      return GameOrchestrator.getInstance().getGameByArena(args[1])
+          .filter(TeamGame.class::isInstance)
+          .map(game -> Arrays.stream(ETeam.values())
+                  .map(Enum::name)
+                  .map(String::toLowerCase)
+                  .toList()
+          ).orElse(null);
+    }
+    return List.of();
   }
 
   private List<String> resolveHost() {
@@ -63,7 +92,7 @@ public class ArenaDeathMatchTabCompleter {
           .map(Arena::getName)
           .toList();
     }
-    return null;
+    return List.of();
   }
 
   private List<String> resolveSet() {
@@ -83,13 +112,13 @@ public class ArenaDeathMatchTabCompleter {
       try {
         action = ArenaSetAction.valueOf(args[2].toUpperCase());
       } catch (IllegalArgumentException e) {
-        return null;
+        return List.of();
       }
       return Arrays.stream(ArenaSetField.values())
           .filter(f -> f.supports.test(action))
           .map(Enum::name)
           .toList();
     }
-    return null;
+    return List.of();
   }
 }

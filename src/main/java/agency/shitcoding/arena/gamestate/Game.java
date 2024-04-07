@@ -130,6 +130,13 @@ public abstract class Game {
 
   protected abstract Component getGameStatComponent();
 
+  public void forceStart() {
+    if (gamestage != GameStage.WAITING) {
+      return;
+    }
+    startGame();
+  }
+
   public void startGame() {
     if (waitingManager != null) {
       waitingManager.cleanup();
@@ -375,6 +382,9 @@ public abstract class Game {
   }
 
   public void onPlayerDeath(Player p) {
+    if (gamestage != GameStage.IN_PROGRESS) {
+      return;
+    }
     incrementStat(statDeaths, p);
     diedOnce.add(p);
   }

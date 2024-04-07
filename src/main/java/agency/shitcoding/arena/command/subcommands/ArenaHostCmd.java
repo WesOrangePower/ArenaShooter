@@ -40,12 +40,13 @@ public class ArenaHostCmd extends CommandInst {
   }
 
   private void hostGame() {
-    if (!GameOrchestrator.getInstance().getGames().isEmpty()) {
-      if (sender instanceof Player player) {
-        LangPlayer.of(player).sendRichLocalized("command.host.alreadyCreated");
-      }
-      return;
-    }
+//    if (!GameOrchestrator.getInstance().getGames().isEmpty()) {
+//      if (sender instanceof Player player) {
+//        LangPlayer.of(player).sendRichLocalized("command.host.alreadyCreated");
+//      }
+//      return;
+//    }
+
     Game game = GameOrchestrator.getInstance().createGame(ruleSet, arena);
     if (game instanceof TeamGame teamGame) {
       teamGame.addPlayer((Player) sender, team);
@@ -81,13 +82,22 @@ public class ArenaHostCmd extends CommandInst {
 
     arena = StorageProvider.getArenaStorage().getArena(args[ARG_ARENA]);
     if (arena == null) {
-      Arena[] arenas = StorageProvider.getArenaStorage().getArenas().toArray(Arena[]::new);
+      String[] arenas = StorageProvider.getArenaStorage().getArenas().stream()
+          .filter(Arena::isAllowHost)
+          .map(Arena::getName)
+          .toArray(String[]::new);
+
       lang.sendRichLocalized("command.host.arenaNotFound", Arrays.toString(arenas));
       return false;
     }
 
     if (!arena.isAllowHost() && !sender.hasPermission(ArenaDeathMatchCommand.ADMIN_PERM)) {
       lang.sendRichLocalized("command.host.arenaNotAllowed");
+      return false;
+    }
+
+    if (GameOrchestrator.getInstance().getUsedArenaNames().contains(arena.getName())) {
+      lang.sendRichLocalized("command.host.arenaAlreadyHosted", arena.getName());
       return false;
     }
 

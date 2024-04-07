@@ -12,6 +12,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
+import org.bukkit.event.entity.FoodLevelChangeEvent;
 import org.bukkit.event.inventory.InventoryInteractEvent;
 import org.bukkit.event.inventory.InventoryOpenEvent;
 import org.bukkit.event.player.PlayerCommandPreprocessEvent;
@@ -146,6 +147,24 @@ public class BlockerListener implements Listener {
     if (event.getMessage().startsWith("/kill")) {
       event.getPlayer().sendRichMessage("<red>Gubami");
       event.setCancelled(true);
+    }
+  }
+
+  @EventHandler
+  private void disableInventoryManipulation(InventoryInteractEvent event) {
+    if (event.getWhoClicked() instanceof Player player) {
+      if (player.getGameMode() == GameMode.ADVENTURE) {
+        event.setCancelled(true);
+      }
+    }
+  }
+
+  @EventHandler
+  private void disableFoodLevelChange(FoodLevelChangeEvent event) {
+    if (event.getEntity() instanceof Player player) {
+      if (player.getGameMode() == GameMode.ADVENTURE) {
+        event.setCancelled(true);
+      }
     }
   }
 }
