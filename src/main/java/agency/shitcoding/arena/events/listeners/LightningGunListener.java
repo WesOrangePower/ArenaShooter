@@ -72,8 +72,8 @@ public class LightningGunListener implements Listener {
     @SuppressWarnings("OptionalGetWithoutIsPresent")
     LivingEntity target = los.subList(1, los.size() - 1).stream()
         .map(block -> world.getNearbyLivingEntities(block.getLocation(), 1, 1, 1))
-        .filter(foundEntities -> !foundEntities.isEmpty() && foundEntities.stream()
-            .anyMatch(entity -> entity != player))
+        .filter(foundEntities -> !foundEntities.isEmpty()
+            && foundEntities.stream().anyMatch(entity -> !entity.getName().equals(player.getName())))
         .findFirst()
         .map(foundEntities -> foundEntities.stream().findFirst().get()).orElse(null);
 

@@ -3,6 +3,7 @@ package agency.shitcoding.arena.command.subcommands;
 import agency.shitcoding.arena.command.ArenaDeathMatchCommand;
 import agency.shitcoding.arena.command.CommandInst;
 import agency.shitcoding.arena.events.GameDamageEvent;
+import agency.shitcoding.arena.events.listeners.ShotgunListener;
 import agency.shitcoding.arena.models.Weapon;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -20,6 +21,10 @@ public class ArenaTestCmd extends CommandInst {
       switch (args[1].toLowerCase()) {
         case "gib" -> new GameDamageEvent((Player) sender, (Player) sender, 1000d, Weapon.SHOTGUN)
             .fire();
+        case "shotgun" -> {
+          ShotgunListener.tracers = !ShotgunListener.tracers;
+          sender.sendMessage("Shotgun tracers: " + ShotgunListener.tracers);
+        }
       }
     }
   }

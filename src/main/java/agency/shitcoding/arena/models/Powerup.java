@@ -232,7 +232,7 @@ public enum Powerup {
   private final int offset;
 
   private static boolean giveArmor(Player player, int amount) {
-    if (player.getLevel() == MAX_ARMOR) {
+    if (player.getLevel() >= MAX_ARMOR) {
       return false;
     }
     int armor = Math.min(player.getLevel() + amount, MAX_ARMOR);

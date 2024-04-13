@@ -12,7 +12,9 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
+import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
 import org.bukkit.event.entity.FoodLevelChangeEvent;
+import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryInteractEvent;
 import org.bukkit.event.inventory.InventoryOpenEvent;
 import org.bukkit.event.player.PlayerCommandPreprocessEvent;
@@ -97,7 +99,8 @@ public class BlockerListener implements Listener {
 
   @EventHandler
   private void cancelDamageByPlayerInSameTeam(EntityDamageByEntityEvent event) {
-    if (event.getDamager() instanceof Player damager && event.getEntity() instanceof Player victim) {
+    if (event.getDamager() instanceof Player damager
+        && event.getEntity() instanceof Player victim) {
       Game game = GameOrchestrator.getInstance().getGameByPlayer(damager).orElse(null);
       if (game instanceof TeamGame teamGame) {
         var damagerTeam = teamGame.getTeamManager().getTeam(damager).map(GameTeam::getETeam);
@@ -151,7 +154,7 @@ public class BlockerListener implements Listener {
   }
 
   @EventHandler
-  private void disableInventoryManipulation(InventoryInteractEvent event) {
+  private void disableInventoryManipulation(InventoryClickEvent event) {
     if (event.getWhoClicked() instanceof Player player) {
       if (player.getGameMode() == GameMode.ADVENTURE) {
         event.setCancelled(true);

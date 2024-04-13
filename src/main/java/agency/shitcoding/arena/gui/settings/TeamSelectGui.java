@@ -4,6 +4,8 @@ import agency.shitcoding.arena.gamestate.team.ETeam;
 import agency.shitcoding.arena.gamestate.team.GameTeam;
 import agency.shitcoding.arena.gamestate.team.TeamGame;
 import agency.shitcoding.arena.localization.LangPlayer;
+import java.util.Arrays;
+import java.util.Set;
 import net.jellycraft.guiapi.api.InventorySize;
 import net.jellycraft.guiapi.api.ItemSlot;
 import net.jellycraft.guiapi.api.ViewRegistry;
@@ -41,22 +43,28 @@ public class TeamSelectGui {
     var teams = game.getTeamManager().getTeams().entrySet();
     int slot = 0;
     for (var team : teams) {
-      viewBuilder.addItemSlot(makeItemSlot(team.getKey(), team.getValue(), slot++));
+      var players = team.getValue().getPlayers();
+      viewBuilder.addItemSlot(makeItemSlot(team.getKey(), team.getValue(), players, slot++));
     }
   }
 
-  private ItemSlot makeItemSlot(ETeam eTeam, GameTeam gameTeam, int slot) {
-    return ItemBuilder.builder()
+  private ItemSlot makeItemSlot(ETeam eTeam, GameTeam gameTeam, Set<Player> players, int slot) {
+    var playerNames = players.stream().map(Player::getName).toArray(String[]::new);
+    var builder =  ItemBuilder.builder()
         .withMaterial(eTeam.getIcon())
         .withName(gameTeam.getTeamMeta().getDisplayComponent(player.getLangContext()))
+        .withLoreLine(Component.text(player.getLocalized("menu.join.chooseTeamButton.lore",
+            players.size(), NamedTextColor.DARK_PURPLE)))
+        .withLoreLine(Component.text(Arrays.toString(playerNames), NamedTextColor.DARK_PURPLE))
         .withLoreLine(Component.text(player.getLocalized("menu.host.chooseTeamButton.lore"),
             NamedTextColor.GRAY))
         .withSlot(slot)
         .withClickAction((type, ctx) -> {
           ViewRegistry.closeForPlayer(player.getPlayer());
           player.getPlayer().performCommand("arena join " + game.getArena().getName() + " " + eTeam.name());
-        })
-        .build();
+        });
+
+    return builder.build();
   }
 
 

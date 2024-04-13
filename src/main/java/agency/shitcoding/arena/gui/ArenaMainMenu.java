@@ -1,6 +1,7 @@
 package agency.shitcoding.arena.gui;
 
 import agency.shitcoding.arena.ArenaShooter;
+import agency.shitcoding.arena.command.ArenaDeathMatchCommand;
 import agency.shitcoding.arena.gamestate.Game;
 import agency.shitcoding.arena.gamestate.GameOrchestrator;
 import agency.shitcoding.arena.gamestate.team.TeamGame;
@@ -69,8 +70,13 @@ public class ArenaMainMenu {
     viewBuilder.addItemSlot(statsButton());
     viewBuilder.addItemSlot(faqButton());
 
+    if (player.getPlayer().hasPermission(ArenaDeathMatchCommand.ADMIN_PERM) && isJellyRestartLoaded())
+      viewBuilder.addItemSlot(restartServerButton());
+
     return viewBuilder.build();
   }
+
+
 
   private ItemSlot faqButton() {
     return ItemBuilder.builder()
@@ -229,4 +235,22 @@ public class ArenaMainMenu {
             ((clickType, clickContext) -> player.getPlayer().performCommand("arena leave")))
         .build();
   }
+
+  private ItemSlot restartServerButton() {
+    return ItemBuilder.builder()
+        .withMaterial(Material.REDSTONE_BLOCK)
+        .withName(Component.text(player.getLocalized("menu.restartServerButton.name"),
+            TextColor.color(0xbb2222)))
+        .withLore(Component.text(player.getLocalized("menu.restartServerButton.description"),
+            TextColor.color(0x882222)))
+        .withClickAction(
+            ((clickType, clickContext) -> player.getPlayer().performCommand("jellyrestart:restart start 5")))
+        .withSlot(4, 8)
+        .build();
+  }
+
+  private static boolean isJellyRestartLoaded() {
+    return ArenaShooter.getInstance().getServer().getPluginManager().isPluginEnabled("JellyRestart");
+  }
+
 }

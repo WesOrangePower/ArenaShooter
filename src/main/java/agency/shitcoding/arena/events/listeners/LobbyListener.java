@@ -6,6 +6,7 @@ import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.event.player.PlayerGameModeChangeEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
 
@@ -23,6 +24,15 @@ public class LobbyListener implements Listener {
         && GameOrchestrator.getInstance().getGameByPlayer(event.getPlayer()).isEmpty()
     ) {
       lobby.sendPlayer(event.getPlayer());
+    }
+  }
+
+  @EventHandler
+  public void onGamemodeChangeToSpectatorOutsideOfAGame(PlayerGameModeChangeEvent event) {
+    if (event.getNewGameMode() == GameMode.SPECTATOR
+        && GameOrchestrator.getInstance().getGameByPlayer(event.getPlayer()).isEmpty()
+    ) {
+      Lobby.getInstance().sendPlayer(event.getPlayer());
     }
   }
 

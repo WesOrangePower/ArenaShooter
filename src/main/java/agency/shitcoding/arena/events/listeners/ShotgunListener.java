@@ -28,6 +28,7 @@ public class ShotgunListener implements Listener {
   public static final int SCAN_LEN = 35;
   private static final int PELLETS_AMOUNT = 11;
   private static final double SPREAD = .25;
+  public static boolean tracers;
 
   @EventHandler
   public void onShooting(GameShootEvent event) {
@@ -93,7 +94,9 @@ public class ShotgunListener implements Listener {
       Location at = startPoint.clone().add(normalizedVec.clone().multiply(i / DENSITY_FACTOR));
 
 //       TRACES
-//            at.getWorld().spawnParticle(Particle.WAX_ON, at, 1, 0, 0, 0, 0);
+      if (tracers) {
+            at.getWorld().spawnParticle(Particle.WAX_ON, at, 1, 0, 0, 0, 0);
+      }
 
       if (at.getBlock().getType().isCollidable()) {
         // spawn smoke at the surface of block

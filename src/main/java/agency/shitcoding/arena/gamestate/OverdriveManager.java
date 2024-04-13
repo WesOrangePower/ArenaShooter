@@ -59,7 +59,7 @@ public class OverdriveManager {
 
       if (OVERDRIVE_HEALTH_TICK && player.getHealth() > BASE_HEALTH) {
         double newValue = attribute.getBaseValue() - .02;
-        if (Math.abs(player.getHealth() - attribute.getBaseValue()) < .001) {
+        if (Math.abs(player.getHealth() - attribute.getBaseValue()) < .003) {
           player.setHealth(newValue);
         }
         attribute.setBaseValue(newValue);
