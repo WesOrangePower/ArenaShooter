@@ -14,6 +14,7 @@ public class GameStreakUpdateEvent extends GameEvent {
 
   private static final HandlerList handlers = new HandlerList();
   private final PlayerStreak streak;
+  private final PlayerStreak oldStreak;
   private final Player player;
   private final Game game;
 

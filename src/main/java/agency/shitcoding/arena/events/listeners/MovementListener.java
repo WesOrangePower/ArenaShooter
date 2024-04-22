@@ -23,6 +23,7 @@ import org.bukkit.util.Vector;
 
 import static org.bukkit.potion.PotionEffect.INFINITE_DURATION;
 import static org.bukkit.potion.PotionEffectType.JUMP;
+import static org.bukkit.potion.PotionEffectType.WEAKNESS;
 
 @Getter
 public class MovementListener implements Listener {
@@ -89,6 +90,8 @@ public class MovementListener implements Listener {
       player.setWalkSpeed(.3f);
       event.getPlayer().setAllowFlight(true);
       var effect = new PotionEffect(JUMP, INFINITE_DURATION, 2, false, false, false);
+      player.addPotionEffect(effect);
+      effect = new PotionEffect(WEAKNESS, INFINITE_DURATION, 10, false, false, false);
       player.addPotionEffect(effect);
     }
     GameOrchestrator.getInstance().getGameByPlayer(player)

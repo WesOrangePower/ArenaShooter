@@ -5,10 +5,12 @@ import agency.shitcoding.arena.GameplayConstants;
 import agency.shitcoding.arena.SoundConstants;
 import agency.shitcoding.arena.events.GameDamageEvent;
 import agency.shitcoding.arena.events.GameFragEvent;
+import agency.shitcoding.arena.events.GameStreakUpdateEvent;
 import agency.shitcoding.arena.gamestate.Game;
 import agency.shitcoding.arena.gamestate.GameOrchestrator;
 import agency.shitcoding.arena.gamestate.team.TeamGame;
 import agency.shitcoding.arena.gamestate.team.TeamManager;
+import agency.shitcoding.arena.localization.LangPlayer;
 import agency.shitcoding.arena.models.Weapon;
 import net.kyori.adventure.key.Key;
 import net.kyori.adventure.sound.Sound;
@@ -40,12 +42,27 @@ public class DamageListener implements Listener {
 
   private Random rng;
 
+  public static void setBaseHealth(Player player) {
+    var attribute = player.getAttribute(Attribute.GENERIC_MAX_HEALTH);
+    if (attribute == null) {
+      return;
+    }
+    if (Math.abs(attribute.getBaseValue() - GameplayConstants.BASE_HEALTH) < .01) {
+      return;
+    }
+    attribute.setBaseValue(GameplayConstants.BASE_HEALTH);
+  }
+
   @EventHandler
   public void onDamage(GameDamageEvent event) {
     @Nullable Player dealer = event.getDealer();
     LivingEntity victim = event.getVictim();
 
     if (dealer != null && victim instanceof Player victimPlayer) {
+      if (victimPlayer.getGameMode() == GameMode.SPECTATOR) {
+        return;
+      }
+
       Optional<Game> gameByPlayer = GameOrchestrator.getInstance().getGameByPlayer(victimPlayer);
       if (gameByPlayer.isPresent()) {
         Game game = gameByPlayer.get();
@@ -91,15 +108,12 @@ public class DamageListener implements Listener {
       double damage = calculateDamage(playerVictim, event.getDamage());
       event.setDamage(damage);
 
-      if (playerVictim.getHealth() - damage < 0
-          && playerVictim.getGameMode() == GameMode.ADVENTURE) {
-        new GameFragEvent(playerVictim, dealer, event.getWeapon())
+      // fragging
+      var remainingHealth = playerVictim.getHealth() - damage;
+      if (remainingHealth <= 0d && playerVictim.getGameMode() == GameMode.ADVENTURE) {
+        var isGibbed = remainingHealth <= GameplayConstants.GIBBING_THRESHOLD;
+        new GameFragEvent(playerVictim, dealer, event.getWeapon(), isGibbed)
             .fire();
-      }
-
-      // gibbing
-      if (playerVictim.getHealth() - event.getDamage() <= GameplayConstants.GIBBING_THRESHOLD) {
-        gibbingSequence(playerVictim, event.getWeapon());
       }
     }
 
@@ -130,7 +144,7 @@ public class DamageListener implements Listener {
   @EventHandler
   public void onEntityDamage(EntityDamageByEntityEvent event) {
     if (event.getDamager().getType() == EntityType.PLAYER
-    && event.getEntityType() == EntityType.PLAYER) {
+        && event.getEntityType() == EntityType.PLAYER) {
       // Ignore all armor
       event.setDamage(EntityDamageEvent.DamageModifier.ARMOR, 0);
     }
@@ -149,6 +163,33 @@ public class DamageListener implements Listener {
   }
 
   @EventHandler
+  public void onFragIncreaseStreak(GameFragEvent event) {
+    var killer = event.getKiller();
+    if (killer == null || killer.getName().equals(event.getVictim().getName())) {
+      return;
+    }
+    GameOrchestrator.getInstance().getGameByPlayer(event.getKiller())
+        .ifPresent(game -> {
+          var score = game.getScore(event.getKiller());
+          if (score == null) {
+            return;
+          }
+          var streak = score.getStreak();
+          var oldStreak = streak.copy();
+          streak.setFragStreak(streak.getFragStreak() + 1);
+          new GameStreakUpdateEvent(streak, oldStreak, event.getKiller(), game)
+              .fire();
+        });
+  }
+
+  @EventHandler
+  public void onFragApplyGibbing(GameFragEvent event) {
+    if (event.isGibbed()) {
+      gibbingSequence(event.getVictim(), event.getWeapon());
+    }
+  }
+
+  @EventHandler
   public void onFrag(GameFragEvent event) {
     if (event.getWeapon() == Weapon.GAUNTLET) {
       var killer = event.getKiller();
@@ -158,15 +199,27 @@ public class DamageListener implements Listener {
     }
   }
 
-  public static void setBaseHealth(Player player) {
-    var attribute = player.getAttribute(Attribute.GENERIC_MAX_HEALTH);
-    if (attribute == null) {
+  @EventHandler
+  public void messageOnFrag(GameFragEvent event) {
+    var killer = event.getKiller();
+    var victim = event.getVictim();
+    if (killer == null) return;
+
+    Game game = GameOrchestrator.getInstance().getGameByPlayer(victim).orElse(null);
+    if (game == null) return;
+    if (killer.getName().equals(victim.getName())) {
+      game.getPlayers().stream().map(LangPlayer::new)
+          .forEach(pl -> pl.sendRichLocalized("game.death.chat.self", victim.getName()));
       return;
     }
-    if (Math.abs(attribute.getBaseValue() - GameplayConstants.BASE_HEALTH) < .01) {
-      return;
-    }
-    attribute.setBaseValue(GameplayConstants.BASE_HEALTH);
+
+    var suffix = Optional.ofNullable(event.getWeapon())
+        .map(w -> "." + w.translatableName)
+        .orElse("");
+
+    game.getPlayers().stream().map(LangPlayer::new)
+        .forEach(pl -> pl.sendRichLocalized("game.death.chat.other" + suffix,
+            killer.getName(), victim.getName()));
   }
 
   private double calculateDamage(Player victim, double damage) {

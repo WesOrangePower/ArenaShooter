@@ -21,8 +21,12 @@ public final class GameplayConstants {
 
   public static final int MACHINE_GUN_SPAWN_INTERVAL_TICKS = 30 * 20;
   public static final int MACHINE_GUN_SPAWN_OFFSET_TICKS = 0;
+
   public static final int SHOTGUN_SPAWN_INTERVAL_TICKS = 10 * 20;
   public static final int SHOTGUN_SPAWN_OFFSET_TICKS = 0;
+
+  public static final int BFG9K_SPAWN_INTERVAL_TICKS = 120 * 20;
+  public static final int BFG9K_SPAWN_OFFSET_TICKS = 0;
 
   public static final int ROCKET_LAUNCHER_SPAWN_INTERVAL_TICKS = 15 * 20;
   public static final int ROCKET_LAUNCHER_SPAWN_OFFSET_TICKS = 0;
@@ -43,8 +47,8 @@ public final class GameplayConstants {
   public static final int MEDIKIT_SPAWN_OFFSET_TICKS = 0;
   public static final int MEGA_HEALTH_SPAWN_INTERVAL_TICKS = 35 * 20;
   public static final int MEGA_HEALTH_SPAWN_OFFSET_TICKS = 0;
-  public static final double MEGA_HEALTH_VALUE = 40d;
-  public static final int MEGA_HEALTH_ARMOR = 200;
+  public static final double MEGA_HEALTH_VALUE = 36d;
+  public static final int MEGA_HEALTH_ARMOR = 150;
 
   public static final int ARMOR_SHARD_SPAWN_INTERVAL_TICKS = 20 * 20;
   public static final int ARMOR_SHARD_SPAWN_OFFSET_TICKS = 0;
@@ -52,15 +56,17 @@ public final class GameplayConstants {
   public static final int LIGHT_ARMOR_SPAWN_OFFSET_TICKS = 0;
 
   public static final int GIBBING_THRESHOLD = -7;
-  public static final double ARMOR_FACTOR = .4;
+  public static final double ARMOR_FACTOR = .35;
   public static final double ARMOR_DAMAGE_FACTOR = 2d;
 
-  public static final double GAUNTLET_DAMAGE = 5;
-  public static final double MACHINE_GUN_DAMAGE = 1;
-  public static final double SHOTGUN_PELLET_DAMAGE = 2;
-  public static final double ROCKET_DAMAGE = 15;
+  public static final double GAUNTLET_DAMAGE = 5d;
+  public static final double MACHINE_GUN_DAMAGE = 1d;
+  public static final double SHOTGUN_PELLET_DAMAGE = 2d;
+  public static final double ROCKET_DAMAGE = 15d;
   public static final double LIGHTNING_DAMAGE = .35;
-  public static final double RAILGUN_DAMAGE = 18;
+  public static final double RAILGUN_DAMAGE = 18d;
+  public static final double BFG_DAMAGE = 45d;
+  public static final double BFG_SPREAD_DAMAGE = 25d;
   public static final int MAX_ARMOR = 100;
   public static final int RESPAWN_INVULNERABILITY_DURATION = 20 * 2; // Milliseconds
   public static final boolean RESPAWN_INVULNERABILITY_DISABLE_ON_SHOOT = true;

@@ -10,6 +10,7 @@ import org.bukkit.configuration.file.YamlConfiguration;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.Nullable;
 
+import java.io.File;
 import java.util.*;
 import java.util.logging.Logger;
 
@@ -17,7 +18,8 @@ import java.util.logging.Logger;
 public class ConfigurationFaqStorage implements FaqStorage {
 
   private static final Logger LOG = ArenaShooter.getInstance().getLogger();
-  public static final String FILE_NAME = "faq.yml";
+  public static final File FILE =
+      new File(ArenaShooter.getInstance().getDataFolder(), "faq.yml");
 
   private final Configuration configuration;
 
@@ -76,9 +78,9 @@ public class ConfigurationFaqStorage implements FaqStorage {
   private void save() {
     if (configuration instanceof YamlConfiguration yamlConfiguration) {
       try {
-        yamlConfiguration.save(FILE_NAME);
+        yamlConfiguration.save(FILE);
       } catch (Exception e) {
-        ArenaShooter.getInstance().getLogger().severe("Failed to save " + FILE_NAME);
+        ArenaShooter.getInstance().getLogger().severe("Failed to save " + FILE);
       }
     }
   }

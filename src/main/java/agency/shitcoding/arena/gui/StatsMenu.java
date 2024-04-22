@@ -3,11 +3,6 @@ package agency.shitcoding.arena.gui;
 import agency.shitcoding.arena.ArenaShooter;
 import agency.shitcoding.arena.localization.LangPlayer;
 import agency.shitcoding.arena.statistics.GameOutcome;
-import java.time.ZoneId;
-import java.time.format.DateTimeFormatter;
-import java.time.format.FormatStyle;
-import java.util.Comparator;
-import java.util.Locale;
 import net.jellycraft.guiapi.Item;
 import net.jellycraft.guiapi.api.InventorySize;
 import net.jellycraft.guiapi.api.ViewRenderer;
@@ -17,6 +12,12 @@ import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
+
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
+import java.time.format.FormatStyle;
+import java.util.Comparator;
+import java.util.Locale;
 
 public class StatsMenu {
   private final LangPlayer player;
@@ -66,7 +67,7 @@ public class StatsMenu {
     var kills = player.getLocalized("menu.stat.item.kills", gameOutcome.kills());
     var kdr = gameOutcome.deaths() == 0
         ? player.getLocalized("menu.stat.item.killDeathRatio", gameOutcome.kills())
-        : player.getLocalized("menu.stat.item.killDeathRatio", gameOutcome.kills() / gameOutcome.deaths());
+        : player.getLocalized("menu.stat.item.killDeathRatio", (float)gameOutcome.kills() / gameOutcome.deaths());
 
     return ItemBuilder.builder()
         .withMaterial(Material.IRON_SWORD)

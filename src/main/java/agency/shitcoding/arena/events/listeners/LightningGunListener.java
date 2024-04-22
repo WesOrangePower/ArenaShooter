@@ -3,26 +3,24 @@ package agency.shitcoding.arena.events.listeners;
 import agency.shitcoding.arena.ArenaShooter;
 import agency.shitcoding.arena.GameplayConstants;
 import agency.shitcoding.arena.SoundConstants;
+import agency.shitcoding.arena.events.AmmoUpdateEvent;
 import agency.shitcoding.arena.events.GameDamageEvent;
 import agency.shitcoding.arena.events.GameShootEvent;
 import agency.shitcoding.arena.gamestate.Laser.GuardianLaser;
 import agency.shitcoding.arena.models.Ammo;
 import agency.shitcoding.arena.models.Weapon;
-import java.util.Arrays;
-import java.util.Set;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.stream.Collectors;
-import org.bukkit.Bukkit;
-import org.bukkit.Location;
-import org.bukkit.Material;
-import org.bukkit.SoundCategory;
-import org.bukkit.World;
+import org.bukkit.*;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.inventory.ItemStack;
+
+import java.util.Arrays;
+import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.stream.Collectors;
 
 
 public class LightningGunListener implements Listener {
@@ -61,6 +59,7 @@ public class LightningGunListener implements Listener {
     if (Ammo.getAmmoForPlayer(player, Ammo.LIGHTNING) <= 0) {
       return;
     }
+    new AmmoUpdateEvent(player, -Weapon.LIGHTNING_GUN.ammoPerShot, Weapon.LIGHTNING_GUN.ammo).fire();
 
     var name = player.getName();
     lastFired.put(name, System.currentTimeMillis());

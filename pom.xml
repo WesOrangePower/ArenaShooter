@@ -6,7 +6,7 @@
 
     <groupId>agency.shitcoding</groupId>
     <artifactId>ArenaShooter</artifactId>
-    <version>1</version>
+    <version>Beta-22042024</version>
     <packaging>jar</packaging>
 
     <name>ArenaShooter</name>
@@ -75,7 +75,7 @@
         <dependency>
             <groupId>io.papermc.paper</groupId>
             <artifactId>paper-api</artifactId>
-            <version>1.20.1-R0.1-SNAPSHOT</version>
+            <version>1.20.4-R0.1-SNAPSHOT</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
@@ -90,12 +90,6 @@
             <version>1.0</version>
             <scope>provided</scope>
         </dependency>
-      <dependency>
-        <groupId>net.jellycraft</groupId>
-        <artifactId>JellyCommandApi</artifactId>
-        <version>1.0</version>
-        <scope>provided</scope>
-      </dependency>
         <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>

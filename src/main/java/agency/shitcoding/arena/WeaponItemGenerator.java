@@ -11,7 +11,7 @@ public final class WeaponItemGenerator {
 
   public static ItemStack generate(Player player, Weapon weapon) {
     ItemStack item = new ItemStack(weapon.item, 1);
-    var name = LangPlayer.of(player).getLocalized(weapon.name);
+    var name = LangPlayer.of(player).getLocalized(weapon.translatableName);
     item.editMeta(meta ->
         meta.displayName(Component.text(name, TextColor.color(weapon.color.asRGB()))));
     return item;

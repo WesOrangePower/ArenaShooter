@@ -16,6 +16,7 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.PotionMeta;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.Optional;
 import java.util.function.Function;
@@ -196,6 +197,14 @@ public enum Powerup {
       MACHINE_GUN_SPAWN_INTERVAL_TICKS,
       MACHINE_GUN_SPAWN_OFFSET_TICKS
   ),
+  BFG9K(
+      "powerup.bfg9k",
+      PowerupType.WEAPON,
+      new ItemStack(Weapon.BFG9K.item),
+      player -> giveWeaponOrAmmo(player, Weapon.BFG9K),
+      BFG9K_SPAWN_INTERVAL_TICKS,
+      BFG9K_SPAWN_OFFSET_TICKS
+  ),
   GAUNTLET(
       "powerup.gauntlet",
       PowerupType.WEAPON,
@@ -252,6 +261,17 @@ public enum Powerup {
       amount = 100;
     }
     return giveAmmo(player, weapon.ammo, amount);
+  }
+
+  public static @Nullable Ammo getAmmo(Powerup powerup) {
+    return switch (powerup) {
+      case ROCKET_BOX -> Ammo.ROCKETS;
+      case LIGHTNING_BOX -> Ammo.LIGHTNING;
+      case BULLET_BOX -> Ammo.BULLETS;
+      case SHELL_BOX -> Ammo.SHELLS;
+      case CELL_BOX -> Ammo.CELLS;
+      default -> null;
+    };
   }
 
   private static boolean genericHealth(Player player, double amount) {

@@ -81,6 +81,9 @@ public final class SoundConstants {
   public static final String PLASMA_FIRE = "jelly:q3.weapon.plasma_fire";
   public static final String PLASMA_HIT = "jelly:q3.weapon.plasma_hit";
   public static final String LG_FIRE = "jelly:q3.weapon.lg_fire";
+  public static final String BFG_FIRE = "jelly:q3.weapon.bfg_fire";
+  public static final String BFG_HIT = "jelly:q3.weapon.bfg_hit";
+  public static final String PAD = "jelly:q3.misc.pad";
 
     private SoundConstants() {
     }

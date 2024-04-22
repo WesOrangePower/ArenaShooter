@@ -1,10 +1,13 @@
 package agency.shitcoding.arena.command.subcommands;
 
+import agency.shitcoding.arena.WeaponItemGenerator;
 import agency.shitcoding.arena.command.ArenaDeathMatchCommand;
 import agency.shitcoding.arena.command.CommandInst;
 import agency.shitcoding.arena.events.GameDamageEvent;
 import agency.shitcoding.arena.events.listeners.ShotgunListener;
+import agency.shitcoding.arena.models.Ammo;
 import agency.shitcoding.arena.models.Weapon;
+import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
@@ -24,6 +27,21 @@ public class ArenaTestCmd extends CommandInst {
         case "shotgun" -> {
           ShotgunListener.tracers = !ShotgunListener.tracers;
           sender.sendMessage("Shotgun tracers: " + ShotgunListener.tracers);
+        }
+        case "guns" -> {
+          Player p = (Player) sender;
+          if (args.length == 3) {
+            p = Bukkit.getPlayer(args[2]);
+          }
+          if (p == null) {
+            sender.sendMessage(args[2] + ": null");
+            return;
+          }
+          for (Weapon weapon : Weapon.values()) {
+            p.getInventory().setItem(weapon.slot, WeaponItemGenerator.generate(p, weapon));
+          }
+          Ammo.maxAmmoForPlayer(p);
+          sender.sendMessage("Given");
         }
       }
     }

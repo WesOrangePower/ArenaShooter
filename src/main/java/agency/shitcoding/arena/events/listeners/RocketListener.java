@@ -41,7 +41,8 @@ public class RocketListener implements Listener {
     player.launchProjectile(LargeFireball.class, lookingVector, rocket -> {
       rocket.setIsIncendiary(false);
       rocket.setYield(0f);
-      rocket.setDirection(lookingVector.clone().multiply(2.4));
+      rocket.setDirection(lookingVector.clone());
+      rocket.getVelocity().multiply(1.6f);
       Bukkit.getScheduler().runTaskLater(ArenaShooter.getInstance(), rocket::remove, 20 * 10L);
     });
   }

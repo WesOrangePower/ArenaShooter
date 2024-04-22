@@ -4,7 +4,9 @@ import agency.shitcoding.arena.GameplayConstants;
 import agency.shitcoding.arena.SoundConstants;
 import agency.shitcoding.arena.events.GameDamageEvent;
 import agency.shitcoding.arena.events.GameShootEvent;
+import agency.shitcoding.arena.events.GameStreakUpdateEvent;
 import agency.shitcoding.arena.gamestate.GameOrchestrator;
+import agency.shitcoding.arena.gamestate.PlayerScore;
 import agency.shitcoding.arena.models.Weapon;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -73,10 +75,21 @@ public class RailListener implements Listener {
     affectedEntities.forEach(entity ->
         new GameDamageEvent(player, entity, GameplayConstants.RAILGUN_DAMAGE, Weapon.RAILGUN).fire()
     );
+    var optGame = GameOrchestrator.getInstance().getGameByPlayer(player);
+    if (optGame.isEmpty()) return;
+    var game = optGame.get();
+    var optStreak =
+        Optional.ofNullable(game.getScore(player))
+            .map(PlayerScore::getStreak);
+    if (optStreak.isEmpty()) return;
+    var streak = optStreak.get();
+    var oldStreak = streak.copy();
+
     if (affectedEntities.isEmpty()) {
-      GameOrchestrator.getInstance().getGameByPlayer(player)
-          .flatMap(g -> Optional.ofNullable(g.getScore(player)))
-          .ifPresent(score -> score.getStreak().setConsequentRailHit(0));
+      streak.setConsequentRailHit(0);
+    } else {
+      streak.setConsequentRailHit(streak.getConsequentRailHit() + 1);
     }
+    new GameStreakUpdateEvent(streak, oldStreak, player, game);
   }
 }

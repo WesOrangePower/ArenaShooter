@@ -11,4 +11,8 @@ public class PlayerStreak {
 
   private int consequentRailHit;
   private int fragStreak;
+
+  public PlayerStreak copy() {
+    return new PlayerStreak(consequentRailHit, fragStreak);
+  }
 }

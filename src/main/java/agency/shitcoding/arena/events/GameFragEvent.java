@@ -17,6 +17,7 @@ public class GameFragEvent extends GameEvent implements Cancellable {
   private @Nullable Player killer;
   private @NotNull Player victim;
   private @Nullable Weapon weapon;
+  private final boolean isGibbed;
   private boolean cancelled;
 
   @SuppressWarnings("unused")
@@ -29,9 +30,10 @@ public class GameFragEvent extends GameEvent implements Cancellable {
     return getHandlerList();
   }
 
-  public GameFragEvent(@NotNull Player victim, @Nullable Player killer, @Nullable Weapon weapon) {
+  public GameFragEvent(@NotNull Player victim, @Nullable Player killer, @Nullable Weapon weapon, boolean isGibbed) {
     this.killer = killer;
     this.victim = victim;
     this.weapon = weapon;
+    this.isGibbed = isGibbed;
   }
 }

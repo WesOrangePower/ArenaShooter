@@ -1,5 +1,6 @@
 package agency.shitcoding.arena.events.listeners;
 
+import agency.shitcoding.arena.SoundConstants;
 import agency.shitcoding.arena.events.GameDamageEvent;
 import agency.shitcoding.arena.events.GameStreakUpdateEvent;
 import agency.shitcoding.arena.gamestate.Game;
@@ -37,24 +38,37 @@ public class GameStreakListener implements Listener {
 
     Weapon weapon = event.getWeapon();
     PlayerStreak streak = score.getStreak();
+    PlayerStreak oldStreak = streak.copy();
     if (weapon == Weapon.RAILGUN) {
       streak.setConsequentRailHit(streak.getConsequentRailHit() + 1);
     }
 
-    new GameStreakUpdateEvent(streak, player, game)
+    new GameStreakUpdateEvent(streak, oldStreak, player, game)
         .fire();
   }
 
   @EventHandler
-  public void onStreakUpdate(GameStreakUpdateEvent event) {
-    // TODO: Fix
+  public void announceRailStreak(GameStreakUpdateEvent event) {
     Player p = event.getPlayer();
-    int fragStreak = event.getStreak().getFragStreak();
-//        switch (fragStreak) {
-//            case 1, 2 -> {}
-//            case 3, 4 -> playSound(p, SoundConstants.EXCELLENT);
-//            default -> playSound(p, SoundConstants.HOLYSHIT);
-//        }
+    int streak = event.getStreak().getConsequentRailHit();
+    int oldStreak = event.getOldStreak().getConsequentRailHit();
+    if (oldStreak == streak) return;
+    if (streak > 2) {
+      playSound(p, SoundConstants.IMPRESSIVE);
+    }
+  }
+
+  @EventHandler
+  public void announceFragStreak(GameStreakUpdateEvent event) {
+    Player p = event.getPlayer();
+    int streak = event.getStreak().getFragStreak();
+    int oldStreak = event.getOldStreak().getFragStreak();
+    if (oldStreak == streak) return;
+    switch (streak) {
+      case 0, 1, 2 -> { /* Don't announce */ }
+      case 3, 4 -> playSound(p, SoundConstants.EXCELLENT);
+      default -> playSound(p, SoundConstants.HOLYSHIT);
+    }
   }
 
   private void playSound(Player p, String sound) {

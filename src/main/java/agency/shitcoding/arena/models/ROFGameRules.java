@@ -1,36 +1,35 @@
 package agency.shitcoding.arena.models;
 
-import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.List;
 import java.util.Map;
 
-public class LMSGameRules implements GameRules {
+public class ROFGameRules implements GameRules {
 
   @Override
   public Map<Ammo, Integer> spawnAmmo() {
-    return Map.of(Ammo.BULLETS, 50);
+    return Map.of(Ammo.ROCKETS, 6);
   }
 
   @Override
   public List<Powerup> spawnPowerups() {
-    return List.of(Powerup.PROTECTION, Powerup.GAUNTLET, Powerup.MACHINE_GUN);
+    return List.of(Powerup.ROCKET_LAUNCHER);
   }
 
   @Override
   public int spawnArmor() {
-    return 0;
+    return 30;
   }
 
   @Override
   public long gameTimerTicks() {
-    return 8L * 60L * 20L;
+    return 6L * 60L * 20L;
   }
 
   @Override
   public boolean doRespawn() {
-    return false;
+    return true;
   }
 
   @Override
@@ -40,11 +39,11 @@ public class LMSGameRules implements GameRules {
 
   @Override
   public boolean allowJoinAfterStart() {
-    return false;
+    return true;
   }
 
   @Override
   public ItemStack getMenuBaseItem() {
-    return new ItemStack(Material.GOLDEN_APPLE);
+    return new ItemStack(Weapon.ROCKET_LAUNCHER.item);
   }
 }

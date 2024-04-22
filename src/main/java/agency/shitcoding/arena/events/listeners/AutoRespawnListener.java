@@ -83,15 +83,9 @@ public class AutoRespawnListener implements Listener {
                 return;
               }
               resetStreak(p, game);
-              resetStreak(killer, game); // TODO: wtf?
               if (killedThemselves) {
-                game.getPlayers().stream().map(LangPlayer::new)
-                    .forEach(pl -> pl.sendRichLocalized("game.death.chat.self", p.getName()));
                 game.updateScore(p, -1);
               } else {
-                game.getPlayers().stream().map(LangPlayer::new)
-                    .forEach(pl -> pl.sendRichLocalized("game.death.chat.other",
-                        killer.getName(), p.getName()));
                 game.updateScore(killer, 1);
               }
             }
@@ -125,9 +119,10 @@ public class AutoRespawnListener implements Listener {
   private void resetStreak(Player p, Game g) {
     PlayerScore score = g.getScore(p);
     if (score != null) {
+      var oldStreak = score.getStreak().copy();
       score.getStreak().setConsequentRailHit(0);
       score.getStreak().setFragStreak(0);
-      new GameStreakUpdateEvent(score.getStreak(), p, g)
+      new GameStreakUpdateEvent(score.getStreak(), oldStreak, p, g)
           .fire();
     }
   }

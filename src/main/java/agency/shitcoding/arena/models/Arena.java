@@ -20,7 +20,6 @@ import java.util.stream.Collectors;
 @Getter
 @Setter
 public class Arena {
-
   public static final Random spawnPointRandomizer = new Random();
   private String name;
   private List<String> authors;

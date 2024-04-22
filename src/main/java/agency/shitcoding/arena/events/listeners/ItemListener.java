@@ -5,19 +5,16 @@ import agency.shitcoding.arena.gamestate.GameOrchestrator;
 import agency.shitcoding.arena.gamestate.LootManager;
 import agency.shitcoding.arena.gamestate.LootManagerProvider;
 import agency.shitcoding.arena.localization.LangPlayer;
-import agency.shitcoding.arena.models.GameStage;
-import agency.shitcoding.arena.models.Keys;
-import agency.shitcoding.arena.models.LootPointInstance;
-import agency.shitcoding.arena.models.Powerup;
-import agency.shitcoding.arena.models.PowerupType;
-import java.util.Arrays;
-import java.util.Optional;
+import agency.shitcoding.arena.models.*;
 import org.bukkit.entity.Item;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerAttemptPickupItemEvent;
 import org.bukkit.persistence.PersistentDataType;
+
+import java.util.Arrays;
+import java.util.Optional;
 
 public class ItemListener implements Listener {
 
@@ -62,6 +59,16 @@ public class ItemListener implements Listener {
       player.playSound(player, powerup.getType().getSoundName(), .5f, 1f);
       var langPlayer = LangPlayer.of(player);
       var powerupName = langPlayer.getLocalized(powerup.getDisplayName());
+      if (powerup.getType() == PowerupType.AMMO) {
+        Ammo ammo = Powerup.getAmmo(powerup);
+        if (ammo == null) {
+          throw new IllegalStateException("Ammo type not found for PowerupType.AMMO powerup " + powerup.name());
+        }
+        var color = "#" + Integer.toHexString(Ammo.AMMO_COLORS[ammo.slot]);
+        powerupName = String.format("<color:%s>%s %s</color>",
+            color, Ammo.AMMO_PICT[ammo.slot], powerupName
+        );
+      }
       langPlayer.sendRichLocalized("powerup.pickup.self", powerupName);
       if (powerup.getType() == PowerupType.MAJOR_BUFF) {
         handleMajorBuff(player, game, powerup);

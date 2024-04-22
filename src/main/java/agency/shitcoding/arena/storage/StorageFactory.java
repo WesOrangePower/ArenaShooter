@@ -14,22 +14,25 @@ public final class StorageFactory {
 
 
   public static ArenaStorage createArenaStorage() {
-    return new ConfigurationArenaStorage(getConfiguration(ConfigurationArenaStorage.FILE_NAME));
+    return new ConfigurationArenaStorage(getConfiguration(ConfigurationArenaStorage.FILE));
   }
 
   public static FaqStorage createFaqStorage() {
-    return new ConfigurationFaqStorage(getConfiguration(ConfigurationFaqStorage.FILE_NAME));
+    return new ConfigurationFaqStorage(getConfiguration(ConfigurationFaqStorage.FILE));
   }
 
-  private static Configuration getConfiguration(String name) {
+  private static Configuration getConfiguration(File file) {
     try {
-      File file = new File(name);
+      File parent = file.getParentFile();
+      if (parent != null && !parent.exists() && parent.mkdirs()) {
+        LOG.info(() -> "Created new directory " + parent);
+      }
       if (file.createNewFile()) {
-        LOG.info(() -> "Created new file " + name);
+        LOG.info(() -> "Created new file " + file);
       }
       return YamlConfiguration.loadConfiguration(file);
     } catch (IOException e) {
-      LOG.severe("Could not create file " + name);
+      LOG.severe("Could not create file " + file);
       LOG.severe(e.getMessage());
       LOG.severe("Using memory configuration instead");
       return new MemoryConfiguration();

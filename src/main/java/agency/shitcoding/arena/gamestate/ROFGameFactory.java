@@ -1,0 +1,11 @@
+package agency.shitcoding.arena.gamestate;
+
+import agency.shitcoding.arena.models.Arena;
+
+public class ROFGameFactory implements GameFactory {
+
+  @Override
+  public Game createGame(Arena arena) {
+    return new ROFGame(arena);
+  }
+}

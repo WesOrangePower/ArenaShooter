@@ -1,7 +1,9 @@
 package agency.shitcoding.arena.models;
 
 import lombok.RequiredArgsConstructor;
-import net.kyori.adventure.text.minimessage.MiniMessage;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
+import net.kyori.adventure.text.format.TextColor;
 import org.bukkit.entity.Player;
 import org.bukkit.persistence.PersistentDataType;
 
@@ -55,14 +57,26 @@ public enum Ammo {
         .set(Keys.getPlayerAmmoKey(), PersistentDataType.INTEGER_ARRAY, ammoValues);
   }
 
+  public static final String[] AMMO_PICT = {
+      "🔫", "💥", "🚀", "☢", "⚡"
+  };
+  public static final int[] AMMO_COLORS = {
+      0xFFFF55, 0xFFAA00, 0xAA0000, 0xFFFFFF, 0x55FFFF
+  };
   public static void displayAmmoActionBar(Player p) {
     int[] ammoValues = Ammo.getAmmoForPlayer(p);
-    String richTextStr = "<yellow>" +
-        ammoValues[0] + "<gray> | <gold>" +
-        ammoValues[1] + "<gray> | <red>" +
-        ammoValues[2] + "<gray> | <white>" +
-        ammoValues[3] + "<gray> | <aqua>" +
-        ammoValues[4] + "<gray>";
-    p.sendActionBar(MiniMessage.miniMessage().deserialize(richTextStr));
+    var builder = Component.text();
+    boolean append = false;
+    for (int i = 0; i < ammoValues.length; i++) {
+      if (ammoValues[i] > 0) {
+        if (append) {
+          builder.append(Component.text("   ", NamedTextColor.GRAY));
+        }
+        builder.append(Component.text(AMMO_PICT[i] + " " + ammoValues[i],
+            TextColor.color(AMMO_COLORS[i])));
+        append = true;
+      }
+    }
+    p.sendActionBar(builder);
   }
 }

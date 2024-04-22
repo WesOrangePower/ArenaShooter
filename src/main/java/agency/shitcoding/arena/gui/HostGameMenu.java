@@ -7,9 +7,6 @@ import agency.shitcoding.arena.localization.LangPlayer;
 import agency.shitcoding.arena.models.Arena;
 import agency.shitcoding.arena.models.RuleSet;
 import agency.shitcoding.arena.storage.StorageProvider;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.List;
 import net.jellycraft.guiapi.Item;
 import net.jellycraft.guiapi.api.ClickAction;
 import net.jellycraft.guiapi.api.ItemSlot;
@@ -23,6 +20,10 @@ import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
+
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.List;
 
 public class HostGameMenu {
 
@@ -112,7 +113,7 @@ public class HostGameMenu {
     return Arrays.stream(RuleSet.values())
         .map(ruleSet -> {
               ItemSlot build = ItemBuilder.builder()
-                  .withMaterial(Material.GOLDEN_PICKAXE)
+                  .withItemStack(ruleSet.getGameRules().getMenuBaseItem())
                   .withName(Component.text(player.getLocalized(ruleSet.getName()), NamedTextColor.GOLD))
                   .withClickAction(ruleSetClickAction(ruleSet))
                   .build();

@@ -11,6 +11,7 @@ import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.util.Vector;
 import org.jetbrains.annotations.Nullable;
 
+import java.io.File;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
@@ -18,7 +19,8 @@ import java.util.Set;
 @RequiredArgsConstructor
 public class ConfigurationArenaStorage implements ArenaStorage {
 
-  public static final String FILE_NAME = "arenas.yml";
+  public static final File FILE =
+      new File(ArenaShooter.getInstance().getDataFolder(), "arenas.yml");
 
   private final Configuration configuration;
 
@@ -247,9 +249,9 @@ public class ConfigurationArenaStorage implements ArenaStorage {
   private void save() {
     if (configuration instanceof YamlConfiguration yamlConfiguration) {
       try {
-        yamlConfiguration.save(FILE_NAME);
+        yamlConfiguration.save(FILE);
       } catch (Exception e) {
-        ArenaShooter.getInstance().getLogger().severe("Failed to save " + FILE_NAME);
+        ArenaShooter.getInstance().getLogger().severe("Failed to save " + FILE);
       }
     }
   }
