@@ -8,6 +8,7 @@ import org.bukkit.entity.Player;
 import java.io.File;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -21,13 +22,19 @@ public class StatisticsServiceImpl implements
 
   private boolean disabled;
 
+  private boolean isDataFresh = false;
+
+  private GameOutcome[] outcomes;
+
   @SuppressWarnings("ResultOfMethodCallIgnored")
   public StatisticsServiceImpl(File file) {
     this.file = file;
     if (!file.exists()) {
       file.getParentFile().mkdirs();
       try {
-        file.createNewFile();
+        if (file.createNewFile()) {
+          logger.log(Level.INFO, "Stats file created");
+        }
       } catch (IOException e) {
         disabled = true;
         logger.log(Level.WARNING, "Failed to set up StatisticsService.", e);
@@ -47,6 +54,8 @@ public class StatisticsServiceImpl implements
         logger.log(Level.WARNING, "Failed to write game outcome to stats file.", e);
       }
     }
+
+    this.isDataFresh = false;
   }
 
   @Override
@@ -55,29 +64,24 @@ public class StatisticsServiceImpl implements
       return new Statistics(playerName, 0, 0, 0, 0, 0);
     }
 
-    try {
-      var lines = Files.readLines(file, StandardCharsets.UTF_8);
-      var statistics = new Statistics();
-      lines.stream()
-          .map(GameOutcome::fromString)
-          .filter(gameOutcome -> gameOutcome.playerName().equals(playerName))
-          .forEach(outcome -> {
-            statistics.totalKills += outcome.kills();
-            statistics.totalDeaths += outcome.deaths();
-            statistics.matchesWon += outcome.isWon() ? 1 : 0;
-            statistics.totalGames++;
-          });
+    load();
 
-      statistics.playerName = playerName;
-      statistics.killDeathRatio = statistics.totalDeaths == 0
-          ? statistics.totalKills
-          : (float) statistics.totalKills / statistics.totalDeaths;
-
-      return statistics;
-    } catch (IOException e) {
-      logger.log(Level.WARNING, "Failed to read stats file.", e);
-      return new Statistics(playerName, 0, 0, 0, 0, 0);
+    var statistics = new Statistics();
+    for (var outcome : outcomes) {
+      if (outcome.playerName().equals(playerName)) {
+        statistics.totalKills += outcome.kills();
+        statistics.totalDeaths += outcome.deaths();
+        statistics.matchesWon += outcome.isWon() ? 1 : 0;
+        statistics.totalGames++;
+      }
     }
+
+    statistics.playerName = playerName;
+    statistics.killDeathRatio = statistics.totalDeaths == 0
+        ? statistics.totalKills
+        : (float) statistics.totalKills / statistics.totalDeaths;
+
+    return statistics;
   }
 
   @Override
@@ -86,15 +90,30 @@ public class StatisticsServiceImpl implements
       return List.of();
     }
 
+    load();
+
+    var result = new ArrayList<GameOutcome>();
+
+    var playerName = player.getName();
+    for (var outcome : outcomes) {
+      if (outcome.playerName().equals(playerName)) {
+        result.add(outcome);
+      }
+    }
+    return result;
+  }
+
+  private void load() {
+    if (isDataFresh) return;
+
     try {
       var lines = Files.readLines(file, StandardCharsets.UTF_8);
-      return lines.stream()
+      this.outcomes = lines.stream()
           .map(GameOutcome::fromString)
-          .filter(outcome -> outcome.playerName().equals(player.getName()))
-          .toList();
+          .toArray(GameOutcome[]::new);
+      this.isDataFresh = true;
     } catch (IOException e) {
       logger.log(Level.WARNING, "Failed to read stats file.", e);
     }
-    return List.of();
   }
 }

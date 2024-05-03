@@ -42,7 +42,7 @@ public class RocketListener implements Listener {
       rocket.setIsIncendiary(false);
       rocket.setYield(0f);
       rocket.setDirection(lookingVector.clone());
-      rocket.getVelocity().multiply(1.6f);
+      rocket.getVelocity().multiply(2f);
       Bukkit.getScheduler().runTaskLater(ArenaShooter.getInstance(), rocket::remove, 20 * 10L);
     });
   }

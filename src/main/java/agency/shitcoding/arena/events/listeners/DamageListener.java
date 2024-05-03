@@ -17,6 +17,8 @@ import net.kyori.adventure.sound.Sound;
 import net.kyori.adventure.sound.Sound.Source;
 import org.bukkit.*;
 import org.bukkit.attribute.Attribute;
+import org.bukkit.damage.DamageSource;
+import org.bukkit.damage.DamageType;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
@@ -128,15 +130,24 @@ public class DamageListener implements Listener {
       Optional.ofNullable(ArenaShooter.getInstance().getWorldBorderApi())
           .ifPresent(api -> api.sendRedScreen(victimPlayer, (long) damage * 4));
     }
-    var entityDamageEvent = new EntityDamageEvent(victim, DamageCause.ENTITY_ATTACK, damage);
-    victim.setLastDamageCause(entityDamageEvent);
+
+    /* Set last dealer as last damage source for the victim */
+
+    var damageSource = DamageSource.builder(DamageType.PLAYER_ATTACK)
+        .withCausingEntity(dealer)
+        .withDamageLocation(victim.getLocation())
+        .withDirectEntity(dealer)
+        .build();
+    var entityDamageEvent = new EntityDamageEvent(victim, DamageCause.ENTITY_ATTACK, damageSource, damage);
+
+    Bukkit.getPluginManager().callEvent(entityDamageEvent);
+
     victim.setKiller(dealer);
     victim.playSound(Sound.sound().type(ENTITY_PLAYER_HURT)
         .source(Source.VOICE)
         .volume(1f)
         .build());
     victim.setHealth(Math.max(victim.getHealth() - damage, 0));
-
 
   }
 

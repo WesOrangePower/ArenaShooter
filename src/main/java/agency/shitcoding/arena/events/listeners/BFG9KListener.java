@@ -6,8 +6,10 @@ import agency.shitcoding.arena.SoundConstants;
 import agency.shitcoding.arena.events.AmmoUpdateEvent;
 import agency.shitcoding.arena.events.GameDamageEvent;
 import agency.shitcoding.arena.events.GameShootEvent;
+import agency.shitcoding.arena.gamestate.Laser;
 import agency.shitcoding.arena.models.Weapon;
 import com.destroystokyo.paper.event.entity.EnderDragonFireballHitEvent;
+import lombok.extern.log4j.Log4j2;
 import org.bukkit.*;
 import org.bukkit.block.data.BlockData;
 import org.bukkit.entity.DragonFireball;
@@ -16,7 +18,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.util.Vector;
-
+@Log4j2
 public class BFG9KListener implements Listener {
 
   public static final Material BFG = Weapon.BFG9K.item;
@@ -95,7 +97,14 @@ public class BFG9KListener implements Listener {
     w.spawnParticle(Particle.SNOWBALL, at, 20, 3, 3, 3, 0);
     boom(at, Material.EMERALD_BLOCK.createBlockData(), SoundConstants.BFG_HIT);
 
-    Bukkit.getScheduler().runTaskLater(ArenaShooter.getInstance(), () -> bfgSpray(shooter, at), 30);
+    Runnable flashes = () -> w.spawnParticle(Particle.FLASH, at, 3, 2, 2, 2, .2);
+
+    for (long delay : new long[]{2, 4, 8, 10, 12, 14, 16, 18, 20}) {
+      Bukkit.getScheduler().runTaskLater(ArenaShooter.getInstance(), flashes, delay);
+    }
+
+    w.playSound(at, Sound.ENTITY_FIREWORK_ROCKET_TWINKLE, 1f, 1.5f);
+    Bukkit.getScheduler().runTaskLater(ArenaShooter.getInstance(), () -> bfgSpray(shooter, at), 15);
   }
 
   private void bfgSpray(Player shooter, Location projLoc) {
@@ -142,6 +151,14 @@ public class BFG9KListener implements Listener {
           }
 
           if (rt1.getHitEntity() == hit && rt2.getHitEntity() == hit) {
+            particleLine(projLoc, hit.getEyeLocation(), Particle.COMPOSTER, 16);
+            try {
+              new Laser.GuardianLaser(projLoc, hit.getEyeLocation(), 1, 64)
+                  .start(ArenaShooter.getInstance());
+            } catch (ReflectiveOperationException e) {
+              /* Doesn't really matter if fails */
+              log.warn("Failed to create laser", e);
+            }
             w.spawnParticle(Particle.BLOCK_CRACK, loc,
                 5, .75, .75, .75,
                 blockData);
@@ -160,10 +177,25 @@ public class BFG9KListener implements Listener {
         });
   }
 
+  @SuppressWarnings("SameParameterValue")
+  private void particleLine(Location from, Location to, Particle particle, double steps) {
+    var distance = from.distance(to);
+    var direction = to.toVector().subtract(from.toVector()).normalize();
+    var loc = from.clone();
+    var step = direction.multiply(distance / steps);
+
+    for (int i = 0; i < steps; i++) {
+      loc.add(step);
+      loc.getWorld().spawnParticle(particle, loc, 1, 0, 0, 0, 0);
+    }
+  }
+
   private void boom(Location at, BlockData blockData, String sound) {
-    double x = at.getX(), y = at.getY(), z = at.getZ();
+    double x = at.getX();
+    double y = at.getY();
+    double z = at.getZ();
     World w = at.getWorld();
-    w.playSound(at, sound, .75f, 1);
+    w.playSound(at, sound, 1f, 1f);
     for (int dx = -2; dx < 2; dx++) {
       for (int dy = -2; dy < 2; dy++) {
         for (int dz = -2; dz < 2; dz++) {
