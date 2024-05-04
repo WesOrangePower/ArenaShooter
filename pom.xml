@@ -6,7 +6,7 @@
 
   <groupId>agency.shitcoding</groupId>
   <artifactId>ArenaShooter</artifactId>
-  <version>Beta-05052024</version>
+  <version>1.0-SNAPSHOT</version>
   <packaging>jar</packaging>
 
   <name>ArenaShooter</name>
@@ -110,6 +110,10 @@
   </dependencies>
 
   <distributionManagement>
+    <snapshotRepository>
+      <id>nexus-jelly</id>
+      <url>https://nexus.jellycraft.net/repository/maven-snapshots</url>
+    </snapshotRepository>
     <repository>
       <id>nexus-jelly</id>
       <url>https://nexus.jellycraft.net/repository/maven-releases</url>
