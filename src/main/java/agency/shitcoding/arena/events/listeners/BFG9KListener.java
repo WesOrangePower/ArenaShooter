@@ -36,7 +36,6 @@ public class BFG9KListener implements Listener {
     Weapon.applyCooldown(player, Weapon.BFG9K.cooldown);
 
     Location eyeLocation = player.getEyeLocation();
-    Vector lookingVector = eyeLocation.getDirection();
 
     eyeLocation.getWorld().playSound(eyeLocation,
         SoundConstants.BFG_FIRE,
@@ -44,7 +43,7 @@ public class BFG9KListener implements Listener {
         1f);
 
     Bukkit.getScheduler().runTaskLater(ArenaShooter.getInstance(),
-        () -> fireBFG(player, lookingVector),
+        () -> fireBFG(player, player.getEyeLocation().getDirection()),
         10);
 
   }
