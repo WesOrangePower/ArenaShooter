@@ -59,7 +59,7 @@ public final class GameplayConstants {
   public static final double ARMOR_FACTOR = .35;
   public static final double ARMOR_DAMAGE_FACTOR = 2d;
 
-  public static final double GAUNTLET_DAMAGE = 5d;
+  public static final double GAUNTLET_DAMAGE = 8.5d;
   public static final double MACHINE_GUN_DAMAGE = 1d;
   public static final double SHOTGUN_PELLET_DAMAGE = 2d;
   public static final double ROCKET_DAMAGE = 15d;

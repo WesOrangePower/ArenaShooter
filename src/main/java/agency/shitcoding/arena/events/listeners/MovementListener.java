@@ -87,7 +87,7 @@ public class MovementListener implements Listener {
     }
     Player player = event.getPlayer();
     if (player.getLocation().subtract(0, 1, 0).getBlock().getType().isSolid()) {
-      player.setWalkSpeed(.3f);
+      player.setWalkSpeed(.4f);
       event.getPlayer().setAllowFlight(true);
       var effect = new PotionEffect(JUMP, INFINITE_DURATION, 2, false, false, false);
       player.addPotionEffect(effect);
