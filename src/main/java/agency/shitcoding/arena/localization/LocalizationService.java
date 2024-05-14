@@ -18,7 +18,7 @@ public class LocalizationService {
     return instance;
   }
 
-  public static final String [] SUPPORTED_LOCALES = { "en", "ru", "et" };
+  public static final String [] SUPPORTED_LOCALES = { "en", "ru", "et", "uk" };
   private final Map<String, ResourceBundle> bundles = new HashMap<>();
 
   public LocalizationService() {

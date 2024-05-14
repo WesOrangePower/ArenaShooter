@@ -50,7 +50,8 @@ public class LangChooserMenu {
     return new String[][] {
         new String[] {"en", "890"},
         new String[] {"et", "4399"},
-        new String[] {"ru", "4406"}
+        new String[] {"ru", "4406"},
+        new String[] {"uk", "5578"},
     };
   }
 }
