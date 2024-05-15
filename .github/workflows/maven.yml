@@ -36,6 +36,7 @@ jobs:
         username: ${{ secrets.USERNAME }}
         key: ${{ secrets.KEY }}
         port: ${{ secrets.PORT }}
+        overwrite: true
         source: "server/plugins/ArenaShooter.jar"
         target: "/var/jelly/Arena/plugins"
     - name: Restart server
