@@ -253,12 +253,14 @@ public enum Powerup {
     if (weapon == null) {
       return false;
     }
-    if (!hasWeapon(player, weapon)) {
-      giveWeapon(player, weapon);
-    }
     int amount = weapon.ammoPerShot * 3;
     if (weapon.ammo == Ammo.LIGHTNING) {
       amount = 100;
+    }
+    if (!hasWeapon(player, weapon)) {
+      giveWeapon(player, weapon);
+      giveAmmo(player, weapon.ammo, amount);
+      return true;
     }
     return giveAmmo(player, weapon.ammo, amount);
   }
