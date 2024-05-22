@@ -11,7 +11,8 @@ import java.util.Optional;
 
 @RequiredArgsConstructor
 public enum Weapon {
-  GAUNTLET("weapon.gauntlet", Color.BLUE, 0, Material.WOODEN_SWORD, Ammo.BULLETS, 0, 3), MACHINE_GUN("weapon.machineGun", Color.YELLOW, 1, Material.STONE_PICKAXE, Ammo.BULLETS, 2, 3),
+  GAUNTLET("weapon.gauntlet", Color.BLUE, 0, Material.WOODEN_SWORD, Ammo.BULLETS, 0, 3),
+  MACHINE_GUN("weapon.machineGun", Color.YELLOW, 1, Material.STONE_PICKAXE, Ammo.BULLETS, 2, 3),
   LIGHTNING_GUN("weapon.lightningGun", Color.WHITE, 5, Material.IRON_PICKAXE, Ammo.LIGHTNING, 2, 3),
   SHOTGUN("weapon.shotGun", Color.ORANGE, 2, Material.WOODEN_PICKAXE, Ammo.SHELLS, 2, 16),
   ROCKET_LAUNCHER("weapon.rocketLauncher", Color.RED, 3, Material.BOW, Ammo.ROCKETS, 1, 20),

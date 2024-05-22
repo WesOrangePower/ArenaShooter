@@ -5,15 +5,24 @@ import agency.shitcoding.arena.GameplayConstants;
 import agency.shitcoding.arena.SoundConstants;
 import agency.shitcoding.arena.events.GameDamageEvent;
 import agency.shitcoding.arena.events.GameShootEvent;
+import agency.shitcoding.arena.gamestate.CosmeticsService;
+import agency.shitcoding.arena.models.Keys;
 import agency.shitcoding.arena.models.Weapon;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Particle;
+import org.bukkit.Sound;
+import org.bukkit.entity.Cat;
+import org.bukkit.entity.Entity;
+import org.bukkit.entity.EntityType;
+import org.bukkit.entity.Fireball;
 import org.bukkit.entity.LargeFireball;
 import org.bukkit.entity.Player;
+import org.bukkit.entity.SmallFireball;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason;
 import org.bukkit.event.entity.ProjectileHitEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.util.Vector;
@@ -37,14 +46,87 @@ public class RocketListener implements Listener {
     Location eyeLocation = player.getEyeLocation();
     Vector lookingVector = eyeLocation.getDirection();
 
-    eyeLocation.getWorld().playSound(eyeLocation, SoundConstants.ROCKET_FIRE, .5f, 1f);
-    player.launchProjectile(LargeFireball.class, lookingVector, rocket -> {
-      rocket.setIsIncendiary(false);
-      rocket.setYield(0f);
-      rocket.setDirection(lookingVector.clone());
-      rocket.getVelocity().multiply(2f);
-      Bukkit.getScheduler().runTaskLater(ArenaShooter.getInstance(), rocket::remove, 20 * 10L);
-    });
+    if (isKittyCannon(player)) {
+      eyeLocation.getWorld().playSound(eyeLocation, Sound.ENTITY_CAT_DEATH, .5f, 1f);
+      Vector velocity = lookingVector.multiply(2f);
+      eyeLocation
+          .getWorld()
+          .spawnEntity(
+              eyeLocation,
+              EntityType.CAT,
+              SpawnReason.COMMAND,
+              entity -> {
+                Cat cat = (Cat) entity;
+                cat.setAI(false);
+                cat.setVelocity(velocity);
+                cat.setGravity(false);
+                cat.setInvulnerable(true);
+                player.launchProjectile(
+                    SmallFireball.class,
+                    lookingVector,
+                    rocket -> {
+                      rocket.addPassenger(cat);
+                      rocket.setIsIncendiary(false);
+                      rocket.setYield(0f);
+                      rocket.setDirection(lookingVector.clone());
+                      rocket.getVelocity().multiply(2f);
+                      Bukkit.getScheduler()
+                          .runTaskLater(
+                              ArenaShooter.getInstance(),
+                              () -> {
+                                cat.remove();
+                                rocket.remove();
+                              },
+                              20 * 10L);
+                    });
+              });
+    } else {
+      eyeLocation.getWorld().playSound(eyeLocation, SoundConstants.ROCKET_FIRE, .5f, 1f);
+      player.launchProjectile(
+          LargeFireball.class,
+          lookingVector,
+          rocket -> {
+            rocket.setIsIncendiary(false);
+            rocket.setYield(0f);
+            rocket.setDirection(lookingVector.clone());
+            rocket.getVelocity().multiply(2f);
+            Bukkit.getScheduler()
+                .runTaskLater(ArenaShooter.getInstance(), rocket::remove, 20 * 10L);
+          });
+    }
+  }
+
+  private static boolean isKittyCannon(Player player) {
+    return Keys.getKittyCannonKey()
+        .getKey()
+        .equals(CosmeticsService.getInstance().getWeaponMod(player, Weapon.ROCKET_LAUNCHER));
+  }
+
+  @EventHandler
+  public void onKittyCannonCollision(ProjectileHitEvent event) {
+    if (!(event.getEntity() instanceof SmallFireball rocket)) {
+      return;
+    }
+
+    var passengers = rocket.getPassengers();
+    if (passengers.isEmpty()) {
+      return;
+    }
+
+    event.setCancelled(true);
+    var hitEntity = event.getHitEntity();
+    if (hitEntity != null && hitEntity.isInvulnerable()) {
+      return;
+    }
+
+    for (Entity passenger : passengers) {
+      rocket.removePassenger(passenger);
+      passenger.remove();
+    }
+    if (rocket.getShooter() instanceof Player player) {
+      explodeCat(rocket.getLocation(), player);
+    }
+    rocket.remove();
   }
 
   @EventHandler
@@ -55,24 +137,41 @@ public class RocketListener implements Listener {
     event.setCancelled(true);
 
     Location at = rocket.getLocation();
+    if (rocket.getShooter() instanceof Player player) {
+      explode(at, player);
+    }
     rocket.remove();
+  }
 
-    at.getWorld().spawnParticle(Particle.EXPLOSION_NORMAL, at, 5, .75, .75, .75, 0);
-    at.getWorld().spawnParticle(Particle.EXPLOSION_HUGE, at, 5, .75, .75, .75, 0);
+  private void explodeCat(Location at, Player shooter) {
+    explode(at, shooter, new Particle[]{ Particle.HEART, Particle.EXPLOSION_HUGE });
+  }
+
+  private void explode(Location at, Player shooter) {
+    explode(at, shooter, new Particle[] {Particle.EXPLOSION_NORMAL, Particle.EXPLOSION_HUGE});
+  }
+
+  private void explode(Location at, Player shooter, Particle[] particles) {
+    for (Particle particle : particles) {
+      at.getWorld().spawnParticle(particle, at, 5, .75, .75, .75, 0);
+    }
     at.getWorld().playSound(at, SoundConstants.ROCKET_DET, .75f, 1f);
     at.getNearbyLivingEntities(3, 3, 3)
-        .forEach(entity -> {
-          Location entityLoc = entity.getLocation();
-          double damageFactor = 1d / (Math.max(1.5, entityLoc.distance(at)) - 0.5);
-          if (entity == rocket.getShooter()) {
-            damageFactor *= 0.75;
-          }
-          new GameDamageEvent((Player) rocket.getShooter(), entity,
-              GameplayConstants.ROCKET_DAMAGE * damageFactor,
-              Weapon.ROCKET_LAUNCHER)
-              .fire();
-          Vector away = entity.getLocation().toVector().subtract(at.toVector()).normalize();
-          entity.setVelocity(away.multiply(1.5));
-        });
+        .forEach(
+            entity -> {
+              Location entityLoc = entity.getLocation();
+              double damageFactor = 1d / (Math.max(1.5, entityLoc.distance(at)) - 0.5);
+              if (entity == shooter) {
+                damageFactor *= 0.75;
+              }
+              new GameDamageEvent(
+                      shooter,
+                      entity,
+                      GameplayConstants.ROCKET_DAMAGE * damageFactor,
+                      Weapon.ROCKET_LAUNCHER)
+                  .fire();
+              Vector away = entity.getLocation().toVector().subtract(at.toVector()).normalize();
+              entity.setVelocity(away.multiply(1.5));
+            });
   }
 }

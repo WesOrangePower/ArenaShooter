@@ -36,14 +36,14 @@ public class ArenaMainMenu {
         TextColor.color(0xaa2222), TextDecoration.BOLD);
   }
 
-  public static ItemSlot backButton(LangPlayer player) {
+  public static ItemSlot backButton(LangPlayer player, Runnable action) {
     return ItemBuilder.builder()
         .withMaterial(Material.ARROW)
         .withName(Component.text(player.getLocalized("menu.backButton.name"),
             TextColor.color(0xbb2222)))
         .withLoreLine(Component.text(player.getLocalized("menu.backButton.description"),
             TextColor.color(0x882222)))
-        .withClickAction((type, ctx) -> new ArenaMainMenu(player.getPlayer()).render())
+        .withClickAction((type, ctx) -> action.run())
         .build();
   }
 
@@ -68,7 +68,8 @@ public class ArenaMainMenu {
 
     viewBuilder.addItemSlot(settingsButton());
     viewBuilder.addItemSlot(statsButton());
-    viewBuilder.addItemSlot(faqButton());
+    viewBuilder.addItemSlot(cosmeticsButton());
+//    viewBuilder.addItemSlot(faqButton());
 
     if (player.getPlayer().hasPermission(ArenaDeathMatchCommand.ADMIN_PERM) && isJellyRestartLoaded())
       viewBuilder.addItemSlot(restartServerButton());
@@ -76,6 +77,16 @@ public class ArenaMainMenu {
     return viewBuilder.build();
   }
 
+  private ItemSlot cosmeticsButton() {
+    return ItemBuilder.builder()
+        .withMaterial(Material.CHEST)
+        .withName(Component.text(player.getLocalized("menu.cosmetics.title"), TextColor.color(0xa94366)))
+        .withLoreLine(player.getLocalized("menu.lore.open"))
+        .withLoreLine(player.getLocalized("menu.cosmetics.description"))
+        .withClickAction((clickType, clickContext) -> new CosmeticsMenu(player.getPlayer()).render())
+        .withSlot(2, 7)
+        .build();
+  }
 
 
   private ItemSlot faqButton() {
@@ -84,7 +95,7 @@ public class ArenaMainMenu {
         .withName(Component.text(player.getLocalized("menu.help.title"), TextColor.color(0xa94366)))
         .withLoreLine(player.getLocalized("menu.lore.open"))
         .withLoreLine(player.getLocalized("menu.help.description"))
-        .withClickAction(((clickType, clickContext) -> new FaqMenu(player.getPlayer()).render()))
+        .withClickAction((clickType, clickContext) -> new FaqMenu(player.getPlayer()).render())
         .withSlot(2, 7)
         .build();
   }

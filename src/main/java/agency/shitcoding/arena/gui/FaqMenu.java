@@ -1,5 +1,7 @@
 package agency.shitcoding.arena.gui;
 
+import static agency.shitcoding.arena.gui.ArenaMainMenu.backButton;
+
 import agency.shitcoding.arena.localization.LangPlayer;
 import agency.shitcoding.arena.models.Faq;
 import agency.shitcoding.arena.storage.StorageProvider;
@@ -34,7 +36,7 @@ public class FaqMenu {
         .withHolder(player.getPlayer())
         .withTitle(player.getLocalized("menu.help.title"))
         .withRows(3)
-        .addItemSlot(backButton())
+        .addItemSlot(9*2, backButton(player, () -> new ArenaMainMenu(player.getPlayer()).render()))
         .build()
         .toPaginatedView();
 
@@ -57,13 +59,5 @@ public class FaqMenu {
       items.add(item);
     }
     return items;
-  }
-
-  private ItemSlot backButton() {
-    return ItemBuilder.builder()
-        .withName(Component.text(player.getLocalized("menu.backButton.name"), NamedTextColor.GRAY))
-        .withPersistItalics()
-        .withSlot(2, 0)
-        .build();
   }
 }

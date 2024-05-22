@@ -1,5 +1,7 @@
 package agency.shitcoding.arena.gui;
 
+import static agency.shitcoding.arena.gui.ArenaMainMenu.backButton;
+
 import agency.shitcoding.arena.gamestate.Game;
 import agency.shitcoding.arena.gamestate.GameOrchestrator;
 import agency.shitcoding.arena.localization.LangPlayer;
@@ -29,7 +31,7 @@ public class JoinGameMenu {
         withHolder(player.getPlayer()).
         withTitle(title).
         withSize(InventorySize.TWO_ROWS).
-        addItemSlot(13, ArenaMainMenu.backButton(player));
+        addItemSlot(13, backButton(player, () -> new ArenaMainMenu(player.getPlayer()).render()));
 
     // Add buttons for joining games
     int i = 0;

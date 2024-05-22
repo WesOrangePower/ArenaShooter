@@ -5,6 +5,7 @@ import agency.shitcoding.arena.command.ArenaDeathMatchCommand;
 import agency.shitcoding.arena.command.CommandInst;
 import agency.shitcoding.arena.events.GameDamageEvent;
 import agency.shitcoding.arena.events.listeners.ShotgunListener;
+import agency.shitcoding.arena.gamestate.CosmeticsService;
 import agency.shitcoding.arena.models.Ammo;
 import agency.shitcoding.arena.models.Weapon;
 import org.bukkit.Bukkit;
@@ -38,7 +39,7 @@ public class ArenaTestCmd extends CommandInst {
             return;
           }
           for (Weapon weapon : Weapon.values()) {
-            p.getInventory().setItem(weapon.slot, WeaponItemGenerator.generate(p, weapon));
+            p.getInventory().setItem(weapon.slot, CosmeticsService.getInstance().getWeapon(p, weapon));
           }
           Ammo.maxAmmoForPlayer(p);
           sender.sendMessage("Given");

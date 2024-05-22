@@ -1,5 +1,7 @@
 package agency.shitcoding.arena.gui;
 
+import static agency.shitcoding.arena.gui.ArenaMainMenu.backButton;
+
 import agency.shitcoding.arena.localization.LangPlayer;
 import net.jellycraft.guiapi.api.InventorySize;
 import net.jellycraft.guiapi.api.ItemSlot;
@@ -23,6 +25,7 @@ public class SettingsMenu {
         .withSize(InventorySize.ONE_ROW)
         .withHolder(player.getPlayer())
         .addItemSlot(langChooser())
+        .addItemSlot(8, backButton(player, () -> new ArenaMainMenu(player.getPlayer()).render()))
         .build();
 
     new ViewRenderer(view).render();

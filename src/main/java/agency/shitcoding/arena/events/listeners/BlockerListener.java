@@ -13,6 +13,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
+import org.bukkit.event.entity.EntityDeathEvent;
 import org.bukkit.event.entity.FoodLevelChangeEvent;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryInteractEvent;
@@ -59,6 +60,13 @@ public class BlockerListener implements Listener {
   @EventHandler
   private void onFireballReflect(EntityDamageEvent event) {
     if (event.getEntity() instanceof Fireball) {
+      event.setCancelled(true);
+    }
+  }
+
+  @EventHandler
+  private void makeInvulnerableEntitiesUnkillable(EntityDeathEvent event) {
+    if (event.getEntity().isInvulnerable()) {
       event.setCancelled(true);
     }
   }

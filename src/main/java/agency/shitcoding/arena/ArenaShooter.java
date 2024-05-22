@@ -76,7 +76,7 @@ public final class ArenaShooter extends JavaPlugin {
     new AmmoListener(), new NoAmmoListener(), new PlasmaListener(), new RailListener(), new BFG9KListener(),
     new RocketListener(), new LightningGunListener(), new ShotgunListener(), new GauntletListener(),
     new MachineGunListener(), new InstagibListener(), new ItemListener(), new GameStreakListener(),
-    new PortalListener(), new AutoClickerBlocker()
+    new PortalListener(), new AutoClickerBlocker(), new MessageListener()
     };
 
     for (Listener listener : listeners) {
