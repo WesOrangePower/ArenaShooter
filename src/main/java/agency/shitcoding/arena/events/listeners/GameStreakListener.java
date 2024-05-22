@@ -11,6 +11,9 @@ import agency.shitcoding.arena.localization.LangPlayer;
 import agency.shitcoding.arena.models.Keys;
 import agency.shitcoding.arena.models.PlayerStreak;
 import agency.shitcoding.arena.models.Weapon;
+import java.util.List;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Sound;
 import org.bukkit.SoundCategory;
 import org.bukkit.entity.Player;
@@ -22,47 +25,17 @@ import java.util.Optional;
 public class GameStreakListener implements Listener {
 
   @EventHandler
-  public void onGameDamage(GameDamageEvent event) {
-    Player player = event.getDealer();
-    if (player == null) {
-      return;
-    }
-
-    Optional<Game> optionalGame = GameOrchestrator.getInstance().getGameByPlayer(player);
-
-    if (optionalGame.isEmpty()) {
-      return;
-    }
-
-    Game game = optionalGame.get();
-    PlayerScore score = game.getScore(player);
-    if (score == null) {
-      return;
-    }
-
-    Weapon weapon = event.getWeapon();
-    PlayerStreak streak = score.getStreak();
-    PlayerStreak oldStreak = streak.copy();
-    if (weapon == Weapon.RAILGUN) {
-      streak.setConsequentRailHit(streak.getConsequentRailHit() + 1);
-    }
-
-    new GameStreakUpdateEvent(streak, oldStreak, player, game)
-        .fire();
-  }
-
-  @EventHandler
   public void announceRailStreak(GameStreakUpdateEvent event) {
     Player p = event.getPlayer();
     int streak = event.getStreak().getConsequentRailHit();
     int oldStreak = event.getOldStreak().getConsequentRailHit();
     if (oldStreak == streak) return;
-    if (streak > 2) {
+    if (streak >= 2) {
       playSound(p, SoundConstants.IMPRESSIVE);
     }
 
     if (streak == 7) {
-      if (!CosmeticsService.getInstance()
+      if (CosmeticsService.getInstance()
           .getAvailableWeaponMods(p, Weapon.RAILGUN)
           .contains(Keys.getBubbleGunKey().getKey())) {
         return;

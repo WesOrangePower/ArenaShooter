@@ -1,5 +1,6 @@
 package agency.shitcoding.arena.events.listeners;
 
+import agency.shitcoding.arena.ArenaShooter;
 import agency.shitcoding.arena.GameplayConstants;
 import agency.shitcoding.arena.SoundConstants;
 import agency.shitcoding.arena.events.GameDamageEvent;
@@ -10,9 +11,12 @@ import agency.shitcoding.arena.gamestate.GameOrchestrator;
 import agency.shitcoding.arena.gamestate.PlayerScore;
 import agency.shitcoding.arena.models.Keys;
 import agency.shitcoding.arena.models.Weapon;
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Optional;
 import java.util.Set;
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Particle;
@@ -50,6 +54,7 @@ public class RailListener implements Listener {
         : SoundConstants.RAIL_FIRE;
 
     world.playSound(player, sound, .75f, 1f);
+    List<Location> particleLocations = new ArrayList<>();
 
     Set<LivingEntity> affectedEntities = new HashSet<>();
     // row of particles
@@ -60,7 +65,7 @@ public class RailListener implements Listener {
 
       for (int j = 0; j < DENSITY_FACTOR; j++) {
         var at = eyeLocation.add(lookingVector.clone().normalize().multiply(i / DENSITY_FACTOR));
-        world.spawnParticle(particle, at, 1, 0, 0, 0, 0);
+        particleLocations.add(at.clone());
 
         if (at.getBlock().getType().isCollidable()) {
           // if the block is collidable, stop the loop
@@ -77,6 +82,17 @@ public class RailListener implements Listener {
             });
       }
     }
+
+    particleLocations.forEach(loc -> world.spawnParticle(particle, loc, 1, 0, 0, 0, 0));
+    if (isBubbleGun) {
+      for(int i = 1; i < 20; i++) {
+        Bukkit.getScheduler().runTaskLater(ArenaShooter.getInstance(),
+            () -> particleLocations.forEach(loc -> world.spawnParticle(particle, loc, 1, 0, 0, 0, 0)),
+            i
+        );
+      }
+    }
+
     affectedEntities.forEach(entity ->
         new GameDamageEvent(player, entity, GameplayConstants.RAILGUN_DAMAGE, Weapon.RAILGUN).fire()
     );
@@ -95,7 +111,8 @@ public class RailListener implements Listener {
     } else {
       streak.setConsequentRailHit(streak.getConsequentRailHit() + 1);
     }
-    new GameStreakUpdateEvent(streak, oldStreak, player, game);
+    new GameStreakUpdateEvent(streak, oldStreak, player, game)
+        .fire();
   }
 
   private static boolean isBubbleGun(Player player) {

@@ -56,7 +56,7 @@ public final class GameplayConstants {
   public static final int LIGHT_ARMOR_SPAWN_OFFSET_TICKS = 0;
 
   public static final int GIBBING_THRESHOLD = -7;
-  public static final double ARMOR_FACTOR = .35;
+  public static final double ARMOR_FACTOR = .3;
   public static final double ARMOR_DAMAGE_FACTOR = 2d;
 
   public static final double GAUNTLET_DAMAGE = 8.5d;
@@ -64,7 +64,7 @@ public final class GameplayConstants {
   public static final double SHOTGUN_PELLET_DAMAGE = 2d;
   public static final double ROCKET_DAMAGE = 15d;
   public static final double LIGHTNING_DAMAGE = .35;
-  public static final double RAILGUN_DAMAGE = 18d;
+  public static final double RAILGUN_DAMAGE = 20d;
   public static final double BFG_DAMAGE = 45d;
   public static final double BFG_SPREAD_DAMAGE = 25d;
   public static final int MAX_ARMOR = 100;
