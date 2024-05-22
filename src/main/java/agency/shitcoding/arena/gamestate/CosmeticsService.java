@@ -1,5 +1,6 @@
 package agency.shitcoding.arena.gamestate;
 
+import static org.bukkit.persistence.PersistentDataType.BOOLEAN;
 import static org.bukkit.persistence.PersistentDataType.STRING;
 
 import agency.shitcoding.arena.WeaponItemGenerator;
@@ -22,6 +23,7 @@ public class CosmeticsService {
 
   static {
     weaponMods.put(Weapon.ROCKET_LAUNCHER, new NamespacedKey[] {Keys.getKittyCannonKey()});
+    weaponMods.put(Weapon.RAILGUN, new NamespacedKey[] {Keys.getBubbleGunKey()});
   }
 
   private final Map<Player, ItemStack[]> playerWeapons;
@@ -37,6 +39,11 @@ public class CosmeticsService {
       instance = new CosmeticsService();
     }
     return instance;
+  }
+
+  public void addWeaponMod(Player player, NamespacedKey modKey) {
+    player.getPersistentDataContainer().set(modKey, BOOLEAN, true);
+    dropCache(player);
   }
 
   public ItemStack getWeapon(Player player, Weapon weaponType) {

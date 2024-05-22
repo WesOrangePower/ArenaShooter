@@ -11,7 +11,6 @@ import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
-import org.bukkit.persistence.PersistentDataType;
 
 public class MessageListener implements Listener {
 
@@ -27,9 +26,7 @@ public class MessageListener implements Listener {
 
     if (msg.equalsIgnoreCase(cmp)) {
       Bukkit.getScheduler().runTask(ArenaShooter.getInstance(), () -> {
-        player.getPersistentDataContainer()
-                .set(Keys.getKittyCannonKey(), PersistentDataType.BOOLEAN, true);
-        CosmeticsService.getInstance().dropCache(player);
+        CosmeticsService.getInstance().addWeaponMod(player, Keys.getKittyCannonKey());
         player.sendRichMessage(langPlayer.getLocalized("easter.cat.message"));
       });
     }

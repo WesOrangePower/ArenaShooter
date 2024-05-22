@@ -5,12 +5,18 @@ import agency.shitcoding.arena.SoundConstants;
 import agency.shitcoding.arena.events.GameDamageEvent;
 import agency.shitcoding.arena.events.GameShootEvent;
 import agency.shitcoding.arena.events.GameStreakUpdateEvent;
+import agency.shitcoding.arena.gamestate.CosmeticsService;
 import agency.shitcoding.arena.gamestate.GameOrchestrator;
 import agency.shitcoding.arena.gamestate.PlayerScore;
+import agency.shitcoding.arena.models.Keys;
 import agency.shitcoding.arena.models.Weapon;
+import java.util.HashSet;
+import java.util.Optional;
+import java.util.Set;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Particle;
+import org.bukkit.Sound;
 import org.bukkit.World;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
@@ -18,11 +24,6 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.util.Vector;
-
-import java.util.HashSet;
-import java.util.Optional;
-import java.util.Set;
-
 
 public class RailListener implements Listener {
 
@@ -43,8 +44,12 @@ public class RailListener implements Listener {
     Location eyeLocation = player.getEyeLocation();
     Vector lookingVector = eyeLocation.getDirection();
     World world = eyeLocation.getWorld();
+    boolean isBubbleGun = isBubbleGun(player);
+    var particle = isBubbleGun ? Particle.WATER_BUBBLE : Particle.WAX_OFF;
+    var sound = isBubbleGun ? Sound.BLOCK_BUBBLE_COLUMN_WHIRLPOOL_INSIDE.key().value()
+        : SoundConstants.RAIL_FIRE;
 
-    world.playSound(player, SoundConstants.RAIL_FIRE, .75f, 1f);
+    world.playSound(player, sound, .75f, 1f);
 
     Set<LivingEntity> affectedEntities = new HashSet<>();
     // row of particles
@@ -55,7 +60,7 @@ public class RailListener implements Listener {
 
       for (int j = 0; j < DENSITY_FACTOR; j++) {
         var at = eyeLocation.add(lookingVector.clone().normalize().multiply(i / DENSITY_FACTOR));
-        world.spawnParticle(Particle.WAX_OFF, at, 1, 0, 0, 0, 0);
+        world.spawnParticle(particle, at, 1, 0, 0, 0, 0);
 
         if (at.getBlock().getType().isCollidable()) {
           // if the block is collidable, stop the loop
@@ -91,5 +96,11 @@ public class RailListener implements Listener {
       streak.setConsequentRailHit(streak.getConsequentRailHit() + 1);
     }
     new GameStreakUpdateEvent(streak, oldStreak, player, game);
+  }
+
+  private static boolean isBubbleGun(Player player) {
+    return Keys.getBubbleGunKey()
+        .getKey()
+        .equals(CosmeticsService.getInstance().getWeaponMod(player, Weapon.RAILGUN));
   }
 }

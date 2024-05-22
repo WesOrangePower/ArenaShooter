@@ -1,23 +1,27 @@
 package agency.shitcoding.arena.gui;
 
+import static agency.shitcoding.arena.gui.ArenaMainMenu.backButton;
+
 import agency.shitcoding.arena.ArenaShooter;
 import agency.shitcoding.arena.localization.LangPlayer;
 import agency.shitcoding.arena.statistics.GameOutcome;
-import net.jellycraft.guiapi.Item;
-import net.jellycraft.guiapi.api.InventorySize;
-import net.jellycraft.guiapi.api.ViewRenderer;
-import net.jellycraft.guiapi.api.fluent.ItemBuilder;
-import net.jellycraft.guiapi.api.fluent.ViewBuilder;
-import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.minimessage.MiniMessage;
-import org.bukkit.Material;
-import org.bukkit.entity.Player;
-
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.time.format.FormatStyle;
 import java.util.Comparator;
 import java.util.Locale;
+import net.jellycraft.guiapi.Item;
+import net.jellycraft.guiapi.api.InventorySize;
+import net.jellycraft.guiapi.api.ViewRenderer;
+import net.jellycraft.guiapi.api.fluent.ItemBuilder;
+import net.jellycraft.guiapi.api.fluent.ViewBuilder;
+import net.jellycraft.guiapi.api.paginated.ControlPanelItem;
+import net.jellycraft.guiapi.api.paginated.ControlPanelVisibility;
+import net.jellycraft.guiapi.api.paginated.ControlPanels;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.minimessage.MiniMessage;
+import org.bukkit.Material;
+import org.bukkit.entity.Player;
 
 public class StatsMenu {
   private final LangPlayer player;
@@ -30,7 +34,7 @@ public class StatsMenu {
     var gameOutcomes = ArenaShooter.getInstance().getStatisticsService()
         .getGameOutcomes(player.getPlayer())
         .stream()
-        .sorted(Comparator.comparing(GameOutcome::time))
+        .sorted(Comparator.comparing(GameOutcome::time).reversed())
         .map(this::gameOutcomeToItem)
         .toList();
 
@@ -38,13 +42,27 @@ public class StatsMenu {
       return;
     }
 
+    MiniMessage mm = MiniMessage.miniMessage();
+    var cp = ControlPanels.namedArrows(
+        mm.deserialize("<aqua>" + player.getLocalized("menu.previousArrow")),
+        mm.deserialize("<aqua>" + player.getLocalized("menu.nextArrow"))
+    );
+
+    cp.slots[4] = new ControlPanelItem(
+        ControlPanelVisibility.ALWAYS,
+        backButton(player, () -> new ArenaMainMenu(player.getPlayer()).render())
+    );
+
+
     var view = ViewBuilder.builder()
-        .withTitle(Component.text(player.getLocalized("menu.stat.title")))
-        .withSize(InventorySize.DOUBLE_CHEST)
-        .withHolder(player.getPlayer())
-        .build().toPaginatedView()
-        .withItems(gameOutcomes)
-        .build();
+            .withTitle(Component.text(player.getLocalized("menu.stat.title")))
+            .withSize(InventorySize.DOUBLE_CHEST)
+            .withHolder(player.getPlayer())
+            .build()
+            .toPaginatedView()
+            .withItems(gameOutcomes)
+            .withControlPanel(cp)
+            .build();
 
     new ViewRenderer(view).render();
   }

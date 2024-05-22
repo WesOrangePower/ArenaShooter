@@ -21,6 +21,10 @@ public final class Keys {
     return new NamespacedKey(ArenaShooter.getInstance(), "kittyCannon");
   }
 
+  public static NamespacedKey getBubbleGunKey() {
+    return new NamespacedKey(ArenaShooter.getInstance(), "bubbleGun");
+  }
+
   public static NamespacedKey of(String key) {
     return new NamespacedKey(ArenaShooter.getInstance(), key);
   }
