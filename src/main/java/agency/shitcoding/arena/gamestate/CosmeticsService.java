@@ -4,14 +4,12 @@ import agency.shitcoding.arena.WeaponItemGenerator;
 import agency.shitcoding.arena.models.Keys;
 import agency.shitcoding.arena.models.Weapon;
 import agency.shitcoding.arena.storage.StorageProvider;
-import org.bukkit.NamespacedKey;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
 
-import static org.bukkit.persistence.PersistentDataType.BOOLEAN;
 import static org.bukkit.persistence.PersistentDataType.STRING;
 
 public class CosmeticsService {
@@ -38,8 +36,8 @@ public class CosmeticsService {
     return instance;
   }
 
-  public void addWeaponMod(Player player, NamespacedKey modKey) {
-    player.getPersistentDataContainer().set(modKey, BOOLEAN, true);
+  public void addWeaponMod(Player player, WeaponMod weaponMod) {
+    StorageProvider.getCosmeticsStorage().storeWeaponMod(player.getName(), weaponMod.mod());
     dropCache(player);
   }
 

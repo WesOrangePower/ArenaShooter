@@ -1,16 +1,16 @@
 package agency.shitcoding.arena.events.listeners;
 
-import static net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer.plainText;
-
 import agency.shitcoding.arena.ArenaShooter;
 import agency.shitcoding.arena.gamestate.CosmeticsService;
+import agency.shitcoding.arena.gamestate.WeaponMods;
 import agency.shitcoding.arena.localization.LangPlayer;
-import agency.shitcoding.arena.models.Keys;
 import io.papermc.paper.event.player.AsyncChatEvent;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+
+import static net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer.plainText;
 
 public class MessageListener implements Listener {
 
@@ -26,7 +26,7 @@ public class MessageListener implements Listener {
 
     if (msg.equalsIgnoreCase(cmp)) {
       Bukkit.getScheduler().runTask(ArenaShooter.getInstance(), () -> {
-        CosmeticsService.getInstance().addWeaponMod(player, Keys.getKittyCannonKey());
+        CosmeticsService.getInstance().addWeaponMod(player, WeaponMods.getKittyCannon());
         player.sendRichMessage(langPlayer.getLocalized("easter.cat.message"));
       });
     }

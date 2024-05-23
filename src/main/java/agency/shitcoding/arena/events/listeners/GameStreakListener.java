@@ -1,26 +1,15 @@
 package agency.shitcoding.arena.events.listeners;
 
 import agency.shitcoding.arena.SoundConstants;
-import agency.shitcoding.arena.events.GameDamageEvent;
 import agency.shitcoding.arena.events.GameStreakUpdateEvent;
 import agency.shitcoding.arena.gamestate.CosmeticsService;
-import agency.shitcoding.arena.gamestate.Game;
-import agency.shitcoding.arena.gamestate.GameOrchestrator;
-import agency.shitcoding.arena.gamestate.PlayerScore;
+import agency.shitcoding.arena.gamestate.WeaponMods;
 import agency.shitcoding.arena.localization.LangPlayer;
-import agency.shitcoding.arena.models.Keys;
-import agency.shitcoding.arena.models.PlayerStreak;
-import agency.shitcoding.arena.models.Weapon;
-import java.util.List;
-import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Sound;
 import org.bukkit.SoundCategory;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
-
-import java.util.Optional;
 
 public class GameStreakListener implements Listener {
 
@@ -35,15 +24,13 @@ public class GameStreakListener implements Listener {
     }
 
     if (streak == 7) {
-      if (CosmeticsService.getInstance()
-          .getAvailableWeaponMods(p, Weapon.RAILGUN)
-          .contains(Keys.getBubbleGunKey().getKey())) {
+      if (CosmeticsService.getInstance().hasMod(p, WeaponMods.getBubbleGun())) {
         return;
       }
 
       playSound(p, Sound.ENTITY_PLAYER_LEVELUP.key().value());
       LangPlayer.of(p).sendRichLocalized("easter.bubbleGun.message");
-      CosmeticsService.getInstance().addWeaponMod(p, Keys.getBubbleGunKey());
+      CosmeticsService.getInstance().addWeaponMod(p, WeaponMods.getBubbleGun());
     }
 
   }
