@@ -22,7 +22,9 @@ public class ConfigurationCosmeticsStorage implements CosmeticsStorage {
   @Override
   public void storeWeaponMod(String playerName, String weaponMod) {
     var playerSection = getPlayerSection(playerName);
-    playerSection.set("mods", weaponMod);
+    List<String> mods = new ArrayList<>(playerSection.getStringList("mods"));
+    mods.add(weaponMod);
+    playerSection.set("mods", mods);
     save();
   }
 
@@ -40,6 +42,17 @@ public class ConfigurationCosmeticsStorage implements CosmeticsStorage {
     copy.removeIf(mod -> mod.equals(weaponMod));
     playerSection.set("mods", copy);
     save();
+  }
+
+  @Override
+  public void refresh() {
+    if (configuration instanceof YamlConfiguration yamlConfiguration) {
+      try {
+        yamlConfiguration.load(FILE);
+      } catch (Exception e) {
+        ArenaShooter.getInstance().getLogger().severe("Failed to load " + FILE);
+      }
+    }
   }
 
   private ConfigurationSection getPlayerSection(String playerName) {

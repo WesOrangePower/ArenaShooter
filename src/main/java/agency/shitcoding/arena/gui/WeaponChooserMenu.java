@@ -44,8 +44,8 @@ public class WeaponChooserMenu {
             .map(
                 mod -> {
                   ItemStack moddedItem =
-                      WeaponItemGenerator.generateMod(player.getPlayer(), weapon, mod);
-                  return modWeaponItem(moddedItem, mod, moddedItem.equals(chosenWeapon));
+                      WeaponItemGenerator.generateMod(player.getPlayer(), weapon, mod.mod());
+                  return modWeaponItem(moddedItem, mod.mod(), moddedItem.equals(chosenWeapon));
                 })
             .toArray(Item[]::new);
 

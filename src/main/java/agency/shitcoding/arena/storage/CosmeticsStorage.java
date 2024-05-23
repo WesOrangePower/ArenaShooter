@@ -8,4 +8,6 @@ public interface CosmeticsStorage {
   List<String> getWeaponMods(String playerName);
 
   void deleteWeaponMod(String playerName, String weaponMod);
+
+  void refresh();
 }
