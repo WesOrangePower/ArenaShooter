@@ -9,25 +9,17 @@ import agency.shitcoding.arena.events.GameStreakUpdateEvent;
 import agency.shitcoding.arena.gamestate.CosmeticsService;
 import agency.shitcoding.arena.gamestate.GameOrchestrator;
 import agency.shitcoding.arena.gamestate.PlayerScore;
-import agency.shitcoding.arena.models.Keys;
+import agency.shitcoding.arena.gamestate.WeaponMods;
 import agency.shitcoding.arena.models.Weapon;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
-import org.bukkit.Bukkit;
-import org.bukkit.Location;
-import org.bukkit.Material;
-import org.bukkit.Particle;
-import org.bukkit.Sound;
-import org.bukkit.World;
+import org.bukkit.*;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.util.Vector;
+
+import java.util.*;
 
 public class RailListener implements Listener {
 
@@ -116,8 +108,7 @@ public class RailListener implements Listener {
   }
 
   private static boolean isBubbleGun(Player player) {
-    return Keys.getBubbleGunKey()
-        .getKey()
-        .equals(CosmeticsService.getInstance().getWeaponMod(player, Weapon.RAILGUN));
+    return WeaponMods.getBubbleGun()
+            .equals(CosmeticsService.getInstance().getWeaponMod(player, Weapon.RAILGUN));
   }
 }

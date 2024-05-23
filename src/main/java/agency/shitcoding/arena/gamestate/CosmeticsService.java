@@ -1,29 +1,26 @@
 package agency.shitcoding.arena.gamestate;
 
-import static org.bukkit.persistence.PersistentDataType.BOOLEAN;
-import static org.bukkit.persistence.PersistentDataType.STRING;
-
 import agency.shitcoding.arena.WeaponItemGenerator;
 import agency.shitcoding.arena.models.Keys;
 import agency.shitcoding.arena.models.Weapon;
-import java.util.ArrayList;
-import java.util.EnumMap;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import agency.shitcoding.arena.storage.StorageProvider;
 import org.bukkit.NamespacedKey;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.persistence.PersistentDataType;
 import org.jetbrains.annotations.Nullable;
+
+import java.util.*;
+
+import static org.bukkit.persistence.PersistentDataType.BOOLEAN;
+import static org.bukkit.persistence.PersistentDataType.STRING;
 
 public class CosmeticsService {
 
-  public static final Map<Weapon, NamespacedKey[]> weaponMods = new EnumMap<>(Weapon.class);
+  public static final Map<Weapon, WeaponMod[]> weaponMods = new EnumMap<>(Weapon.class);
 
   static {
-    weaponMods.put(Weapon.ROCKET_LAUNCHER, new NamespacedKey[] {Keys.getKittyCannonKey()});
-    weaponMods.put(Weapon.RAILGUN, new NamespacedKey[] {Keys.getBubbleGunKey()});
+    weaponMods.put(Weapon.ROCKET_LAUNCHER, new WeaponMod[] {WeaponMods.getKittyCannon()});
+    weaponMods.put(Weapon.RAILGUN, new WeaponMod[] {WeaponMods.getBubbleGun()});
   }
 
   private final Map<Player, ItemStack[]> playerWeapons;
@@ -63,16 +60,21 @@ public class CosmeticsService {
     this.playerWeapons.remove(player);
   }
 
-  public List<String> getAvailableWeaponMods(Player player, Weapon weapon) {
-    List<String> items = new ArrayList<>();
+  public List<WeaponMod> getAvailableWeaponMods(Player player, Weapon weapon) {
+    List<WeaponMod> items = new ArrayList<>();
 
-    for (NamespacedKey key : weaponMods.getOrDefault(weapon, new NamespacedKey[0])) {
-      if (player.getPersistentDataContainer().has(key, PersistentDataType.BOOLEAN)) {
-        items.add(key.getKey());
+    for (WeaponMod weaponMod : weaponMods.getOrDefault(weapon, new WeaponMod[0])) {
+      if (hasMod(player, weaponMod)) {
+        items.add(weaponMod);
       }
     }
 
     return items;
+  }
+
+  public boolean hasMod(Player player, WeaponMod weaponMod) {
+    var mods = StorageProvider.getCosmeticsStorage().getWeaponMods(player.getName());
+    return mods.contains(weaponMod.mod());
   }
 
   private ItemStack[] getPlayerWeapons(Player player) {
@@ -86,12 +88,17 @@ public class CosmeticsService {
     return weapons;
   }
 
-  public @Nullable String getWeaponMod(Player player, Weapon weapon) {
+  public @Nullable String getWeaponModName(Player player, Weapon weapon) {
     var pdc = player.getPersistentDataContainer();
     var key = Keys.ofWeapon(weapon);
     if (pdc.has(key, STRING)) {
       return pdc.get(key, STRING);
     }
     return null;
+  }
+
+  public @Nullable WeaponMod getWeaponMod(Player player, Weapon weapon) {
+    var val = getWeaponModName(player, weapon);
+    return val == null ? null : new WeaponMod(weapon, val);
   }
 }

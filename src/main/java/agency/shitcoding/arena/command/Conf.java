@@ -6,6 +6,7 @@ public final class Conf {
   public static final String arenasSection = "arena.arenas";
   public static final String lobbyLocation = "arena.lobby_location";
   public static final String faqSection = "faqs";
+  public static final String weaponModSection = "weapon_mods";
 
   public static class Arenas {
 

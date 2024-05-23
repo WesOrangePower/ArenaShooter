@@ -4,6 +4,7 @@ public final class StorageProvider {
 
   private static ArenaStorage arenaStorage;
   private static FaqStorage faqStorage;
+  private static CosmeticsStorage cosmeticsStorage;
 
 
   private StorageProvider() {
@@ -22,5 +23,12 @@ public final class StorageProvider {
       faqStorage = StorageFactory.createFaqStorage();
     }
     return faqStorage;
+  }
+
+  public static CosmeticsStorage getCosmeticsStorage() {
+    if (cosmeticsStorage == null) {
+      cosmeticsStorage = StorageFactory.createCosmeticsStorage();
+    }
+    return cosmeticsStorage;
   }
 }

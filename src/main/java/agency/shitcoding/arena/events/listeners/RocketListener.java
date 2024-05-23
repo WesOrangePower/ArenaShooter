@@ -6,20 +6,10 @@ import agency.shitcoding.arena.SoundConstants;
 import agency.shitcoding.arena.events.GameDamageEvent;
 import agency.shitcoding.arena.events.GameShootEvent;
 import agency.shitcoding.arena.gamestate.CosmeticsService;
-import agency.shitcoding.arena.models.Keys;
+import agency.shitcoding.arena.gamestate.WeaponMods;
 import agency.shitcoding.arena.models.Weapon;
-import org.bukkit.Bukkit;
-import org.bukkit.Location;
-import org.bukkit.Material;
-import org.bukkit.Particle;
-import org.bukkit.Sound;
-import org.bukkit.entity.Cat;
-import org.bukkit.entity.Entity;
-import org.bukkit.entity.EntityType;
-import org.bukkit.entity.Fireball;
-import org.bukkit.entity.LargeFireball;
-import org.bukkit.entity.Player;
-import org.bukkit.entity.SmallFireball;
+import org.bukkit.*;
+import org.bukkit.entity.*;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason;
@@ -97,9 +87,8 @@ public class RocketListener implements Listener {
   }
 
   private static boolean isKittyCannon(Player player) {
-    return Keys.getKittyCannonKey()
-        .getKey()
-        .equals(CosmeticsService.getInstance().getWeaponMod(player, Weapon.ROCKET_LAUNCHER));
+      return WeaponMods.getKittyCannon()
+              .equals(CosmeticsService.getInstance().getWeaponMod(player, Weapon.ROCKET_LAUNCHER));
   }
 
   @EventHandler

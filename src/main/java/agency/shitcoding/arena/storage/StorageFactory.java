@@ -21,6 +21,10 @@ public final class StorageFactory {
     return new ConfigurationFaqStorage(getConfiguration(ConfigurationFaqStorage.FILE));
   }
 
+  public static CosmeticsStorage createCosmeticsStorage() {
+    return new ConfigurationCosmeticsStorage(getConfiguration(ConfigurationCosmeticsStorage.FILE));
+  }
+
   private static Configuration getConfiguration(File file) {
     try {
       File parent = file.getParentFile();
