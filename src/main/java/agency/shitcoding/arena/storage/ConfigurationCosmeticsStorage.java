@@ -2,6 +2,8 @@ package agency.shitcoding.arena.storage;
 
 import agency.shitcoding.arena.ArenaShooter;
 import agency.shitcoding.arena.command.Conf;
+import java.util.HashMap;
+import java.util.Map;
 import lombok.RequiredArgsConstructor;
 import org.bukkit.configuration.Configuration;
 import org.bukkit.configuration.ConfigurationSection;
@@ -53,6 +55,21 @@ public class ConfigurationCosmeticsStorage implements CosmeticsStorage {
         ArenaShooter.getInstance().getLogger().severe("Failed to load " + FILE);
       }
     }
+  }
+
+  @Override
+  public Map<String, List<String>> getAllWeaponMods() {
+    var weaponModSection = configuration.getConfigurationSection(Conf.weaponModSection);
+    if (weaponModSection == null) {
+      return Map.of();
+    }
+    var keys = weaponModSection.getKeys(false);
+
+    Map<String, List<String>> result = new HashMap<>();
+    for (var key : keys) {
+      result.put(key, weaponModSection.getStringList(key + ".mods"));
+    }
+    return result;
   }
 
   private ConfigurationSection getPlayerSection(String playerName) {

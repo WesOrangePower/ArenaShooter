@@ -54,7 +54,7 @@ public final class ArenaDeathMatchCommand extends CommandInst {
       case "join" -> new ArenaJoinCmd(sender, args);
       case "forcestart" -> new ArenaForcestartCmd(sender, args);
       case "leave" -> new ArenaLeaveCmd(sender, args);
-      case "test" -> new ArenaTestCmd(sender, args);
+      case "utils" -> new ArenaUtilsCmd(sender, args);
       default -> new ArenaHelpCmd(sender, args, HELP);
     };
     command.execute();
