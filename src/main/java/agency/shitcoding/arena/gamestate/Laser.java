@@ -1241,6 +1241,19 @@ public abstract class Laser {
           return versionMinor < 3 ? super.getGuardianTypeName() : "W";
         }
       },
+      V1_21(21,
+          "ao",
+          "b" /* ?? */,
+          "e" /* ?? */,
+          "c" /* ?? */,
+          "d" /* ?? */,
+          89,
+          38,
+          "Y" /* net.minecraft.world.entity.EntityType GUARDIAN */,
+          "aX" /* net.minecraft.world.entity.EntityType SQUID */,
+          "E"/* net.minecraft.world.entity.EntityType END_CRYSTAL */,
+          "a" /* net.minecraft.world.scores.PlayerTeam#setCollisionRule */,
+          "g"/* net.minecraft.world.scores.PlayerTeam#getPlayers */)
       ;
 
       private final int major;
