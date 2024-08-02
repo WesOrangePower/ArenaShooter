@@ -1,7 +1,7 @@
 name: ArenaShooter
 version: '${project.version}'
 main: agency.shitcoding.arena.ArenaShooter
-api-version: '1.20'
+api-version: '1.21'
 author: WesOrangePower
 depend: [ JellyLib, JellyGuiApi ]
 softdepend: [ worldborderapi, JellyRestart ]

@@ -9,10 +9,10 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v4
-    - name: Set up JDK 17
+    - name: Set up JDK 21
       uses: actions/setup-java@v3
       with:
-        java-version: '17'
+        java-version: '21'
         distribution: 'temurin'
         cache: maven
         server-id: nexus-jelly
@@ -25,6 +25,14 @@ jobs:
           MAVEN_PASSWORD: ${{ secrets.MAVEN_PASSWORD }}
     - name: Rename jar to ArenaShooter.jar
       run: mv target/*.jar ArenaShooter.jar
+    - name: Delete existing jar
+      uses: appleboy/ssh-action@v1.0.3
+      with:
+        host: ${{ secrets.HOST }}
+        username: ${{ secrets.USERNAME }}
+        key: ${{ secrets.KEY }}
+        port: ${{ secrets.PORT }}
+        script: rm -f /var/edenor/Arena/plugins/ArenaShooter*.jar
     - name: Upload jar
       uses: appleboy/scp-action@master
       with:
@@ -34,7 +42,7 @@ jobs:
         port: ${{ secrets.PORT }}
         overwrite: true
         source: "ArenaShooter.jar"
-        target: "/var/jelly/Arena/plugins"
+        target: "/var/edenor/Arena/plugins"
     - name: Restart server
       uses: appleboy/ssh-action@v1.0.3
       with:

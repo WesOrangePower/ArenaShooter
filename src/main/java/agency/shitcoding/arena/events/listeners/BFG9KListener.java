@@ -6,9 +6,10 @@ import agency.shitcoding.arena.SoundConstants;
 import agency.shitcoding.arena.events.AmmoUpdateEvent;
 import agency.shitcoding.arena.events.GameDamageEvent;
 import agency.shitcoding.arena.events.GameShootEvent;
-import agency.shitcoding.arena.gamestate.Laser;
+import agency.shitcoding.arena.laser.GuardianLaser;
 import agency.shitcoding.arena.models.Weapon;
 import com.destroystokyo.paper.event.entity.EnderDragonFireballHitEvent;
+import java.util.ArrayList;
 import lombok.extern.log4j.Log4j2;
 import org.bukkit.*;
 import org.bukkit.block.data.BlockData;
@@ -115,6 +116,12 @@ public class BFG9KListener implements Listener {
     BlockData blockData = Material.CRYING_OBSIDIAN.createBlockData();
     boom(projLoc, blockData, SoundConstants.ROCKET_DET);
 
+    var lasers = new ArrayList<GuardianLaser>();
+    Bukkit.getScheduler().runTaskLater(ArenaShooter.getInstance(), () -> {
+      lasers.forEach(GuardianLaser::close);
+      lasers.clear();
+    }, 20L);
+
     projLoc.getNearbyLivingEntities(40d, 20d, le -> !le.equals(shooter))
         .forEach(hit -> {
           Location loc = hit.getEyeLocation();
@@ -151,13 +158,11 @@ public class BFG9KListener implements Listener {
 
           if (rt1.getHitEntity() == hit && rt2.getHitEntity() == hit) {
             particleLine(projLoc, hit.getEyeLocation(), Particle.COMPOSTER, 16);
-            try {
-              new Laser.GuardianLaser(projLoc, hit.getEyeLocation(), 1, 64)
-                  .start(ArenaShooter.getInstance());
-            } catch (ReflectiveOperationException e) {
-              /* Doesn't really matter if fails */
-              log.warn("Failed to create laser", e);
-            }
+
+            var l = new GuardianLaser(projLoc, hit.getEyeLocation());
+            l.startBeam();
+            lasers.add(l);
+
             w.spawnParticle(Particle.BLOCK_CRACK, loc,
                 5, .75, .75, .75,
                 blockData);

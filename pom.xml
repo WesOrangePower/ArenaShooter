@@ -12,7 +12,7 @@
   <name>ArenaShooter</name>
 
   <properties>
-    <java.version>17</java.version>
+    <java.version>21</java.version>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
   </properties>
 
@@ -97,13 +97,13 @@
     <dependency>
       <groupId>org.projectlombok</groupId>
       <artifactId>lombok</artifactId>
-      <version>1.18.28</version>
+      <version>1.18.34</version>
     </dependency>
 
     <dependency>
       <groupId>com.github.yannicklamprecht</groupId>
       <artifactId>worldborderapi</artifactId>
-      <version>1.204.0</version>
+      <version>1.210.1</version>
       <classifier>dev</classifier>
       <scope>provided</scope>
     </dependency>
