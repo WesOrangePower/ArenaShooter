@@ -52,6 +52,7 @@ public class LangChooserMenu {
         new String[] {"et", "4399"},
         new String[] {"ru", "4406"},
         new String[] {"uk", "5578"},
+        new String[] {"pt", "27585"},
     };
   }
 }
