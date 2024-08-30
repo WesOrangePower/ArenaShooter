@@ -4,6 +4,8 @@ import agency.shitcoding.arena.ArenaShooter;
 import agency.shitcoding.arena.SoundConstants;
 import agency.shitcoding.arena.events.GameDamageEvent;
 import agency.shitcoding.arena.events.GameShootEvent;
+import agency.shitcoding.arena.gamestate.CosmeticsService;
+import agency.shitcoding.arena.gamestate.WeaponMods;
 import agency.shitcoding.arena.models.Weapon;
 import org.bukkit.*;
 import org.bukkit.entity.LivingEntity;
@@ -57,9 +59,18 @@ public class PlasmaListener implements Listener {
     if (hand.getType() == PLASMA
         && player.getCooldown(PLASMA) > 0
         && player.getGameMode() == GameMode.ADVENTURE) {
+
+      var isSlimaGun = isSlimaGun(player);
+      var sound = isSlimaGun ? Sound.ENTITY_SLIME_JUMP_SMALL.key().asString()
+          : SoundConstants.PLASMA_FIRE;
+
       player.getLocation().getWorld()
-          .playSound(player.getEyeLocation(), SoundConstants.PLASMA_FIRE, .75f, 1f);
+          .playSound(player.getEyeLocation(), sound, .75f, 1f);
+
       player.launchProjectile(Snowball.class, lookingVector, projectile -> {
+        if (isSlimaGun) {
+          projectile.setItem(new ItemStack(Material.SLIME_BALL));
+        }
         projectile.setGravity(false);
         projectile.setVelocity(lookingVector.clone().multiply(1.5));
         Bukkit.getScheduler().runTaskLater(ArenaShooter.getInstance(), projectile::remove, 20L * 5);
@@ -97,5 +108,10 @@ public class PlasmaListener implements Listener {
     }
 
     snowball.remove();
+  }
+
+  private static boolean isSlimaGun(Player player) {
+    return WeaponMods.getSlimaGun()
+        .equals(CosmeticsService.getInstance().getWeaponMod(player, Weapon.PLASMA_GUN));
   }
 }

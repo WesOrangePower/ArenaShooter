@@ -19,6 +19,7 @@ public class CosmeticsService {
   static {
     weaponMods.put(Weapon.ROCKET_LAUNCHER, new WeaponMod[] {WeaponMods.getKittyCannon()});
     weaponMods.put(Weapon.RAILGUN, new WeaponMod[] {WeaponMods.getBubbleGun()});
+    weaponMods.put(Weapon.PLASMA_GUN, new WeaponMod[] {WeaponMods.getSlimaGun()});
   }
 
   private final Map<Player, ItemStack[]> playerWeapons;
