@@ -240,6 +240,7 @@ public abstract class Game {
   }
 
   protected void startGameStage2() {
+    // Virtual method
   }
 
   public void addPlayer(Player player) {

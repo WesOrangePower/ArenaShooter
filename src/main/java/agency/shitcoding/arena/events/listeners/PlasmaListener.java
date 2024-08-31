@@ -4,6 +4,8 @@ import agency.shitcoding.arena.ArenaShooter;
 import agency.shitcoding.arena.SoundConstants;
 import agency.shitcoding.arena.events.GameDamageEvent;
 import agency.shitcoding.arena.events.GameShootEvent;
+import agency.shitcoding.arena.gamestate.CosmeticsService;
+import agency.shitcoding.arena.gamestate.WeaponMods;
 import agency.shitcoding.arena.models.Weapon;
 import org.bukkit.*;
 import org.bukkit.entity.LivingEntity;
@@ -57,9 +59,18 @@ public class PlasmaListener implements Listener {
     if (hand.getType() == PLASMA
         && player.getCooldown(PLASMA) > 0
         && player.getGameMode() == GameMode.ADVENTURE) {
+
+      var isSlimaGun = isSlimaGun(player);
+      var sound = isSlimaGun ? Sound.ENTITY_SLIME_JUMP_SMALL.key().asString()
+          : SoundConstants.PLASMA_FIRE;
+
       player.getLocation().getWorld()
-          .playSound(player.getEyeLocation(), SoundConstants.PLASMA_FIRE, .75f, 1f);
+          .playSound(player.getEyeLocation(), sound, .75f, 1f);
+
       player.launchProjectile(Snowball.class, lookingVector, projectile -> {
+        if (isSlimaGun) {
+          projectile.setItem(new ItemStack(Material.SLIME_BALL));
+        }
         projectile.setGravity(false);
         projectile.setVelocity(lookingVector.clone().multiply(1.5));
         Bukkit.getScheduler().runTaskLater(ArenaShooter.getInstance(), projectile::remove, 20L * 5);
@@ -79,7 +90,11 @@ public class PlasmaListener implements Listener {
     at.getWorld().playSound(at, SoundConstants.PLASMA_HIT, .5f, 1f);
 
     if (hitEntity == null) {
-      at.getWorld().spawnParticle(Particle.ELECTRIC_SPARK, at, 5, 1.5, 1.5, 1.5, 0);
+      if (snowball.getShooter() instanceof Player player && isSlimaGun(player)) {
+        at.getWorld().spawnParticle(Particle.SLIME, at, 5, 1.5, 1.5, 1.5, 0);
+      } else {
+        at.getWorld().spawnParticle(Particle.ELECTRIC_SPARK, at, 5, 1.5, 1.5, 1.5, 0);
+      }
       for (LivingEntity nearbyEntity : at.getNearbyLivingEntities(.2, .2, .2)) {
         if (nearbyEntity instanceof Player player && (player.getGameMode() == GameMode.ADVENTURE)) {
             new GameDamageEvent(player, nearbyEntity, 1.3, Weapon.PLASMA_GUN).fire();
@@ -97,5 +112,10 @@ public class PlasmaListener implements Listener {
     }
 
     snowball.remove();
+  }
+
+  private static boolean isSlimaGun(Player player) {
+    return WeaponMods.getSlimaGun()
+        .equals(CosmeticsService.getInstance().getWeaponMod(player, Weapon.PLASMA_GUN));
   }
 }

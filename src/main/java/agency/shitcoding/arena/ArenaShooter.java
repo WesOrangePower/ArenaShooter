@@ -3,6 +3,7 @@ package agency.shitcoding.arena;
 import agency.shitcoding.arena.command.ArenaDeathMatchCommandInvoker;
 import agency.shitcoding.arena.events.PortalListener;
 import agency.shitcoding.arena.events.listeners.*;
+import agency.shitcoding.arena.gamestate.DisableCleanup;
 import agency.shitcoding.arena.gamestate.Game;
 import agency.shitcoding.arena.gamestate.GameOrchestrator;
 import agency.shitcoding.arena.statistics.StatisticsService;
@@ -69,10 +70,15 @@ public final class ArenaShooter extends JavaPlugin {
 
   @Override
   public void onDisable() {
+    getLogger().info("Shutting down");
+
     for (Game game : GameOrchestrator.getInstance()
         .getGames()) {
       game.endGame("game.end.shutdown", false);
     }
+
+    DisableCleanup.onShutdown();
+
   }
 
   private void registerListeners() {
