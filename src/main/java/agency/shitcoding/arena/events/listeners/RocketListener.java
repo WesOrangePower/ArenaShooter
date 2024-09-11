@@ -6,7 +6,9 @@ import agency.shitcoding.arena.SoundConstants;
 import agency.shitcoding.arena.events.GameDamageEvent;
 import agency.shitcoding.arena.events.GameShootEvent;
 import agency.shitcoding.arena.gamestate.CosmeticsService;
+import agency.shitcoding.arena.gamestate.GameOrchestrator;
 import agency.shitcoding.arena.gamestate.WeaponMods;
+import agency.shitcoding.arena.models.RuleSet;
 import agency.shitcoding.arena.models.Weapon;
 import org.bukkit.*;
 import org.bukkit.entity.*;
@@ -153,6 +155,17 @@ public class RocketListener implements Listener {
               if (entity == shooter) {
                 damageFactor *= 0.75;
               }
+              if (entity.getType() == EntityType.PLAYER
+                  && GameOrchestrator.getInstance()
+                      .getGameByPlayer((Player) entity)
+                      .map(game -> game.getRuleSet() == RuleSet.ROF).orElse(false)) {
+
+                Vector away = entity.getLocation().toVector().subtract(at.toVector()).normalize();
+                entity.setVelocity(away.multiply(1.5));
+
+                return;
+              }
+
               new GameDamageEvent(
                       shooter,
                       entity,
