@@ -153,17 +153,17 @@ public class RocketListener implements Listener {
               Location entityLoc = entity.getLocation();
               double damageFactor = 1d / (Math.max(1.5, entityLoc.distance(at)) - 0.5);
               if (entity == shooter) {
+                if (entity.getType() == EntityType.PLAYER
+                    && GameOrchestrator.getInstance()
+                    .getGameByPlayer((Player) entity)
+                    .map(game -> game.getRuleSet() == RuleSet.ROF).orElse(false)) {
+
+                  Vector away = entity.getLocation().toVector().subtract(at.toVector()).normalize();
+                  entity.setVelocity(away.multiply(1.5));
+
+                  return;
+                }
                 damageFactor *= 0.75;
-              }
-              if (entity.getType() == EntityType.PLAYER
-                  && GameOrchestrator.getInstance()
-                      .getGameByPlayer((Player) entity)
-                      .map(game -> game.getRuleSet() == RuleSet.ROF).orElse(false)) {
-
-                Vector away = entity.getLocation().toVector().subtract(at.toVector()).normalize();
-                entity.setVelocity(away.multiply(1.5));
-
-                return;
               }
 
               new GameDamageEvent(
