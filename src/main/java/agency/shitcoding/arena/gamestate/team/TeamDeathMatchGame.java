@@ -1,12 +1,12 @@
 package agency.shitcoding.arena.gamestate.team;
 
-import agency.shitcoding.arena.models.Arena;
 import agency.shitcoding.arena.models.RuleSet;
+import agency.shitcoding.arena.worlds.ArenaWorld;
 import org.bukkit.entity.Player;
 
 public class TeamDeathMatchGame extends TeamGame {
 
-  protected TeamDeathMatchGame(Arena arena, RuleSet ruleSet) {
+  protected TeamDeathMatchGame(ArenaWorld arena, RuleSet ruleSet) {
     super(arena, ruleSet);
   }
 

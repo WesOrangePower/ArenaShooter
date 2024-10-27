@@ -17,6 +17,8 @@ import org.bukkit.event.player.PlayerTeleportEvent;
 import java.util.*;
 import java.util.logging.Level;
 import java.util.stream.Collectors;
+import org.jetbrains.annotations.Contract;
+import org.jetbrains.annotations.Nullable;
 
 @Getter
 @Setter
@@ -188,7 +190,11 @@ public class Arena implements Cloneable {
     }
   }
 
-  private static <T extends Cloneable> Set<T> cloneSet(Set<T> set) {
+  @Contract("null -> null")
+  private static <T extends Cloneable> @Nullable Set<T> cloneSet(@Nullable Set<T> set) {
+    if (set == null) {
+      return null;
+    }
     Set<T> newSet = new HashSet<>();
     for (T cloneable : set) {
       try {

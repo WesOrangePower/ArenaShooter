@@ -1,5 +1,6 @@
 package agency.shitcoding.arena.command.subcommands;
 
+import agency.shitcoding.arena.ArenaShooter;
 import agency.shitcoding.arena.command.ArenaDeathMatchCommand;
 import agency.shitcoding.arena.command.CommandInst;
 import agency.shitcoding.arena.gamestate.Game;
@@ -12,6 +13,7 @@ import agency.shitcoding.arena.models.Arena;
 import agency.shitcoding.arena.models.RuleSet;
 import agency.shitcoding.arena.storage.StorageProvider;
 import java.util.Arrays;
+import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
@@ -40,14 +42,11 @@ public class ArenaHostCmd extends CommandInst {
   }
 
   private void hostGame() {
-//    if (!GameOrchestrator.getInstance().getGames().isEmpty()) {
-//      if (sender instanceof Player player) {
-//        LangPlayer.of(player).sendRichLocalized("command.host.alreadyCreated");
-//      }
-//      return;
-//    }
+    hostGameSync();
+  }
 
-    Game game = GameOrchestrator.getInstance().createGame(ruleSet, arena);
+  private void hostGameSync() {
+    Game game = GameOrchestrator.getInstance().createGame(ruleSet, arena, (Player) sender);
     if (game instanceof TeamGame teamGame) {
       teamGame.addPlayer((Player) sender, team);
     } else {
@@ -96,10 +95,12 @@ public class ArenaHostCmd extends CommandInst {
       return false;
     }
 
+    /*
     if (GameOrchestrator.getInstance().getUsedArenaNames().contains(arena.getName())) {
       lang.sendRichLocalized("command.host.arenaAlreadyHosted", arena.getName());
       return false;
     }
+     */
 
     boolean isTeamGame = ruleSet.getGameRules().hasTeams();
     if (isTeamGame && args.length < ARG_TEAM + 1) {

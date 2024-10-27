@@ -1,11 +1,12 @@
 package agency.shitcoding.arena.gamestate;
 
+import agency.shitcoding.arena.AnnouncerConstant;
 import agency.shitcoding.arena.ArenaShooter;
-import agency.shitcoding.arena.SoundConstants;
 import agency.shitcoding.arena.events.MajorBuffTracker;
 import agency.shitcoding.arena.localization.LangPlayer;
 import agency.shitcoding.arena.models.*;
 import agency.shitcoding.arena.statistics.GameOutcome;
+import agency.shitcoding.arena.worlds.ArenaWorld;
 import lombok.Getter;
 import net.kyori.adventure.audience.Audience;
 import net.kyori.adventure.bossbar.BossBar;
@@ -41,11 +42,20 @@ public abstract class Game {
   protected final List<PlayerScore> scores = new ArrayList<>();
   protected final MajorBuffTracker majorBuffTracker = new MajorBuffTracker();
   protected final Set<Player> diedOnce = new HashSet<>();
-  protected final Consumer<String> announcer = s -> players.forEach(
-      p -> p.playSound(p, s, SoundCategory.VOICE, .8f, 1f));
+  protected final Consumer<AnnouncerConstant> announcer =
+      ac ->
+          players.forEach(
+              p ->
+                  p.playSound(
+                      p,
+                      LangPlayer.of(p).getLangContext().translateAnnounce(ac),
+                      SoundCategory.VOICE,
+                      .8f,
+                      1f));
   protected Map<Player, BossBar> bossBarMap = new ConcurrentHashMap<>();
   protected RuleSet ruleSet;
   protected Arena arena;
+  protected ArenaWorld arenaWorld;
   protected BukkitTask gameTimerTask;
   protected BukkitTask ammoActionBarTask;
   protected GameStage gamestage = GameStage.WAITING;
@@ -53,19 +63,25 @@ public abstract class Game {
   private Instant gameStart;
   private PlayerWaitingManager waitingManager;
 
-  protected Game(Arena arena, RuleSet ruleSet) {
+  protected Game(ArenaWorld arenaWorld, RuleSet ruleSet) {
+    var arena = arenaWorld.getShifted();
+    this.arenaWorld = arenaWorld;
     this.arena = arena;
     this.ruleSet = ruleSet;
     this.scoreboard = GameOrchestrator.getInstance().getScoreboard();
-    arena.getLowerBound().getWorld()
+    arena
+        .getLowerBound()
+        .getWorld()
         .getNearbyEntities(BoundingBox.of(arena.getLowerBound(), arena.getUpperBound()))
-        .stream().filter(e -> e.getType() == EntityType.DROPPED_ITEM)
+        .stream()
+        .filter(e -> e.getType() == EntityType.DROPPED_ITEM)
         .map(Item.class::cast)
-        .forEach(item -> {
-          item.getChunk().setForceLoaded(true);
-          item.getChunk().load();
-          item.remove();
-        });
+        .forEach(
+            item -> {
+              item.getChunk().setForceLoaded(true);
+              item.getChunk().load();
+              item.remove();
+            });
   }
 
   public void removePlayer(Player player) {
@@ -73,10 +89,12 @@ public abstract class Game {
     scores.removeIf(p -> p.getPlayer().equals(player));
     Optional.ofNullable(scoreboardObjective).ifPresent(o -> o.getScore(player).resetScore());
     player.setScoreboard(Bukkit.getScoreboardManager().getMainScoreboard());
-    Optional.ofNullable(bossBarMap.get(player)).ifPresent(bb -> {
-      bb.removeViewer(player);
-      bossBarMap.remove(player);
-    });
+    Optional.ofNullable(bossBarMap.get(player))
+        .ifPresent(
+            bb -> {
+              bb.removeViewer(player);
+              bossBarMap.remove(player);
+            });
     boolean isEmptyWaiting = gamestage == GameStage.WAITING && players.isEmpty();
     boolean isTooFewPlayers =
         gamestage == GameStage.IN_PROGRESS && players.size() < ruleSet.getMinPlayers();
@@ -86,7 +104,6 @@ public abstract class Game {
     players.forEach(p -> p.sendRichMessage(leaveBroadcastMessage(LangPlayer.of(p), player)));
     Lobby.getInstance().sendPlayer(player);
   }
-
 
   public void endGame(String reason, boolean intendedEnding, Object... toFormat) {
     this.gamestage = GameStage.FINISHED;
@@ -102,15 +119,20 @@ public abstract class Game {
     LootManagerProvider.cleanup(arena);
 
     Optional.ofNullable(scoreboardObjective).ifPresent(Objective::unregister);
-    Bukkit.getScheduler().runTaskLater(ArenaShooter.getInstance(), () -> {
-      bossBarMap.forEach((player, bossBar) -> bossBar.removeViewer(player));
-      bossBarMap.clear();
-    },20L);
+    Bukkit.getScheduler()
+        .runTaskLater(
+            ArenaShooter.getInstance(),
+            () -> {
+              bossBarMap.forEach((player, bossBar) -> bossBar.removeViewer(player));
+              bossBarMap.clear();
+            },
+            20L);
 
     if (intendedEnding) {
-      Bukkit.getScheduler().runTaskAsynchronously(ArenaShooter.getInstance(), () ->
-          ArenaShooter.getInstance().getStatisticsService().endGame(getGameOutcomes())
-      );
+      Bukkit.getScheduler()
+          .runTaskAsynchronously(
+              ArenaShooter.getInstance(),
+              () -> ArenaShooter.getInstance().getStatisticsService().endGame(getGameOutcomes()));
     }
 
     for (Player player : players) {
@@ -141,34 +163,36 @@ public abstract class Game {
     if (waitingManager != null) {
       waitingManager.cleanup();
     }
+    announcer.accept(AnnouncerConstant.FIGHT);
     for (Player player : players) {
       LangPlayer.of(player).sendRichLocalized("game.start.message");
-      announcer.accept(SoundConstants.FIGHT);
       arena.spawn(player, this);
     }
     gamestage = GameStage.IN_PROGRESS;
     LootManagerProvider.create(this, arena, this::preprocessLootPoints);
     startGameStage2();
     this.gameStart = Instant.now();
-    this.gameTimerTask = Bukkit.getScheduler().runTaskTimer(
-        ArenaShooter.getInstance(),
-        this::onGameSecondElapsed,
-        0L, 20L
-    );
-    this.ammoActionBarTask = Bukkit.getScheduler().runTaskTimerAsynchronously(
-        ArenaShooter.getInstance(),
-        () -> players.forEach(Ammo::displayAmmoActionBar),
-        0L, 30L
-    );
+    this.gameTimerTask =
+        Bukkit.getScheduler()
+            .runTaskTimer(ArenaShooter.getInstance(), this::onGameSecondElapsed, 0L, 20L);
+    this.ammoActionBarTask =
+        Bukkit.getScheduler()
+            .runTaskTimerAsynchronously(
+                ArenaShooter.getInstance(),
+                () -> players.forEach(Ammo::displayAmmoActionBar),
+                0L,
+                30L);
     createScoreboardObjective();
   }
 
-  /**
-   * Creates and sets main scoreboard objective
-   */
+  /** Creates and sets main scoreboard objective */
   protected void createScoreboardObjective() {
-    scoreboardObjective = scoreboard.registerNewObjective(arena.getName(), Criteria.DUMMY,
-        Component.text("Score", NamedTextColor.GOLD), RenderType.INTEGER);
+    scoreboardObjective =
+        scoreboard.registerNewObjective(
+            arena.getName(),
+            Criteria.DUMMY,
+            Component.text("Score", NamedTextColor.GOLD),
+            RenderType.INTEGER);
     scoreboardObjective.setDisplaySlot(DisplaySlot.SIDEBAR);
 
     for (Player p : players) {
@@ -203,18 +227,15 @@ public abstract class Game {
       LangPlayer langPlayer = new LangPlayer(player);
       var name = mm.deserialize(langPlayer.getLocalized("game.bossbar.title", timeString));
 
-      BossBar bossBar = bossBarMap.computeIfAbsent(player,
-          p -> {
-            var bb =
-                BossBar.bossBar(
-                    name,
-                    fraction,
-                    BossBar.Color.RED,
-                    BossBar.Overlay.PROGRESS
-                );
-            bb.addViewer(Audience.audience(p));
-            return bb;
-          });
+      BossBar bossBar =
+          bossBarMap.computeIfAbsent(
+              player,
+              p -> {
+                var bb =
+                    BossBar.bossBar(name, fraction, BossBar.Color.RED, BossBar.Overlay.PROGRESS);
+                bb.addViewer(Audience.audience(p));
+                return bb;
+              });
       bossBar.name(name);
       bossBar.progress(fraction);
     }
@@ -223,19 +244,19 @@ public abstract class Game {
   private void timeEvents(long remainingSeconds) {
     boolean fiveMinutes = remainingSeconds == 300;
     if (fiveMinutes) {
-      announcer.accept(SoundConstants.FIVE_MINUTE);
+      announcer.accept(AnnouncerConstant.FIVE_MINUTE);
     }
     if (remainingSeconds == 60) {
-      announcer.accept(SoundConstants.ONE_MINUTE);
+      announcer.accept(AnnouncerConstant.ONE_MINUTE);
     }
     if (remainingSeconds == 3) {
-      announcer.accept(SoundConstants.THREE);
+      announcer.accept(AnnouncerConstant.THREE);
     }
     if (remainingSeconds == 2) {
-      announcer.accept(SoundConstants.TWO);
+      announcer.accept(AnnouncerConstant.TWO);
     }
     if (remainingSeconds == 1) {
-      announcer.accept(SoundConstants.ONE);
+      announcer.accept(AnnouncerConstant.ONE);
     }
   }
 
@@ -259,13 +280,13 @@ public abstract class Game {
     players.add(player);
     scores.add(new PlayerScore(0, player, new PlayerStreak()));
     player.sendRichMessage(youJoinedGameMessage(player));
-    Set<Player> filteredPlayers = players.stream()
-        .filter(p -> !p.getName().equals(player.getName()))
-        .collect(Collectors.toUnmodifiableSet());
+    Set<Player> filteredPlayers =
+        players.stream()
+            .filter(p -> !p.getName().equals(player.getName()))
+            .collect(Collectors.toUnmodifiableSet());
     sendJoinMessage(player, filteredPlayers);
     getArena().spawn(player, this);
   }
-
 
   public String youJoinedGameMessage(Player p) {
     return LangPlayer.of(p).getLocalized("game.youJoined");
@@ -332,13 +353,13 @@ public abstract class Game {
     tiedLeaders.removeAll(leadersBefore.tied);
 
     for (Player pl : takenLeaders) {
-      playSound(pl, SoundConstants.TAKEN_LEAD);
+      playSound(pl, AnnouncerConstant.TAKEN_LEAD);
     }
     for (Player pl : tiedLeaders) {
-      playSound(pl, SoundConstants.TIED_LEAD);
+      playSound(pl, AnnouncerConstant.TIED_LEAD);
     }
     for (Player pl : lostLeaders) {
-      playSound(pl, SoundConstants.LOSTLEAD);
+      playSound(pl, AnnouncerConstant.LOSTLEAD);
     }
   }
 
@@ -347,8 +368,8 @@ public abstract class Game {
       scores.add(new PlayerScore(delta, p, new PlayerStreak()));
       return;
     }
-    PlayerScore pScore = Objects.requireNonNullElseGet(getScore(p),
-        () -> new PlayerScore(0, p, new PlayerStreak()));
+    PlayerScore pScore =
+        Objects.requireNonNullElseGet(getScore(p), () -> new PlayerScore(0, p, new PlayerStreak()));
     // Don't go below 0
     if (pScore.getScore() + delta < 0) {
       return;
@@ -358,14 +379,12 @@ public abstract class Game {
     updateScoreBoard();
   }
 
-  protected record Leaders(Set<Player> taken, Set<Player> tied) {
-
-  }
+  protected record Leaders(Set<Player> taken, Set<Player> tied) {}
 
   private Leaders leaders() {
     Set<Player> leaders = new HashSet<>();
     if (!scores.isEmpty()) {
-      int topScore = scores.get(0).getScore();
+      int topScore = scores.getFirst().getScore();
       if (topScore == 0) {
         return new Leaders(Collections.emptySet(), Collections.emptySet());
       }
@@ -402,5 +421,9 @@ public abstract class Game {
 
   protected void playSound(Player p, String sound) {
     p.playSound(p, sound, SoundCategory.VOICE, .8f, 1f);
+  }
+  protected void playSound(Player p, AnnouncerConstant constant) {
+    String sound = LangPlayer.of(p).getLangContext().translateAnnounce(constant);
+    playSound(p, sound);
   }
 }

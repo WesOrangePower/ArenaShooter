@@ -81,7 +81,7 @@ public class HostGameMenu {
     Collection<Arena> arenas = StorageProvider.getArenaStorage().getArenas();
     return arenas.stream()
         .filter(Arena::isAllowHost)
-        .filter(arena -> !usedArenaNames.contains(arena.getName()))
+//        .filter(arena -> !usedArenaNames.contains(arena.getName()))
         .map(arena -> {
               ItemSlot build = ItemBuilder.builder()
                   .withMaterial(Material.IRON_SWORD)

@@ -1,6 +1,7 @@
 package agency.shitcoding.arena.gamestate;
 
 import agency.shitcoding.arena.models.*;
+import agency.shitcoding.arena.worlds.ArenaWorld;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Set;
@@ -8,7 +9,7 @@ import java.util.stream.Collectors;
 
 public class InstagibGame extends DeathMatchGame {
 
-  public InstagibGame(Arena arena) {
+  public InstagibGame(ArenaWorld arena) {
     super(arena, RuleSet.INSTAGIB);
   }
 

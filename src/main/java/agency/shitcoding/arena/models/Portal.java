@@ -2,7 +2,6 @@ package agency.shitcoding.arena.models;
 
 import agency.shitcoding.arena.events.GameDamageEvent;
 import lombok.Getter;
-import lombok.RequiredArgsConstructor;
 import org.bukkit.Location;
 import org.bukkit.Particle;
 import org.bukkit.Sound;

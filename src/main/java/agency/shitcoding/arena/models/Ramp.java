@@ -3,7 +3,6 @@ package agency.shitcoding.arena.models;
 import agency.shitcoding.arena.ArenaShooter;
 import agency.shitcoding.arena.SoundConstants;
 import lombok.Getter;
-import lombok.RequiredArgsConstructor;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.SoundCategory;

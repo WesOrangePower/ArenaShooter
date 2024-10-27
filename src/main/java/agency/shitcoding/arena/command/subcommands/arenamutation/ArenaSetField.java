@@ -13,6 +13,7 @@ import agency.shitcoding.arena.models.Powerup;
 import agency.shitcoding.arena.models.Ramp;
 import agency.shitcoding.arena.storage.ArenaStorage;
 import agency.shitcoding.arena.storage.StorageProvider;
+import agency.shitcoding.arena.worlds.WorldFactory;
 import java.util.Arrays;
 import java.util.List;
 import java.util.function.Predicate;
@@ -58,7 +59,7 @@ public enum ArenaSetField {
               Powerup.values()));
           return;
         }
-        Location centerLocation = ((Player) p).getLocation().toCenterLocation();
+        Location centerLocation = unshifted(((Player) p).getLocation().toCenterLocation());
         LootPoint lootPoint = new LootPoint(ar.getLootPoints().size(), centerLocation, powerup);
         ar.getLootPoints().add(lootPoint);
         arenaStorage.storeArena(ar);
@@ -105,7 +106,7 @@ public enum ArenaSetField {
         return;
       }
       Location upper = ar.getUpperBound();
-      Location location = player.getLocation().toCenterLocation();
+      Location location = unshifted(player.getLocation().toCenterLocation());
 
       if (location.getBlockX() >= upper.getBlockX()
           || location.getBlockY() >= upper.getBlockY()
@@ -137,7 +138,7 @@ public enum ArenaSetField {
         return;
       }
       Location lower = ar.getLowerBound();
-      Location location = player.getLocation().toCenterLocation();
+      Location location = unshifted(player.getLocation().toCenterLocation());
 
       if (location.getBlockX() <= lower.getBlockX()
           || location.getBlockY() <= lower.getBlockY()
@@ -340,5 +341,13 @@ public enum ArenaSetField {
   private static Component locationComponent(Location l) {
     return Component.text("[" + l.getX() + ", " + l.getY() + ", " + l.getZ() + "]")
         .clickEvent(ClickEvent.runCommand("/tp " + l.getX() + " " + l.getY() + " " + l.getZ()));
+  }
+
+  private static Location unshifted(Location location) {
+    var arenaWorld = WorldFactory.getInstance().findByWorld(location.getWorld().getName());
+    if (arenaWorld.isEmpty()) return null;
+    var original = arenaWorld.get().getOrigin();
+    location.setWorld(original.getLowerBound().getWorld());
+    return location;
   }
 }

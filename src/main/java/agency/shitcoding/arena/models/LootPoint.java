@@ -1,10 +1,8 @@
 package agency.shitcoding.arena.models;
 
 import lombok.AllArgsConstructor;
-import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
-import lombok.RequiredArgsConstructor;
 import org.bukkit.Location;
 
 @Getter

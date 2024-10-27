@@ -1,8 +1,8 @@
 package agency.shitcoding.arena.gamestate;
 
-import agency.shitcoding.arena.models.Arena;
 import agency.shitcoding.arena.models.RuleSet;
 import agency.shitcoding.arena.statistics.GameOutcome;
+import agency.shitcoding.arena.worlds.ArenaWorld;
 import java.time.Instant;
 import java.util.Collections;
 import java.util.Comparator;
@@ -13,12 +13,12 @@ import net.kyori.adventure.text.minimessage.MiniMessage;
 
 public class DeathMatchGame extends Game {
 
-  public DeathMatchGame(Arena arena) {
-    this(arena, RuleSet.DM);
+  public DeathMatchGame(ArenaWorld arenaWorld) {
+    this(arenaWorld, RuleSet.DM);
   }
 
-  public DeathMatchGame(Arena arena, RuleSet ruleSet) {
-    super(arena, ruleSet);
+  public DeathMatchGame(ArenaWorld arenaWorld, RuleSet ruleSet) {
+    super(arenaWorld, ruleSet);
   }
 
   @Override
