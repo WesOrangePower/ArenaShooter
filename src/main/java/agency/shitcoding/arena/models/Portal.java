@@ -2,7 +2,6 @@ package agency.shitcoding.arena.models;
 
 import agency.shitcoding.arena.events.GameDamageEvent;
 import lombok.Getter;
-import lombok.RequiredArgsConstructor;
 import org.bukkit.Location;
 import org.bukkit.Particle;
 import org.bukkit.Sound;
@@ -10,17 +9,24 @@ import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.util.BoundingBox;
 
-@RequiredArgsConstructor
-public class Portal {
+public class Portal implements Cloneable {
 
   @Getter
   private final String id;
   @Getter
-  private final Location firstLocation;
+  private Location firstLocation;
   @Getter
-  private final Location secondLocation;
+  private Location secondLocation;
   @Getter
-  private final Location targetLocation;
+  private Location targetLocation;
+
+  public Portal(String id, Location firstLocation, Location secondLocation,
+      Location targetLocation) {
+    this.id = id;
+    this.firstLocation = firstLocation;
+    this.secondLocation = secondLocation;
+    this.targetLocation = targetLocation;
+  }
 
   private Block lowerBlock;
   private Block upperBlock;
@@ -65,5 +71,20 @@ public class Portal {
     player.teleport(targetLocation);
     player.playSound(player.getLocation(), Sound.ENTITY_ENDERMAN_TELEPORT, .2f, 1.3f);
     player.spawnParticle(Particle.PORTAL, player.getLocation(), 20, 1, .2, 1, 2);
+  }
+
+  @Override
+  public Portal clone() {
+    try {
+      Portal clone = (Portal) super.clone();
+      clone.firstLocation = firstLocation.clone();
+      clone.secondLocation = secondLocation.clone();
+      clone.targetLocation = targetLocation.clone();
+      clone.lowerBlock = null;
+      clone.upperBlock = null;
+      return clone;
+    } catch (CloneNotSupportedException e) {
+      throw new AssertionError();
+    }
   }
 }

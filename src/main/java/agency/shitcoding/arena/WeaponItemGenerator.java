@@ -48,6 +48,5 @@ public final class WeaponItemGenerator {
     return item;
   }
 
-  private WeaponItemGenerator() {
-  }
+  private WeaponItemGenerator() {}
 }

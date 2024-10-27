@@ -1,9 +1,9 @@
 package agency.shitcoding.arena.gamestate;
 
-import agency.shitcoding.arena.models.Arena;
 import agency.shitcoding.arena.models.GameStage;
 import agency.shitcoding.arena.models.RuleSet;
 import agency.shitcoding.arena.statistics.GameOutcome;
+import agency.shitcoding.arena.worlds.ArenaWorld;
 import org.bukkit.entity.Player;
 
 import java.time.Instant;
@@ -14,7 +14,7 @@ public class LMSGame extends DeathMatchGame {
 
   private Player winner;
 
-  public LMSGame(Arena arena) {
+  public LMSGame(ArenaWorld arena) {
     super(arena, RuleSet.LMS);
   }
 

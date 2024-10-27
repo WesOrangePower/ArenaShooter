@@ -1,5 +1,6 @@
 package agency.shitcoding.arena.events.listeners;
 
+import agency.shitcoding.arena.AnnouncerConstant;
 import agency.shitcoding.arena.SoundConstants;
 import agency.shitcoding.arena.events.GameStreakUpdateEvent;
 import agency.shitcoding.arena.gamestate.CosmeticsService;
@@ -20,7 +21,7 @@ public class GameStreakListener implements Listener {
     int oldStreak = event.getOldStreak().getConsequentRailHit();
     if (oldStreak == streak) return;
     if (streak >= 2) {
-      playSound(p, SoundConstants.IMPRESSIVE);
+      playSound(p, AnnouncerConstant.IMPRESSIVE);
     }
 
     if (streak == 7) {
@@ -43,12 +44,16 @@ public class GameStreakListener implements Listener {
     if (oldStreak == streak) return;
     switch (streak) {
       case 0, 1, 2 -> { /* Don't announce */ }
-      case 3, 4 -> playSound(p, SoundConstants.EXCELLENT);
-      default -> playSound(p, SoundConstants.HOLYSHIT);
+      case 3, 4 -> playSound(p, AnnouncerConstant.EXCELLENT);
+      default -> playSound(p, AnnouncerConstant.HOLYSHIT);
     }
   }
 
   private void playSound(Player p, String sound) {
     p.playSound(p, sound, SoundCategory.VOICE, .8f, 1f);
+  }
+  private void playSound(Player p, AnnouncerConstant constant) {
+    var sound = LangPlayer.of(p).getLangContext().translateAnnounce(constant);
+    playSound(p, sound);
   }
 }

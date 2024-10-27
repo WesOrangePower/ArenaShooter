@@ -1,8 +1,8 @@
 package agency.shitcoding.arena.gamestate;
 
-import agency.shitcoding.arena.models.Arena;
+import agency.shitcoding.arena.worlds.ArenaWorld;
 
 public interface GameFactory {
 
-  Game createGame(Arena arena);
+  Game createGame(ArenaWorld arenaWorld);
 }

@@ -146,6 +146,7 @@ public class ConfigurationArenaStorage implements ArenaStorage {
 
   @Override
   public void storeArena(Arena arena) {
+    if (arena.isShifted()) throw new IllegalArgumentException("Arena is shifted");
     var allArenasSection = configuration.getConfigurationSection(Conf.arenasSection);
     if (allArenasSection == null) {
       allArenasSection = configuration.createSection(Conf.arenasSection);

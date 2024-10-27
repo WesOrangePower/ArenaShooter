@@ -7,6 +7,7 @@ import agency.shitcoding.arena.models.Arena;
 import agency.shitcoding.arena.models.GameStage;
 import agency.shitcoding.arena.models.RuleSet;
 import agency.shitcoding.arena.statistics.GameOutcome;
+import agency.shitcoding.arena.worlds.ArenaWorld;
 import lombok.Getter;
 import net.kyori.adventure.text.Component;
 import org.bukkit.entity.Player;
@@ -22,8 +23,8 @@ public abstract class TeamGame extends Game {
 
   protected TeamManager teamManager;
 
-  protected TeamGame(Arena arena, RuleSet ruleSet) {
-    super(arena, ruleSet);
+  protected TeamGame(ArenaWorld arenaWorld, RuleSet ruleSet) {
+    super(arenaWorld, ruleSet);
     int maxPerTeam = ruleSet.getMaxPlayers() / 2;
     teamManager = new TeamManager(maxPerTeam, getScoreboard());
   }

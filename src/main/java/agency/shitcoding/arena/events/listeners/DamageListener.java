@@ -1,5 +1,6 @@
 package agency.shitcoding.arena.events.listeners;
 
+import agency.shitcoding.arena.AnnouncerConstant;
 import agency.shitcoding.arena.ArenaShooter;
 import agency.shitcoding.arena.GameplayConstants;
 import agency.shitcoding.arena.SoundConstants;
@@ -86,22 +87,28 @@ public class DamageListener implements Listener {
 
     // if Has QuadDamage
     if (dealer != null) {
-      dealer.getActivePotionEffects().forEach(potionEffect -> {
-        if (potionEffect.getType().equals(GameplayConstants.QUAD_DAMAGE_POTION_EFFECT)) {
-          event.setDamage(event.getDamage() * GameplayConstants.QUAD_DAMAGE_MULTIPLIER);
-        }
-      });
+      dealer
+          .getActivePotionEffects()
+          .forEach(
+              potionEffect -> {
+                if (potionEffect.getType().equals(GameplayConstants.QUAD_DAMAGE_POTION_EFFECT)) {
+                  event.setDamage(event.getDamage() * GameplayConstants.QUAD_DAMAGE_MULTIPLIER);
+                }
+              });
       if (victim instanceof Player) {
         dealer.playSound(dealer, SoundConstants.HITSOUND, 1f, 1f);
       }
     }
 
     // if Has Protection
-    victim.getActivePotionEffects().forEach(potionEffect -> {
-      if (potionEffect.getType().equals(GameplayConstants.PROTECTION_POTION_EFFECT)) {
-        event.setDamage(event.getDamage() * GameplayConstants.PROTECTION_FACTOR);
-      }
-    });
+    victim
+        .getActivePotionEffects()
+        .forEach(
+            potionEffect -> {
+              if (potionEffect.getType().equals(GameplayConstants.PROTECTION_POTION_EFFECT)) {
+                event.setDamage(event.getDamage() * GameplayConstants.PROTECTION_FACTOR);
+              }
+            });
     victim.setNoDamageTicks(0);
 
     // player only zone
@@ -114,8 +121,7 @@ public class DamageListener implements Listener {
       var remainingHealth = playerVictim.getHealth() - damage;
       if (remainingHealth <= 0d && playerVictim.getGameMode() == GameMode.ADVENTURE) {
         var isGibbed = remainingHealth <= GameplayConstants.GIBBING_THRESHOLD;
-        new GameFragEvent(playerVictim, dealer, event.getWeapon(), isGibbed)
-            .fire();
+        new GameFragEvent(playerVictim, dealer, event.getWeapon(), isGibbed).fire();
       }
     }
 
@@ -133,22 +139,21 @@ public class DamageListener implements Listener {
 
     /* Set last dealer as last damage source for the victim */
 
-    var damageSource = DamageSource.builder(DamageType.PLAYER_ATTACK)
-        .withCausingEntity(dealer)
-        .withDamageLocation(victim.getLocation())
-        .withDirectEntity(dealer)
-        .build();
-    var entityDamageEvent = new EntityDamageEvent(victim, DamageCause.ENTITY_ATTACK, damageSource, damage);
+    var damageSourceBuilder = DamageSource.builder(DamageType.PLAYER_ATTACK);
+    if (dealer != null) {
+      damageSourceBuilder = damageSourceBuilder.withCausingEntity(dealer).withDirectEntity(dealer);
+    }
+
+    var damageSource = damageSourceBuilder.withDamageLocation(victim.getLocation()).build();
+    var entityDamageEvent =
+        new EntityDamageEvent(victim, DamageCause.ENTITY_ATTACK, damageSource, damage);
 
     Bukkit.getPluginManager().callEvent(entityDamageEvent);
 
     victim.setKiller(dealer);
-    victim.playSound(Sound.sound().type(ENTITY_PLAYER_HURT)
-        .source(Source.VOICE)
-        .volume(1f)
-        .build());
+    victim.playSound(
+        Sound.sound().type(ENTITY_PLAYER_HURT).source(Source.VOICE).volume(1f).build());
     victim.setHealth(Math.max(victim.getHealth() - damage, 0));
-
   }
 
   @SuppressWarnings("deprecation")
@@ -179,18 +184,19 @@ public class DamageListener implements Listener {
     if (killer == null || killer.getName().equals(event.getVictim().getName())) {
       return;
     }
-    GameOrchestrator.getInstance().getGameByPlayer(event.getKiller())
-        .ifPresent(game -> {
-          var score = game.getScore(event.getKiller());
-          if (score == null) {
-            return;
-          }
-          var streak = score.getStreak();
-          var oldStreak = streak.copy();
-          streak.setFragStreak(streak.getFragStreak() + 1);
-          new GameStreakUpdateEvent(streak, oldStreak, event.getKiller(), game)
-              .fire();
-        });
+    GameOrchestrator.getInstance()
+        .getGameByPlayer(event.getKiller())
+        .ifPresent(
+            game -> {
+              var score = game.getScore(event.getKiller());
+              if (score == null) {
+                return;
+              }
+              var streak = score.getStreak();
+              var oldStreak = streak.copy();
+              streak.setFragStreak(streak.getFragStreak() + 1);
+              new GameStreakUpdateEvent(streak, oldStreak, event.getKiller(), game).fire();
+            });
   }
 
   @EventHandler
@@ -205,7 +211,9 @@ public class DamageListener implements Listener {
     if (event.getWeapon() == Weapon.GAUNTLET) {
       var killer = event.getKiller();
       if (killer != null) {
-        killer.playSound(killer, SoundConstants.HUMILIATION, .5f, 1f);
+        var sound =
+            LangPlayer.of(killer).getLangContext().translateAnnounce(AnnouncerConstant.HUMILIATION);
+        killer.playSound(killer, sound, .5f, 1f);
       }
     }
   }
@@ -219,18 +227,21 @@ public class DamageListener implements Listener {
     Game game = GameOrchestrator.getInstance().getGameByPlayer(victim).orElse(null);
     if (game == null) return;
     if (killer.getName().equals(victim.getName())) {
-      game.getPlayers().stream().map(LangPlayer::new)
+      game.getPlayers().stream()
+          .map(LangPlayer::new)
           .forEach(pl -> pl.sendRichLocalized("game.death.chat.self", victim.getName()));
       return;
     }
 
-    var suffix = Optional.ofNullable(event.getWeapon())
-        .map(w -> "." + w.translatableName)
-        .orElse("");
+    var suffix =
+        Optional.ofNullable(event.getWeapon()).map(w -> "." + w.translatableName).orElse("");
 
-    game.getPlayers().stream().map(LangPlayer::new)
-        .forEach(pl -> pl.sendRichLocalized("game.death.chat.other" + suffix,
-            killer.getName(), victim.getName()));
+    game.getPlayers().stream()
+        .map(LangPlayer::new)
+        .forEach(
+            pl ->
+                pl.sendRichLocalized(
+                    "game.death.chat.other" + suffix, killer.getName(), victim.getName()));
   }
 
   private double calculateDamage(Player victim, double damage) {
@@ -256,9 +267,12 @@ public class DamageListener implements Listener {
     Location eyeLoc = victim.getEyeLocation();
     World world = eyeLoc.getWorld();
 
-    Sound gibbingSound = Sound.sound().source(Source.VOICE)
-        .type(Key.key("entity.player.big_fall"))
-        .volume(.5f).build();
+    Sound gibbingSound =
+        Sound.sound()
+            .source(Source.VOICE)
+            .type(Key.key("entity.player.big_fall"))
+            .volume(.5f)
+            .build();
     eyeLoc.getWorld().playSound(gibbingSound, eyeLoc.getX(), eyeLoc.getY(), eyeLoc.getZ());
 
     ItemStack head = new ItemStack(Material.PLAYER_HEAD);
@@ -270,19 +284,28 @@ public class DamageListener implements Listener {
     }
     Stream.of(head, bone, meat, meat.clone(), meat.clone(), meat.clone())
         .map(itemStack -> world.dropItem(eyeLoc, itemStack))
-        .forEach(item -> {
-          item.setCanPlayerPickup(false);
-          item.setVelocity(item.getVelocity().add(
-              new Vector(rng.nextDouble() - .5,
-                  rng.nextDouble() - .5,
-                  rng.nextDouble() - .5)
-          ));
-          Bukkit.getScheduler()
-              .runTaskLater(ArenaShooter.getInstance(), item::remove, 20 * 3L);
-        });
+        .forEach(
+            item -> {
+              item.setCanPlayerPickup(false);
+              item.setVelocity(
+                  item.getVelocity()
+                      .add(
+                          new Vector(
+                              rng.nextDouble() - .5,
+                              rng.nextDouble() - .5,
+                              rng.nextDouble() - .5)));
+              Bukkit.getScheduler().runTaskLater(ArenaShooter.getInstance(), item::remove, 20 * 3L);
+            });
 
     world.playSound(eyeLoc, org.bukkit.Sound.ENTITY_PLAYER_BIG_FALL, 1f, 1);
-    world.spawnParticle(Particle.BLOCK_CRACK, eyeLoc, 15, .5, .5, .5, .5,
+    world.spawnParticle(
+        Particle.BLOCK_CRACK,
+        eyeLoc,
+        15,
+        .5,
+        .5,
+        .5,
+        .5,
         Material.REDSTONE_BLOCK.createBlockData());
 
     if (weapon == null) {

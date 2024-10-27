@@ -1,7 +1,10 @@
 package agency.shitcoding.arena.gamestate;
 
+import agency.shitcoding.arena.ArenaShooter;
+import agency.shitcoding.arena.localization.LangPlayer;
 import agency.shitcoding.arena.models.Arena;
 import agency.shitcoding.arena.models.RuleSet;
+import agency.shitcoding.arena.worlds.WorldFactory;
 import java.util.List;
 import lombok.Getter;
 import org.bukkit.Bukkit;
@@ -11,22 +14,33 @@ import org.bukkit.scoreboard.Scoreboard;
 import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
+import org.jetbrains.annotations.Nullable;
 
 public final class GameOrchestrator {
 
-  @Getter
-  private static final GameOrchestrator instance = new GameOrchestrator();
-  @Getter
-  private final Set<Game> games = new HashSet<>();
-  @Getter
-  private final Scoreboard scoreboard;
+  @Getter private static final GameOrchestrator instance = new GameOrchestrator();
+  @Getter private final Set<Game> games = new HashSet<>();
+  @Getter private final Scoreboard scoreboard;
 
   private GameOrchestrator() {
     this.scoreboard = Bukkit.getScoreboardManager().getNewScoreboard();
   }
 
-  public Game createGame(RuleSet ruleSet, Arena arena) {
-    Game game = ruleSet.getGameFactory().createGame(arena);
+  /**
+   * This will block soo hard.
+   *
+   * @param ruleSet RuleSet
+   * @param arena Source arena, template
+   * @param hoster Nullable, sends a start message if exists
+   * @return the created Game
+   */
+  public Game createGame(RuleSet ruleSet, Arena arena, @Nullable Player hoster) {
+    LangPlayer langPlayer = LangPlayer.of(hoster);
+    if (hoster != null) langPlayer.sendRichLocalized("command.host.startingGame", arena.getName());
+
+    var worldArena = WorldFactory.getInstance().newWorld(arena);
+
+    Game game = ruleSet.getGameFactory().createGame(worldArena);
     games.add(game);
     return game;
   }
@@ -41,6 +55,7 @@ public final class GameOrchestrator {
 
   public void removeGame(Game game) {
     games.remove(game);
+    game.getArenaWorld().destroy();
   }
 
   public List<String> getUsedArenaNames() {
