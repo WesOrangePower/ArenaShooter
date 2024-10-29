@@ -47,8 +47,8 @@ public final class GameplayConstants {
   public static final int MEDIKIT_SPAWN_OFFSET_TICKS = 0;
   public static final int MEGA_HEALTH_SPAWN_INTERVAL_TICKS = 35 * 20;
   public static final int MEGA_HEALTH_SPAWN_OFFSET_TICKS = 0;
-  public static final double MEGA_HEALTH_VALUE = 36d;
-  public static final int MEGA_HEALTH_ARMOR = 150;
+  public static final double MEGA_HEALTH_VALUE = 32d;
+  public static final int MEGA_HEALTH_ARMOR = 50;
 
   public static final int ARMOR_SHARD_SPAWN_INTERVAL_TICKS = 20 * 20;
   public static final int ARMOR_SHARD_SPAWN_OFFSET_TICKS = 0;
