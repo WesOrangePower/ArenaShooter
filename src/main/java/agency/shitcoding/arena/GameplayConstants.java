@@ -4,6 +4,8 @@ import org.bukkit.potion.PotionEffectType;
 
 public final class GameplayConstants {
 
+  public static final int GAME_END_TIMER_TICKS = 10 * 20;
+
   public static final int QUAD_DAMAGE_DURATION = 30 * 20;
   public static final int QUAD_DAMAGE_MULTIPLIER = 4;
   public static final PotionEffectType QUAD_DAMAGE_POTION_EFFECT = PotionEffectType.INCREASE_DAMAGE;
