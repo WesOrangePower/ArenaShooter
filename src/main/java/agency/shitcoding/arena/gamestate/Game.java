@@ -1,5 +1,7 @@
 package agency.shitcoding.arena.gamestate;
 
+import static agency.shitcoding.arena.GameplayConstants.GAME_END_TIMER_TICKS;
+
 import agency.shitcoding.arena.AnnouncerConstant;
 import agency.shitcoding.arena.ArenaShooter;
 import agency.shitcoding.arena.events.MajorBuffTracker;
@@ -13,6 +15,7 @@ import net.kyori.adventure.bossbar.BossBar;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.minimessage.MiniMessage;
+import net.kyori.adventure.title.Title;
 import org.bukkit.Bukkit;
 import org.bukkit.SoundCategory;
 import org.bukkit.entity.EntityType;
@@ -135,6 +138,8 @@ public abstract class Game {
               () -> ArenaShooter.getInstance().getStatisticsService().endGame(getGameOutcomes()));
     }
 
+    Collections.sort(scores);
+
     for (Player player : players) {
       var langPlayer = new LangPlayer(player);
       langPlayer.sendRichLocalized("game.end.header");
@@ -143,6 +148,27 @@ public abstract class Game {
 
       var localizedReason = langPlayer.getLocalized(reason, toFormat);
       langPlayer.sendRichLocalized("game.end.message", localizedReason);
+
+      if (intendedEnding) {
+        var place = scores.indexOf(getScore(player)) + 1;
+        var title =
+            Title.title(
+                Component.text(localizedReason, NamedTextColor.GREEN),
+                langPlayer.getRichLocalized("game.end.subtitle", place));
+        player.showTitle(title);
+      }
+    }
+
+    if (intendedEnding) {
+      Bukkit.getScheduler()
+          .runTaskLater(ArenaShooter.getInstance(), this::unregister, GAME_END_TIMER_TICKS);
+    } else {
+      unregister();
+    }
+  }
+
+  private void unregister() {
+    for (Player player : players) {
       Lobby.getInstance().sendPlayer(player);
     }
     GameOrchestrator.getInstance().removeGame(this);
@@ -422,6 +448,7 @@ public abstract class Game {
   protected void playSound(Player p, String sound) {
     p.playSound(p, sound, SoundCategory.VOICE, .8f, 1f);
   }
+
   protected void playSound(Player p, AnnouncerConstant constant) {
     String sound = LangPlayer.of(p).getLangContext().translateAnnounce(constant);
     playSound(p, sound);

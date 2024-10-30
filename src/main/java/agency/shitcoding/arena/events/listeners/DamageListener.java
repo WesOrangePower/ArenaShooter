@@ -12,6 +12,7 @@ import agency.shitcoding.arena.gamestate.GameOrchestrator;
 import agency.shitcoding.arena.gamestate.team.TeamGame;
 import agency.shitcoding.arena.gamestate.team.TeamManager;
 import agency.shitcoding.arena.localization.LangPlayer;
+import agency.shitcoding.arena.models.GameStage;
 import agency.shitcoding.arena.models.Weapon;
 import net.kyori.adventure.key.Key;
 import net.kyori.adventure.sound.Sound;
@@ -69,6 +70,11 @@ public class DamageListener implements Listener {
       Optional<Game> gameByPlayer = GameOrchestrator.getInstance().getGameByPlayer(victimPlayer);
       if (gameByPlayer.isPresent()) {
         Game game = gameByPlayer.get();
+        // if Game is over
+        if (game.getGamestage() == GameStage.FINISHED) {
+          event.setCancelled(true);
+          return;
+        }
         // if Invulnerable
         if (game.getRespawnInvulnerability().hasInvulnerability(victimPlayer)) {
           event.setCancelled(true);

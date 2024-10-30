@@ -1,8 +1,11 @@
 package agency.shitcoding.arena.localization;
 
+import static net.kyori.adventure.text.minimessage.MiniMessage.miniMessage;
+
 import agency.shitcoding.arena.models.Keys;
 import java.util.Optional;
 import lombok.Getter;
+import net.kyori.adventure.text.Component;
 import org.bukkit.entity.Player;
 import org.bukkit.persistence.PersistentDataType;
 
@@ -41,6 +44,10 @@ public class LangPlayer {
 
   public String getLocalized(String key, Object... args) {
     return langContext.getLocalized(key, args);
+  }
+
+  public Component getRichLocalized(String key, Object... args) {
+    return miniMessage().deserialize(langContext.getLocalized(key, args));
   }
 
   public void sendLocalized(String key, Object... args) {
