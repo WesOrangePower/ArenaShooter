@@ -84,8 +84,12 @@ public class PlasmaListener implements Listener {
     if (!(event.getEntity() instanceof Snowball snowball)) {
       return;
     }
-    event.setCancelled(true);
     var hitEntity = event.getHitEntity();
+    if (IgnoreEntities.shouldIgnoreEntity(hitEntity)) {
+      return;
+    }
+
+    event.setCancelled(true);
     Location at = snowball.getLocation();
     at.getWorld().playSound(at, SoundConstants.PLASMA_HIT, .5f, 1f);
 

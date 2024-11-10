@@ -76,6 +76,7 @@ public class MachineGunListener implements Listener {
         at.getWorld().getNearbyEntities(at, .2, .2, .2)
             .stream()
             .filter(LivingEntity.class::isInstance)
+            .filter(entity -> !IgnoreEntities.shouldIgnoreEntity(entity))
             .filter(entity -> entity != player)
             .forEach(entity -> {
               affectedEntities.add((LivingEntity) entity);

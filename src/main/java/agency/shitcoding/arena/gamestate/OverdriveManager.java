@@ -31,6 +31,9 @@ public class OverdriveManager {
   }
 
   public static void setArmor(Player player, int armor) {
+    if (player.getLevel() > armor) {
+      return;
+    }
     player.setLevel(armor);
     overdriveSet.add(player);
     runTask();

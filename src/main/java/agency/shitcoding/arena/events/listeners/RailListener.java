@@ -66,10 +66,12 @@ public class RailListener implements Listener {
 
         at.getWorld().getNearbyEntities(at, .2, .2, .2)
             .stream()
+            .filter(e -> !IgnoreEntities.shouldIgnoreEntity(e))
             .filter(LivingEntity.class::isInstance)
+            .map(LivingEntity.class::cast)
             .filter(entity -> entity != player)
             .forEach(entity -> {
-              affectedEntities.add((LivingEntity) entity);
+              affectedEntities.add(entity);
               world.spawnParticle(Particle.FLASH, at, 10, .2, .2, .2, 0);
             });
       }
