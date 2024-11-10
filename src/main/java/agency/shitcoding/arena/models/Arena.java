@@ -4,6 +4,8 @@ import agency.shitcoding.arena.ArenaShooter;
 import agency.shitcoding.arena.events.listeners.DamageListener;
 import agency.shitcoding.arena.gamestate.Game;
 import agency.shitcoding.arena.gamestate.team.TeamGame;
+import agency.shitcoding.arena.models.door.Door;
+import agency.shitcoding.arena.models.door.DoorTrigger;
 import java.lang.reflect.InvocationTargetException;
 import lombok.Getter;
 import lombok.Setter;
@@ -33,6 +35,8 @@ public class Arena implements Cloneable {
   private Set<Portal> portals;
   private Set<Ramp> ramps;
   private Set<LootPoint> weaponLootPoints;
+  private Set<Door> doors;
+  private Set<DoorTrigger> doorTriggers;
   private boolean allowHost;
 
   public Arena(
@@ -43,6 +47,8 @@ public class Arena implements Cloneable {
       Set<LootPoint> lootPoints,
       Set<Portal> portals,
       Set<Ramp> ramps,
+      Set<Door> doors,
+      Set<DoorTrigger> doorTriggers,
       boolean allowHost) {
     this.name = name;
     this.authors = authors;
@@ -51,6 +57,8 @@ public class Arena implements Cloneable {
     this.lootPoints = lootPoints;
     this.portals = portals;
     this.ramps = ramps;
+    this.doors = doors;
+    this.doorTriggers = doorTriggers;
     this.allowHost = allowHost;
   }
 
@@ -169,6 +177,8 @@ public class Arena implements Cloneable {
         newLootPoints,
         portals,
         ramps,
+        doors,
+        doorTriggers,
         allowHost);
   }
 
@@ -184,6 +194,8 @@ public class Arena implements Cloneable {
       arena.portals = cloneSet(portals);
       arena.ramps = cloneSet(ramps);
       arena.weaponLootPoints = cloneSet(weaponLootPoints);
+      arena.doors = cloneSet(doors);
+      arena.doorTriggers = cloneSet(doorTriggers);
       return arena;
     } catch (CloneNotSupportedException e) {
       throw new RuntimeException(e);

@@ -3,7 +3,7 @@ package agency.shitcoding.arena;
 import agency.shitcoding.arena.command.ArenaDeathMatchCommandInvoker;
 import agency.shitcoding.arena.events.PortalListener;
 import agency.shitcoding.arena.events.listeners.*;
-import agency.shitcoding.arena.gamestate.DisableCleanup;
+import agency.shitcoding.arena.gamestate.CleanUp;
 import agency.shitcoding.arena.gamestate.Game;
 import agency.shitcoding.arena.gamestate.GameOrchestrator;
 import agency.shitcoding.arena.statistics.StatisticsService;
@@ -34,6 +34,7 @@ public final class ArenaShooter extends JavaPlugin {
 
   @Override
   public void onEnable() {
+    CleanUp.onStart();
     registerListeners();
 
     Objects.requireNonNull(getCommand("arenaDeathMatch".toLowerCase()))
@@ -77,19 +78,39 @@ public final class ArenaShooter extends JavaPlugin {
       game.endGame("game.end.shutdown", false);
     }
 
-    DisableCleanup.onShutdown();
+    CleanUp.onShutdown();
 
   }
 
   private void registerListeners() {
-    var listeners = new Listener[] {
-    new AutoRespawnListener(), new BlockerListener(), new DamageListener(), new InteractListener(),
-    new LobbyListener(), new InteractListener(), new LobbyListener(), new MovementListener(),
-    new AmmoListener(), new NoAmmoListener(), new PlasmaListener(), new RailListener(), new BFG9KListener(),
-    new RocketListener(), new LightningGunListener(), new ShotgunListener(), new GauntletListener(),
-    new MachineGunListener(), new InstagibListener(), new ItemListener(), new GameStreakListener(),
-    new PortalListener(), new AutoClickerBlocker(), new MessageListener()
-    };
+    var listeners =
+        new Listener[] {
+          new AutoRespawnListener(),
+          new BlockerListener(),
+          new DamageListener(),
+          new InteractListener(),
+          new LobbyListener(),
+          new InteractListener(),
+          new LobbyListener(),
+          new MovementListener(),
+          new AmmoListener(),
+          new NoAmmoListener(),
+          new PlasmaListener(),
+          new RailListener(),
+          new BFG9KListener(),
+          new RocketListener(),
+          new LightningGunListener(),
+          new ShotgunListener(),
+          new GauntletListener(),
+          new MachineGunListener(),
+          new InstagibListener(),
+          new ItemListener(),
+          new GameStreakListener(),
+          new PortalListener(),
+          new AutoClickerBlocker(),
+          new MessageListener(),
+          new DoorTriggerListener()
+        };
 
     for (Listener listener : listeners) {
       getServer().getPluginManager().registerEvents(listener, this);

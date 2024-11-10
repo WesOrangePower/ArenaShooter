@@ -5,6 +5,8 @@ import agency.shitcoding.arena.models.Arena;
 import agency.shitcoding.arena.models.LootPoint;
 import agency.shitcoding.arena.models.Portal;
 import agency.shitcoding.arena.models.Ramp;
+import agency.shitcoding.arena.models.door.Door;
+import agency.shitcoding.arena.models.door.DoorTrigger;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -101,6 +103,10 @@ public class ArenaWorld {
             shifted.getPortals().stream().map(Portal::getFirstLocation).toList(),
             shifted.getPortals().stream().map(Portal::getSecondLocation).toList(),
             shifted.getPortals().stream().map(Portal::getTargetLocation).toList(),
+            shifted.getDoorTriggers().stream().map(DoorTrigger::getLocation).toList(),
+            shifted.getDoors().stream().map(Door::getEdge1).toList(),
+            shifted.getDoors().stream().map(Door::getEdge2).toList(),
+            shifted.getDoors().stream().map(Door::getDestinationCenter).toList(),
             shifted.getLootPoints().stream().map(LootPoint::getLocation).toList()));
 
     shifted.setWeaponLootPoints(null);

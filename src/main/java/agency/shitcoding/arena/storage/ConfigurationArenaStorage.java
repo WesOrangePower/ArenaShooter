@@ -3,6 +3,13 @@ package agency.shitcoding.arena.storage;
 import agency.shitcoding.arena.ArenaShooter;
 import agency.shitcoding.arena.command.Conf;
 import agency.shitcoding.arena.models.*;
+import agency.shitcoding.arena.models.door.Door;
+import agency.shitcoding.arena.models.door.DoorTrigger;
+import java.io.File;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 import lombok.RequiredArgsConstructor;
 import org.bukkit.Location;
 import org.bukkit.configuration.Configuration;
@@ -10,11 +17,6 @@ import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.util.Vector;
 import org.jetbrains.annotations.Nullable;
-
-import java.io.File;
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.Set;
 
 @RequiredArgsConstructor
 public class ConfigurationArenaStorage implements ArenaStorage {
@@ -30,16 +32,13 @@ public class ConfigurationArenaStorage implements ArenaStorage {
     if (allArenasSection == null) {
       allArenasSection = configuration.createSection(Conf.arenasSection);
     }
-    return allArenasSection.getKeys(false).stream()
-        .map(this::getArena)
-        .toList();
+    return allArenasSection.getKeys(false).stream().map(this::getArena).toList();
   }
 
   @Override
   public void deleteArena(Arena arena) {
     configuration.set(Conf.arenasSection + "." + arena.getName(), null);
   }
-
 
   @Override
   public @Nullable Arena getArena(String name) {
@@ -64,6 +63,8 @@ public class ConfigurationArenaStorage implements ArenaStorage {
     var lootPointsSection = arenaSection.getConfigurationSection(Conf.Arenas.lootPointsSection);
     var portalsSection = arenaSection.getConfigurationSection(Conf.Arenas.portalsSection);
     var rampsSection = arenaSection.getConfigurationSection(Conf.Arenas.rampsSection);
+    var doorsSection = arenaSection.getConfigurationSection(Conf.Arenas.doorsSection);
+    var doorTriggersSection = arenaSection.getConfigurationSection(Conf.Arenas.doorTriggersSection);
     var allowHost = arenaSection.getBoolean(Conf.Arenas.allowHost, true);
 
     if (lootPointsSection == null) {
@@ -74,6 +75,12 @@ public class ConfigurationArenaStorage implements ArenaStorage {
     }
     if (rampsSection == null) {
       rampsSection = arenaSection.createSection(Conf.Arenas.rampsSection);
+    }
+    if (doorsSection == null) {
+      doorsSection = arenaSection.createSection(Conf.Arenas.doorsSection);
+    }
+    if (doorTriggersSection == null) {
+      doorTriggersSection = arenaSection.createSection(Conf.Arenas.doorTriggersSection);
     }
 
     Set<LootPoint> lootPoints = new HashSet<>();
@@ -106,9 +113,67 @@ public class ConfigurationArenaStorage implements ArenaStorage {
       ramps.add(ramp);
     }
 
-    return new Arena(name, authors, lowerBound, upperBound, lootPoints, portals, ramps, allowHost);
+    Set<Door> doors = new HashSet<>();
+    for (String id : doorsSection.getKeys(false)) {
+      var configurationSection = doorsSection.getConfigurationSection(id);
+      if (configurationSection == null) {
+        continue;
+      }
+      Door door = parseDoor(id, configurationSection);
+      doors.add(door);
+    }
+
+    Set<DoorTrigger> doorTriggers = new HashSet<>();
+    for (String id : doorTriggersSection.getKeys(false)) {
+      var configurationSection = doorTriggersSection.getConfigurationSection(id);
+      if (configurationSection == null) {
+        continue;
+      }
+      DoorTrigger doorTrigger = parseDoorTrigger(id, configurationSection);
+      doorTriggers.add(doorTrigger);
+    }
+
+    return new Arena(
+        name,
+        authors,
+        lowerBound,
+        upperBound,
+        lootPoints,
+        portals,
+        ramps,
+        doors,
+        doorTriggers,
+        allowHost);
   }
 
+  private Door parseDoor(String id, ConfigurationSection configurationSection) {
+    Location edge1 = configurationSection.getLocation(Conf.Arenas.Doors.firstLocation);
+    Location edge2 = configurationSection.getLocation(Conf.Arenas.Doors.secondLocation);
+    Location destinationCenter =
+        configurationSection.getLocation(Conf.Arenas.Doors.destinationCenter);
+    int doorType = configurationSection.getInt(Conf.Arenas.Doors.doorType);
+    int animationTime = configurationSection.getInt(Conf.Arenas.Doors.animationTime);
+    int closeAfterTicks = configurationSection.getInt(Conf.Arenas.Doors.closeAfterTicks);
+    boolean replaceAir = configurationSection.getBoolean(Conf.Arenas.Doors.replaceAir);
+
+    if (edge1 == null || edge2 == null || destinationCenter == null) {
+      throw new RuntimeException("Failed to parse door");
+    }
+    return new Door(
+        id, doorType, animationTime, closeAfterTicks, replaceAir, edge1, edge2, destinationCenter);
+  }
+
+  private DoorTrigger parseDoorTrigger(String id, ConfigurationSection configurationSection) {
+    List<String> doorIds = configurationSection.getStringList(Conf.Arenas.DoorTriggers.doorIds);
+    int triggerType = configurationSection.getInt(Conf.Arenas.DoorTriggers.triggerType);
+    Location location = configurationSection.getLocation(Conf.Arenas.DoorTriggers.location);
+
+    if (location == null) {
+      throw new RuntimeException("Failed to parse door trigger");
+    }
+
+    return new DoorTrigger(id, doorIds, triggerType, location);
+  }
 
   private LootPoint parseLootPoint(String lootPointId, ConfigurationSection lootPointSection) {
 
@@ -163,9 +228,10 @@ public class ConfigurationArenaStorage implements ArenaStorage {
     setLootPointsSection(arenaSection, arena);
     setPortalSection(arenaSection, arena);
     setRampSection(arenaSection, arena);
+    setDoorSection(arenaSection, arena);
+    setDoorTriggerSection(arenaSection, arena);
     save();
   }
-
 
   private void setLootPointsSection(ConfigurationSection arenaSection, Arena arena) {
     var allLootPointsSection = arenaSection.getConfigurationSection(Conf.Arenas.lootPointsSection);
@@ -185,8 +251,8 @@ public class ConfigurationArenaStorage implements ArenaStorage {
   }
 
   private void setPortalSection(ConfigurationSection configurationSection, Arena arena) {
-    var allPortalsSection = configurationSection.getConfigurationSection(
-        Conf.Arenas.portalsSection);
+    var allPortalsSection =
+        configurationSection.getConfigurationSection(Conf.Arenas.portalsSection);
     if (allPortalsSection == null) {
       allPortalsSection = configurationSection.createSection(Conf.Arenas.portalsSection);
     }
@@ -222,6 +288,46 @@ public class ConfigurationArenaStorage implements ArenaStorage {
     removeLeftoverRamps(allRampsSection, arena);
   }
 
+  private void setDoorSection(ConfigurationSection section, Arena arena) {
+    var allDoorsSection = section.getConfigurationSection(Conf.Arenas.doorsSection);
+    if (allDoorsSection == null) {
+      allDoorsSection = section.createSection(Conf.Arenas.doorsSection);
+    }
+
+    for (Door door : arena.getDoors()) {
+      var doorSection = allDoorsSection.getConfigurationSection(door.getDoorId());
+      if (doorSection == null) {
+        doorSection = allDoorsSection.createSection(door.getDoorId());
+      }
+      doorSection.set(Conf.Arenas.Doors.firstLocation, door.getEdge1());
+      doorSection.set(Conf.Arenas.Doors.secondLocation, door.getEdge2());
+      doorSection.set(Conf.Arenas.Doors.destinationCenter, door.getDestinationCenter());
+      doorSection.set(Conf.Arenas.Doors.doorType, door.getDoorType());
+      doorSection.set(Conf.Arenas.Doors.animationTime, door.getAnimationTime());
+      doorSection.set(Conf.Arenas.Doors.closeAfterTicks, door.getCloseAfterTicks());
+      doorSection.set(Conf.Arenas.Doors.replaceAir, door.isReplaceAir());
+    }
+    removeLeftoverDoors(allDoorsSection, arena);
+  }
+
+  private void setDoorTriggerSection(ConfigurationSection section, Arena arena) {
+    var allDoorTriggersSection = section.getConfigurationSection(Conf.Arenas.doorTriggersSection);
+    if (allDoorTriggersSection == null) {
+      allDoorTriggersSection = section.createSection(Conf.Arenas.doorTriggersSection);
+    }
+
+    for (DoorTrigger doorTrigger : arena.getDoorTriggers()) {
+      var doorTriggerSection =
+          allDoorTriggersSection.getConfigurationSection(doorTrigger.getTriggerId());
+      if (doorTriggerSection == null) {
+        doorTriggerSection = allDoorTriggersSection.createSection(doorTrigger.getTriggerId());
+      }
+      doorTriggerSection.set(Conf.Arenas.DoorTriggers.triggerType, doorTrigger.getTriggerType());
+      doorTriggerSection.set(Conf.Arenas.DoorTriggers.location, doorTrigger.getLocation());
+      doorTriggerSection.set(Conf.Arenas.DoorTriggers.doorIds, doorTrigger.getDoorIds());
+    }
+    removeLeftoverDoorTriggers(allDoorTriggersSection, arena);
+  }
 
   private void removeLeftoverLootPoints(ConfigurationSection allLootPointsSection, Arena arena) {
     for (String key : allLootPointsSection.getKeys(false)) {
@@ -247,6 +353,23 @@ public class ConfigurationArenaStorage implements ArenaStorage {
     }
   }
 
+  private void removeLeftoverDoors(ConfigurationSection allDoorsSection, Arena arena) {
+    for (String key : allDoorsSection.getKeys(false)) {
+      if (arena.getDoors().stream().noneMatch(d -> d.getDoorId().equals(key))) {
+        allDoorsSection.set(key, null);
+      }
+    }
+  }
+
+  private void removeLeftoverDoorTriggers(
+      ConfigurationSection allDoorTriggersSection, Arena arena) {
+    for (String key : allDoorTriggersSection.getKeys(false)) {
+      if (arena.getDoorTriggers().stream().noneMatch(dt -> dt.getTriggerId().equals(key))) {
+        allDoorTriggersSection.set(key, null);
+      }
+    }
+  }
+
   private void save() {
     if (configuration instanceof YamlConfiguration yamlConfiguration) {
       try {
@@ -256,5 +379,4 @@ public class ConfigurationArenaStorage implements ArenaStorage {
       }
     }
   }
-
 }

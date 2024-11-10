@@ -7,6 +7,7 @@ import agency.shitcoding.arena.models.LootPointInstance;
 import agency.shitcoding.arena.models.Powerup;
 import lombok.Getter;
 import lombok.Setter;
+import net.kyori.adventure.text.Component;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.entity.Entity;
@@ -70,7 +71,8 @@ public class LootManager {
     if (powerup == Powerup.PROTECTION && game.getMajorBuffTracker().getProtectionTicks() != null) {
       return;
     }
-    ItemStack itemStack = powerup.getItemStack();
+    ItemStack itemStack = powerup.getItemStack().clone();
+    itemStack.lore(List.of(Component.text(UUID.randomUUID().toString())));
     Location location = instance.getLootPoint().getLocation().toCenterLocation().clone();
 
     location.getNearbyEntities(.5, .5, .5).stream()

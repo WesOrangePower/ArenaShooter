@@ -45,7 +45,7 @@ public enum Powerup {
   STIM_PACK(
       "powerup.stimPack",
       PowerupType.BUFF,
-      potionItem(Color.BLUE),
+      new ItemStack(Material.KELP),
       player -> genericHealth(player, 2),
       STIM_PACK_SPAWN_INTERVAL_TICKS,
       STIM_PACK_SPAWN_OFFSET_TICKS
