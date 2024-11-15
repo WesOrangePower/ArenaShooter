@@ -1,11 +1,11 @@
 package agency.shitcoding.arena.command.subcommands;
 
-import agency.shitcoding.arena.ArenaShooter;
 import agency.shitcoding.arena.command.ArenaDeathMatchCommand;
 import agency.shitcoding.arena.command.CommandInst;
 import agency.shitcoding.arena.gamestate.Game;
 import agency.shitcoding.arena.gamestate.GameOrchestrator;
 import agency.shitcoding.arena.gamestate.Lobby;
+import agency.shitcoding.arena.gamestate.TournamentAccessor;
 import agency.shitcoding.arena.gamestate.team.ETeam;
 import agency.shitcoding.arena.gamestate.team.TeamGame;
 import agency.shitcoding.arena.localization.LangPlayer;
@@ -13,7 +13,6 @@ import agency.shitcoding.arena.models.Arena;
 import agency.shitcoding.arena.models.RuleSet;
 import agency.shitcoding.arena.storage.StorageProvider;
 import java.util.Arrays;
-import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
@@ -71,6 +70,11 @@ public class ArenaHostCmd extends CommandInst {
       return false;
     }
     LangPlayer lang = new LangPlayer((Player) sender);
+
+    if (TournamentAccessor.getInstance().hasTournament()) {
+      lang.sendRichLocalized("command.host.tournamentInProgress");
+      return false;
+    }
 
     try {
       ruleSet = RuleSet.valueOf(args[ARG_RULESET].toUpperCase());

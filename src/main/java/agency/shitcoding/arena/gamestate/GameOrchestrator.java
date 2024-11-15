@@ -1,19 +1,17 @@
 package agency.shitcoding.arena.gamestate;
 
-import agency.shitcoding.arena.ArenaShooter;
 import agency.shitcoding.arena.localization.LangPlayer;
 import agency.shitcoding.arena.models.Arena;
 import agency.shitcoding.arena.models.RuleSet;
 import agency.shitcoding.arena.worlds.WorldFactory;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Optional;
+import java.util.Set;
 import lombok.Getter;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.scoreboard.Scoreboard;
-
-import java.util.HashSet;
-import java.util.Optional;
-import java.util.Set;
 import org.jetbrains.annotations.Nullable;
 
 public final class GameOrchestrator {

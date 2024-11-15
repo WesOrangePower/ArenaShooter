@@ -49,6 +49,7 @@ public final class ArenaDeathMatchCommand extends CommandInst {
     }
     CommandInst command = switch (args[0].toLowerCase()) {
       case "set" -> new ArenaSetCmd(sender, args);
+      case "tournament" -> new ArenaTournamentCmd(sender, args);
       case "create" -> new ArenaCreateCmd(sender, args);
       case "host" -> new ArenaHostCmd(sender, args);
       case "join" -> new ArenaJoinCmd(sender, args);

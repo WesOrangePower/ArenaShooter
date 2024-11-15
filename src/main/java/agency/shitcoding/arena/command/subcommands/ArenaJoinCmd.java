@@ -3,6 +3,7 @@ package agency.shitcoding.arena.command.subcommands;
 import agency.shitcoding.arena.command.CommandInst;
 import agency.shitcoding.arena.gamestate.Game;
 import agency.shitcoding.arena.gamestate.GameOrchestrator;
+import agency.shitcoding.arena.gamestate.TournamentAccessor;
 import agency.shitcoding.arena.gamestate.team.ETeam;
 import agency.shitcoding.arena.gamestate.team.TeamGame;
 import agency.shitcoding.arena.localization.LangPlayer;
@@ -73,6 +74,14 @@ public class ArenaJoinCmd extends CommandInst {
     if (args.length < MIN_ARGS) {
       lang.sendRichLocalized("command.join.arenaRequired", joined);
       return true;
+    }
+
+    var tournament = TournamentAccessor.getInstance().getTournamentOrNull();
+    if (tournament != null) {
+      if (!tournament.getPlayerNames().contains(lang.getPlayer().getName())) {
+        lang.sendRichLocalized("command.join.tournamentInProgress");
+        return true;
+      }
     }
 
     String arena = args[ARENA_ARG];
