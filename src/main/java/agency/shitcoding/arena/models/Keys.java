@@ -5,12 +5,17 @@ import org.bukkit.NamespacedKey;
 
 public final class Keys {
 
+  // ********************
+  // Before you do something stupid again,
+  // minecraft keys support only lowercase snake case
+  // ********************
+
   public static final NamespacedKey LOOT_POINT_KEY = new NamespacedKey(ArenaShooter.getInstance(),
-      "lootPointId");
+      "loot_point_id");
 
 
   public static NamespacedKey getPlayerAmmoKey() {
-    return new NamespacedKey(ArenaShooter.getInstance(), "ammoValues");
+    return new NamespacedKey(ArenaShooter.getInstance(), "ammo_values");
   }
 
   public static NamespacedKey getPlayerLocalizationKey() {
@@ -34,15 +39,19 @@ public final class Keys {
     return new NamespacedKey(ArenaShooter.getInstance(), "owner");
   }
   public static NamespacedKey getVelocityXKey() {
-    return new NamespacedKey(ArenaShooter.getInstance(), "velocityX");
+    return new NamespacedKey(ArenaShooter.getInstance(), "velocity_x");
   }
 
   public static NamespacedKey getVelocityYKey() {
-    return new NamespacedKey(ArenaShooter.getInstance(), "velocityY");
+    return new NamespacedKey(ArenaShooter.getInstance(), "velocity_y");
   }
 
   public static NamespacedKey getVelocityZKey() {
-    return new NamespacedKey(ArenaShooter.getInstance(), "velocityZ");
+    return new NamespacedKey(ArenaShooter.getInstance(), "velocity_z");
+  }
+
+  public static NamespacedKey getIgnoreHitKey() {
+    return new NamespacedKey(ArenaShooter.getInstance(), "ignore_hit");
   }
 
   private Keys() {

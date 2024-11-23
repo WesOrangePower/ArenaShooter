@@ -1,12 +1,12 @@
 package agency.shitcoding.arena.laser;
 
-import agency.shitcoding.arena.events.listeners.IgnoreEntities;
 import org.bukkit.Location;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Guardian;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Squid;
-import org.bukkit.persistence.PersistentDataType;
+
+import static agency.shitcoding.arena.events.listeners.IgnoreEntities.ignoreEntity;
 
 public class GuardianLaser implements AutoCloseable {
 
@@ -61,8 +61,7 @@ public class GuardianLaser implements AutoCloseable {
     squid.setAI(false);
     squid.setInvulnerable(true);
     squid.setSilent(true);
-    squid.getPersistentDataContainer()
-        .set(IgnoreEntities.IGNORE_KEY, PersistentDataType.BOOLEAN, true);
+    ignoreEntity(squid::getPersistentDataContainer);
     return squid;
   }
 
@@ -72,8 +71,7 @@ public class GuardianLaser implements AutoCloseable {
     guardian.setGravity(false);
     guardian.setAI(false);
     guardian.setInvulnerable(true);
-    guardian.getPersistentDataContainer()
-        .set(IgnoreEntities.IGNORE_KEY, PersistentDataType.BOOLEAN, true);
+    ignoreEntity(guardian::getPersistentDataContainer);
     guardian.setSilent(true);
   }
 
