@@ -31,25 +31,6 @@ public final class Keys {
     return Keys.of(w.name());
   }
 
-  public static NamespacedKey getVectorKey() {
-    return new NamespacedKey(ArenaShooter.getInstance(), "vector");
-  }
-
-  public static NamespacedKey getOwnerKey() {
-    return new NamespacedKey(ArenaShooter.getInstance(), "owner");
-  }
-  public static NamespacedKey getVelocityXKey() {
-    return new NamespacedKey(ArenaShooter.getInstance(), "velocity_x");
-  }
-
-  public static NamespacedKey getVelocityYKey() {
-    return new NamespacedKey(ArenaShooter.getInstance(), "velocity_y");
-  }
-
-  public static NamespacedKey getVelocityZKey() {
-    return new NamespacedKey(ArenaShooter.getInstance(), "velocity_z");
-  }
-
   public static NamespacedKey getIgnoreHitKey() {
     return new NamespacedKey(ArenaShooter.getInstance(), "ignore_hit");
   }
