@@ -53,7 +53,7 @@ public abstract class Game {
                       p,
                       LangPlayer.of(p).getLangContext().translateAnnounce(ac),
                       SoundCategory.VOICE,
-                      .8f,
+                      1f,
                       1f));
   protected Map<Player, BossBar> bossBarMap = new ConcurrentHashMap<>();
   protected RuleSet ruleSet;
