@@ -38,13 +38,19 @@ public class ArenaTournamentCmd extends CommandInst {
 
   @Override
   public void execute() {
+    if (args.length < SUB_COMMAND_ARG + 1) {
+      help();
+      return;
+    }
+
     var subCommand = args[SUB_COMMAND_ARG];
 
+    if (subCommand.equalsIgnoreCase("enroll")) {
+      enroll();
+      return;
+    }
+
     if (!sender.hasPermission(ADMIN_PERM)) {
-      if (subCommand.equalsIgnoreCase("enroll")) {
-        enroll();
-        return;
-      }
       help();
       return;
     }
@@ -111,19 +117,19 @@ public class ArenaTournamentCmd extends CommandInst {
         .ifPresentOrElse(
             t -> {
               if (t.getPlayerNames().contains(player.getName())) {
-                sender.sendMessage("<dark_red>You are already enrolled to the tournament");
+                sender.sendRichMessage("<dark_red>You are already enrolled to the tournament");
                 return;
               }
 
               if (t.getPlayerNames().size() >= t.getMaxPlayerCount()) {
-                sender.sendMessage("<dark_red>Tournament is full");
+                sender.sendRichMessage("<dark_red>Tournament is full");
                 return;
               }
 
               t.getPlayerNames().add(player.getName());
-              sender.sendMessage("<green>You have been enrolled to the tournament");
+              sender.sendRichMessage("<green>You have been enrolled to the tournament");
             },
-            () -> sender.sendMessage("<dark_red>There is no ongoing tournament"));
+            () -> sender.sendRichMessage("<dark_red>There is no ongoing tournament"));
   }
 
   private void kickPlayer() {
