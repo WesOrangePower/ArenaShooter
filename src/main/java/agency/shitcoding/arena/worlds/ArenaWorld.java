@@ -1,6 +1,7 @@
 package agency.shitcoding.arena.worlds;
 
 import agency.shitcoding.arena.ArenaShooter;
+import agency.shitcoding.arena.FileUtil;
 import agency.shitcoding.arena.models.Arena;
 import agency.shitcoding.arena.models.LootPoint;
 import agency.shitcoding.arena.models.Portal;
@@ -18,13 +19,11 @@ import net.kyori.adventure.util.TriState;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.WorldCreator;
-import org.codehaus.plexus.util.FileUtils;
 import org.jetbrains.annotations.NotNull;
 
 @RequiredArgsConstructor
 public class ArenaWorld {
-  @Getter
-  private final Arena origin;
+  @Getter private final Arena origin;
   private Arena shifted = null;
   @Getter private boolean generated;
   private World world;
@@ -61,7 +60,10 @@ public class ArenaWorld {
 
   @SuppressWarnings("ResultOfMethodCallIgnored")
   private void copyStructure(File template, File target) throws IOException {
-    FileUtils.copyDirectoryStructure(template, target);
+    FileUtil.copyDirectoryRecursively(
+        template,
+        target,
+        file -> !file.getName().equals("session.lock") && !file.getName().equals("uid.dat"));
     new File(target, "session.lock").delete();
     new File(target, "uid.dat").delete();
   }
