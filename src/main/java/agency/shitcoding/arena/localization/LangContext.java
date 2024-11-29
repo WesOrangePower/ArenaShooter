@@ -26,7 +26,7 @@ public class LangContext implements Announcer {
     return LocalizationService.getInstance().getLocalized(key, locale, args);
   }
 
-  public static final List<String> SUPPORTED_SOUNDS = List.of("en", "ru", "et");
+  public static final List<String> SUPPORTED_SOUNDS = List.of("en", "ru", "et", "uk");
 
   @Override
   public String translateAnnounce(AnnouncerConstant constant) {
