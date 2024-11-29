@@ -18,6 +18,8 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.stream.Collectors;
+
 public class ArenaTournamentCmd extends CommandInst {
 
   public static final int SUB_COMMAND_ARG = 1;
@@ -99,7 +101,8 @@ public class ArenaTournamentCmd extends CommandInst {
                                     e.getKey()
                                         + " - "
                                         + lang.getLocalized(
-                                            e.getValue().getTeamMeta().getDisplayName())));
+                                            e.getValue().getTeamMeta().getDisplayName()))
+                        .collect(Collectors.joining(", ")));
               }
               sender.sendMessage("Players: " + String.join(", ", t.getPlayerNames()));
             },
@@ -126,7 +129,12 @@ public class ArenaTournamentCmd extends CommandInst {
                 return;
               }
 
-              t.getPlayerNames().add(player.getName());
+              if (!t.isPublicJoin()) {
+                sender.sendRichMessage("<dark_red>Tournament is not public");
+                return;
+              }
+
+              t.addPlayer(player, t.nextAutoAssignedTeam());
               sender.sendRichMessage("<green>You have been enrolled to the tournament");
             },
             () -> sender.sendRichMessage("<dark_red>There is no ongoing tournament"));
@@ -267,6 +275,7 @@ public class ArenaTournamentCmd extends CommandInst {
       sender.sendMessage("/arena tournament next - Hosts next match");
       sender.sendMessage("/arena tournament add <player> [team] - Adds player to the tournament");
       sender.sendMessage("/arena tournament kick <player> - Removes player from the tournament");
+      sender.sendMessage("/arena tournament end - Ends the tournament");
     }
     sender.sendMessage("/arena tournament enroll - Enrolls yourself to the tournament");
   }

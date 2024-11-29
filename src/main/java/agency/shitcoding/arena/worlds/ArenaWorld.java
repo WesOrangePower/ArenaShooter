@@ -86,6 +86,7 @@ public class ArenaWorld {
     ArenaShooter.getInstance().getServer().unloadWorld(world, false);
     try {
       boolean isWindows = System.getProperty("os.name").toLowerCase().startsWith("windows");
+      if (isWindows) { return; } // fixme, windows does not find `rmdir`
       Runtime.getRuntime()
           .exec(
               isWindows

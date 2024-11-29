@@ -171,6 +171,7 @@ public abstract class Game {
     for (Player player : players) {
       Lobby.getInstance().sendPlayer(player);
     }
+    TournamentAccessor.getInstance().getTournament().ifPresent(Tournament::endGame);
     GameOrchestrator.getInstance().removeGame(this);
   }
 

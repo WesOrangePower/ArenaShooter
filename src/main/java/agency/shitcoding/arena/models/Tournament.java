@@ -3,20 +3,21 @@ package agency.shitcoding.arena.models;
 import agency.shitcoding.arena.gamestate.Game;
 import agency.shitcoding.arena.gamestate.GameOrchestrator;
 import agency.shitcoding.arena.gamestate.PlayerScore;
+import agency.shitcoding.arena.gamestate.TournamentAccessor;
 import agency.shitcoding.arena.gamestate.team.ETeam;
 import agency.shitcoding.arena.gamestate.team.TeamGame;
 import agency.shitcoding.arena.gamestate.team.TeamScore;
 import agency.shitcoding.arena.localization.LangPlayer;
 import com.google.common.base.Preconditions;
 import io.vavr.control.Either;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+
+import java.util.*;
 import java.util.function.Consumer;
 import lombok.Getter;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
+
+import static net.kyori.adventure.text.minimessage.MiniMessage.miniMessage;
 
 @Getter
 public class Tournament {
@@ -84,18 +85,22 @@ public class Tournament {
       return Either.left("Team required");
     }
 
+    LangPlayer langPlayer = LangPlayer.of(player);
     if (isTeamTournament()) {
       if (playerTeams.containsKey(player.getName())) {
         return Either.left("Player already in tournament");
       }
       playerTeams.put(player.getName(), team);
       playerNames.add(player.getName());
-      LangPlayer.of(player).sendRichLocalized("tournament.add.team.success");
+      langPlayer.sendRichLocalized(
+          "tournament.add.team.success",
+          miniMessage()
+              .serialize(team.getTeamMeta().getDisplayComponent(langPlayer.getLangContext())));
       return Either.right(null);
     }
 
     playerNames.add(player.getName());
-    LangPlayer.of(player).sendRichLocalized("tournament.add.success");
+    langPlayer.sendRichLocalized("tournament.add.success");
 
     return Either.right(null);
   }
@@ -133,15 +138,6 @@ public class Tournament {
     broadcastToPlayers(lp -> lp.sendRichLocalized("tournament.end"));
 
     broadcastToPlayers(lp -> lp.sendRichLocalized("tournament.score.header"));
-    List<PlayerScore> playerScores = sumScores();
-    for (PlayerScore playerScore : playerScores) {
-      broadcastToPlayers(
-          lp ->
-              lp.sendRichLocalized(
-                  "tournament.score.player",
-                  playerScore.getPlayer().getName(),
-                  playerScore.getScore()));
-    }
     if (isTeamTournament()) {
       List<TeamScore> teamScores = sumTeamScores();
       for (TeamScore teamScore : teamScores) {
@@ -152,7 +148,19 @@ public class Tournament {
                     lp.getLocalized(teamScore.getTeam().getTeamMeta().getDisplayName()),
                     teamScore.getScore()));
       }
+    } else {
+      List<PlayerScore> playerScores = sumScores();
+      for (PlayerScore playerScore : playerScores) {
+        broadcastToPlayers(
+            lp ->
+                lp.sendRichLocalized(
+                    "tournament.score.player",
+                    playerScore.getPlayer().getName(),
+                    playerScore.getScore()));
+      }
     }
+
+    TournamentAccessor.getInstance().setTournament(null);
   }
 
   private void broadcastToPlayers(Consumer<LangPlayer> lpc) {
@@ -165,10 +173,21 @@ public class Tournament {
   }
 
   private List<TeamScore> sumTeamScores() {
+    Map<ETeam, Integer> scores = new EnumMap<>(ETeam.class);
+
     List<TeamScore> raw = new ArrayList<>();
     for (Game game : games) {
       if (game != null) {
-        raw.addAll(((TeamGame) game).getTeamManager().getScores());
+        Queue<TeamScore> gameScores = ((TeamGame) game).getTeamManager().getScores();
+
+        for (TeamScore score : gameScores) {
+          ETeam eTeam = score.getTeam().getETeam();
+          if (scores.containsKey(eTeam)) {
+            scores.put(eTeam, scores.get(eTeam) + score.getScore());
+          } else {
+            scores.put(eTeam, score.getScore());
+          }
+        }
       }
     }
     return raw;
@@ -195,5 +214,18 @@ public class Tournament {
       }
     }
     return new ArrayList<>(scores.values());
+  }
+
+  public void endGame() {
+    currentGame = null;
+  }
+
+  public ETeam nextAutoAssignedTeam() {
+    if (!isTeamTournament()) return null;
+    return Arrays.stream(ETeam.values())
+        .min(
+            Comparator.comparingInt(
+                team -> (int) playerTeams.values().stream().filter(team::equals).count()))
+        .orElseGet(() -> ETeam.values()[new Random().nextInt(ETeam.values().length)]);
   }
 }
