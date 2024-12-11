@@ -1,7 +1,7 @@
 package agency.shitcoding.arena.worlds;
 
 import agency.shitcoding.arena.ArenaShooter;
-import agency.shitcoding.arena.FileUtil;
+import agency.shitcoding.arena.util.FileUtil;
 import agency.shitcoding.arena.models.Arena;
 import agency.shitcoding.arena.models.LootPoint;
 import agency.shitcoding.arena.models.Portal;

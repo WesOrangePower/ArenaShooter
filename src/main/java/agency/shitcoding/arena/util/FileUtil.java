@@ -1,4 +1,4 @@
-package agency.shitcoding.arena;
+package agency.shitcoding.arena.util;
 
 import io.vavr.control.Try;
 import org.jetbrains.annotations.NotNull;

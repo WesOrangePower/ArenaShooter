@@ -13,12 +13,11 @@ import agency.shitcoding.arena.models.Arena;
 import agency.shitcoding.arena.models.Tournament;
 import io.vavr.collection.Array;
 import io.vavr.control.Try;
+import java.util.stream.Collectors;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
-
-import java.util.stream.Collectors;
 
 public class ArenaTournamentCmd extends CommandInst {
 
@@ -45,11 +44,21 @@ public class ArenaTournamentCmd extends CommandInst {
       return;
     }
 
-    var subCommand = args[SUB_COMMAND_ARG];
+    var subCommand = args[SUB_COMMAND_ARG].toLowerCase();
 
-    if (subCommand.equalsIgnoreCase("enroll")) {
-      enroll();
-      return;
+    /*
+     * Non-admin commands
+     */
+
+    switch (subCommand) {
+      case "enroll" -> {
+        enroll();
+        return;
+      }
+      case "leave" -> {
+        leave();
+        return;
+      }
     }
 
     if (!sender.hasPermission(ADMIN_PERM)) {
@@ -57,7 +66,11 @@ public class ArenaTournamentCmd extends CommandInst {
       return;
     }
 
-    switch (subCommand.toLowerCase()) {
+    /*
+     * Admin commands
+     */
+
+    switch (subCommand) {
       case "create" -> createTournament();
       case "status" -> status();
       case "next" -> next();
@@ -68,15 +81,26 @@ public class ArenaTournamentCmd extends CommandInst {
     }
   }
 
+  private void leave() {
+    TournamentAccessor.getInstance()
+        .getTournament()
+        .ifPresentOrElse(
+            t -> {
+              t.removePlayer(sender.getName());
+              reply("command.tournament.leave.success");
+            },
+            () -> reply("command.tournament.noOngoing"));
+  }
+
   private void end() {
     TournamentAccessor.getInstance()
         .getTournament()
         .ifPresentOrElse(
             t -> {
               t.endTournament();
-              sender.sendMessage("Tournament ended");
+              reply("command.tournament.ended");
             },
-            () -> sender.sendMessage("There is no ongoing tournament"));
+            () -> reply("command.tournament.noOngoing"));
   }
 
   private void status() {
@@ -84,13 +108,18 @@ public class ArenaTournamentCmd extends CommandInst {
         .getTournament()
         .ifPresentOrElse(
             t -> {
-              sender.sendMessage("Tournament status");
-              sender.sendMessage("Game: " + t.getCurrentGameNumber() + "/" + t.getGameCount());
-              sender.sendMessage("Rule set: " + t.getRuleSet());
-              sender.sendMessage("Max player count: " + t.getMaxPlayerCount());
-              sender.sendMessage(
-                  "Arenas: " + Array.of(t.getArenas()).map(Arena::getName).mkString(", "));
-              sender.sendMessage("Next arena: " + t.peekNextArena().getName());
+              reply("command.tournament.status.tournamentStatus");
+              reply(
+                  "command.tournament.status.gameNumber",
+                  t.getCurrentGameNumber(),
+                  t.getGameCount());
+              reply("command.tournament.status.ruleSet", t.getRuleSet());
+              reply("command.tournament.status.maxPlayers", t.getMaxPlayerCount());
+              reply("command.tournament.status.type", t.isPublicJoin() ? "public" : "private");
+              reply(
+                  "command.tournament.status.arenas",
+                  Array.of(t.getArenas()).map(Arena::getName).mkString(", "));
+              reply("command.tournament.status.nextArena", t.peekNextArena().getName());
               if (t.getRuleSet().getGameRules().hasTeams()) {
                 var lang = new LangContext("en");
                 sender.sendMessage(
@@ -102,11 +131,11 @@ public class ArenaTournamentCmd extends CommandInst {
                                         + " - "
                                         + lang.getLocalized(
                                             e.getValue().getTeamMeta().getDisplayName()))
-                        .collect(Collectors.joining(", ")));
+                            .collect(Collectors.joining(", ")));
               }
               sender.sendMessage("Players: " + String.join(", ", t.getPlayerNames()));
             },
-            () -> sender.sendMessage("There is no ongoing tournament"));
+            () -> reply("command.tournament.noOngoing"));
   }
 
   private void enroll() {
@@ -120,24 +149,24 @@ public class ArenaTournamentCmd extends CommandInst {
         .ifPresentOrElse(
             t -> {
               if (t.getPlayerNames().contains(player.getName())) {
-                sender.sendRichMessage("<dark_red>You are already enrolled to the tournament");
+                reply("command.tournament.enroll.alreadyEnrolled");
                 return;
               }
 
               if (t.getPlayerNames().size() >= t.getMaxPlayerCount()) {
-                sender.sendRichMessage("<dark_red>Tournament is full");
+                reply("command.tournament.enroll.full");
                 return;
               }
 
               if (!t.isPublicJoin()) {
-                sender.sendRichMessage("<dark_red>Tournament is not public");
+                reply("command.tournament.enroll.nonPublic");
                 return;
               }
 
               t.addPlayer(player, t.nextAutoAssignedTeam());
-              sender.sendRichMessage("<green>You have been enrolled to the tournament");
+              reply("command.tournament.enroll.success");
             },
-            () -> sender.sendRichMessage("<dark_red>There is no ongoing tournament"));
+            () -> reply("command.tournament.noOngoing"));
   }
 
   private void kickPlayer() {
@@ -249,8 +278,8 @@ public class ArenaTournamentCmd extends CommandInst {
     sender.sendRichMessage("<green>Tournament created");
     announceTournament(result);
     for (Game game : GameOrchestrator.getInstance().getGames()) {
-        game.endGame("game.end.tournamentStart", false);
-      }
+      game.endGame("game.end.tournamentStart", false);
+    }
   }
 
   private void announceTournament(Tournament result) {
@@ -278,5 +307,13 @@ public class ArenaTournamentCmd extends CommandInst {
       sender.sendMessage("/arena tournament end - Ends the tournament");
     }
     sender.sendMessage("/arena tournament enroll - Enrolls yourself to the tournament");
+  }
+
+  private void reply(String key, Object... args) {
+    if (sender instanceof Player player) {
+      LangPlayer.of(player).sendRichLocalized(key, args);
+    } else {
+      sender.sendRichMessage(new LangContext().getLocalized(key, args));
+    }
   }
 }

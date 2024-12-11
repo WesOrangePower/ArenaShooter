@@ -3,6 +3,7 @@ package agency.shitcoding.arena.command.subcommands;
 import agency.shitcoding.arena.command.ArenaDeathMatchCommand;
 import agency.shitcoding.arena.command.CommandInst;
 import agency.shitcoding.arena.events.GameDamageEvent;
+import agency.shitcoding.arena.events.listeners.RailListener;
 import agency.shitcoding.arena.events.listeners.ShotgunListener;
 import agency.shitcoding.arena.gamestate.CosmeticsService;
 import agency.shitcoding.arena.models.Ammo;
@@ -26,6 +27,10 @@ public class ArenaUtilsCmd extends CommandInst {
       switch (args[1].toLowerCase()) {
         case "gib" ->
             new GameDamageEvent((Player) sender, (Player) sender, 1000d, Weapon.SHOTGUN).fire();
+        case "helix" -> {
+          RailListener.helix = !RailListener.helix;
+          sender.sendMessage("Rail helix: " + RailListener.helix);
+        }
         case "tracers" -> {
           ShotgunListener.tracers = !ShotgunListener.tracers;
           sender.sendMessage("Shotgun tracers: " + ShotgunListener.tracers);
