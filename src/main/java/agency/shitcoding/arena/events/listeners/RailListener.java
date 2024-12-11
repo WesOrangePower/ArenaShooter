@@ -11,6 +11,7 @@ import agency.shitcoding.arena.gamestate.GameOrchestrator;
 import agency.shitcoding.arena.gamestate.PlayerScore;
 import agency.shitcoding.arena.gamestate.WeaponMods;
 import agency.shitcoding.arena.models.Weapon;
+import java.util.*;
 import org.bukkit.*;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
@@ -19,13 +20,15 @@ import org.bukkit.event.Listener;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.util.Vector;
 
-import java.util.*;
+import static agency.shitcoding.arena.util.HelixUtil.helixAroundLine;
 
 public class RailListener implements Listener {
 
   public static final int DENSITY_FACTOR = 5;
   public static final int SCAN_LEN = 32;
   private static final Material RAILGUN = Weapon.RAILGUN.item;
+
+  public static boolean helix = true;
 
   @EventHandler
   public void onPlayerInteract(GameShootEvent event) {
@@ -42,11 +45,15 @@ public class RailListener implements Listener {
     World world = eyeLocation.getWorld();
     boolean isBubbleGun = isBubbleGun(player);
     var particle = isBubbleGun ? Particle.WATER_BUBBLE : Particle.WAX_OFF;
-    var sound = isBubbleGun ? Sound.BLOCK_BUBBLE_COLUMN_WHIRLPOOL_INSIDE.key().value()
-        : SoundConstants.RAIL_FIRE;
+    var helixParticle = isBubbleGun ? Particle.NAUTILUS : Particle.CRIMSON_SPORE;
+    var sound =
+        isBubbleGun
+            ? Sound.BLOCK_BUBBLE_COLUMN_WHIRLPOOL_INSIDE.key().value()
+            : SoundConstants.RAIL_FIRE;
 
     world.playSound(player, sound, .75f, 1f);
     List<Location> particleLocations = new ArrayList<>();
+    List<Location> helixLocations = new ArrayList<>();
 
     Set<LivingEntity> affectedEntities = new HashSet<>();
     // row of particles
@@ -64,38 +71,58 @@ public class RailListener implements Listener {
           break outer;
         }
 
-        at.getWorld().getNearbyEntities(at, .2, .2, .2)
-            .stream()
+        at.getWorld().getNearbyEntities(at, .2, .2, .2).stream()
             .filter(e -> !IgnoreEntities.shouldIgnoreEntity(e))
             .filter(LivingEntity.class::isInstance)
             .map(LivingEntity.class::cast)
             .filter(entity -> entity != player)
-            .forEach(entity -> {
-              affectedEntities.add(entity);
-              world.spawnParticle(Particle.FLASH, at, 10, .2, .2, .2, 0);
-            });
+            .forEach(
+                entity -> {
+                  affectedEntities.add(entity);
+                  world.spawnParticle(Particle.FLASH, at, 10, .2, .2, .2, 0);
+                });
       }
+    }
+
+    if (helix && particleLocations.size() > 1) {
+      var first = particleLocations.getFirst();
+      var last = particleLocations.getLast();
+      var direction = first.getDirection();
+
+      var points =
+          helixAroundLine(
+              first.getX(), first.getY(), first.getZ(),
+              last.getX(), last.getY(), last.getZ(),
+              direction.getX(), direction.getY(), direction.getZ(),
+              0.25f,
+              1f
+          );
+
+      points.forEach(v -> helixLocations.add(new Location(world, v[0], v[1], v[2])));
     }
 
     particleLocations.forEach(loc -> world.spawnParticle(particle, loc, 1, 0, 0, 0, 0));
+    helixLocations.forEach(loc -> world.spawnParticle(helixParticle, loc, 1, 0, 0, 0, 0));
     if (isBubbleGun) {
-      for(int i = 1; i < 20; i++) {
-        Bukkit.getScheduler().runTaskLater(ArenaShooter.getInstance(),
-            () -> particleLocations.forEach(loc -> world.spawnParticle(particle, loc, 1, 0, 0, 0, 0)),
-            i
-        );
+      for (int i = 1; i < 20; i++) {
+        Bukkit.getScheduler()
+            .runTaskLater(
+                ArenaShooter.getInstance(),
+                () ->
+                    particleLocations.forEach(
+                        loc -> world.spawnParticle(particle, loc, 1, 0, 0, 0, 0)),
+                i);
       }
     }
 
-    affectedEntities.forEach(entity ->
-        new GameDamageEvent(player, entity, GameplayConstants.RAILGUN_DAMAGE, Weapon.RAILGUN).fire()
-    );
+    affectedEntities.forEach(
+        entity ->
+            new GameDamageEvent(player, entity, GameplayConstants.RAILGUN_DAMAGE, Weapon.RAILGUN)
+                .fire());
     var optGame = GameOrchestrator.getInstance().getGameByPlayer(player);
     if (optGame.isEmpty()) return;
     var game = optGame.get();
-    var optStreak =
-        Optional.ofNullable(game.getScore(player))
-            .map(PlayerScore::getStreak);
+    var optStreak = Optional.ofNullable(game.getScore(player)).map(PlayerScore::getStreak);
     if (optStreak.isEmpty()) return;
     var streak = optStreak.get();
     var oldStreak = streak.copy();
@@ -105,12 +132,11 @@ public class RailListener implements Listener {
     } else {
       streak.setConsequentRailHit(streak.getConsequentRailHit() + 1);
     }
-    new GameStreakUpdateEvent(streak, oldStreak, player, game)
-        .fire();
+    new GameStreakUpdateEvent(streak, oldStreak, player, game).fire();
   }
 
   private static boolean isBubbleGun(Player player) {
     return WeaponMods.getBubbleGun()
-            .equals(CosmeticsService.getInstance().getWeaponMod(player, Weapon.RAILGUN));
+        .equals(CosmeticsService.getInstance().getWeaponMod(player, Weapon.RAILGUN));
   }
 }
