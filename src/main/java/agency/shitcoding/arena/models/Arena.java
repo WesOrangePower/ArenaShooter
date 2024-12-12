@@ -150,7 +150,9 @@ public class Arena implements Cloneable {
   }
 
   private LootPoint findLootPointToSpawn() {
-    Set<LootPoint> weaponLootPoints = getWeaponLootPoints();
+    Set<LootPoint> weaponLootPoints = getWeaponLootPoints()
+        .stream().filter(LootPoint::isSpawnPoint)
+        .collect(Collectors.toSet());
     int size = weaponLootPoints.size();
     int item = spawnPointRandomizer.nextInt(size);
     int i = 0;

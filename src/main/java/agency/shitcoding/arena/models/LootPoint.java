@@ -12,6 +12,7 @@ public class LootPoint implements Cloneable {
 
   private int id;
   private Location location;
+  private boolean isSpawnPoint;
   private Powerup type;
 
   @Override
@@ -19,6 +20,7 @@ public class LootPoint implements Cloneable {
     try {
       LootPoint clone = (LootPoint) super.clone();
       clone.location = location.clone();
+      clone.isSpawnPoint = isSpawnPoint;
       return clone;
     } catch (CloneNotSupportedException e) {
       throw new AssertionError();

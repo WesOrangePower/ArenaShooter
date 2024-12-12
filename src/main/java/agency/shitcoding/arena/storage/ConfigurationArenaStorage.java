@@ -179,9 +179,10 @@ public class ConfigurationArenaStorage implements ArenaStorage {
 
     int id = Integer.parseInt(lootPointId.substring(2));
     Location location = lootPointSection.getLocation(Conf.Arenas.LootPoints.location);
+    boolean isSpawnPoint = lootPointSection.getBoolean(Conf.Arenas.LootPoints.isSpawnPoint, true);
     Powerup type = Powerup.valueOf(lootPointSection.getString(Conf.Arenas.LootPoints.type));
 
-    return new LootPoint(id, location, type);
+    return new LootPoint(id, location, isSpawnPoint, type);
   }
 
   private Portal parsePortal(String id, ConfigurationSection portalSection) {
@@ -245,6 +246,7 @@ public class ConfigurationArenaStorage implements ArenaStorage {
         lootPointSection = allLootPointsSection.createSection("LP" + lootPoint.getId());
       }
       lootPointSection.set(Conf.Arenas.LootPoints.type, lootPoint.getType().name());
+      lootPointSection.set(Conf.Arenas.LootPoints.isSpawnPoint, lootPoint.isSpawnPoint());
       lootPointSection.set(Conf.Arenas.LootPoints.location, lootPoint.getLocation());
     }
     removeLeftoverLootPoints(allLootPointsSection, arena);

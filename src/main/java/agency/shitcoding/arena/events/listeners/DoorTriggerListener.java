@@ -7,11 +7,30 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerInteractEvent;
+import org.bukkit.event.player.PlayerMoveEvent;
 
 public class DoorTriggerListener implements Listener {
+  @EventHandler
+  public void proximityDoorTrigger(PlayerMoveEvent event) {
+    Player player = event.getPlayer();
+    var gameOpt = GameOrchestrator.getInstance().getGameByPlayer(player);
+    if (gameOpt.isEmpty()) {
+      return;
+    }
+    var game = gameOpt.get();
+
+    game.getArena().getDoorTriggers().stream()
+        .filter(trigger -> (trigger.getTriggerType() & DoorTrigger.PROXIMITY) != 0)
+        .filter(trigger -> trigger.getLocation().distance(player.getLocation()) < 1.1d)
+        .map(DoorTrigger::getDoorIds)
+        .forEach(doorIds -> game.getArena().getDoors().stream()
+            .filter(door -> doorIds.contains(door.getDoorId()))
+            .forEach(Door::open)
+        );
+  }
 
   @EventHandler
-  public void tryRunDoorTrigger(PlayerInteractEvent event) {
+  public void interactionDoorTrigger(PlayerInteractEvent event) {
     Player player = event.getPlayer();
     var gameOpt = GameOrchestrator.getInstance().getGameByPlayer(player);
     if (gameOpt.isEmpty()) {

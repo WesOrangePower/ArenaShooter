@@ -26,4 +26,6 @@ public class DoorTrigger implements Cloneable {
   }
 
   public static final int INTERACTION = 1;
+  public static final int PROXIMITY = 1 << 1;
+//  public static final int SHOOT = 1 << 2; TODO
 }

@@ -67,7 +67,7 @@ public enum ArenaSetField {
               return;
             }
             Location centerLocation = unshifted(((Player) p).getLocation().toCenterLocation());
-            LootPoint lootPoint = new LootPoint(ar.getLootPoints().size(), centerLocation, powerup);
+            LootPoint lootPoint = new LootPoint(ar.getLootPoints().size(), centerLocation, true, powerup);
             ar.getLootPoints().add(lootPoint);
             arenaStorage.storeArena(ar);
             p.sendRichMessage(

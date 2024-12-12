@@ -25,10 +25,10 @@ public class InstagibGame extends DeathMatchGame {
     if (type == PowerupType.WEAPON
         || lootPoint.getType() == Powerup.MEGA_HEALTH
         || type == PowerupType.MAJOR_BUFF) {
-      return new LootPoint(lootPoint.getId(), lootPoint.getLocation(), Powerup.RAILGUN);
+      return new LootPoint(lootPoint.getId(), lootPoint.getLocation(), lootPoint.isSpawnPoint(), Powerup.RAILGUN);
     }
     if (type == PowerupType.ARMOR || type == PowerupType.AMMO) {
-      return new LootPoint(lootPoint.getId(), lootPoint.getLocation(), Powerup.CELL_BOX);
+      return new LootPoint(lootPoint.getId(), lootPoint.getLocation(), lootPoint.isSpawnPoint(), Powerup.CELL_BOX);
     }
     return lootPoint;
   }

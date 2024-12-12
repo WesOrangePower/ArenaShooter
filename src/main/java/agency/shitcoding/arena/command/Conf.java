@@ -23,6 +23,7 @@ public final class Conf {
 
       public static final String location = "location";
       public static final String type = "type";
+      public static final String isSpawnPoint = "is_spawn_point";
 
       private LootPoints() {}
     }
