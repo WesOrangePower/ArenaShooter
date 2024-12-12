@@ -1,6 +1,6 @@
 package agency.shitcoding.arena.command;
 
-import agency.shitcoding.arena.ArenaDeathMatchTabCompleter;
+import agency.shitcoding.arena.suggester.ArenaDeathMatchTabCompleter;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;

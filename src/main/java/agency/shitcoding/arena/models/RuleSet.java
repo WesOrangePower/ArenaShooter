@@ -8,7 +8,7 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 @Getter
 public enum RuleSet {
-  DM("ruleset.dm", 10 * 60, 32, 2, new DeathMatchGameFactory(), new DMGameRules()),
+  DM("ruleset.dm", 60, 32, 2, new DeathMatchGameFactory(), new DMGameRules()),
   TDM("ruleset.tdm", 10 * 60, 32, 2, new TeamDeathMatchGameFactory(), new TDMGameRules()),
   LMS("ruleset.lms", 7 * 60, 32, 2, new LMSGameFactory(), new LMSGameRules()),
   INSTAGIB("ruleset.instagib", 8 * 60, 32, 2, new InstagibGameFactory(), new InstagibGameRules()),

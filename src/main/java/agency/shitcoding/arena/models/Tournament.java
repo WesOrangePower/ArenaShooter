@@ -9,10 +9,13 @@ import agency.shitcoding.arena.gamestate.team.TeamGame;
 import agency.shitcoding.arena.gamestate.team.TeamScore;
 import agency.shitcoding.arena.localization.LangPlayer;
 import com.google.common.base.Preconditions;
+import io.vavr.Tuple2;
 import io.vavr.control.Either;
 
 import java.util.*;
 import java.util.function.Consumer;
+import java.util.stream.Collectors;
+
 import lombok.Getter;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
@@ -139,14 +142,14 @@ public class Tournament {
 
     broadcastToPlayers(lp -> lp.sendRichLocalized("tournament.score.header"));
     if (isTeamTournament()) {
-      List<TeamScore> teamScores = sumTeamScores();
-      for (TeamScore teamScore : teamScores) {
+      List<Tuple2<ETeam, Integer>> teamScores = sumTeamScores();
+      for (var teamScore : teamScores) {
         broadcastToPlayers(
             lp ->
                 lp.sendRichLocalized(
                     "tournament.score.team",
-                    lp.getLocalized(teamScore.getTeam().getTeamMeta().getDisplayName()),
-                    teamScore.getScore()));
+                    lp.getLocalized(teamScore._1.getTeamMeta().getDisplayName()),
+                    teamScore._2));
       }
     } else {
       List<PlayerScore> playerScores = sumScores();
@@ -172,10 +175,9 @@ public class Tournament {
     }
   }
 
-  private List<TeamScore> sumTeamScores() {
+  private List<Tuple2<ETeam, Integer>> sumTeamScores() {
     Map<ETeam, Integer> scores = new EnumMap<>(ETeam.class);
 
-    List<TeamScore> raw = new ArrayList<>();
     for (Game game : games) {
       if (game != null) {
         Queue<TeamScore> gameScores = ((TeamGame) game).getTeamManager().getScores();
@@ -190,7 +192,13 @@ public class Tournament {
         }
       }
     }
-    return raw;
+
+    return scores.entrySet()
+        .stream()
+        .map(e -> new Tuple2<>(e.getKey(), e.getValue()))
+        .sorted(Comparator.comparingInt(t -> t._2))
+        .collect(Collectors.toList())
+        .reversed();
   }
 
   private List<PlayerScore> sumScores() {
@@ -200,6 +208,7 @@ public class Tournament {
         raw.addAll(game.getScores());
       }
     }
+    raw.sort(Comparator.comparingInt(PlayerScore::getScore).reversed());
     return sumScores(raw);
   }
 

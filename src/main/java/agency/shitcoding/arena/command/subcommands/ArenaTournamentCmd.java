@@ -220,6 +220,8 @@ public class ArenaTournamentCmd extends CommandInst {
               var result = t.addPlayer(playerTeam._1, playerTeam._2);
               if (result.isLeft()) {
                 sender.sendRichMessage("<dark_red> Player addition failed: " + result.getLeft());
+              } else {
+                sender.sendRichMessage("<green> Player" + playerTeam._1 + " added to the tournament");
               }
             },
             () -> sender.sendMessage("<dark_red>There is no ongoing tournament"));
