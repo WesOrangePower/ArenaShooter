@@ -25,14 +25,6 @@ jobs:
           MAVEN_PASSWORD: ${{ secrets.MAVEN_PASSWORD }}
     - name: Rename jar to ArenaShooter.jar
       run: mv target/*.jar ArenaShooter.jar
-    - name: Delete existing jar
-      uses: appleboy/ssh-action@v1.0.3
-      with:
-        host: ${{ secrets.HOST }}
-        username: ${{ secrets.USERNAME }}
-        key: ${{ secrets.KEY }}
-        port: ${{ secrets.PORT }}
-        script: rm -f /var/edenor/Arena/plugins/ArenaShooter*.jar
     - name: Upload jar
       uses: appleboy/ssh-action@v1.0.3
       with:
@@ -40,7 +32,7 @@ jobs:
         username: ${{ secrets.USERNAME }}
         key: ${{ secrets.KEY }}
         port: ${{ secrets.PORT }}
-        script: docker exec -t Arena sh -c "cd /dist && wget --user ${{ secrets.MAVEN_USERNAME }} --password ${{ secrets.MAVEN_PASSWORD }} https://nexus.jellycraft.net/repository/maven-releases/agency/shitcoding/ArenaShooter/1.0/ArenaShooter-1.0.jar -O ArenaShooter.jar"
+        script: rm -f /var/edenor/Arena/plugins/ArenaShooter*.jar && cd /var/edenor/Arena/plugins/ && wget --user ${{ secrets.MAVEN_USERNAME }} --password ${{ secrets.MAVEN_PASSWORD }} https://nexus.jellycraft.net/repository/maven-releases/agency/shitcoding/ArenaShooter/1.0/ArenaShooter-1.0.jar -O ArenaShooter.jar
     - name: Restart server
       uses: appleboy/ssh-action@v1.0.3
       with:
