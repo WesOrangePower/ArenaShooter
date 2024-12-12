@@ -34,15 +34,13 @@ jobs:
         port: ${{ secrets.PORT }}
         script: rm -f /var/edenor/Arena/plugins/ArenaShooter*.jar
     - name: Upload jar
-      uses: appleboy/scp-action@master
+      uses: appleboy/ssh-action@v1.0.3
       with:
         host: ${{ secrets.HOST }}
         username: ${{ secrets.USERNAME }}
         key: ${{ secrets.KEY }}
         port: ${{ secrets.PORT }}
-        overwrite: true
-        source: "ArenaShooter.jar"
-        target: "/var/edenor/Arena/plugins"
+        script: docker exec -t Arena sh -c "cd /dist && wget --user ${{ secrets.MAVEN_USERNAME }} --password ${{ secrets.MAVEN_PASSWORD }} https://nexus.jellycraft.net/repository/maven-releases/agency/shitcoding/ArenaShooter/1.0/ArenaShooter-1.0.jar -O ArenaShooter.jar"
     - name: Restart server
       uses: appleboy/ssh-action@v1.0.3
       with:
