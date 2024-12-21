@@ -88,7 +88,7 @@ public class StatsMenu {
         : player.getLocalized("menu.stat.item.killDeathRatio", (float)gameOutcome.kills() / gameOutcome.deaths());
 
     return ItemBuilder.builder()
-        .withMaterial(Material.IRON_SWORD)
+        .withMaterial(gameOutcome.isWon() ? Material.IRON_SWORD : Material.STONE_SWORD)
         .withName(mm.deserialize(name))
         .withLoreLine(mm.deserialize(playedAt))
         .withLoreLine(mm.deserialize(kills))
