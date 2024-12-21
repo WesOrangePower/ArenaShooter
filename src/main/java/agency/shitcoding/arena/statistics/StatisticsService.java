@@ -1,6 +1,8 @@
 package agency.shitcoding.arena.statistics;
 
 import java.util.Collection;
+import java.util.PriorityQueue;
+
 import org.bukkit.entity.Player;
 
 public interface StatisticsService {
@@ -12,4 +14,7 @@ public interface StatisticsService {
   }
 
   Collection<GameOutcome> getGameOutcomes(Player player);
+
+  PriorityQueue<Statistics> getLeaderboard(LeaderBoardCriterion criteria);
 }
+

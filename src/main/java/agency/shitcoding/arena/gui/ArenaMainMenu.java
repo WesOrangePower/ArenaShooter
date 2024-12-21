@@ -16,6 +16,7 @@ import net.jellycraft.guiapi.api.fluent.ItemBuilder;
 import net.jellycraft.guiapi.api.fluent.ViewBuilder;
 import net.jellycraft.guiapi.api.views.View;
 import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextColor;
 import net.kyori.adventure.text.format.TextDecoration;
 import net.kyori.adventure.text.minimessage.MiniMessage;
@@ -81,8 +82,9 @@ public class ArenaMainMenu {
     return ItemBuilder.builder()
         .withMaterial(Material.CHEST)
         .withName(Component.text(player.getLocalized("menu.cosmetics.title"), TextColor.color(0xa94366)))
-        .withLoreLine(player.getLocalized("menu.lore.open"))
         .withLoreLine(player.getLocalized("menu.cosmetics.description"))
+        .withLoreLine(Component.text(""))
+        .withLoreLine(Component.text(player.getLocalized("menu.lore.open")).color(NamedTextColor.GRAY))
         .withClickAction((clickType, clickContext) -> new CosmeticsMenu(player.getPlayer()).render())
         .withSlot(2, 7)
         .build();
@@ -101,14 +103,21 @@ public class ArenaMainMenu {
   }
 
   private ItemSlot statsButton() {
-    var itemBuilder = ItemBuilder.builder()
-        .withMaterial(Material.ENCHANTED_BOOK)
-        .withName(Component.text(
-            player.getLocalized("menu.stat.title"), TextColor.color(0xa94366)
-        ))
-        .withLore(getStatsLore())
-        .withSlot(2, 5)
-        .withClickAction(((clickType, clickContext) -> new StatsMenu(player.getPlayer()).open()));
+    var itemBuilder =
+        ItemBuilder.builder()
+            .withMaterial(Material.ENCHANTED_BOOK)
+            .withName(
+                Component.text(player.getLocalized("menu.stat.title"), TextColor.color(0xa94366)))
+            .withLore(getStatsLore())
+            .withSlot(2, 5)
+            .withClickAction(
+                ((clickType, clickContext) -> {
+                  if (clickType.isShiftClick()) {
+                    new LeaderBoardMenu(player.getPlayer()).open();
+                  } else {
+                    new StatsMenu(player.getPlayer()).open();
+                  }
+                }));
 
     return itemBuilder.build();
   }
@@ -126,6 +135,7 @@ public class ArenaMainMenu {
     var killDeathRatio = player.getLocalized("menu.stat.killDeathRatio", statistics.killDeathRatio);
 
     var open = player.getLocalized("menu.lore.open");
+    var openLead = player.getLocalized("menu.lore.open.leaderboard");
 
     return new Component[]{
         mm.deserialize(totalKills),
@@ -133,7 +143,8 @@ public class ArenaMainMenu {
         mm.deserialize(matchesWon),
         mm.deserialize(killDeathRatio),
         Component.text(""),
-        mm.deserialize("<gray><i>" + open)
+        mm.deserialize("<gray><i>" + open),
+        mm.deserialize("<gray><i>" + openLead)
     };
 
   }
@@ -143,8 +154,9 @@ public class ArenaMainMenu {
         withMaterial(Material.REDSTONE).
         withName(
             Component.text(player.getLocalized("menu.settings.title"), TextColor.color(0xa94366))).
-        withLoreLine(player.getLocalized("menu.lore.open")).
         withLoreLine(player.getLocalized("menu.settings.description")).
+        withLoreLine(Component.text("")).
+        withLoreLine(Component.text(player.getLocalized("menu.lore.open")).color(NamedTextColor.GRAY)).
         withClickAction(((clickType, clickContext) -> new SettingsMenu(player.getPlayer()).open())).
         withSlot(2, 3).
         build();

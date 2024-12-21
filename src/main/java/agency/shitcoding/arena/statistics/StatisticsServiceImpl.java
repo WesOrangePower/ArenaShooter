@@ -10,8 +10,10 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.PriorityQueue;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.stream.Stream;
 
 public class StatisticsServiceImpl implements
     StatisticsService {
@@ -101,6 +103,28 @@ public class StatisticsServiceImpl implements
       }
     }
     return result;
+  }
+
+  @Override
+  public PriorityQueue<Statistics> getLeaderboard(LeaderBoardCriterion criteria) {
+    if (disabled) {
+      return new PriorityQueue<>();
+    }
+
+    load();
+
+    var leaderboard = new PriorityQueue<>(criteria.comparator);
+    var playerNames = Stream.of(outcomes)
+        .map(GameOutcome::playerName)
+        .distinct()
+        .toArray(String[]::new);
+
+    for (var playerName : playerNames) {
+      var statistics = getStatistics(playerName);
+      leaderboard.add(statistics);
+    }
+
+    return leaderboard;
   }
 
   private void load() {
