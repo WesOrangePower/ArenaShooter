@@ -34,7 +34,6 @@ public final class GameOrchestrator {
    */
   public Game createGame(RuleSet ruleSet, Arena arena, @Nullable Player hoster) {
     LangPlayer langPlayer = LangPlayer.of(hoster);
-    if (hoster != null) langPlayer.sendRichLocalized("command.host.startingGame", arena.getName());
 
     var worldArena = WorldFactory.getInstance().newWorld(arena);
 
