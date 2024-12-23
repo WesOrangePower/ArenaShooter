@@ -11,6 +11,8 @@ import net.jellycraft.guiapi.api.fluent.ViewBuilder;
 import org.bukkit.entity.Player;
 import su.jellycraft.jellylib.utils.HeadDatabaseUtil;
 
+import static agency.shitcoding.arena.gui.ArenaMainMenu.backButton;
+
 public class LangChooserMenu {
 
   private final LangPlayer langPlayer;
@@ -29,6 +31,7 @@ public class LangChooserMenu {
     for (int i = 0; i < langToHead.length; i++) {
       builder.addItemSlot(i, getItem(langToHead[i][0], langToHead[i][1]));
     }
+    builder.addItemSlot(8, backButton(langPlayer, () -> new SettingsMenu(langPlayer.getPlayer()).open()));
 
     new ViewRenderer(builder.build()).render();
   }

@@ -112,7 +112,7 @@ public class ArenaDeathMatchTabCompleter {
 
   private List<String> resolveUtils() {
     if (args.length == 2) {
-      return List.of("gib", "tracers", "guns", "powerup", "helix");
+      return List.of("gib", "tracers", "guns", "powerup", "helix", "cutter");
     }
     if (args.length == 3) {
       if (args[1].equalsIgnoreCase("guns")) {

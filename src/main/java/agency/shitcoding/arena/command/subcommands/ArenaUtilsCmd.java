@@ -3,6 +3,7 @@ package agency.shitcoding.arena.command.subcommands;
 import agency.shitcoding.arena.command.ArenaDeathMatchCommand;
 import agency.shitcoding.arena.command.CommandInst;
 import agency.shitcoding.arena.events.GameDamageEvent;
+import agency.shitcoding.arena.events.listeners.GauntletListener;
 import agency.shitcoding.arena.events.listeners.RailListener;
 import agency.shitcoding.arena.events.listeners.ShotgunListener;
 import agency.shitcoding.arena.gamestate.CosmeticsService;
@@ -30,6 +31,10 @@ public class ArenaUtilsCmd extends CommandInst {
         case "helix" -> {
           RailListener.helix = !RailListener.helix;
           sender.sendMessage("Rail helix: " + RailListener.helix);
+        }
+        case "cutter" -> {
+          GauntletListener.bloodParticles = !GauntletListener.bloodParticles;
+          sender.sendMessage("Gauntlet blood particles: " + GauntletListener.bloodParticles);
         }
         case "tracers" -> {
           ShotgunListener.tracers = !ShotgunListener.tracers;
