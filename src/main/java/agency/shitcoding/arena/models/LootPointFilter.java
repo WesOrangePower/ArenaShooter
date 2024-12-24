@@ -2,7 +2,7 @@ package agency.shitcoding.arena.models;
 
 @FunctionalInterface
 public interface LootPointFilter {
-  public static LootPointFilter all() {
+  static LootPointFilter all() {
     return lootPoint -> true;
   }
 
