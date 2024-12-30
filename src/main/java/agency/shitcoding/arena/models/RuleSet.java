@@ -12,7 +12,8 @@ public enum RuleSet {
   TDM("ruleset.tdm", 10 * 60, 32, 2, new TeamDeathMatchGameFactory(), new TDMGameRules()),
   LMS("ruleset.lms", 7 * 60, 32, 2, new LMSGameFactory(), new LMSGameRules()),
   INSTAGIB("ruleset.instagib", 8 * 60, 32, 2, new InstagibGameFactory(), new InstagibGameRules()),
-  ROF("ruleset.rof", 8 * 60, 8, 2, new ROFGameFactory(), new ROFGameRules());
+  ROF("ruleset.rof", 8 * 60, 8, 2, new ROFGameFactory(), new ROFGameRules()),
+  CTF("ruleset.ctf", 10 * 60, 32, 2, new CTFGameFactory(), new CTFGameRules());
 
   private final String name;
   private final int gameLenSeconds;

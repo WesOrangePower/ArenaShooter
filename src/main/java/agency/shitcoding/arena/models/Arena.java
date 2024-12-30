@@ -87,8 +87,8 @@ public class Arena implements Cloneable {
     return weaponLootPoints;
   }
 
-  public LootPoint spawn(Player player, Game game) {
-    LootPoint lootPoint = findLootPointToSpawn();
+  public LootPoint spawn(Player player, Game game, LootPointFilter filter) {
+    LootPoint lootPoint = findLootPointToSpawn(filter);
     if (lootPoint == null) {
       ArenaShooter.getInstance()
           .getLogger()
@@ -155,9 +155,10 @@ public class Arena implements Cloneable {
     }
   }
 
-  private LootPoint findLootPointToSpawn() {
+  private LootPoint findLootPointToSpawn(LootPointFilter filter) {
     Set<LootPoint> weaponLootPoints = getWeaponLootPoints()
-        .stream().filter(LootPoint::isSpawnPoint)
+        .stream()
+        .filter(filter::filter)
         .collect(Collectors.toSet());
     int size = weaponLootPoints.size();
     int item = spawnPointRandomizer.nextInt(size);
