@@ -81,7 +81,7 @@ public class HostGameMenu {
     Collection<Arena> arenas = StorageProvider.getArenaStorage().getArenas();
     return arenas.stream()
         .filter(Arena::isAllowHost)
-//        .filter(arena -> !usedArenaNames.contains(arena.getName()))
+        .filter(arena -> !arena.getSupportedRuleSets().isEmpty())
         .map(arena -> {
               ItemSlot build = ItemBuilder.builder()
                   .withMaterial(Material.IRON_SWORD)
@@ -104,13 +104,14 @@ public class HostGameMenu {
 
   private ClickAction arenaClickAction(Arena arena) {
     return (clickType, clickContext) -> {
-      chooseRuleSet();
       this.chosenArena = arena;
+      chooseRuleSet();
     };
   }
 
   private List<Item> getRuleSetItems() {
     return Arrays.stream(RuleSet.values())
+        .filter(ruleSet -> chosenArena.getSupportedRuleSets().contains(ruleSet))
         .map(ruleSet -> {
               ItemSlot build = ItemBuilder.builder()
                   .withItemStack(ruleSet.getGameRules().getMenuBaseItem())

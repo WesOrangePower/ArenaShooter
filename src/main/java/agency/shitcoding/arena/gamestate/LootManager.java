@@ -31,6 +31,7 @@ public class LootManager {
     lootPoints = new ArrayList<>(template.size());
     template.stream()
         .sorted(Comparator.comparingInt(LootPoint::getId))
+        .filter(lp -> lp.getType() != Powerup.NOTHING)
         .forEach(this::generateInstance);
   }
 
