@@ -27,6 +27,14 @@ import static agency.shitcoding.arena.GameplayConstants.*;
 @Getter
 public enum Powerup {
 
+  NOTHING(
+      "powerup.nothing",
+      PowerupType.SPAWN,
+      new ItemStack(Material.AIR),
+      player -> false,
+      0,
+      0
+  ),
   MEGA_HEALTH(
       "powerup.megaHealth",
       PowerupType.BUFF,

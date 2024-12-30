@@ -103,7 +103,7 @@ public class AutoRespawnListener implements Listener {
 
     Bukkit.getScheduler().runTaskLater(ArenaShooter.getInstance(), () -> {
       Optional<Game> gameByPlayer = GameOrchestrator.getInstance().getGameByPlayer(p);
-      gameByPlayer.ifPresentOrElse(game -> game.getArena().spawn(p, game),
+      gameByPlayer.ifPresentOrElse(game -> game.getArena().spawn(p, game, game.getLootPointFilter()),
           () -> Lobby.getInstance().sendPlayer(p));
     }, 60);
   }
@@ -112,7 +112,7 @@ public class AutoRespawnListener implements Listener {
   public void onPlayerRespawn(PlayerPostRespawnEvent event) {
     Player player = event.getPlayer();
     Optional<Game> gameByPlayer = GameOrchestrator.getInstance().getGameByPlayer(player);
-    gameByPlayer.ifPresentOrElse(game -> game.getArena().spawn(player, game),
+    gameByPlayer.ifPresentOrElse(game -> game.getArena().spawn(player, game, game.getLootPointFilter()),
         () -> Lobby.getInstance().sendPlayer(player));
   }
 

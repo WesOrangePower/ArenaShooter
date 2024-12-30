@@ -193,7 +193,7 @@ public abstract class Game {
     announcer.accept(AnnouncerConstant.FIGHT);
     for (Player player : players) {
       LangPlayer.of(player).sendRichLocalized("game.start.message");
-      arena.spawn(player, this);
+      arena.spawn(player, this, getLootPointFilter());
     }
     gamestage = GameStage.IN_PROGRESS;
     LootManagerProvider.create(this, arena, this::preprocessLootPoints);
@@ -312,7 +312,7 @@ public abstract class Game {
             .filter(p -> !p.getName().equals(player.getName()))
             .collect(Collectors.toUnmodifiableSet());
     sendJoinMessage(player, filteredPlayers);
-    getArena().spawn(player, this);
+    getArena().spawn(player, this, getLootPointFilter());
   }
 
   public String youJoinedGameMessage(Player p) {
@@ -453,5 +453,9 @@ public abstract class Game {
   protected void playSound(Player p, AnnouncerConstant constant) {
     String sound = LangPlayer.of(p).getLangContext().translateAnnounce(constant);
     playSound(p, sound);
+  }
+
+  public LootPointFilter getLootPointFilter() {
+    return (lootPoint, player) -> lootPoint.isSpawnPoint();
   }
 }

@@ -81,14 +81,15 @@ public class Arena implements Cloneable {
     if (weaponLootPoints == null) {
       weaponLootPoints =
           lootPoints.stream()
-              .filter(lootPoint -> lootPoint.getType().getType() == PowerupType.WEAPON)
+              .filter(lootPoint -> lootPoint.getType().getType() == PowerupType.WEAPON
+                  || lootPoint.getType().getType() == PowerupType.SPAWN)
               .collect(Collectors.toSet());
     }
     return weaponLootPoints;
   }
 
-  public LootPoint spawn(Player player, Game game) {
-    LootPoint lootPoint = findLootPointToSpawn();
+  public LootPoint spawn(Player player, Game game, LootPointFilter filter) {
+    LootPoint lootPoint = findLootPointToSpawn(filter, player);
     if (lootPoint == null) {
       ArenaShooter.getInstance()
           .getLogger()
@@ -155,14 +156,18 @@ public class Arena implements Cloneable {
     }
   }
 
-  private LootPoint findLootPointToSpawn() {
+  private LootPoint findLootPointToSpawn(LootPointFilter filter, Player player) {
     Set<LootPoint> weaponLootPoints = getWeaponLootPoints()
-        .stream().filter(LootPoint::isSpawnPoint)
+        .stream()
+        .filter(lp -> filter.filter(lp, player))
         .collect(Collectors.toSet());
     int size = weaponLootPoints.size();
+    if (size == 0) {
+      throw new IllegalStateException("No loot points to spawn player " + player.getName());
+    }
     int item = spawnPointRandomizer.nextInt(size);
     int i = 0;
-    for (LootPoint point : lootPoints) {
+    for (LootPoint point : weaponLootPoints) {
       if (i == item) {
         return point;
       }
