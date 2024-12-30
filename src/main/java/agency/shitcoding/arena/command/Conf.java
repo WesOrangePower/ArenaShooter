@@ -1,5 +1,7 @@
 package agency.shitcoding.arena.command;
 
+import org.jetbrains.annotations.NotNull;
+
 public final class Conf {
 
   public static final String arenasSection = "arena.arenas";
@@ -18,6 +20,8 @@ public final class Conf {
     public static final String doorsSection = "doors";
     public static final String doorTriggersSection = "door_triggers";
     public static final String allowHost = "allow_host";
+    public static final String tags = "tags";
+    public static String supportedRuleSets = "supported_rulesets";
 
     public static class LootPoints {
 

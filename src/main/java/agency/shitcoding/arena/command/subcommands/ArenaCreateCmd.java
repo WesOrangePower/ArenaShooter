@@ -39,7 +39,9 @@ public class ArenaCreateCmd extends CommandInst {
         new HashSet<>(),
         new HashSet<>(),
         new HashSet<>(),
-        true
+        true,
+        new HashSet<>(),
+        new HashSet<>()
     );
     StorageProvider.getArenaStorage().storeArena(arena);
     sender.sendRichMessage("<green>Арена <yellow>" + name + "<green> создана");

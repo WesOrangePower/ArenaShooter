@@ -6,6 +6,8 @@ import static agency.shitcoding.arena.command.subcommands.arenamutation.ArenaSet
 import static agency.shitcoding.arena.command.subcommands.arenamutation.ArenaSetAction.SET;
 
 import agency.shitcoding.arena.QuadConsumer;
+import agency.shitcoding.arena.command.subcommands.arenamutation.processors.RuleSetMutationProcessor;
+import agency.shitcoding.arena.command.subcommands.arenamutation.processors.TagMutationProcessor;
 import agency.shitcoding.arena.models.Arena;
 import agency.shitcoding.arena.models.LootPoint;
 import agency.shitcoding.arena.models.Portal;
@@ -518,7 +520,15 @@ public enum ArenaSetField {
                     () -> s.sendRichMessage("<red>Trigger " + v + " not found."));
           }
         }
-      });
+      }),
+  TAG(
+      a -> a == SET || a == GET || a == REMOVE,
+      new TagMutationProcessor()
+  ),
+  RULESET(
+      a -> a == ADD || a == REMOVE || a == GET,
+      new RuleSetMutationProcessor()
+  );
 
   public final Predicate<ArenaSetAction> supports;
   public final QuadConsumer<Arena, ArenaSetAction, @Nullable String, @NotNull CommandSender>

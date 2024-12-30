@@ -10,6 +10,8 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
+
 import lombok.RequiredArgsConstructor;
 import org.bukkit.Location;
 import org.bukkit.configuration.Configuration;
@@ -65,6 +67,9 @@ public class ConfigurationArenaStorage implements ArenaStorage {
     var rampsSection = arenaSection.getConfigurationSection(Conf.Arenas.rampsSection);
     var doorsSection = arenaSection.getConfigurationSection(Conf.Arenas.doorsSection);
     var doorTriggersSection = arenaSection.getConfigurationSection(Conf.Arenas.doorTriggersSection);
+    var tags = new HashSet<>(arenaSection.getStringList(Conf.Arenas.tags));
+    var supportedRuleSets = arenaSection.getStringList(Conf.Arenas.supportedRuleSets).stream()
+        .map(RuleSet::valueOf).collect(Collectors.toSet());
     var allowHost = arenaSection.getBoolean(Conf.Arenas.allowHost, true);
 
     if (lootPointsSection == null) {
@@ -143,7 +148,9 @@ public class ConfigurationArenaStorage implements ArenaStorage {
         ramps,
         doors,
         doorTriggers,
-        allowHost);
+        allowHost,
+        tags,
+        supportedRuleSets);
   }
 
   private Door parseDoor(String id, ConfigurationSection configurationSection) {
@@ -231,6 +238,10 @@ public class ConfigurationArenaStorage implements ArenaStorage {
     setRampSection(arenaSection, arena);
     setDoorSection(arenaSection, arena);
     setDoorTriggerSection(arenaSection, arena);
+    arenaSection.set(Conf.Arenas.tags, arena.getTags());
+    arenaSection.set(
+        Conf.Arenas.supportedRuleSets,
+        arena.getSupportedRuleSets().stream().map(Enum::name).toList());
     save();
   }
 
