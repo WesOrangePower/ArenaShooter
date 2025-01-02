@@ -2,6 +2,7 @@ package agency.shitcoding.arena.models;
 
 import agency.shitcoding.arena.ArenaShooter;
 import org.bukkit.NamespacedKey;
+import org.jetbrains.annotations.NotNull;
 
 public final class Keys {
 
@@ -33,6 +34,10 @@ public final class Keys {
 
   public static NamespacedKey getIgnoreHitKey() {
     return new NamespacedKey(ArenaShooter.getInstance(), "ignore_hit");
+  }
+
+  public static @NotNull NamespacedKey getFlagKey() {
+    return new NamespacedKey(ArenaShooter.getInstance(), "ctf_flag");
   }
 
   private Keys() {

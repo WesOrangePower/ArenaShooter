@@ -1,10 +1,13 @@
 package agency.shitcoding.arena.localization;
 
+import static net.kyori.adventure.text.minimessage.MiniMessage.miniMessage;
+
 import agency.shitcoding.arena.AnnouncerConstant;
 import agency.shitcoding.arena.SoundConstants;
 import java.util.List;
 import java.util.Locale;
 import lombok.Getter;
+import net.kyori.adventure.text.Component;
 
 @Getter
 public class LangContext implements Announcer {
@@ -34,5 +37,9 @@ public class LangContext implements Announcer {
       return SoundConstants.ANNOUNCE_BASE + "en." + constant.getSoundName();
     }
     return SoundConstants.ANNOUNCE_BASE + locale + "." + constant.getSoundName();
+  }
+
+  public Component getRichLocalized(String key, Object... args) {
+    return miniMessage().deserialize(getLocalized(key, args));
   }
 }

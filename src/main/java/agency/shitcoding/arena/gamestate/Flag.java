@@ -11,28 +11,28 @@ public class Flag {
   @Getter
   private final ETeam team;
   @Setter
-  private FlagState state;
+  private State state;
   @Setter
   private Player carrier;
 
   Flag(ETeam team) {
     this.team = team;
-    this.state = FlagState.AT_BASE;
+    this.state = State.AT_BASE;
   }
 
   public boolean isAtBase() {
-    return state == FlagState.AT_BASE;
+    return state == State.AT_BASE;
   }
   public boolean isDropped() {
-    return state == FlagState.DROPPED;
+    return state == State.DROPPED;
   }
   public boolean isCarried() {
-    return state == FlagState.CARRIED;
+    return state == State.CARRIED;
   }
   public Optional<Player> getCarrier() {
     return Optional.ofNullable(carrier);
   }
-  enum FlagState {
+  enum State {
     AT_BASE,
     DROPPED,
     CARRIED

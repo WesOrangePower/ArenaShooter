@@ -109,7 +109,8 @@ public final class ArenaShooter extends JavaPlugin {
           new PortalListener(),
           new AutoClickerBlocker(),
           new MessageListener(),
-          new DoorTriggerListener()
+          new DoorTriggerListener(),
+          new CTFFlagListener()
         };
 
     for (Listener listener : listeners) {

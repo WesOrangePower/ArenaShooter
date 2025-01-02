@@ -23,12 +23,12 @@ import java.util.*;
 @Setter
 public class LootManager {
 
-  private List<LootPointInstance> lootPoints;
+  private Map<Integer, LootPointInstance> lootPoints;
   private final Game game;
 
   public LootManager(Collection<LootPoint> template, Game game) {
     this.game = game;
-    lootPoints = new ArrayList<>(template.size());
+    lootPoints = new HashMap<>(template.size());
     template.stream()
         .sorted(Comparator.comparingInt(LootPoint::getId))
         .filter(lp -> lp.getType() != Powerup.NOTHING)
@@ -39,7 +39,7 @@ public class LootManager {
     if (lootPoints == null) {
       return;
     }
-    for (LootPointInstance lootPoint : lootPoints) {
+    for (LootPointInstance lootPoint : lootPoints.values()) {
       Optional.ofNullable(lootPoint.getSpawnTask()).ifPresent(BukkitTask::cancel);
       Location location = lootPoint.getLootPoint().getLocation();
       if (!location.isChunkLoaded()) {
@@ -61,7 +61,7 @@ public class LootManager {
     );
     instance.setSpawnTask(bukkitTask);
 
-    this.lootPoints.add(instance.getLootPoint().getId(), instance);
+    this.lootPoints.put(instance.getLootPoint().getId(), instance);
   }
 
   private void spawnTask(LootPointInstance instance) {

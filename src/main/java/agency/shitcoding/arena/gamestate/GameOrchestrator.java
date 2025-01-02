@@ -64,4 +64,8 @@ public final class GameOrchestrator {
         .filter(game -> game.getArena().getName().equalsIgnoreCase(arenaName))
         .findFirst();
   }
+
+  public Optional<Game> getGameByHashCode(Integer gameHash) {
+    return games.stream().filter(game -> game.hashCode() == gameHash).findFirst();
+  }
 }

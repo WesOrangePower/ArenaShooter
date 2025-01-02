@@ -1,6 +1,5 @@
 package agency.shitcoding.arena.localization;
 
-import static net.kyori.adventure.text.minimessage.MiniMessage.miniMessage;
 
 import agency.shitcoding.arena.models.Keys;
 import java.util.Optional;
@@ -47,7 +46,7 @@ public class LangPlayer {
   }
 
   public Component getRichLocalized(String key, Object... args) {
-    return miniMessage().deserialize(langContext.getLocalized(key, args));
+    return langContext.getRichLocalized(key, args);
   }
 
   public void sendLocalized(String key, Object... args) {
