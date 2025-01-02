@@ -1,6 +1,7 @@
 package agency.shitcoding.arena.gamestate;
 
 import static java.util.Objects.requireNonNull;
+import static net.kyori.adventure.text.minimessage.MiniMessage.miniMessage;
 
 import agency.shitcoding.arena.AnnouncerConstant;
 import agency.shitcoding.arena.ArenaShooter;
@@ -11,6 +12,8 @@ import agency.shitcoding.arena.localization.LangPlayer;
 import agency.shitcoding.arena.models.*;
 import agency.shitcoding.arena.worlds.ArenaWorld;
 import java.util.Optional;
+import java.util.function.Function;
+
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import net.kyori.adventure.text.Component;
@@ -193,10 +196,11 @@ public class CTFGame extends TeamGame {
             p -> p.playSound(p, LangPlayer.of(p).getLangContext().translateAnnounce(key), 1f, 1f));
   }
 
-  protected void announceTeam(ETeam team, String message, Object... args) {
+  protected void announceTeam(
+      ETeam team, String message, Function<LangPlayer, Object[]> additionalArgsExtractor) {
     getTeamManager().getTeam(team).getPlayers().stream()
         .map(LangPlayer::of)
-        .forEach(p -> p.sendRichLocalized(message, args));
+        .forEach(p -> p.sendRichLocalized(message, additionalArgsExtractor.apply(p)));
   }
 
   protected void announceOtherTeams(ETeam team, AnnouncerConstant key) {
@@ -207,31 +211,38 @@ public class CTFGame extends TeamGame {
             p -> p.playSound(p, LangPlayer.of(p).getLangContext().translateAnnounce(key), 1f, 1f));
   }
 
-  protected void announceOtherTeams(ETeam team, String message, Object... args) {
+  protected void announceOtherTeams(
+      ETeam team, String message, Function<LangPlayer, Object[]> additionalArgsExtractor) {
     getTeamManager().getTeams().values().stream()
         .filter(t -> t.getETeam() != team)
         .flatMap(t -> t.getPlayers().stream())
         .map(LangPlayer::of)
-        .forEach(p -> p.sendRichLocalized(message, args));
+        .forEach(p -> p.sendRichLocalized(message, additionalArgsExtractor.apply(p)));
   }
 
   protected void announce(CTFMessageAction messageAction, ETeam selfTeam, Player actor) {
     announceTeam(selfTeam, messageAction.selfTeamAnnounceConstant);
-    announceTeam(selfTeam, messageAction.selfTeamMessage, messageAction.getAdditionalArguments(actor, this));
+    announceTeam(
+        selfTeam,
+        messageAction.selfTeamMessage,
+        p -> messageAction.getAdditionalArguments(p, actor, this));
     announceOtherTeams(selfTeam, messageAction.otherTeamsAnnounceConstant);
-    announceOtherTeams(selfTeam, messageAction.otherTeamsMessage, messageAction.getAdditionalArguments(actor, this));
+    announceOtherTeams(
+        selfTeam,
+        messageAction.otherTeamsMessage,
+        p -> messageAction.getAdditionalArguments(p, actor, this));
   }
 
   @RequiredArgsConstructor
   public enum CTFMessageAction {
     FLAG_TAKEN(
         "ctf.flag.taken",
-        "ctf.flag.taken.your",
+        "ctf.flag.taken",
         AnnouncerConstant.YOUR_FLAG_TAKEN,
         AnnouncerConstant.ENEMY_FLAG_TAKEN),
     FLAG_RETURNED(
         "ctf.flag.returned",
-        "ctf.flag.returned.your",
+        "ctf.flag.returned",
         AnnouncerConstant.YOUR_FLAG_RETURNED,
         AnnouncerConstant.ENEMY_FLAG_RETURNED),
     SCORES(
@@ -245,11 +256,21 @@ public class CTFGame extends TeamGame {
     private final AnnouncerConstant selfTeamAnnounceConstant;
     private final AnnouncerConstant otherTeamsAnnounceConstant;
 
-    public Object[] getAdditionalArguments(Player player, CTFGame game) {
-      if (this == SCORES) {
-        return new Object[] {player.getName(), game.getTeamManager().getTeam(player).orElseThrow()};
-      }
-      return new Object[] {player.getName()};
+    public Object[] getAdditionalArguments(LangPlayer audience, Player player, CTFGame game) {
+      return new Object[] {
+        player.getName(),
+        game.getTeamManager()
+            .getTeam(player)
+            .map(GameTeam::getETeam)
+            .map(ETeam::getTeamMeta)
+            .map(
+                meta ->
+                    miniMessage()
+                        .serialize(
+                            Component.text(
+                                audience.getLocalized(meta.getDisplayName()), meta.getTextColor())))
+            .orElseThrow()
+      };
     }
   }
 }
