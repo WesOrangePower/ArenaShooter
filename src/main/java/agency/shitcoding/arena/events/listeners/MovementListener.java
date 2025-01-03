@@ -54,7 +54,7 @@ public class MovementListener implements Listener {
     GameOrchestrator.getInstance().getGameByPlayer(player).map(Game::getArena)
         .ifPresent(arena -> {
           if (!arena.isInside(location)) {
-            if (player.getGameMode() == GameMode.ADVENTURE && Math.random() > .9) {
+            if (player.getGameMode() == GameMode.ADVENTURE) {
               new GameDamageEvent(null, player, 100, Weapon.GAUNTLET)
                   .fire();
               return;

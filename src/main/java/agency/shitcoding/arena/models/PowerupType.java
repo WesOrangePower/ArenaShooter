@@ -11,7 +11,8 @@ public enum PowerupType {
   AMMO(SoundConstants.AMMO_PICKUP),
   ARMOR(SoundConstants.BUFF_PICKUP),
   BUFF(SoundConstants.BUFF_PICKUP),
-  MAJOR_BUFF(SoundConstants.PROTECT);
+  MAJOR_BUFF(SoundConstants.PROTECT),
+  SPAWN(SoundConstants.PLASMA_HIT);
 
   private final String soundName;
 }

@@ -94,17 +94,16 @@ public class ArenaHostCmd extends CommandInst {
       return false;
     }
 
+    if (!arena.getSupportedRuleSets().contains(ruleSet)) {
+      var rulesetName = lang.getLocalized(ruleSet.getName());
+      lang.sendRichLocalized("command.host.ruleSetNotSupportedByArena", rulesetName, arena.getName());
+      return false;
+    }
+
     if (!arena.isAllowHost() && !sender.hasPermission(ArenaDeathMatchCommand.ADMIN_PERM)) {
       lang.sendRichLocalized("command.host.arenaNotAllowed");
       return false;
     }
-
-    /*
-    if (GameOrchestrator.getInstance().getUsedArenaNames().contains(arena.getName())) {
-      lang.sendRichLocalized("command.host.arenaAlreadyHosted", arena.getName());
-      return false;
-    }
-     */
 
     boolean isTeamGame = ruleSet.getGameRules().hasTeams();
     if (isTeamGame && args.length < ARG_TEAM + 1) {

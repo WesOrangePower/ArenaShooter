@@ -90,7 +90,7 @@ public class ArenaSetCmd extends CommandInst {
       return false;
     }
 
-    if (action != ArenaSetAction.GET) {
+    if (args.length == ARGS_WITH_VALUE) {
       value = args[ARG_VALUE];
     }
 

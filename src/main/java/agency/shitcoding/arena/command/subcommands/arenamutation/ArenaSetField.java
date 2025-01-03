@@ -6,6 +6,9 @@ import static agency.shitcoding.arena.command.subcommands.arenamutation.ArenaSet
 import static agency.shitcoding.arena.command.subcommands.arenamutation.ArenaSetAction.SET;
 
 import agency.shitcoding.arena.QuadConsumer;
+import agency.shitcoding.arena.command.subcommands.arenamutation.processors.LootPointMarkerMutationProcessor;
+import agency.shitcoding.arena.command.subcommands.arenamutation.processors.RuleSetMutationProcessor;
+import agency.shitcoding.arena.command.subcommands.arenamutation.processors.TagMutationProcessor;
 import agency.shitcoding.arena.models.Arena;
 import agency.shitcoding.arena.models.LootPoint;
 import agency.shitcoding.arena.models.Portal;
@@ -17,6 +20,7 @@ import agency.shitcoding.arena.storage.ArenaStorage;
 import agency.shitcoding.arena.storage.StorageProvider;
 import agency.shitcoding.arena.worlds.WorldFactory;
 import java.util.Arrays;
+import java.util.Comparator;
 import java.util.List;
 import java.util.function.Predicate;
 import lombok.RequiredArgsConstructor;
@@ -67,7 +71,7 @@ public enum ArenaSetField {
               return;
             }
             Location centerLocation = unshifted(((Player) p).getLocation().toCenterLocation());
-            LootPoint lootPoint = new LootPoint(ar.getLootPoints().size(), centerLocation, true, powerup);
+            LootPoint lootPoint = new LootPoint(ar.getLootPoints().size(), centerLocation, true, powerup, 0);
             ar.getLootPoints().add(lootPoint);
             arenaStorage.storeArena(ar);
             p.sendRichMessage(
@@ -80,6 +84,8 @@ public enum ArenaSetField {
           }
           case GET ->
               ar.getLootPoints()
+                  .stream()
+                  .sorted(Comparator.comparingInt(LootPoint::getId))
                   .forEach(
                       lp ->
                           p.sendMessage(
@@ -518,7 +524,19 @@ public enum ArenaSetField {
                     () -> s.sendRichMessage("<red>Trigger " + v + " not found."));
           }
         }
-      });
+      }),
+  TAG(
+      a -> a == SET || a == GET || a == REMOVE,
+      new TagMutationProcessor()
+  ),
+  LP_MARKER(
+      a -> a == SET || a == GET || a == REMOVE,
+      new LootPointMarkerMutationProcessor()
+  ),
+  RULESET(
+      a -> a == ADD || a == REMOVE || a == GET,
+      new RuleSetMutationProcessor()
+  );
 
   public final Predicate<ArenaSetAction> supports;
   public final QuadConsumer<Arena, ArenaSetAction, @Nullable String, @NotNull CommandSender>

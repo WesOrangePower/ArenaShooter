@@ -3,6 +3,8 @@ package agency.shitcoding.arena.gamestate.team;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.bukkit.Material;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 @Getter
 @RequiredArgsConstructor
@@ -14,7 +16,16 @@ public enum ETeam {
   private final Material icon;
   private final TeamMeta teamMeta;
 
-  public ETeam getTeamByClass(Class<? extends GameTeam> teamClass) {
+  public static @Nullable ETeam getTeamByMaterial(@NotNull Material type) {
+    for (ETeam team : values()) {
+      if (team.icon.equals(type)) {
+        return team;
+      }
+    }
+    return null;
+  }
+
+  public @Nullable ETeam getTeamByClass(Class<? extends GameTeam> teamClass) {
     for (ETeam team : values()) {
       if (team.teamClass.equals(teamClass)) {
         return team;

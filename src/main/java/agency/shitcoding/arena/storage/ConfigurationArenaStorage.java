@@ -10,6 +10,8 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
+
 import lombok.RequiredArgsConstructor;
 import org.bukkit.Location;
 import org.bukkit.configuration.Configuration;
@@ -65,6 +67,9 @@ public class ConfigurationArenaStorage implements ArenaStorage {
     var rampsSection = arenaSection.getConfigurationSection(Conf.Arenas.rampsSection);
     var doorsSection = arenaSection.getConfigurationSection(Conf.Arenas.doorsSection);
     var doorTriggersSection = arenaSection.getConfigurationSection(Conf.Arenas.doorTriggersSection);
+    var tags = new HashSet<>(arenaSection.getStringList(Conf.Arenas.tags));
+    var supportedRuleSets = arenaSection.getStringList(Conf.Arenas.supportedRuleSets).stream()
+        .map(RuleSet::valueOf).collect(Collectors.toSet());
     var allowHost = arenaSection.getBoolean(Conf.Arenas.allowHost, true);
 
     if (lootPointsSection == null) {
@@ -143,7 +148,9 @@ public class ConfigurationArenaStorage implements ArenaStorage {
         ramps,
         doors,
         doorTriggers,
-        allowHost);
+        allowHost,
+        tags,
+        supportedRuleSets);
   }
 
   private Door parseDoor(String id, ConfigurationSection configurationSection) {
@@ -181,8 +188,9 @@ public class ConfigurationArenaStorage implements ArenaStorage {
     Location location = lootPointSection.getLocation(Conf.Arenas.LootPoints.location);
     boolean isSpawnPoint = lootPointSection.getBoolean(Conf.Arenas.LootPoints.isSpawnPoint, true);
     Powerup type = Powerup.valueOf(lootPointSection.getString(Conf.Arenas.LootPoints.type));
+    int markers = lootPointSection.getInt(Conf.Arenas.LootPoints.markers, 0);
 
-    return new LootPoint(id, location, isSpawnPoint, type);
+    return new LootPoint(id, location, isSpawnPoint, type, markers);
   }
 
   private Portal parsePortal(String id, ConfigurationSection portalSection) {
@@ -231,6 +239,10 @@ public class ConfigurationArenaStorage implements ArenaStorage {
     setRampSection(arenaSection, arena);
     setDoorSection(arenaSection, arena);
     setDoorTriggerSection(arenaSection, arena);
+    arenaSection.set(Conf.Arenas.tags, arena.getTags());
+    arenaSection.set(
+        Conf.Arenas.supportedRuleSets,
+        arena.getSupportedRuleSets().stream().map(Enum::name).toList());
     save();
   }
 
@@ -248,6 +260,7 @@ public class ConfigurationArenaStorage implements ArenaStorage {
       lootPointSection.set(Conf.Arenas.LootPoints.type, lootPoint.getType().name());
       lootPointSection.set(Conf.Arenas.LootPoints.isSpawnPoint, lootPoint.isSpawnPoint());
       lootPointSection.set(Conf.Arenas.LootPoints.location, lootPoint.getLocation());
+      lootPointSection.set(Conf.Arenas.LootPoints.markers, lootPoint.getMarkers());
     }
     removeLeftoverLootPoints(allLootPointsSection, arena);
   }

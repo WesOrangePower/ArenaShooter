@@ -3,6 +3,7 @@ package agency.shitcoding.arena.models;
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
+import lombok.Setter;
 import org.bukkit.Location;
 
 @Getter
@@ -14,6 +15,8 @@ public class LootPoint implements Cloneable {
   private Location location;
   private boolean isSpawnPoint;
   private Powerup type;
+  @Setter
+  private int markers;
 
   @Override
   public LootPoint clone() {

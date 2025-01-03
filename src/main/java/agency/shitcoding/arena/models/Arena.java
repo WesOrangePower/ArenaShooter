@@ -38,6 +38,8 @@ public class Arena implements Cloneable {
   private Set<Door> doors;
   private Set<DoorTrigger> doorTriggers;
   private boolean allowHost;
+  private Set<String> tags;
+  private Set<RuleSet> supportedRuleSets;
 
   public Arena(
       String name,
@@ -49,7 +51,9 @@ public class Arena implements Cloneable {
       Set<Ramp> ramps,
       Set<Door> doors,
       Set<DoorTrigger> doorTriggers,
-      boolean allowHost) {
+      boolean allowHost,
+      Set<String> tags,
+      Set<RuleSet> supportedRuleSets) {
     this.name = name;
     this.authors = authors;
     this.lowerBound = lowerBound;
@@ -60,6 +64,8 @@ public class Arena implements Cloneable {
     this.doors = doors;
     this.doorTriggers = doorTriggers;
     this.allowHost = allowHost;
+    this.tags = tags;
+    this.supportedRuleSets = supportedRuleSets;
   }
 
   public boolean isInside(Location location) {
@@ -75,14 +81,15 @@ public class Arena implements Cloneable {
     if (weaponLootPoints == null) {
       weaponLootPoints =
           lootPoints.stream()
-              .filter(lootPoint -> lootPoint.getType().getType() == PowerupType.WEAPON)
+              .filter(lootPoint -> lootPoint.getType().getType() == PowerupType.WEAPON
+                  || lootPoint.getType().getType() == PowerupType.SPAWN)
               .collect(Collectors.toSet());
     }
     return weaponLootPoints;
   }
 
   public LootPoint spawn(Player player, Game game, LootPointFilter filter) {
-    LootPoint lootPoint = findLootPointToSpawn(filter);
+    LootPoint lootPoint = findLootPointToSpawn(filter, player);
     if (lootPoint == null) {
       ArenaShooter.getInstance()
           .getLogger()
@@ -149,15 +156,18 @@ public class Arena implements Cloneable {
     }
   }
 
-  private LootPoint findLootPointToSpawn(LootPointFilter filter) {
+  private LootPoint findLootPointToSpawn(LootPointFilter filter, Player player) {
     Set<LootPoint> weaponLootPoints = getWeaponLootPoints()
         .stream()
-        .filter(filter::filter)
+        .filter(lp -> filter.filter(lp, player))
         .collect(Collectors.toSet());
     int size = weaponLootPoints.size();
+    if (size == 0) {
+      throw new IllegalStateException("No loot points to spawn player " + player.getName());
+    }
     int item = spawnPointRandomizer.nextInt(size);
     int i = 0;
-    for (LootPoint point : lootPoints) {
+    for (LootPoint point : weaponLootPoints) {
       if (i == item) {
         return point;
       }
@@ -182,7 +192,9 @@ public class Arena implements Cloneable {
         ramps,
         doors,
         doorTriggers,
-        allowHost);
+        allowHost,
+        tags,
+        supportedRuleSets);
   }
 
   @Override
@@ -199,6 +211,8 @@ public class Arena implements Cloneable {
       arena.weaponLootPoints = cloneSet(weaponLootPoints);
       arena.doors = cloneSet(doors);
       arena.doorTriggers = cloneSet(doorTriggers);
+      arena.tags = shallowCloneSet(tags);
+      arena.supportedRuleSets = shallowCloneSet(supportedRuleSets);
       return arena;
     } catch (CloneNotSupportedException e) {
       throw new RuntimeException(e);
@@ -222,5 +236,10 @@ public class Arena implements Cloneable {
       }
     }
     return newSet;
+  }
+
+  @Contract("null -> null")
+  private static <T> Set<T> shallowCloneSet(Set<T> set) {
+    return set == null ? null : new HashSet<>(set);
   }
 }
