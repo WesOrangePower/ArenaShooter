@@ -14,7 +14,6 @@ import agency.shitcoding.arena.models.*;
 import agency.shitcoding.arena.worlds.ArenaWorld;
 import java.util.Optional;
 import java.util.function.Function;
-
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import net.kyori.adventure.text.Component;
@@ -247,8 +246,8 @@ public class CTFGame extends TeamGame {
         AnnouncerConstant.YOUR_FLAG_RETURNED,
         AnnouncerConstant.ENEMY_FLAG_RETURNED),
     SCORES(
-        "ctf.scores",
         "ctf.scores.your",
+        "ctf.scores",
         AnnouncerConstant.YOUR_TEAM_SCORED,
         AnnouncerConstant.ENEMY_TEAM_SCORED);
 
