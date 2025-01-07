@@ -7,6 +7,8 @@ import agency.shitcoding.arena.models.Keys;
 import agency.shitcoding.arena.models.LootPointMarker;
 import java.util.EnumMap;
 import java.util.Optional;
+
+import net.kyori.adventure.text.Component;
 import org.bukkit.GameMode;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -33,17 +35,27 @@ public class FlagManager {
 
     game.getArena().getLootPoints().stream()
         .filter(lp -> (lp.getMarkers() & flagMarker) != 0)
-        .forEach(lp -> lp.getLocation().getWorld().dropItem(lp.getLocation(), getFlagItem(flag), item -> {
-          item.setVelocity(Vector.fromJOML(new Vector3f(0f, 0.1f, 0f)));
-          item.getPersistentDataContainer()
-                  .set(Keys.getFlagKey(), PersistentDataType.INTEGER, game.hashCode());
-          item.setCanMobPickup(false);
-        }));
+        .forEach(
+            lp ->
+                lp.getLocation()
+                    .getWorld()
+                    .dropItem(
+                        lp.getLocation(),
+                        getFlagItem(flag),
+                        item -> {
+                          item.setGlowing(true);
+                          item.setVelocity(Vector.fromJOML(new Vector3f(0f, 0.1f, 0f)));
+                          item.getPersistentDataContainer()
+                              .set(Keys.getFlagKey(), PersistentDataType.INTEGER, game.hashCode());
+                          item.setCanMobPickup(false);
+                        }));
   }
 
   public ItemStack getFlagItem(Flag flag) {
     var item = new ItemStack(flag.getTeam().getIcon());
-    item.getItemMeta().getPersistentDataContainer().set(Keys.getFlagKey(), PersistentDataType.INTEGER, game.hashCode());
+    item.getItemMeta()
+        .getPersistentDataContainer()
+        .set(Keys.getFlagKey(), PersistentDataType.INTEGER, game.hashCode());
     return item;
   }
 
@@ -52,7 +64,9 @@ public class FlagManager {
     item.editMeta(
         meta ->
             meta.displayName(
-                lang.getRichLocalized("ctf.flag." + flag.getTeam().name().toLowerCase())));
+                Component.text(
+                    lang.getLocalized("ctf.flag." + flag.getTeam().name().toLowerCase()),
+                    flag.getTeam().getTeamMeta().getTextColor())));
     return item;
   }
 
@@ -127,9 +141,7 @@ public class FlagManager {
   }
 
   public Optional<Flag> getFlagByMaterial(@NotNull Material material) {
-    return flags.values().stream()
-        .filter(flag -> flag.getTeam().getIcon() == material)
-        .findFirst();
+    return flags.values().stream().filter(flag -> flag.getTeam().getIcon() == material).findFirst();
   }
 
   public void dropAtPlayer(Player player, Flag carriedFlag) {
@@ -138,15 +150,18 @@ public class FlagManager {
     player.getInventory().setItem(8, null);
     player.getInventory().setHelmet(null);
 
-    player.getLocation().getWorld().dropItem(
-        player.getLocation(),
-        getFlagItem(carriedFlag),
-        item -> {
-          item.setVelocity(Vector.fromJOML(new Vector3f(0f, 0.1f, 0f)));
-          item.getPersistentDataContainer()
+    player
+        .getLocation()
+        .getWorld()
+        .dropItem(
+            player.getLocation(),
+            getFlagItem(carriedFlag),
+            item -> {
+              item.setGlowing(true);
+              item.setVelocity(Vector.fromJOML(new Vector3f(0f, 0.1f, 0f)));
+              item.getPersistentDataContainer()
                   .set(Keys.getFlagKey(), PersistentDataType.INTEGER, game.hashCode());
-          item.setCanMobPickup(false);
-        }
-    );
+              item.setCanMobPickup(false);
+            });
   }
 }
