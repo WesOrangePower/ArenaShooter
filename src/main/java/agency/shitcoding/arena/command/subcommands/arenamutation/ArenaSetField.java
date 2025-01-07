@@ -28,6 +28,7 @@ import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.event.ClickEvent;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextDecoration;
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -70,7 +71,7 @@ public enum ArenaSetField {
                       + Arrays.toString(Powerup.values()));
               return;
             }
-            Location centerLocation = unshifted(((Player) p).getLocation().toCenterLocation());
+            Location centerLocation = unshifted(ar, ((Player) p).getLocation().toCenterLocation());
             LootPoint lootPoint = new LootPoint(ar.getLootPoints().size(), centerLocation, true, powerup, 0);
             ar.getLootPoints().add(lootPoint);
             arenaStorage.storeArena(ar);
@@ -130,18 +131,17 @@ public enum ArenaSetField {
             return;
           }
           Location upper = ar.getUpperBound();
-          Location location = unshifted(player.getLocation().toCenterLocation());
+          Location location = unshifted(ar, player.getLocation().toCenterLocation());
 
           if (location.getBlockX() >= upper.getBlockX()
               || location.getBlockY() >= upper.getBlockY()
               || location.getBlockZ() >= upper.getBlockZ()) {
             s.sendRichMessage(
-                "<dark_red>Lower boundary cannot have higher coordinates than upper boundary. Perhaps you meant UBOUND?");
+                "<gold>WARNING: Lower boundary cannot have higher coordinates than upper boundary. Reset UBOUND?");
             s.sendMessage(
                 locationComponent(location)
                     .append(Component.text(" ≥ ", NamedTextColor.DARK_RED, TextDecoration.BOLD))
                     .append(locationComponent(upper)));
-            return;
           }
           ar.setLowerBound(location);
           StorageProvider.getArenaStorage().storeArena(ar);
@@ -163,18 +163,17 @@ public enum ArenaSetField {
             return;
           }
           Location lower = ar.getLowerBound();
-          Location location = unshifted(player.getLocation().toCenterLocation());
+          Location location = unshifted(ar, player.getLocation().toCenterLocation());
 
           if (location.getBlockX() <= lower.getBlockX()
               || location.getBlockY() <= lower.getBlockY()
               || location.getBlockZ() <= lower.getBlockZ()) {
             s.sendRichMessage(
-                "<dark_red>Upper boundary cannot have lower coordinates than lower boundary. Perhaps you meant LBOUND?");
+                "<gold>WARNING: Upper boundary cannot have lower coordinates than lower boundary. Reset LBOUND?");
             s.sendMessage(
                 locationComponent(location)
                     .append(Component.text(" ≤ ", NamedTextColor.DARK_RED, TextDecoration.BOLD))
                     .append(locationComponent(lower)));
-            return;
           }
 
           ar.setUpperBound(location);
@@ -557,9 +556,14 @@ public enum ArenaSetField {
         .clickEvent(ClickEvent.runCommand("/tp " + l.getX() + " " + l.getY() + " " + l.getZ()));
   }
 
-  private static Location unshifted(Location location) {
+  private static Location unshifted(Arena arena, Location location) {
     var arenaWorld = WorldFactory.getInstance().findByWorld(location.getWorld().getName());
-    if (arenaWorld.isEmpty()) return null;
+    if (arenaWorld.isEmpty()) {
+      location.setWorld(
+        Bukkit.getWorld(arena.getName())
+      );
+      return location;
+    }
     var original = arenaWorld.get().getOrigin();
     location.setWorld(original.getLowerBound().getWorld());
     return location;
