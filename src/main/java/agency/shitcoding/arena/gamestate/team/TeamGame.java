@@ -3,20 +3,22 @@ package agency.shitcoding.arena.gamestate.team;
 import agency.shitcoding.arena.gamestate.Game;
 import agency.shitcoding.arena.localization.LangContext;
 import agency.shitcoding.arena.localization.LangPlayer;
-import agency.shitcoding.arena.models.Arena;
 import agency.shitcoding.arena.models.GameStage;
 import agency.shitcoding.arena.models.RuleSet;
 import agency.shitcoding.arena.statistics.GameOutcome;
 import agency.shitcoding.arena.worlds.ArenaWorld;
-import lombok.Getter;
-import net.kyori.adventure.text.Component;
-import org.bukkit.entity.Player;
-import org.bukkit.scoreboard.Team;
-
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
+import lombok.Getter;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
+import net.kyori.adventure.title.Title;
+import org.bukkit.entity.Player;
+import org.bukkit.scoreboard.Team;
+
+import static java.util.Objects.requireNonNull;
 
 @Getter
 public abstract class TeamGame extends Game {
@@ -113,6 +115,33 @@ public abstract class TeamGame extends Game {
         .forEach(score -> builder.append(score.getTeam().getTeamMeta().getDisplayComponent(new LangContext()))
             .append(Component.text(": " + score.getScore() + "\n")));
     return builder.build();
+  }
+
+  @Override
+  protected void showEndGameTitle(String reason, boolean intendedEnding, Object[] toFormat) {
+    var scores = teamManager.getScores();
+
+    var winningTeam = requireNonNull(scores.peek()).getTeam().getETeam();
+
+    for (Player player : players) {
+      var langPlayer = new LangPlayer(player);
+      langPlayer.sendRichLocalized("game.end.header");
+      var stats = getGameStatComponent();
+      player.sendMessage(stats);
+
+      var localizedReason = langPlayer.getLocalized(reason, toFormat);
+      langPlayer.sendRichLocalized("game.end.message", localizedReason);
+
+      if (intendedEnding) {
+        var playerTeam = teamManager.getTeam(player).orElseThrow().getETeam();
+        var key = winningTeam == playerTeam ? "menu.stat.item.win" : "menu.stat.item.loss";
+        var title =
+            Title.title(
+                Component.text(localizedReason, NamedTextColor.GREEN),
+                langPlayer.getRichLocalized(key));
+        player.showTitle(title);
+      }
+    }
   }
 
   @Override

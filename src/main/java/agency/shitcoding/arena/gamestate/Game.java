@@ -138,6 +138,17 @@ public abstract class Game {
               () -> ArenaShooter.getInstance().getStatisticsService().endGame(getGameOutcomes()));
     }
 
+    showEndGameTitle(reason, intendedEnding, toFormat);
+
+    if (intendedEnding) {
+      Bukkit.getScheduler()
+          .runTaskLater(ArenaShooter.getInstance(), this::unregister, GAME_END_TIMER_TICKS);
+    } else {
+      unregister();
+    }
+  }
+
+  protected void showEndGameTitle(String reason, boolean intendedEnding, Object[] toFormat) {
     Collections.sort(scores);
 
     for (Player player : players) {
@@ -157,13 +168,6 @@ public abstract class Game {
                 langPlayer.getRichLocalized("game.end.subtitle", place));
         player.showTitle(title);
       }
-    }
-
-    if (intendedEnding) {
-      Bukkit.getScheduler()
-          .runTaskLater(ArenaShooter.getInstance(), this::unregister, GAME_END_TIMER_TICKS);
-    } else {
-      unregister();
     }
   }
 
