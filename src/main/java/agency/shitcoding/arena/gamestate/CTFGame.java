@@ -8,6 +8,7 @@ import agency.shitcoding.arena.ArenaShooter;
 import agency.shitcoding.arena.gamestate.team.ETeam;
 import agency.shitcoding.arena.gamestate.team.GameTeam;
 import agency.shitcoding.arena.gamestate.team.TeamGame;
+import agency.shitcoding.arena.gamestate.team.TeamMeta;
 import agency.shitcoding.arena.localization.LangPlayer;
 import agency.shitcoding.arena.models.*;
 import agency.shitcoding.arena.worlds.ArenaWorld;
@@ -220,17 +221,17 @@ public class CTFGame extends TeamGame {
         .forEach(p -> p.sendRichLocalized(message, additionalArgsExtractor.apply(p)));
   }
 
-  protected void announce(CTFMessageAction messageAction, ETeam selfTeam, Player actor) {
-    announceTeam(selfTeam, messageAction.selfTeamAnnounceConstant);
+  protected void announce(CTFMessageAction messageAction, ETeam flagTeam, Player actor) {
+    announceTeam(flagTeam, messageAction.selfTeamAnnounceConstant);
     announceTeam(
-        selfTeam,
+        flagTeam,
         messageAction.selfTeamMessage,
-        p -> messageAction.getAdditionalArguments(p, actor, this));
-    announceOtherTeams(selfTeam, messageAction.otherTeamsAnnounceConstant);
+        p -> messageAction.getAdditionalArguments(p, actor, flagTeam, this));
+    announceOtherTeams(flagTeam, messageAction.otherTeamsAnnounceConstant);
     announceOtherTeams(
-        selfTeam,
+        flagTeam,
         messageAction.otherTeamsMessage,
-        p -> messageAction.getAdditionalArguments(p, actor, this));
+        p -> messageAction.getAdditionalArguments(p, actor, flagTeam, this));
   }
 
   @RequiredArgsConstructor
@@ -256,21 +257,29 @@ public class CTFGame extends TeamGame {
     private final AnnouncerConstant selfTeamAnnounceConstant;
     private final AnnouncerConstant otherTeamsAnnounceConstant;
 
-    public Object[] getAdditionalArguments(LangPlayer audience, Player player, CTFGame game) {
-      return new Object[] {
-        player.getName(),
-        game.getTeamManager()
-            .getTeam(player)
-            .map(GameTeam::getETeam)
-            .map(ETeam::getTeamMeta)
-            .map(
-                meta ->
-                    miniMessage()
-                        .serialize(
-                            Component.text(
-                                audience.getLocalized(meta.getDisplayName()), meta.getTextColor())))
-            .orElseThrow()
-      };
+    public Object[] getAdditionalArguments(
+        LangPlayer audience, Player player, ETeam flagTeam, CTFGame game) {
+      String playerTeam =
+          game.getTeamManager()
+              .getTeam(player)
+              .map(GameTeam::getETeam)
+              .map(ETeam::getTeamMeta)
+              .map(
+                  meta ->
+                      miniMessage()
+                          .serialize(
+                              Component.text(
+                                  audience.getLocalized(meta.getDisplayName()),
+                                  meta.getTextColor())))
+              .orElseThrow();
+      TeamMeta flagTeamMeta = flagTeam.getTeamMeta();
+      String flagTeamName =
+          miniMessage()
+              .serialize(
+                  Component.text(
+                      audience.getLocalized(flagTeamMeta.getDisplayName()),
+                      flagTeamMeta.getTextColor()));
+      return new Object[] {player.getName(), playerTeam, flagTeamName};
     }
   }
 }
