@@ -180,7 +180,7 @@ public class Tournament {
 
     for (Game game : games) {
       if (game != null) {
-        Queue<TeamScore> gameScores = ((TeamGame) game).getTeamManager().getScores();
+        List<TeamScore> gameScores = ((TeamGame) game).getTeamManager().getScores();
 
         for (TeamScore score : gameScores) {
           ETeam eTeam = score.getTeam().getETeam();

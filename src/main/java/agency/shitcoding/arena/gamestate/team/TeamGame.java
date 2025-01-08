@@ -121,7 +121,7 @@ public abstract class TeamGame extends Game {
   protected void showEndGameTitle(String reason, boolean intendedEnding, Object[] toFormat) {
     var scores = teamManager.getScores();
 
-    var winningTeam = requireNonNull(scores.peek()).getTeam().getETeam();
+    var winningTeam = requireNonNull(scores.getFirst()).getTeam().getETeam();
 
     for (Player player : players) {
       var langPlayer = new LangPlayer(player);

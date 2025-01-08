@@ -14,9 +14,8 @@ public class TeamManager {
 
   private final int maxPerTeam;
   private final Map<ETeam, GameTeam> teams;
-  private final Queue<TeamScore> scores = new PriorityQueue<>(
-      (o1, o2) -> o2.getScore() - o1.getScore()
-  );
+  private final List<TeamScore> scores = new ArrayList<>(ETeam.values().length);
+  private final Comparator<TeamScore> comparator = (o1, o2) -> o2.getScore() - o1.getScore();
 
   public TeamManager(int maxPerTeam, Scoreboard scoreboard) {
     this.maxPerTeam = maxPerTeam;
@@ -77,6 +76,7 @@ public class TeamManager {
     for (TeamScore score : scores) {
       if (score.getTeam() == team) {
         score.setScore(i);
+        scores.sort(comparator);
         return;
       }
     }
