@@ -23,4 +23,6 @@ public interface GameRules {
   boolean allowJoinAfterStart();
 
   ItemStack getMenuBaseItem();
+
+  boolean dropMostValuableWeaponOnDeath();
 }

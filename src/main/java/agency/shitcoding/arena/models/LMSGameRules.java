@@ -47,4 +47,9 @@ public class LMSGameRules implements GameRules {
   public ItemStack getMenuBaseItem() {
     return new ItemStack(Material.GOLDEN_APPLE);
   }
+
+  @Override
+  public boolean dropMostValuableWeaponOnDeath() {
+    return true;
+  }
 }

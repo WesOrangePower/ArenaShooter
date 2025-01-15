@@ -6,7 +6,9 @@ import agency.shitcoding.arena.localization.LangPlayer;
 import agency.shitcoding.arena.models.Keys;
 import agency.shitcoding.arena.models.LootPointMarker;
 import java.util.EnumMap;
+import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 import net.kyori.adventure.text.Component;
 import org.bukkit.GameMode;
@@ -56,6 +58,7 @@ public class FlagManager {
     item.getItemMeta()
         .getPersistentDataContainer()
         .set(Keys.getFlagKey(), PersistentDataType.INTEGER, game.hashCode());
+    item.lore(List.of(Component.text(UUID.randomUUID().toString())));
     return item;
   }
 

@@ -1,5 +1,7 @@
 package agency.shitcoding.arena.events.listeners;
 
+import static org.bukkit.Sound.ENTITY_PLAYER_HURT;
+
 import agency.shitcoding.arena.AnnouncerConstant;
 import agency.shitcoding.arena.ArenaShooter;
 import agency.shitcoding.arena.GameplayConstants;
@@ -12,16 +14,22 @@ import agency.shitcoding.arena.gamestate.GameOrchestrator;
 import agency.shitcoding.arena.gamestate.team.TeamGame;
 import agency.shitcoding.arena.gamestate.team.TeamManager;
 import agency.shitcoding.arena.localization.LangPlayer;
-import agency.shitcoding.arena.models.GameStage;
-import agency.shitcoding.arena.models.Weapon;
+import agency.shitcoding.arena.models.*;
+import java.util.List;
+import java.util.Optional;
+import java.util.Random;
+import java.util.UUID;
+import java.util.stream.Stream;
 import net.kyori.adventure.key.Key;
 import net.kyori.adventure.sound.Sound;
 import net.kyori.adventure.sound.Sound.Source;
+import net.kyori.adventure.text.Component;
 import org.bukkit.*;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.damage.DamageSource;
 import org.bukkit.damage.DamageType;
 import org.bukkit.entity.EntityType;
+import org.bukkit.entity.Item;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -32,15 +40,10 @@ import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.SkullMeta;
+import org.bukkit.persistence.PersistentDataType;
 import org.bukkit.util.Vector;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-
-import java.util.Optional;
-import java.util.Random;
-import java.util.stream.Stream;
-
-import static org.bukkit.Sound.ENTITY_PLAYER_HURT;
 
 public class DamageListener implements Listener {
 
@@ -222,6 +225,50 @@ public class DamageListener implements Listener {
         killer.playSound(killer, sound, .5f, 1f);
       }
     }
+  }
+
+  @EventHandler
+  public void dropItemOnFrag(GameFragEvent event) {
+    Item item;
+    ItemStack itemStack = null;
+    Player killer = event.getKiller();
+    Player victim = event.getVictim();
+    if (killer == null) return;
+    Game game = GameOrchestrator.getInstance().getGameByPlayer(victim).orElse(null);
+    if (game == null
+        || game.getGamestage() != GameStage.IN_PROGRESS
+        || !game.getRuleSet().getGameRules().dropMostValuableWeaponOnDeath()) return;
+    Location deathLocation = victim.getLocation();
+
+    for (int i = 7; i > 0 && itemStack == null; i--) {
+      System.out.printf(
+          "Player %s's item at slot %d is %s%n",
+          victim.getName(), i, victim.getInventory().getItem(i));
+      if (victim.getInventory().getItem(i) == null) continue;
+      itemStack = Weapon.getBySlot(i).getPowerUp().getItemStack();
+    }
+    if (itemStack == null) return;
+
+    itemStack.lore(List.of(Component.text(UUID.randomUUID().toString())));
+
+    item =
+        deathLocation
+            .getWorld()
+            .dropItemNaturally(
+                deathLocation,
+                itemStack,
+                i -> {
+                  i.getPersistentDataContainer()
+                      .set(Keys.LOOT_POINT_KEY, PersistentDataType.INTEGER, -1);
+                  i.setCanMobPickup(false);
+                });
+
+    Bukkit.getScheduler()
+        .runTaskLater(
+            ArenaShooter.getInstance(),
+            item::remove,
+            GameplayConstants.REMOVE_DEATH_DROP_AFTER_TICKS);
+    item.setVelocity(new Vector(0f, .2f, 0f));
   }
 
   @EventHandler

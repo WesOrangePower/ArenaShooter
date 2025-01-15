@@ -49,4 +49,9 @@ public class DMGameRules implements GameRules {
   public ItemStack getMenuBaseItem() {
     return new ItemStack(Weapon.GAUNTLET.item);
   }
+
+  @Override
+  public boolean dropMostValuableWeaponOnDeath() {
+    return true;
+  }
 }

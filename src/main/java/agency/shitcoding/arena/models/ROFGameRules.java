@@ -46,4 +46,9 @@ public class ROFGameRules implements GameRules {
   public ItemStack getMenuBaseItem() {
     return new ItemStack(Weapon.ROCKET_LAUNCHER.item);
   }
+
+  @Override
+  public boolean dropMostValuableWeaponOnDeath() {
+    return false;
+  }
 }

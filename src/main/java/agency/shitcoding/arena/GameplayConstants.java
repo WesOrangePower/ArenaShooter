@@ -75,6 +75,7 @@ public final class GameplayConstants {
   public static final double BASE_HEALTH = 20d;
   public static final boolean OVERDRIVE_HEALTH_TICK = true;
   public static final boolean OVERDRIVE_ARMOR_TICK = true;
+  public static final long REMOVE_DEATH_DROP_AFTER_TICKS = 20 * 10L;
 
   private GameplayConstants() {
   }
