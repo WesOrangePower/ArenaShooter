@@ -241,9 +241,6 @@ public class DamageListener implements Listener {
     Location deathLocation = victim.getLocation();
 
     for (int i = 7; i > 0 && itemStack == null; i--) {
-      System.out.printf(
-          "Player %s's item at slot %d is %s%n",
-          victim.getName(), i, victim.getInventory().getItem(i));
       if (victim.getInventory().getItem(i) == null) continue;
       itemStack = Weapon.getBySlot(i).getPowerUp().getItemStack();
     }

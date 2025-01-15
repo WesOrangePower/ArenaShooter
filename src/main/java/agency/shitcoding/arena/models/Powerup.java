@@ -262,8 +262,10 @@ public enum Powerup {
       return false;
     }
     int amount = weapon.ammoPerShot * 3;
-    if (weapon.ammo == Ammo.LIGHTNING) {
+    if (weapon == Weapon.LIGHTNING_GUN) {
       amount = 100;
+    } else if (weapon == Weapon.BFG9K) {
+      amount = 200;
     }
     if (!hasWeapon(player, weapon)) {
       giveWeapon(player, weapon);
