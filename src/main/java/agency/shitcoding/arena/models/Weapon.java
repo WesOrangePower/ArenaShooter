@@ -39,4 +39,26 @@ public enum Weapon {
         .filter(w -> w.item.equals(itemStack.getType()))
         .findFirst();
   }
+
+  public static Weapon getBySlot(int i) {
+    if (i < 0 || i > values().length) throw new IllegalArgumentException("Value out of range");
+
+    for (var weapon : values()) {
+      if (weapon.slot == i) return weapon;
+    }
+    throw new IllegalArgumentException("Weapon with slot " + i + " not found");
+  }
+
+  public Powerup getPowerUp() {
+    return switch (this) {
+      case GAUNTLET -> Powerup.GAUNTLET;
+      case MACHINE_GUN -> Powerup.MACHINE_GUN;
+      case LIGHTNING_GUN -> Powerup.LIGHTNING_GUN;
+      case SHOTGUN -> Powerup.SHOTGUN;
+      case ROCKET_LAUNCHER -> Powerup.ROCKET_LAUNCHER;
+      case RAILGUN -> Powerup.RAILGUN;
+      case PLASMA_GUN -> Powerup.PLASMA_GUN;
+      case BFG9K -> Powerup.BFG9K;
+    };
+  }
 }

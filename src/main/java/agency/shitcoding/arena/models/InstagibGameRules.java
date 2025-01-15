@@ -46,4 +46,9 @@ public class InstagibGameRules implements GameRules {
   public ItemStack getMenuBaseItem() {
     return new ItemStack(Weapon.RAILGUN.item);
   }
+
+  @Override
+  public boolean dropMostValuableWeaponOnDeath() {
+    return false;
+  }
 }
