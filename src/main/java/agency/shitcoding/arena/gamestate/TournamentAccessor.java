@@ -8,7 +8,7 @@ import org.jetbrains.annotations.Nullable;
 
 @Setter
 public class TournamentAccessor {
-  private static final Lazy<TournamentAccessor> instance = Lazy.of(TournamentAccessor::new);
+  private static TournamentAccessor instance = null;
   private Tournament tournament = null;
 
   public Optional<Tournament> getTournament() {
@@ -24,7 +24,7 @@ public class TournamentAccessor {
   }
 
   public static TournamentAccessor getInstance() {
-    return instance.get();
+    return instance == null ? (instance = new TournamentAccessor()) : instance;
   }
 
   private TournamentAccessor() {}

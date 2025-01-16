@@ -116,7 +116,7 @@ public class Arena implements Cloneable {
     Optional.ofNullable(player.getAttribute(Attribute.GENERIC_MAX_HEALTH))
         .map(AttributeInstance::getBaseValue)
         .ifPresent(player::setHealth);
-    if (!game.getRuleSet().getGameRules().doRespawn()
+    if (!game.getRuleSet().getDefaultGameRules().doRespawn()
         && game.getDiedOnce().contains(player)
         && game.getGamestage() == GameStage.IN_PROGRESS) {
       player.setGameMode(GameMode.SPECTATOR);
@@ -138,7 +138,7 @@ public class Arena implements Cloneable {
 
     player.teleport(lootPoint.getLocation(), PlayerTeleportEvent.TeleportCause.PLUGIN);
 
-    GameRules gameRules = game.getRuleSet().getGameRules();
+    GameRules gameRules = game.getRuleSet().getDefaultGameRules();
     List<Powerup> powerups = gameRules.spawnPowerups();
     Map<Ammo, Integer> ammoIntegerMap = gameRules.spawnAmmo();
     int spawnArmor = gameRules.spawnArmor();

@@ -10,7 +10,11 @@ import java.util.stream.Collectors;
 public class ROFGame extends DeathMatchGame {
 
   public ROFGame(ArenaWorld arena) {
-    super(arena, RuleSet.ROF);
+    this(arena, RuleSet.ROF, RuleSet.ROF.getDefaultGameRules());
+  }
+
+  public ROFGame(ArenaWorld arenaWorld, RuleSet ruleSet, GameRules gameRules) {
+    super(arenaWorld, ruleSet, gameRules);
   }
 
   @Override

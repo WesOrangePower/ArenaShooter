@@ -120,7 +120,7 @@ public class ArenaTournamentCmd extends CommandInst {
                   "command.tournament.status.arenas",
                   Array.of(t.getArenas()).map(Arena::getName).mkString(", "));
               reply("command.tournament.status.nextArena", t.peekNextArena().getName());
-              if (t.getRuleSet().getGameRules().hasTeams()) {
+              if (t.getRuleSet().getDefaultGameRules().hasTeams()) {
                 var lang = new LangContext("en");
                 sender.sendMessage(
                     "Teams: "

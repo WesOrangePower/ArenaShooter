@@ -237,7 +237,7 @@ public class DamageListener implements Listener {
     Game game = GameOrchestrator.getInstance().getGameByPlayer(victim).orElse(null);
     if (game == null
         || game.getGamestage() != GameStage.IN_PROGRESS
-        || !game.getRuleSet().getGameRules().dropMostValuableWeaponOnDeath()) return;
+        || !game.getRuleSet().getDefaultGameRules().dropMostValuableWeaponOnDeath()) return;
     Location deathLocation = victim.getLocation();
 
     for (int i = 7; i > 0 && itemStack == null; i--) {

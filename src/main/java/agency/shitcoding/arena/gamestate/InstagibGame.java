@@ -9,7 +9,11 @@ import org.jetbrains.annotations.NotNull;
 public class InstagibGame extends DeathMatchGame {
 
   public InstagibGame(ArenaWorld arena) {
-    super(arena, RuleSet.INSTAGIB);
+    this(arena, RuleSet.INSTAGIB, RuleSet.INSTAGIB.getDefaultGameRules());
+  }
+
+  public InstagibGame(ArenaWorld arenaWorld, RuleSet ruleSet, GameRules gameRules) {
+    super(arenaWorld, ruleSet, gameRules);
   }
 
   @Override

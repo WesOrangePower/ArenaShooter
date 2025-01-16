@@ -24,8 +24,8 @@ public class LMSGameRules implements GameRules {
   }
 
   @Override
-  public long gameTimerTicks() {
-    return 8L * 60L * 20L;
+  public long gameLengthSeconds() {
+    return 8L * 60L;
   }
 
   @Override
@@ -35,11 +35,6 @@ public class LMSGameRules implements GameRules {
 
   @Override
   public boolean hasTeams() {
-    return false;
-  }
-
-  @Override
-  public boolean allowJoinAfterStart() {
     return false;
   }
 

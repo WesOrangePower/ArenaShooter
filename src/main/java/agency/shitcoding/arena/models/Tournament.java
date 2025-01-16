@@ -49,7 +49,7 @@ public class Tournament {
     this.maxPlayerCount = maxPlayerCount;
     this.arenas = arenas;
     this.games = new Game[gameCount];
-    if (ruleSet.getGameRules().hasTeams()) {
+    if (ruleSet.getDefaultGameRules().hasTeams()) {
       playerTeams = new HashMap<>();
     } else {
       playerTeams = null;
@@ -84,7 +84,7 @@ public class Tournament {
     if (playerNames.contains(player.getName())) {
       return Either.left("Player already in tournament");
     }
-    if (ruleSet.getGameRules().hasTeams() && team == null) {
+    if (ruleSet.getDefaultGameRules().hasTeams() && team == null) {
       return Either.left("Team required");
     }
 

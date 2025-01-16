@@ -57,6 +57,7 @@ public abstract class Game {
                       1f));
   protected Map<Player, BossBar> bossBarMap = new ConcurrentHashMap<>();
   protected RuleSet ruleSet;
+  protected GameRules gameRules;
   protected Arena arena;
   protected ArenaWorld arenaWorld;
   protected BukkitTask gameTimerTask;
@@ -66,11 +67,12 @@ public abstract class Game {
   private Instant gameStart;
   private PlayerWaitingManager waitingManager;
 
-  protected Game(ArenaWorld arenaWorld, RuleSet ruleSet) {
+  protected Game(ArenaWorld arenaWorld, RuleSet ruleSet, GameRules gameRules) {
     var arena = arenaWorld.getShifted();
     this.arenaWorld = arenaWorld;
     this.arena = arena;
     this.ruleSet = ruleSet;
+    this.gameRules = gameRules;
     this.scoreboard = GameOrchestrator.getInstance().getScoreboard();
     arena
         .getLowerBound()
@@ -238,8 +240,8 @@ public abstract class Game {
 
   protected void onGameSecondElapsed() {
     long remainingSeconds =
-        ruleSet.getGameLenSeconds() - (Instant.now().getEpochSecond() - gameStart.getEpochSecond());
-    float fractionBase = ((float) remainingSeconds) / ruleSet.getGameLenSeconds();
+        gameRules.gameLengthSeconds() - (Instant.now().getEpochSecond() - gameStart.getEpochSecond());
+    float fractionBase = ((float) remainingSeconds) / gameRules.gameLengthSeconds();
     float fraction = Math.min(BossBar.MAX_PROGRESS, Math.max(BossBar.MIN_PROGRESS, fractionBase));
     boolean fractionIsOne = fraction < Vector.getEpsilon();
 

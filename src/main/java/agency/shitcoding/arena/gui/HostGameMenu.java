@@ -114,7 +114,7 @@ public class HostGameMenu {
         .filter(ruleSet -> chosenArena.getSupportedRuleSets().contains(ruleSet))
         .map(ruleSet -> {
               ItemSlot build = ItemBuilder.builder()
-                  .withItemStack(ruleSet.getGameRules().getMenuBaseItem())
+                  .withItemStack(ruleSet.getDefaultGameRules().getMenuBaseItem())
                   .withName(Component.text(player.getLocalized(ruleSet.getName()), NamedTextColor.GOLD))
                   .withClickAction(ruleSetClickAction(ruleSet))
                   .build();
@@ -127,7 +127,7 @@ public class HostGameMenu {
   private ClickAction ruleSetClickAction(RuleSet ruleSet) {
     return (clickType, clickContext) -> {
       this.chosenRuleSet = ruleSet;
-      if (ruleSet.getGameRules().hasTeams()) {
+      if (ruleSet.getDefaultGameRules().hasTeams()) {
         chooseTeam();
       } else {
         execute();

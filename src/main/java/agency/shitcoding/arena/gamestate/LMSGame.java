@@ -1,5 +1,6 @@
 package agency.shitcoding.arena.gamestate;
 
+import agency.shitcoding.arena.models.GameRules;
 import agency.shitcoding.arena.models.GameStage;
 import agency.shitcoding.arena.models.RuleSet;
 import agency.shitcoding.arena.statistics.GameOutcome;
@@ -15,9 +16,12 @@ public class LMSGame extends DeathMatchGame {
   private Player winner;
 
   public LMSGame(ArenaWorld arena) {
-    super(arena, RuleSet.LMS);
+    this(arena, RuleSet.LMS, RuleSet.LMS.getDefaultGameRules());
   }
 
+  public LMSGame(ArenaWorld arenaWorld, RuleSet ruleSet, GameRules gameRules) {
+    super(arenaWorld, ruleSet, gameRules);
+  }
 
   @Override
   public void onPlayerDeath(Player player) {

@@ -3,6 +3,7 @@ package agency.shitcoding.arena.gamestate.team;
 import agency.shitcoding.arena.gamestate.Game;
 import agency.shitcoding.arena.localization.LangContext;
 import agency.shitcoding.arena.localization.LangPlayer;
+import agency.shitcoding.arena.models.GameRules;
 import agency.shitcoding.arena.models.GameStage;
 import agency.shitcoding.arena.models.RuleSet;
 import agency.shitcoding.arena.statistics.GameOutcome;
@@ -26,9 +27,13 @@ public abstract class TeamGame extends Game {
   protected TeamManager teamManager;
 
   protected TeamGame(ArenaWorld arenaWorld, RuleSet ruleSet) {
-    super(arenaWorld, ruleSet);
+    this(arenaWorld, ruleSet, ruleSet.getDefaultGameRules());
+  }
+
+  public TeamGame(ArenaWorld arenaWorld, RuleSet ruleSet, GameRules gameRules) {
+    super(arenaWorld, ruleSet, gameRules);
     int maxPerTeam = ruleSet.getMaxPlayers() / 2;
-    teamManager = new TeamManager(maxPerTeam, getScoreboard());
+    this.teamManager = new TeamManager(maxPerTeam, getScoreboard());
   }
 
   @Override

@@ -23,8 +23,8 @@ public class ROFGameRules implements GameRules {
   }
 
   @Override
-  public long gameTimerTicks() {
-    return 6L * 60L * 20L;
+  public long gameLengthSeconds() {
+    return 6L * 60L;
   }
 
   @Override
@@ -35,11 +35,6 @@ public class ROFGameRules implements GameRules {
   @Override
   public boolean hasTeams() {
     return false;
-  }
-
-  @Override
-  public boolean allowJoinAfterStart() {
-    return true;
   }
 
   @Override

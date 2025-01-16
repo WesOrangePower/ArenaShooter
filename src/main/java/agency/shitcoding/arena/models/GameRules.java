@@ -13,14 +13,11 @@ public interface GameRules {
 
   int spawnArmor();
 
-  long gameTimerTicks();
+  long gameLengthSeconds();
 
   boolean doRespawn();
 
   boolean hasTeams();
-
-  @Deprecated
-  boolean allowJoinAfterStart();
 
   ItemStack getMenuBaseItem();
 

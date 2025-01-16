@@ -45,16 +45,20 @@ public class ArenaHostCmd extends CommandInst {
   }
 
   private void hostGameSync() {
+    String broadcastKey;
     Game game = GameOrchestrator.getInstance().createGame(ruleSet, arena, (Player) sender);
     if (game instanceof TeamGame teamGame) {
       teamGame.addPlayer((Player) sender, team);
+      broadcastKey = "command.host.broadcast.team";
     } else {
       game.addPlayer((Player) sender);
+      broadcastKey = "command.host.broadcast";
     }
+
 
     Lobby.getInstance().getPlayersInLobby().stream().map(LangPlayer::new)
         .forEach(player -> player.sendRichLocalized(
-            "command.host.broadcast",
+            broadcastKey,
             sender.getName(), player.getLocalized(ruleSet.getName()), arena.getName()
         ));
   }
@@ -105,7 +109,7 @@ public class ArenaHostCmd extends CommandInst {
       return false;
     }
 
-    boolean isTeamGame = ruleSet.getGameRules().hasTeams();
+    boolean isTeamGame = ruleSet.getDefaultGameRules().hasTeams();
     if (isTeamGame && args.length < ARG_TEAM + 1) {
       lang.sendRichLocalized("command.host.teamArgumentRequired", ruleSet.name(), arena.getName());
       return false;
