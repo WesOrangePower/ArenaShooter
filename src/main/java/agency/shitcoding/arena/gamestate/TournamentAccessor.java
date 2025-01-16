@@ -1,7 +1,6 @@
 package agency.shitcoding.arena.gamestate;
 
 import agency.shitcoding.arena.models.Tournament;
-import io.vavr.Lazy;
 import java.util.Optional;
 import lombok.Setter;
 import org.jetbrains.annotations.Nullable;
