@@ -102,7 +102,7 @@ public abstract class Game {
             });
     boolean isEmptyWaiting = gamestage == GameStage.WAITING && players.isEmpty();
     boolean isTooFewPlayers =
-        gamestage == GameStage.IN_PROGRESS && players.size() < ruleSet.getMinPlayers();
+        gamestage == GameStage.IN_PROGRESS && players.size() < gameRules.minPlayers();
     if (isEmptyWaiting || isTooFewPlayers) {
       endGame("game.end.notEnoughPlayers", false);
     }
@@ -298,7 +298,7 @@ public abstract class Game {
   }
 
   public void addPlayer(Player player) {
-    if (players.size() >= ruleSet.getMaxPlayers()) {
+    if (players.size() >= gameRules.maxPlayers()) {
       LangPlayer.of(player).sendRichLocalized("game.full");
     }
     if (waitingManager == null) {

@@ -3,28 +3,29 @@ package agency.shitcoding.arena.models;
 import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 import java.util.Map;
-import org.bukkit.inventory.ItemStack;
+import lombok.Getter;
 
 /**
  * Is a builder for {@link CustomGameRules}. Field names should be the same as methods in {@link
  * GameRules} interface
  */
 @SuppressWarnings("unused")
+@Getter
 public final class CustomGameRulesBuilder {
   private Map<Ammo, Integer> spawnAmmo = null;
   private List<Powerup> spawnPowerups = null;
   private Integer spawnArmor = null;
   private Long gameLengthSeconds = null;
   private Boolean doRespawn = null;
-  private Boolean hasTeams = null;
-  private ItemStack getMenuBaseItem = null;
   private Boolean dropMostValuableWeaponOnDeath = null;
+  private Integer maxPlayers = null;
+  private Integer minPlayers = null;
 
   public static CustomGameRulesBuilder iWantToFillThemAllManually() {
     return new CustomGameRulesBuilder();
   }
 
-  public static CustomGameRulesBuilder basedOn(Class<? extends GameRules> baseGameRules) {
+  public static CustomGameRulesBuilder basedOn(GameRules baseGameRules) {
     var builder = new CustomGameRulesBuilder();
 
     var fields = CustomGameRulesBuilder.class.getDeclaredFields();
@@ -35,7 +36,7 @@ public final class CustomGameRulesBuilder {
 
       try {
         var setter = CustomGameRulesBuilder.class.getDeclaredMethod(setterName, field.getType());
-        var value = baseGameRules.getDeclaredMethod(field.getName()).invoke(baseGameRules);
+        var value = baseGameRules.getClass().getMethod(field.getName()).invoke(baseGameRules);
         setter.invoke(builder, value);
       } catch (InvocationTargetException | NoSuchMethodException | IllegalAccessException e) {
         throw new RuntimeException(e);
@@ -52,9 +53,9 @@ public final class CustomGameRulesBuilder {
         spawnArmor,
         gameLengthSeconds,
         doRespawn,
-        hasTeams,
-        getMenuBaseItem,
-        dropMostValuableWeaponOnDeath);
+        dropMostValuableWeaponOnDeath,
+        maxPlayers,
+        minPlayers);
   }
 
   private CustomGameRulesBuilder() {}
@@ -84,19 +85,19 @@ public final class CustomGameRulesBuilder {
     return this;
   }
 
-  public CustomGameRulesBuilder setHasTeams(Boolean hasTeams) {
-    this.hasTeams = hasTeams;
-    return this;
-  }
-
-  public CustomGameRulesBuilder setGetMenuBaseItem(ItemStack getMenuBaseItem) {
-    this.getMenuBaseItem = getMenuBaseItem;
-    return this;
-  }
-
   public CustomGameRulesBuilder setDropMostValuableWeaponOnDeath(
       Boolean dropMostValuableWeaponOnDeath) {
     this.dropMostValuableWeaponOnDeath = dropMostValuableWeaponOnDeath;
+    return this;
+  }
+
+  public CustomGameRulesBuilder setMaxPlayers(Integer maxPlayers) {
+    this.maxPlayers = maxPlayers;
+    return this;
+  }
+
+  public CustomGameRulesBuilder setMinPlayers(Integer minPlayers) {
+    this.minPlayers = minPlayers;
     return this;
   }
 }

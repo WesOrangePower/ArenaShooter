@@ -49,7 +49,7 @@ public class Tournament {
     this.maxPlayerCount = maxPlayerCount;
     this.arenas = arenas;
     this.games = new Game[gameCount];
-    if (ruleSet.getDefaultGameRules().hasTeams()) {
+    if (ruleSet.isTeamBased()) {
       playerTeams = new HashMap<>();
     } else {
       playerTeams = null;
@@ -84,7 +84,7 @@ public class Tournament {
     if (playerNames.contains(player.getName())) {
       return Either.left("Player already in tournament");
     }
-    if (ruleSet.getDefaultGameRules().hasTeams() && team == null) {
+    if (ruleSet.isTeamBased() && team == null) {
       return Either.left("Team required");
     }
 
@@ -118,7 +118,7 @@ public class Tournament {
     }
 
     final int gamePointer = arenaPointer;
-    currentGame = GameOrchestrator.getInstance().createGame(ruleSet, nextArena(), null);
+    currentGame = GameOrchestrator.getInstance().createGame(ruleSet, nextArena(), null, ruleSet.getDefaultGameRules());
     games[gamePointer] = currentGame;
 
     for (String playerName : playerNames) {

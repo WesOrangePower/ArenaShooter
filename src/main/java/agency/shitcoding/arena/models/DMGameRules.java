@@ -27,7 +27,7 @@ public class DMGameRules implements GameRules {
 
   @Override
   public long gameLengthSeconds() {
-    return 5L * 60L;
+    return 10L * 60L;
   }
 
   @Override
@@ -36,17 +36,17 @@ public class DMGameRules implements GameRules {
   }
 
   @Override
-  public boolean hasTeams() {
-    return false;
-  }
-
-  @Override
-  public ItemStack getMenuBaseItem() {
-    return new ItemStack(Weapon.GAUNTLET.item);
-  }
-
-  @Override
   public boolean dropMostValuableWeaponOnDeath() {
     return true;
+  }
+
+  @Override
+  public int maxPlayers() {
+    return 32;
+  }
+
+  @Override
+  public int minPlayers() {
+    return 2;
   }
 }

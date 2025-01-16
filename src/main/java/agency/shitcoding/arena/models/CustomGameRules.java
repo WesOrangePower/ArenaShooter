@@ -1,21 +1,21 @@
 package agency.shitcoding.arena.models;
 
-import lombok.RequiredArgsConstructor;
-import org.bukkit.inventory.ItemStack;
-
 import java.util.List;
 import java.util.Map;
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 
+@Getter
 @RequiredArgsConstructor
 public class CustomGameRules implements GameRules {
-  private final Map<Ammo, Integer> spawnAmmo ;
-  private final List<Powerup> spawnPowerups ;
-  private final Integer spawnArmor ;
-  private final Long gameLengthSeconds ;
-  private final Boolean doRespawn ;
-  private final Boolean hasTeams ;
-  private final ItemStack getMenuBaseItem ;
-  private final Boolean dropMostValuableWeaponOnDeath ;
+  private final Map<Ammo, Integer> spawnAmmo;
+  private final List<Powerup> spawnPowerups;
+  private final Integer spawnArmor;
+  private final Long gameLengthSeconds;
+  private final Boolean doRespawn;
+  private final Boolean dropMostValuableWeaponOnDeath;
+  private final Integer maxPlayers;
+  private final Integer minPlayers;
 
   @Override
   public Map<Ammo, Integer> spawnAmmo() {
@@ -43,17 +43,17 @@ public class CustomGameRules implements GameRules {
   }
 
   @Override
-  public boolean hasTeams() {
-    return hasTeams;
-  }
-
-  @Override
-  public ItemStack getMenuBaseItem() {
-    return getMenuBaseItem;
-  }
-
-  @Override
   public boolean dropMostValuableWeaponOnDeath() {
     return dropMostValuableWeaponOnDeath;
+  }
+
+  @Override
+  public int maxPlayers() {
+    return maxPlayers;
+  }
+
+  @Override
+  public int minPlayers() {
+    return minPlayers;
   }
 }

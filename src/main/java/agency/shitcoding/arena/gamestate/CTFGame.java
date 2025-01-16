@@ -30,8 +30,8 @@ public class CTFGame extends TeamGame {
     return lootPointFilter;
   }
 
-  public CTFGame(ArenaWorld arenaWorld) {
-    super(arenaWorld, RuleSet.CTF);
+  public CTFGame(ArenaWorld arenaWorld, RuleSet ruleSet, GameRules gameRules) {
+    super(arenaWorld, ruleSet, gameRules);
 
     var lps = arenaWorld.getShifted().getLootPoints();
     var hasRedTeamBase =
@@ -52,6 +52,10 @@ public class CTFGame extends TeamGame {
     if (!hasRedTeamSpawn || !hasBlueTeamSpawn) {
       throw new IllegalStateException("CTF game must have both red and blue team spawns");
     }
+  }
+
+  public CTFGame(ArenaWorld arenaWorld) {
+    this(arenaWorld, RuleSet.CTF, RuleSet.CTF.getDefaultGameRules());
   }
 
   @Override

@@ -48,7 +48,7 @@ public final class Lobby {
     player.setHealth(20);
     player.setFoodLevel(20);
     player.setLevel(0);
-    player.setExp(0f);
+    player.setLevel(100);
     player.clearActivePotionEffects();
     player.teleport(getLocation());
     player.setGameMode(GameMode.ADVENTURE);

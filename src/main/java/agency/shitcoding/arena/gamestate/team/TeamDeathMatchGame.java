@@ -1,5 +1,6 @@
 package agency.shitcoding.arena.gamestate.team;
 
+import agency.shitcoding.arena.models.GameRules;
 import agency.shitcoding.arena.models.RuleSet;
 import agency.shitcoding.arena.worlds.ArenaWorld;
 import org.bukkit.entity.Player;
@@ -7,7 +8,10 @@ import org.bukkit.entity.Player;
 public class TeamDeathMatchGame extends TeamGame {
 
   protected TeamDeathMatchGame(ArenaWorld arena, RuleSet ruleSet) {
-    super(arena, ruleSet);
+    this(arena, ruleSet, ruleSet.getDefaultGameRules());
+  }
+  public TeamDeathMatchGame(ArenaWorld arena, RuleSet ruleSet, GameRules gameRules) {
+    super(arena, ruleSet, gameRules);
   }
 
   @Override

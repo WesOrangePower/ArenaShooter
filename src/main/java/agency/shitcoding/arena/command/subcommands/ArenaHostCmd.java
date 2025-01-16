@@ -2,17 +2,20 @@ package agency.shitcoding.arena.command.subcommands;
 
 import agency.shitcoding.arena.command.ArenaDeathMatchCommand;
 import agency.shitcoding.arena.command.CommandInst;
-import agency.shitcoding.arena.gamestate.Game;
-import agency.shitcoding.arena.gamestate.GameOrchestrator;
-import agency.shitcoding.arena.gamestate.Lobby;
-import agency.shitcoding.arena.gamestate.TournamentAccessor;
+import agency.shitcoding.arena.gamestate.*;
 import agency.shitcoding.arena.gamestate.team.ETeam;
 import agency.shitcoding.arena.gamestate.team.TeamGame;
 import agency.shitcoding.arena.localization.LangPlayer;
 import agency.shitcoding.arena.models.Arena;
+import agency.shitcoding.arena.models.GameRules;
 import agency.shitcoding.arena.models.RuleSet;
 import agency.shitcoding.arena.storage.StorageProvider;
 import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
+
+import com.google.gson.JsonSyntaxException;
+import com.google.gson.stream.MalformedJsonException;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
@@ -26,8 +29,8 @@ public class ArenaHostCmd extends CommandInst {
 
   private RuleSet ruleSet;
   private Arena arena;
-
   private ETeam team;
+  private GameRules gameRules;
 
   public ArenaHostCmd(@NotNull CommandSender sender, @NotNull String[] args) {
     super(sender, args);
@@ -46,7 +49,7 @@ public class ArenaHostCmd extends CommandInst {
 
   private void hostGameSync() {
     String broadcastKey;
-    Game game = GameOrchestrator.getInstance().createGame(ruleSet, arena, (Player) sender);
+    Game game = GameOrchestrator.getInstance().createGame(ruleSet, arena, (Player) sender, gameRules);
     if (game instanceof TeamGame teamGame) {
       teamGame.addPlayer((Player) sender, team);
       broadcastKey = "command.host.broadcast.team";
@@ -109,7 +112,9 @@ public class ArenaHostCmd extends CommandInst {
       return false;
     }
 
-    boolean isTeamGame = ruleSet.getDefaultGameRules().hasTeams();
+    boolean isTeamGame = ruleSet.isTeamBased();
+    int maxArgs = ARG_MIN_LEN + (isTeamGame ? 1 : 0);
+
     if (isTeamGame && args.length < ARG_TEAM + 1) {
       lang.sendRichLocalized("command.host.teamArgumentRequired", ruleSet.name(), arena.getName());
       return false;
@@ -124,6 +129,27 @@ public class ArenaHostCmd extends CommandInst {
       }
     }
 
+    if (args.length > maxArgs) {
+      //noinspection RedundantIfStatement Not redundant if we add more validation in the future
+      if (!parseAdditionalArgs(args, maxArgs, lang)) {
+        return false;
+      }
+    } else {
+      gameRules = ruleSet.getDefaultGameRules();
+    }
+
+    return true;
+  }
+
+  private boolean parseAdditionalArgs(@NotNull String[] args, int maxArgs, LangPlayer lang) {
+    String[] subArgs = Arrays.copyOfRange(args, maxArgs, args.length);
+    String trailing = String.join(" ", subArgs);
+    try {
+      this.gameRules = new GameRuleSerializer().deserialize(trailing);
+    } catch (JsonSyntaxException e) {
+      lang.sendRichLocalized("arena.host.invalidGameRules");
+      return false;
+    }
     return true;
   }
 }

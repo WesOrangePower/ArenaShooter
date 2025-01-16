@@ -46,7 +46,7 @@ class TournamentInputValidator {
     }
 
     ETeam et = null;
-    if (tournament.getRuleSet().getDefaultGameRules().hasTeams()) {
+    if (tournament.getRuleSet().isTeamBased()) {
       if (team == null) {
         return Validation.invalid("Team is required for this tournament");
       }

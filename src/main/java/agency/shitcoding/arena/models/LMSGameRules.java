@@ -34,17 +34,17 @@ public class LMSGameRules implements GameRules {
   }
 
   @Override
-  public boolean hasTeams() {
-    return false;
-  }
-
-  @Override
-  public ItemStack getMenuBaseItem() {
-    return new ItemStack(Material.GOLDEN_APPLE);
-  }
-
-  @Override
   public boolean dropMostValuableWeaponOnDeath() {
     return true;
+  }
+
+  @Override
+  public int maxPlayers() {
+    return 32;
+  }
+
+  @Override
+  public int minPlayers() {
+    return 2;
   }
 }

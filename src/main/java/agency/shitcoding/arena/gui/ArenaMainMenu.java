@@ -214,7 +214,7 @@ public class ArenaMainMenu {
         .withName(name)
         .withMaterial(material)
         .withLoreLine(Component.text(player.getLocalized("menu.joinButton.playerCount",
-            game.getPlayers().size(), game.getRuleSet().getMaxPlayers()
+            game.getPlayers().size(), game.getGameRules().maxPlayers()
         )))
         .withLoreLine(Component.text(Arrays.toString(playerNames)))
         .withClickAction((type, ctx) -> arenaJoinClickAction(player.getPlayer(), game))

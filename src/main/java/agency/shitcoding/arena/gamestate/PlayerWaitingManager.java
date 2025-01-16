@@ -25,7 +25,7 @@ public class PlayerWaitingManager {
   }
 
   private void awaitingCycle() {
-    if (game.getPlayers().size() >= game.getRuleSet().getMinPlayers()) {
+    if (game.getPlayers().size() >= game.getGameRules().minPlayers()) {
       if (gameStartingTask == null) {
         secondsElapsed = 0;
         gameStartingTask = Bukkit.getScheduler().runTaskTimer(
@@ -50,7 +50,7 @@ public class PlayerWaitingManager {
         .forEach(p -> p.sendRichLocalized(
             "game.waiting.waitingForPlayers",
                 game.getPlayers().size(),
-                game.getRuleSet().getMinPlayers()
+                game.getGameRules().minPlayers()
             )
         );
   }
@@ -64,7 +64,7 @@ public class PlayerWaitingManager {
           .forEach(p -> p.sendRichLocalized(
               "game.waiting.startTimer",
               game.getPlayers().size(),
-              game.getRuleSet().getMaxPlayers(),
+              game.getGameRules().maxPlayers(),
               untilStart
           ));
     }

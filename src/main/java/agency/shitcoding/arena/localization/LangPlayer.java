@@ -7,6 +7,7 @@ import lombok.Getter;
 import net.kyori.adventure.text.Component;
 import org.bukkit.entity.Player;
 import org.bukkit.persistence.PersistentDataType;
+import org.checkerframework.checker.i18n.qual.LocalizableKey;
 
 @Getter
 public class LangPlayer {
@@ -53,7 +54,7 @@ public class LangPlayer {
     player.sendMessage(getLocalized(key, args));
   }
 
-  public void sendRichLocalized(String key, Object... args) {
+  public void sendRichLocalized(@LocalizableKey String key, Object... args) {
     player.sendRichMessage(langContext.getLocalized(key, args));
   }
 

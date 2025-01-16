@@ -32,7 +32,7 @@ public abstract class TeamGame extends Game {
 
   public TeamGame(ArenaWorld arenaWorld, RuleSet ruleSet, GameRules gameRules) {
     super(arenaWorld, ruleSet, gameRules);
-    int maxPerTeam = ruleSet.getMaxPlayers() / 2;
+    int maxPerTeam = gameRules.maxPlayers() / 2;
     this.teamManager = new TeamManager(maxPerTeam, getScoreboard());
   }
 

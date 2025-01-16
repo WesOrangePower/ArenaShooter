@@ -2,6 +2,7 @@ package agency.shitcoding.arena.gamestate;
 
 import agency.shitcoding.arena.localization.LangPlayer;
 import agency.shitcoding.arena.models.Arena;
+import agency.shitcoding.arena.models.GameRules;
 import agency.shitcoding.arena.models.RuleSet;
 import agency.shitcoding.arena.worlds.WorldFactory;
 import java.util.HashSet;
@@ -32,12 +33,12 @@ public final class GameOrchestrator {
    * @param hoster Nullable, sends a start message if exists
    * @return the created Game
    */
-  public Game createGame(RuleSet ruleSet, Arena arena, @Nullable Player hoster) {
+  public Game createGame(RuleSet ruleSet, Arena arena, @Nullable Player hoster, GameRules gameRules) {
     LangPlayer langPlayer = LangPlayer.of(hoster);
 
     var worldArena = WorldFactory.getInstance().newWorld(arena);
 
-    Game game = ruleSet.getGameFactory().createGame(worldArena);
+    Game game = ruleSet.getGameFactory().createGame(worldArena, gameRules);
     games.add(game);
     return game;
   }

@@ -3,12 +3,22 @@ package agency.shitcoding.arena;
 import agency.shitcoding.arena.command.ArenaDeathMatchCommandInvoker;
 import agency.shitcoding.arena.events.PortalListener;
 import agency.shitcoding.arena.events.listeners.*;
+import agency.shitcoding.arena.events.listeners.protocol.AnvilTextInputPacketAdapter;
 import agency.shitcoding.arena.gamestate.CleanUp;
 import agency.shitcoding.arena.gamestate.Game;
 import agency.shitcoding.arena.gamestate.GameOrchestrator;
+import agency.shitcoding.arena.gui.TextInputClickAction;
 import agency.shitcoding.arena.statistics.StatisticsService;
 import agency.shitcoding.arena.statistics.StatisticsServiceImpl;
 import agency.shitcoding.arena.storage.CosmeticsUpdater;
+import com.comphenix.protocol.PacketType;
+import com.comphenix.protocol.ProtocolLib;
+import com.comphenix.protocol.ProtocolLibrary;
+import com.comphenix.protocol.ProtocolManager;
+import com.comphenix.protocol.events.ListenerPriority;
+import com.comphenix.protocol.events.PacketAdapter;
+import com.comphenix.protocol.events.PacketContainer;
+import com.comphenix.protocol.events.PacketEvent;
 import com.github.yannicklamprecht.worldborder.api.WorldBorderApi;
 import com.github.yannicklamprecht.worldborder.plugin.PersistenceWrapper;
 import java.io.File;
@@ -26,6 +36,7 @@ public final class ArenaShooter extends JavaPlugin {
 
   private ArenaWorldBorderApi worldBorderApi;
   private StatisticsService statisticsService;
+  private ProtocolManager protocolManager;
 
   public static ArenaShooter getInstance() {
     return getPlugin(ArenaShooter.class);
@@ -56,6 +67,9 @@ public final class ArenaShooter extends JavaPlugin {
     }
     worldBorderApi = new ArenaWorldBorderApi(
         (PersistenceWrapper) worldBorderApiRegisteredServiceProvider.getProvider());
+
+    this.protocolManager = ProtocolLibrary.getProtocolManager();
+    protocolManager.addPacketListener(new AnvilTextInputPacketAdapter());
   }
 
   private void initSchedulers() {
@@ -110,7 +124,7 @@ public final class ArenaShooter extends JavaPlugin {
           new AutoClickerBlocker(),
           new MessageListener(),
           new DoorTriggerListener(),
-          new CTFFlagListener()
+          new CTFFlagListener(),
         };
 
     for (Listener listener : listeners) {

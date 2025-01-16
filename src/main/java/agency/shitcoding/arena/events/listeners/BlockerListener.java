@@ -1,5 +1,6 @@
 package agency.shitcoding.arena.events.listeners;
 
+import agency.shitcoding.arena.events.listeners.protocol.AnvilTextInputPacketAdapter;
 import agency.shitcoding.arena.gamestate.Game;
 import agency.shitcoding.arena.gamestate.GameOrchestrator;
 import agency.shitcoding.arena.gamestate.team.GameTeam;
@@ -31,6 +32,7 @@ public class BlockerListener implements Listener {
     GameOrchestrator.getInstance()
         .getGameByPlayer(event.getPlayer())
         .ifPresent(game -> game.removePlayer(event.getPlayer()));
+    AnvilTextInputPacketAdapter.getCurrentInput().remove(event.getPlayer());
   }
 
   @EventHandler

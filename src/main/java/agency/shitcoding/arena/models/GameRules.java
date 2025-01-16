@@ -1,7 +1,5 @@
 package agency.shitcoding.arena.models;
 
-import org.bukkit.inventory.ItemStack;
-
 import java.util.List;
 import java.util.Map;
 
@@ -17,9 +15,9 @@ public interface GameRules {
 
   boolean doRespawn();
 
-  boolean hasTeams();
-
-  ItemStack getMenuBaseItem();
-
   boolean dropMostValuableWeaponOnDeath();
+  
+  int maxPlayers();
+
+  int minPlayers();
 }

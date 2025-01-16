@@ -33,17 +33,17 @@ public class InstagibGameRules implements GameRules {
   }
 
   @Override
-  public boolean hasTeams() {
-    return false;
-  }
-
-  @Override
-  public ItemStack getMenuBaseItem() {
-    return new ItemStack(Weapon.RAILGUN.item);
-  }
-
-  @Override
   public boolean dropMostValuableWeaponOnDeath() {
     return false;
+  }
+
+  @Override
+  public int maxPlayers() {
+    return 32;
+  }
+
+  @Override
+  public int minPlayers() {
+    return 2;
   }
 }
