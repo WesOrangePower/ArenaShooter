@@ -7,23 +7,17 @@ import agency.shitcoding.arena.events.listeners.protocol.AnvilTextInputPacketAda
 import agency.shitcoding.arena.gamestate.CleanUp;
 import agency.shitcoding.arena.gamestate.Game;
 import agency.shitcoding.arena.gamestate.GameOrchestrator;
-import agency.shitcoding.arena.gui.TextInputClickAction;
 import agency.shitcoding.arena.statistics.StatisticsService;
 import agency.shitcoding.arena.statistics.StatisticsServiceImpl;
 import agency.shitcoding.arena.storage.CosmeticsUpdater;
-import com.comphenix.protocol.PacketType;
-import com.comphenix.protocol.ProtocolLib;
 import com.comphenix.protocol.ProtocolLibrary;
 import com.comphenix.protocol.ProtocolManager;
-import com.comphenix.protocol.events.ListenerPriority;
-import com.comphenix.protocol.events.PacketAdapter;
-import com.comphenix.protocol.events.PacketContainer;
-import com.comphenix.protocol.events.PacketEvent;
 import com.github.yannicklamprecht.worldborder.api.WorldBorderApi;
 import com.github.yannicklamprecht.worldborder.plugin.PersistenceWrapper;
 import java.io.File;
 import java.util.Objects;
 import lombok.Getter;
+import org.bukkit.Bukkit;
 import org.bukkit.event.Listener;
 import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -36,12 +30,11 @@ public final class ArenaShooter extends JavaPlugin {
 
   private ArenaWorldBorderApi worldBorderApi;
   private StatisticsService statisticsService;
-  private ProtocolManager protocolManager;
+  private ProtocolManager protocolManager = null;
 
   public static ArenaShooter getInstance() {
     return getPlugin(ArenaShooter.class);
   }
-
 
   @Override
   public void onEnable() {
@@ -59,21 +52,29 @@ public final class ArenaShooter extends JavaPlugin {
 
     initSchedulers();
 
-    RegisteredServiceProvider<WorldBorderApi> worldBorderApiRegisteredServiceProvider
-        = getServer().getServicesManager().getRegistration(WorldBorderApi.class);
+    RegisteredServiceProvider<WorldBorderApi> worldBorderApiRegisteredServiceProvider =
+        getServer().getServicesManager().getRegistration(WorldBorderApi.class);
     if (worldBorderApiRegisteredServiceProvider == null) {
       getLogger().info("WorldBorderApi not found. Cannot use red screen");
       return;
     }
-    worldBorderApi = new ArenaWorldBorderApi(
-        (PersistenceWrapper) worldBorderApiRegisteredServiceProvider.getProvider());
-
-    this.protocolManager = ProtocolLibrary.getProtocolManager();
-    protocolManager.addPacketListener(new AnvilTextInputPacketAdapter());
+    worldBorderApi =
+        new ArenaWorldBorderApi(
+            (PersistenceWrapper) worldBorderApiRegisteredServiceProvider.getProvider());
+    Bukkit.getScheduler().runTaskLater(
+        this, () -> {
+          protocolManager = ProtocolLibrary.getProtocolManager();
+          if (isProtocolLibEnabled()) {
+            protocolManager.addPacketListener(new AnvilTextInputPacketAdapter());
+          } else {
+            getLogger().info("ProtocolLib not found. Cannot use anvil text input");
+          }
+        }, 20L * 5
+    );
   }
 
   private void initSchedulers() {
-    getServer().getScheduler().runTaskTimer(this, CosmeticsUpdater::refresh, 20L*60, 20L*60);
+    getServer().getScheduler().runTaskTimer(this, CosmeticsUpdater::refresh, 20L * 60, 20L * 60);
   }
 
   private void initStatistics() {
@@ -87,13 +88,15 @@ public final class ArenaShooter extends JavaPlugin {
   public void onDisable() {
     getLogger().info("Shutting down");
 
-    for (Game game : GameOrchestrator.getInstance()
-        .getGames()) {
+    for (Game game : GameOrchestrator.getInstance().getGames()) {
       game.endGame("game.end.shutdown", false);
     }
 
     CleanUp.onShutdown();
+  }
 
+  public boolean isProtocolLibEnabled() {
+    return protocolManager != null;
   }
 
   private void registerListeners() {
