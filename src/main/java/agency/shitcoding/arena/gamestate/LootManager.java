@@ -1,10 +1,9 @@
 package agency.shitcoding.arena.gamestate;
 
 import agency.shitcoding.arena.ArenaShooter;
-import agency.shitcoding.arena.models.Keys;
-import agency.shitcoding.arena.models.LootPoint;
-import agency.shitcoding.arena.models.LootPointInstance;
-import agency.shitcoding.arena.models.Powerup;
+import agency.shitcoding.arena.GameplayConstants;
+import agency.shitcoding.arena.models.*;
+import java.util.*;
 import lombok.Getter;
 import lombok.Setter;
 import net.kyori.adventure.text.Component;
@@ -16,8 +15,6 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.persistence.PersistentDataType;
 import org.bukkit.scheduler.BukkitTask;
 import org.bukkit.util.Vector;
-
-import java.util.*;
 
 @Getter
 @Setter
@@ -54,17 +51,30 @@ public class LootManager {
 
   private void generateInstance(LootPoint lootPoint) {
     LootPointInstance instance = new LootPointInstance(lootPoint);
-    BukkitTask bukkitTask = Bukkit.getScheduler().runTaskTimer(ArenaShooter.getInstance(),
-        () -> spawnTask(instance),
-        lootPoint.getType().getOffset(),
-        lootPoint.getType().getSpawnInterval()
-    );
+    BukkitTask bukkitTask;
+
+    if (game.getGameRules().fastWeaponSpawn()
+        && (lootPoint.getType().getType() == PowerupType.WEAPON || lootPoint.getType().getType() == PowerupType.AMMO)) {
+      bukkitTask = Bukkit.getScheduler().runTaskTimer(ArenaShooter.getInstance(), () -> spawnTask(instance),
+          0, GameplayConstants.FAST_WEAPON_SPAWN_INTERVAL_TICKS);
+    } else {
+      bukkitTask =
+          Bukkit.getScheduler()
+              .runTaskTimer(
+                  ArenaShooter.getInstance(),
+                  () -> spawnTask(instance),
+                  lootPoint.getType().getOffset(),
+                  lootPoint.getType().getSpawnInterval());
+    }
     instance.setSpawnTask(bukkitTask);
 
     this.lootPoints.put(instance.getLootPoint().getId(), instance);
   }
 
   private void spawnTask(LootPointInstance instance) {
+    if (!instance.isLooted()) {
+      return;
+    }
     Powerup powerup = instance.getLootPoint().getType();
     if (powerup == Powerup.QUAD_DAMAGE && game.getMajorBuffTracker().getQuadDamageTicks() != null) {
       return;

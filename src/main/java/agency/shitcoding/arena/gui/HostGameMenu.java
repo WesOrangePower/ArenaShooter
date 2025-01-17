@@ -8,6 +8,8 @@ import agency.shitcoding.arena.models.Arena;
 import agency.shitcoding.arena.models.GameRules;
 import agency.shitcoding.arena.models.RuleSet;
 import agency.shitcoding.arena.storage.StorageProvider;
+
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
@@ -147,13 +149,17 @@ public class HostGameMenu {
     long seconds = gameLengthSeconds % 60;
 
     String timeString = String.format("%02d:%02d", minutes, seconds);
-    return List.of(
-        player.getRichLocalized("menu.host.gameRules.gameLengthSeconds", timeString),
-        player.getRichLocalized(
-            "menu.host.gameRules.players", gameRules.minPlayers(), gameRules.maxPlayers()),
-        player.getRichLocalized(
-            "menu.host.gameRules.dropMostValuableWeaponOnDeath",
-            player.getLocalized("menu.value." + gameRules.dropMostValuableWeaponOnDeath())));
+    var list = new ArrayList<Component>();
+    list.add(player.getRichLocalized("menu.host.gameRules.gameLengthSeconds", timeString));
+    list.add( player.getRichLocalized( "menu.host.gameRules.players", gameRules.minPlayers(), gameRules.maxPlayers()));
+    if (gameRules.dropMostValuableWeaponOnDeath()) {
+      list.add(player.getRichLocalized("menu.host.gameRules.dropMostValuableWeaponOnDeath"));
+    }
+    if (gameRules.fastWeaponSpawn()) {
+      list.add(player.getRichLocalized("menu.host.gameRules.fastWeaponSpawn"));
+    }
+
+    return list;
   }
 
   private ClickAction ruleSetClickAction(RuleSet ruleSet) {

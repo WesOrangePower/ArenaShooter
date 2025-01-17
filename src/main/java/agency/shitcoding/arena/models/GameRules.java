@@ -20,4 +20,6 @@ public interface GameRules {
   int maxPlayers();
 
   int minPlayers();
+
+  boolean fastWeaponSpawn();
 }

@@ -117,9 +117,10 @@ public class CustomGameRulesMenu {
                     }))
             .build(),
         ItemBuilder.builder()
-            .withMaterial(Boolean.TRUE.equals(customGameRulesBuilder.getDropMostValuableWeaponOnDeath())
-                ? Material.CHEST
-                : Material.ENDER_CHEST)
+            .withMaterial(
+                Boolean.TRUE.equals(customGameRulesBuilder.getDropMostValuableWeaponOnDeath())
+                    ? Material.CHEST
+                    : Material.ENDER_CHEST)
             .withLore(
                 langPlayer.getRichLocalized(
                     "menu.customRules.value",
@@ -129,6 +130,22 @@ public class CustomGameRulesMenu {
                 (ct, ctx) -> {
                   customGameRulesBuilder.setDropMostValuableWeaponOnDeath(
                       !customGameRulesBuilder.getDropMostValuableWeaponOnDeath());
+                  render();
+                })
+            .build(),
+        ItemBuilder.builder()
+            .withMaterial(
+                Boolean.TRUE.equals(customGameRulesBuilder.getFastWeaponSpawn())
+                    ? Material.FEATHER
+                    : Material.TURTLE_HELMET)
+            .withLore(
+                langPlayer.getRichLocalized(
+                    "menu.customRules.value", customGameRulesBuilder.getFastWeaponSpawn()))
+            .withName(langPlayer.getLocalized("menu.customRules.fastWeaponSpawn"))
+            .withClickAction(
+                (ct, ctx) -> {
+                  customGameRulesBuilder.setFastWeaponSpawn(
+                      !customGameRulesBuilder.getFastWeaponSpawn());
                   render();
                 })
             .build());

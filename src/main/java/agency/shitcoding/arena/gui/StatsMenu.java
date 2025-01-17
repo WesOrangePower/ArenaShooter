@@ -77,7 +77,7 @@ public class StatsMenu {
     );
     var name = player.getLocalized("menu.stat.item.title", ruleset, gameOutcome.map(), victory);
 
-    var locale = new Locale(player.getLangContext().getLocale());
+    var locale = Locale.of(player.getLangContext().getLocale());
     var formatted = gameOutcome.time().atZone(ZoneId.of("UTC"))
         .format(DateTimeFormatter.ofLocalizedDateTime(FormatStyle.SHORT)
             .withLocale(locale));

@@ -1,6 +1,5 @@
 package agency.shitcoding.arena.models;
 
-import org.bukkit.inventory.ItemStack;
 
 import java.util.List;
 import java.util.Map;
@@ -48,5 +47,10 @@ public class DMGameRules implements GameRules {
   @Override
   public int minPlayers() {
     return 2;
+  }
+
+  @Override
+  public boolean fastWeaponSpawn() {
+    return false;
   }
 }

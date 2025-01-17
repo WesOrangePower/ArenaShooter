@@ -16,6 +16,7 @@ public class CustomGameRules implements GameRules {
   private final Boolean dropMostValuableWeaponOnDeath;
   private final Integer maxPlayers;
   private final Integer minPlayers;
+  private final Boolean fastWeaponSpawn;
 
   @Override
   public Map<Ammo, Integer> spawnAmmo() {
@@ -55,5 +56,10 @@ public class CustomGameRules implements GameRules {
   @Override
   public int minPlayers() {
     return minPlayers;
+  }
+
+  @Override
+  public boolean fastWeaponSpawn() {
+    return fastWeaponSpawn;
   }
 }

@@ -272,6 +272,12 @@ public enum Powerup {
       giveAmmo(player, weapon.ammo, amount);
       return true;
     }
+    var fastWeaponSpawn =
+        GameOrchestrator.getInstance().getGameByPlayer(player).map(game -> game.getGameRules().fastWeaponSpawn())
+        .orElse(false);
+    if (fastWeaponSpawn) {
+      return giveAmmo(player, weapon.ammo, weapon.ammoPerShot);
+    }
     return giveAmmo(player, weapon.ammo, amount);
   }
 

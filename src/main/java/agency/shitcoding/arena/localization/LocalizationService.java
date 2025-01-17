@@ -23,7 +23,7 @@ public class LocalizationService {
 
   public LocalizationService() {
     for (String locale : SUPPORTED_LOCALES) {
-      bundles.put(locale, ResourceBundle.getBundle("localization.arena", new Locale(locale)));
+      bundles.put(locale, ResourceBundle.getBundle("localization.arena", Locale.of(locale)));
     }
   }
 
