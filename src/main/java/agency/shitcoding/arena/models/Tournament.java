@@ -17,6 +17,7 @@ import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
 import lombok.Getter;
+import lombok.Setter;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
@@ -34,6 +35,8 @@ public class Tournament {
   private final boolean publicJoin;
   private int arenaPointer = 0;
   private Game currentGame;
+  @Setter
+  private GameRules gameRules;
 
   public Tournament(
       boolean publicJoin, RuleSet ruleSet, int gameCount, int maxPlayerCount, Arena[] arenas) {
@@ -45,6 +48,7 @@ public class Tournament {
 
     this.publicJoin = publicJoin;
     this.ruleSet = ruleSet;
+    gameRules = ruleSet.getDefaultGameRules();
     this.gameCount = gameCount;
     this.maxPlayerCount = maxPlayerCount;
     this.arenas = arenas;

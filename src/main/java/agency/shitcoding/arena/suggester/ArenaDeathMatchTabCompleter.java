@@ -33,7 +33,7 @@ public class ArenaDeathMatchTabCompleter {
       SuggesterBuilder.builder()
           .at(2)
           .inCase((s, a) -> s.hasPermission(ArenaDeathMatchCommand.ADMIN_PERM))
-          .suggest(() -> List.of("create", "next", "add", "status", "kick", "end", "enroll"))
+          .suggest(() -> List.of("create", "next", "add", "status", "kick", "end", "enroll", "gameRules"))
 
           // create
           .at(3)

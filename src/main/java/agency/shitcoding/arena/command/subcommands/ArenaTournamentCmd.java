@@ -7,6 +7,7 @@ import agency.shitcoding.arena.command.CommandInst;
 import agency.shitcoding.arena.gamestate.Game;
 import agency.shitcoding.arena.gamestate.GameOrchestrator;
 import agency.shitcoding.arena.gamestate.TournamentAccessor;
+import agency.shitcoding.arena.gui.CustomGameRulesMenu;
 import agency.shitcoding.arena.localization.LangContext;
 import agency.shitcoding.arena.localization.LangPlayer;
 import agency.shitcoding.arena.models.Arena;
@@ -77,8 +78,24 @@ public class ArenaTournamentCmd extends CommandInst {
       case "add" -> addPlayer();
       case "kick" -> kickPlayer();
       case "end" -> end();
+      case "gamerules" -> gameRules();
       default -> help();
     }
+  }
+
+  private void gameRules() {
+    if (!(sender instanceof Player player)) {
+      sender.sendMessage("Only players can open the game rules menu");
+      return;
+    }
+
+    TournamentAccessor.getInstance()
+        .getTournament()
+        .ifPresentOrElse(
+            t ->
+                new CustomGameRulesMenu(
+                    LangPlayer.of(player), t.getGameRules(), () -> {}, t::setGameRules),
+            () -> reply("command.tournament.noOngoing"));
   }
 
   private void leave() {
@@ -221,7 +238,8 @@ public class ArenaTournamentCmd extends CommandInst {
               if (result.isLeft()) {
                 sender.sendRichMessage("<dark_red> Player addition failed: " + result.getLeft());
               } else {
-                sender.sendRichMessage("<green> Player" + playerTeam._1 + " added to the tournament");
+                sender.sendRichMessage(
+                    "<green> Player" + playerTeam._1 + " added to the tournament");
               }
             },
             () -> sender.sendMessage("<dark_red>There is no ongoing tournament"));

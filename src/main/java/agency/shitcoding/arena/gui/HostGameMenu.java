@@ -150,7 +150,10 @@ public class HostGameMenu {
     return List.of(
         player.getRichLocalized("menu.host.gameRules.gameLengthSeconds", timeString),
         player.getRichLocalized(
-            "menu.host.gameRules.players", gameRules.minPlayers(), gameRules.maxPlayers()));
+            "menu.host.gameRules.players", gameRules.minPlayers(), gameRules.maxPlayers()),
+        player.getRichLocalized(
+            "menu.host.gameRules.dropMostValuableWeaponOnDeath",
+            player.getLocalized("menu.value." + gameRules.dropMostValuableWeaponOnDeath())));
   }
 
   private ClickAction ruleSetClickAction(RuleSet ruleSet) {

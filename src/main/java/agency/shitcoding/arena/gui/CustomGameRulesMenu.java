@@ -26,7 +26,10 @@ public class CustomGameRulesMenu {
    *     the inventory should happen on the caller side.
    */
   public CustomGameRulesMenu(
-      LangPlayer langPlayer, GameRules baseGameRules, Runnable onDiscard, Consumer<GameRules> onGameRulesChanged) {
+      LangPlayer langPlayer,
+      GameRules baseGameRules,
+      Runnable onDiscard,
+      Consumer<GameRules> onGameRulesChanged) {
     this.langPlayer = langPlayer;
     this.onDiscard = onDiscard;
     this.onGameRulesChanged = onGameRulesChanged;
@@ -112,6 +115,22 @@ public class CustomGameRulesMenu {
                       }
                       render();
                     }))
+            .build(),
+        ItemBuilder.builder()
+            .withMaterial(Boolean.TRUE.equals(customGameRulesBuilder.getDropMostValuableWeaponOnDeath())
+                ? Material.CHEST
+                : Material.ENDER_CHEST)
+            .withLore(
+                langPlayer.getRichLocalized(
+                    "menu.customRules.value",
+                    customGameRulesBuilder.getDropMostValuableWeaponOnDeath()))
+            .withName(langPlayer.getLocalized("menu.customRules.dropMostValuableWeaponOnDeath"))
+            .withClickAction(
+                (ct, ctx) -> {
+                  customGameRulesBuilder.setDropMostValuableWeaponOnDeath(
+                      !customGameRulesBuilder.getDropMostValuableWeaponOnDeath());
+                  render();
+                })
             .build());
   }
 
