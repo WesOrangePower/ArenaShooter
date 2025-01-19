@@ -48,6 +48,7 @@ public class ArenaDeathMatchTabCompleter {
           .at(6)
           .inCaseArgIsIgnoreCase(1, "create")
           .suggestInts(() -> range(2, 16))
+          .addRules(trailingArenaRules())
           .rule()
           .inCaseArgIsIgnoreCase(1, "create")
           .inCase((s, a) -> a.length >= 6)
@@ -69,6 +70,31 @@ public class ArenaDeathMatchTabCompleter {
           .suggest(() -> TournamentAccessor.getInstance().getTournament().map(Tournament::getPlayerNames).orElse(List.of()))
 
           .build();
+
+  private List<SuggestionRule> trailingArenaRules() {
+    var rules = new ArrayList<SuggestionRule>();
+    var arenas = StorageProvider.getArenaStorage().getArenas();
+
+    for (Arena arena : arenas) {
+      rules.add(new SuggestionRule(
+          (s, a) -> {
+            if (a.length < 6) {
+              return false;
+            }
+            RuleSet rulesSet;
+            try {
+              rulesSet = RuleSet.valueOf(a[3].toUpperCase());
+            } catch (IllegalArgumentException e) {
+              throw new RuntimeException(e);
+            }
+            return arena.getSupportedRuleSets().contains(rulesSet);
+          },
+          () -> List.of(arena.getName())
+      ));
+    }
+
+    return rules;
+  }
 
   public @Nullable List<String> onTabComplete() {
     boolean isAdmin = sender.hasPermission(ArenaDeathMatchCommand.ADMIN_PERM);

@@ -74,13 +74,18 @@ class TournamentInputValidator {
       Try<Integer> gameCount,
       Try<Integer> maxPlayers,
       List<String> arenas) {
+    var ruleSetValidation = validateRuleSet(ruleSet);
+    if (ruleSetValidation.isInvalid()) {
+      return Validation.invalid(Array.of(ruleSetValidation.getError()));
+    }
+
     return Validation.combine(
             validateNoOngoingTournament(),
             validateJoinType(joinType),
-            validateRuleSet(ruleSet),
+            ruleSetValidation,
             validateGameCount(gameCount),
             validateMaxPlayers(maxPlayers),
-            validateArenas(arenas))
+            validateArenas(arenas, ruleSetValidation.get()))
         .ap((_1, jt, rs, gc, mp, as) -> new Tournament(jt.equals("public"), rs, gc, mp, as));
   }
 
@@ -96,9 +101,20 @@ class TournamentInputValidator {
         : Validation.invalid("Invalid max player count. Must be a positive integer");
   }
 
-  private Validation<String, Arena[]> validateArenas(List<String> arenas) {
+  private Validation<String, Arena[]> validateArenas(List<String> arenas, RuleSet ruleSet) {
     ArenaStorage arenaStorage = StorageProvider.getArenaStorage();
     Arena[] foundArenas = arenas.stream().map(arenaStorage::getArena).toArray(Arena[]::new);
+
+    for (int i = 0; i < foundArenas.length; i++) {
+      Arena anArena = foundArenas[i];
+      if (anArena == null) {
+        return Validation.invalid("Invalid arena name:" + arenas.get(i));
+      }
+      if (!anArena.getSupportedRuleSets().contains(ruleSet)) {
+        return Validation.invalid("Arena " + anArena.getName() + " does not support " + ruleSet);
+      }
+    }
+
     return Array.of(foundArenas).contains(null) || foundArenas.length != arenas.size()
         ? Validation.invalid("Invalid arena(s)")
         : Validation.valid(foundArenas);

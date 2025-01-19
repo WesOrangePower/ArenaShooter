@@ -15,6 +15,8 @@ import agency.shitcoding.arena.models.Tournament;
 import io.vavr.collection.Array;
 import io.vavr.control.Try;
 import java.util.stream.Collectors;
+
+import net.jellycraft.guiapi.api.ViewRegistry;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -94,7 +96,14 @@ public class ArenaTournamentCmd extends CommandInst {
         .ifPresentOrElse(
             t ->
                 new CustomGameRulesMenu(
-                    LangPlayer.of(player), t.getGameRules(), () -> {}, t::setGameRules),
+                        LangPlayer.of(player),
+                        t.getGameRules(),
+                        () -> ViewRegistry.closeForPlayer(player),
+                        gameRules -> {
+                          ViewRegistry.closeForPlayer(player);
+                          t.setGameRules(gameRules);
+                        })
+                    .render(),
             () -> reply("command.tournament.noOngoing"));
   }
 

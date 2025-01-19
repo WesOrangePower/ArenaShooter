@@ -51,6 +51,7 @@ public class LootManager {
 
   private void generateInstance(LootPoint lootPoint) {
     LootPointInstance instance = new LootPointInstance(lootPoint);
+    instance.setLooted(true);
     BukkitTask bukkitTask;
 
     if (game.getGameRules().fastWeaponSpawn()
@@ -102,6 +103,7 @@ public class LootManager {
           i.setCanMobPickup(false);
         }
     );
+    item.setPickupDelay(0);
     item.setVelocity(new Vector(0f, .2f, 0f));
 
     instance.setLooted(false);

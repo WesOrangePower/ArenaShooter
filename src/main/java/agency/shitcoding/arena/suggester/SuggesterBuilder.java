@@ -5,6 +5,7 @@ import org.bukkit.command.CommandSender;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.BiPredicate;
+import java.util.function.Function;
 
 public class SuggesterBuilder {
 
@@ -35,7 +36,22 @@ public class SuggesterBuilder {
     rules.add(rule);
   }
 
+  public SuggesterBuilder join(SuggesterBuilder other) {
+    rules.addAll(other.rules);
+    return this;
+  }
+
+  public SuggesterBuilder join(Function<SuggesterBuilder, SuggesterBuilder> contextBasedOther) {
+    return contextBasedOther.apply(this);
+  }
+
+  public SuggesterBuilder addRules(List<SuggestionRule> rules) {
+    this.rules.addAll(rules);
+    return this;
+  }
+
   public Suggester build() {
     return new SuggesterImpl(rules);
   }
+
 }
