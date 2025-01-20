@@ -21,9 +21,6 @@ import org.bukkit.Bukkit;
 import org.bukkit.event.Listener;
 import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
-import org.bukkit.scoreboard.Objective;
-import org.bukkit.scoreboard.Scoreboard;
-import org.bukkit.scoreboard.Team;
 
 @Getter
 public final class ArenaShooter extends JavaPlugin {
@@ -44,9 +41,7 @@ public final class ArenaShooter extends JavaPlugin {
     Objects.requireNonNull(getCommand("arenaDeathMatch".toLowerCase()))
         .setExecutor(ArenaDeathMatchCommandInvoker.getInstance());
 
-    Scoreboard scoreboard = GameOrchestrator.getInstance().getScoreboard();
-    scoreboard.getObjectives().forEach(Objective::unregister);
-    scoreboard.getTeams().forEach(Team::unregister);
+    GameOrchestrator.getInstance().unregisterScoreboard();
 
     initStatistics();
 

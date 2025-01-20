@@ -64,6 +64,7 @@ public abstract class Game {
   protected BukkitTask ammoActionBarTask;
   protected GameStage gamestage = GameStage.WAITING;
   protected Objective scoreboardObjective;
+  protected Objective healthObjective;
   private Instant gameStart;
   private PlayerWaitingManager waitingManager;
 
@@ -73,7 +74,14 @@ public abstract class Game {
     this.arena = arena;
     this.ruleSet = ruleSet;
     this.gameRules = gameRules;
-    this.scoreboard = GameOrchestrator.getInstance().getScoreboard();
+    this.scoreboard = GameOrchestrator.getInstance().getScoreboard(this);
+    if (gameRules.showHealth()) {
+      healthObjective =
+          scoreboard.registerNewObjective(
+              "health", Criteria.HEALTH, Component.text("Health", NamedTextColor.RED));
+      healthObjective.setDisplaySlot(DisplaySlot.BELOW_NAME);
+      healthObjective.setRenderType(RenderType.INTEGER);
+    }
     arena
         .getLowerBound()
         .getWorld()
@@ -124,6 +132,7 @@ public abstract class Game {
     LootManagerProvider.cleanup(arena);
 
     Optional.ofNullable(scoreboardObjective).ifPresent(Objective::unregister);
+    Optional.ofNullable(healthObjective).ifPresent(Objective::unregister);
     Bukkit.getScheduler()
         .runTaskLater(
             ArenaShooter.getInstance(),
@@ -310,6 +319,7 @@ public abstract class Game {
       updateScoreBoard();
       player.setScoreboard(scoreboard);
     }
+
     players.add(player);
     scores.add(new PlayerScore(0, player, new PlayerStreak()));
     player.sendRichMessage(youJoinedGameMessage(player));

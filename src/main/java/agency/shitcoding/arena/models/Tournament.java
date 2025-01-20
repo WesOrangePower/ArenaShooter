@@ -122,7 +122,7 @@ public class Tournament {
     }
 
     final int gamePointer = arenaPointer;
-    currentGame = GameOrchestrator.getInstance().createGame(ruleSet, nextArena(), null, ruleSet.getDefaultGameRules());
+    currentGame = GameOrchestrator.getInstance().createGame(ruleSet, nextArena(), ruleSet.getDefaultGameRules());
     games[gamePointer] = currentGame;
 
     for (String playerName : playerNames) {

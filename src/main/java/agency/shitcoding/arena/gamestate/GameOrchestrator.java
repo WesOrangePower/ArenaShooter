@@ -1,28 +1,26 @@
 package agency.shitcoding.arena.gamestate;
 
-import agency.shitcoding.arena.localization.LangPlayer;
 import agency.shitcoding.arena.models.Arena;
 import agency.shitcoding.arena.models.GameRules;
 import agency.shitcoding.arena.models.RuleSet;
 import agency.shitcoding.arena.worlds.WorldFactory;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
+
+import java.util.*;
+
 import lombok.Getter;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
+import org.bukkit.scoreboard.Objective;
 import org.bukkit.scoreboard.Scoreboard;
-import org.jetbrains.annotations.Nullable;
+import org.bukkit.scoreboard.Team;
 
 public final class GameOrchestrator {
 
   @Getter private static final GameOrchestrator instance = new GameOrchestrator();
   @Getter private final Set<Game> games = new HashSet<>();
-  @Getter private final Scoreboard scoreboard;
+  private final Map<Game, Scoreboard> scoreboards = new HashMap<>();
 
   private GameOrchestrator() {
-    this.scoreboard = Bukkit.getScoreboardManager().getNewScoreboard();
   }
 
   /**
@@ -30,11 +28,9 @@ public final class GameOrchestrator {
    *
    * @param ruleSet RuleSet
    * @param arena Source arena, template
-   * @param hoster Nullable, sends a start message if exists
    * @return the created Game
    */
-  public Game createGame(RuleSet ruleSet, Arena arena, @Nullable Player hoster, GameRules gameRules) {
-    LangPlayer langPlayer = LangPlayer.of(hoster);
+  public Game createGame(RuleSet ruleSet, Arena arena, GameRules gameRules) {
 
     var worldArena = WorldFactory.getInstance().newWorld(arena);
 
@@ -53,6 +49,7 @@ public final class GameOrchestrator {
 
   public void removeGame(Game game) {
     games.remove(game);
+    scoreboards.remove(game);
     game.getArenaWorld().destroy();
   }
 
@@ -68,5 +65,16 @@ public final class GameOrchestrator {
 
   public Optional<Game> getGameByHashCode(Integer gameHash) {
     return games.stream().filter(game -> game.hashCode() == gameHash).findFirst();
+  }
+
+  public void unregisterScoreboard() {
+    for (Scoreboard scoreboard : scoreboards.values()) {
+      scoreboard.getObjectives().forEach(Objective::unregister);
+      scoreboard.getTeams().forEach(Team::unregister);
+    }
+  }
+
+  public Scoreboard getScoreboard(Game game) {
+    return scoreboards.computeIfAbsent(game, g -> Bukkit.getScoreboardManager().getNewScoreboard());
   }
 }

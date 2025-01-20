@@ -22,4 +22,6 @@ public interface GameRules {
   int minPlayers();
 
   boolean fastWeaponSpawn();
+
+  boolean showHealth();
 }

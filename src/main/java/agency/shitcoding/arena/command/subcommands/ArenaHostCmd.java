@@ -11,11 +11,8 @@ import agency.shitcoding.arena.models.GameRules;
 import agency.shitcoding.arena.models.RuleSet;
 import agency.shitcoding.arena.storage.StorageProvider;
 import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Map;
 
 import com.google.gson.JsonSyntaxException;
-import com.google.gson.stream.MalformedJsonException;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
@@ -49,7 +46,7 @@ public class ArenaHostCmd extends CommandInst {
 
   private void hostGameSync() {
     String broadcastKey;
-    Game game = GameOrchestrator.getInstance().createGame(ruleSet, arena, (Player) sender, gameRules);
+    Game game = GameOrchestrator.getInstance().createGame(ruleSet, arena, gameRules);
     if (game instanceof TeamGame teamGame) {
       teamGame.addPlayer((Player) sender, team);
       broadcastKey = "command.host.broadcast.team";

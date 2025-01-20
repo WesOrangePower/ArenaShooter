@@ -53,4 +53,9 @@ public class DMGameRules implements GameRules {
   public boolean fastWeaponSpawn() {
     return false;
   }
+
+  @Override
+  public boolean showHealth() {
+    return false;
+  }
 }

@@ -80,7 +80,7 @@ public class ArenaUtilsCmd extends CommandInst {
   private boolean validate() {
     String adminPerm = ArenaDeathMatchCommand.getAdminPerm();
     if (!sender.hasPermission(adminPerm)) {
-      sender.sendRichMessage("<dark_red>У вас нет прав на использование этой подкоманды.");
+      sender.sendRichMessage("<dark_red>You don't have permission to access this command.");
       return false;
     }
     return true;

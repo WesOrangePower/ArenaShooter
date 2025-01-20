@@ -43,24 +43,24 @@ public class ArenaSetCmd extends CommandInst {
   private boolean validate() {
     String adminPerm = ArenaDeathMatchCommand.getAdminPerm();
     if (!sender.hasPermission(adminPerm)) {
-      sender.sendRichMessage("<dark_red>У вас нет прав на использование этой подкоманды.");
+      sender.sendRichMessage("<dark_red>You don't have permissions to access this command");
       return false;
     }
     if (args.length < MIN_ARGS) {
       sender.sendRichMessage(
-          "<red>Not enough arguments. Usage: /arena set <arena> <action> <field> [value]");
+          "<dark_red>Not enough arguments. Usage: /arena set <arena> <action> <field> [value]");
       return false;
     }
     arena = StorageProvider.getArenaStorage().getArena(args[ARG_ARENA]);
     if (arena == null) {
-      sender.sendRichMessage("<red>Arena " + args[ARG_ARENA] + " does not exist.");
+      sender.sendRichMessage("<dark_red>Arena " + args[ARG_ARENA] + " does not exist.");
       return false;
     }
     try {
       action = ArenaSetAction.valueOf(args[ARG_ACTION].toUpperCase());
     } catch (IllegalArgumentException e) {
       sender.sendRichMessage(
-          "<red>Invalid action. Valid actions are: " + Arrays.toString(ArenaSetAction.values()));
+          "<dark_red>Invalid action. Valid actions are: " + Arrays.toString(ArenaSetAction.values()));
       return false;
     }
 
