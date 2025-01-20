@@ -16,6 +16,8 @@ import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.persistence.PersistentDataType;
+import org.bukkit.potion.PotionEffect;
+import org.bukkit.potion.PotionEffectType;
 import org.bukkit.util.Vector;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -107,6 +109,7 @@ public class FlagManager {
                       .orElse(null);
               carrier.getInventory().setHelmet(helmet);
               carrier.getInventory().setItem(8, null);
+              carrier.removePotionEffect(PotionEffectType.GLOWING);
             });
 
     dropFlag(flag);
@@ -131,6 +134,8 @@ public class FlagManager {
     ItemStack namedFlagItem = getNamedFlagItem(LangPlayer.of(player).getLangContext(), flag);
     player.getInventory().setItem(8, namedFlagItem);
     player.getInventory().setHelmet(namedFlagItem);
+    player.addPotionEffect(
+        new PotionEffect(PotionEffectType.GLOWING, 1000000, 1, false, false));
   }
 
   public void score(Player player) {

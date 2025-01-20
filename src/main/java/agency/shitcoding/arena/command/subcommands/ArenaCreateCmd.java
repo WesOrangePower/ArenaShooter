@@ -44,30 +44,30 @@ public class ArenaCreateCmd extends CommandInst {
         new HashSet<>()
     );
     StorageProvider.getArenaStorage().storeArena(arena);
-    sender.sendRichMessage("<green>Арена <yellow>" + name + "<green> создана");
+    sender.sendRichMessage("<green>Arena <yellow>" + name + "<green> created");
   }
 
   private boolean validate() {
     String adminPerm = ArenaDeathMatchCommand.getAdminPerm();
     if (!sender.hasPermission(adminPerm)) {
-      sender.sendRichMessage("<red>У вас нет прав на создание арены");
+      sender.sendRichMessage("<dark_red>You don't have permission to access this command");
       return false;
     }
     if (args.length < ARG_MIN_LEN) {
-      sender.sendRichMessage("<red>Вы не указали название арены");
+      sender.sendRichMessage("<dark_red>Please provide a name for the arena");
       return false;
     }
     int nameLen = args[ARG_NAME].length();
     if (nameLen > 16 || nameLen < 3) {
-      sender.sendRichMessage("<red>Название арены должно быть от 3 до 16 символов");
+      sender.sendRichMessage("<dark_red>Name must be between 3 and 16 characters");
       return false;
     }
     if (!args[ARG_NAME].matches("\\w{3,16}")) {
-      sender.sendRichMessage("<red>Название арены должно состоять из букв и цифр");
+      sender.sendRichMessage("<dark_red>Name must contain only letters, numbers and underscores");
       return false;
     }
     if (!(sender instanceof Player)) {
-      sender.sendRichMessage("<red>Команду можно использовать только в игре");
+      sender.sendRichMessage("<dark_red>This command can only be executed by a player");
       return false;
     }
     return true;

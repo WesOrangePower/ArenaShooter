@@ -17,6 +17,7 @@ public class CustomGameRules implements GameRules {
   private final Integer maxPlayers;
   private final Integer minPlayers;
   private final Boolean fastWeaponSpawn;
+  private final Boolean showHealth;
 
   @Override
   public Map<Ammo, Integer> spawnAmmo() {
@@ -61,5 +62,10 @@ public class CustomGameRules implements GameRules {
   @Override
   public boolean fastWeaponSpawn() {
     return fastWeaponSpawn;
+  }
+
+  @Override
+  public boolean showHealth() {
+    return showHealth;
   }
 }

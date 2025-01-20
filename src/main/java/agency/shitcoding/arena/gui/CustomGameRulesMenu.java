@@ -148,6 +148,18 @@ public class CustomGameRulesMenu {
                       !customGameRulesBuilder.getFastWeaponSpawn());
                   render();
                 })
+            .build(),
+        ItemBuilder.builder()
+            .withMaterial(Material.KELP)
+            .withLore(
+                langPlayer.getRichLocalized(
+                    "menu.customRules.value", customGameRulesBuilder.getShowHealth()))
+            .withName(langPlayer.getLocalized("menu.customRules.showHealth"))
+            .withClickAction(
+                (ct, ctx) -> {
+                  customGameRulesBuilder.setShowHealth(!customGameRulesBuilder.getShowHealth());
+                  render();
+                })
             .build());
   }
 

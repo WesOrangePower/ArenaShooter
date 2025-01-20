@@ -42,12 +42,13 @@ public class TeamManager {
    *
    * @return false if full, true if successful
    */
-  public boolean addToTeam(Player player, ETeam gameTeam) {
-    Set<Player> teamPlayers = teams.get(gameTeam).getPlayers();
+  public boolean addToTeam(Player player, ETeam eteam) {
+    Set<Player> teamPlayers = teams.get(eteam).getPlayers();
     if (teamPlayers.size() >= maxPerTeam && !player.hasPermission("arena.fullTeamJoin")) {
       return false;
     }
     teamPlayers.add(player);
+    getTeam(eteam).getScoreboardTeam().addPlayer(player);
     return true;
   }
 

@@ -21,6 +21,7 @@ public final class CustomGameRulesBuilder {
   private Integer maxPlayers = null;
   private Integer minPlayers = null;
   private Boolean fastWeaponSpawn = null;
+  private Boolean showHealth = null;
 
   public static CustomGameRulesBuilder iWantToFillThemAllManually() {
     return new CustomGameRulesBuilder();
@@ -57,7 +58,8 @@ public final class CustomGameRulesBuilder {
         dropMostValuableWeaponOnDeath,
         maxPlayers,
         minPlayers,
-        fastWeaponSpawn);
+        fastWeaponSpawn,
+        showHealth);
   }
 
   private CustomGameRulesBuilder() {}
@@ -105,6 +107,11 @@ public final class CustomGameRulesBuilder {
 
   public CustomGameRulesBuilder setFastWeaponSpawn(Boolean fastWeaponSpawn) {
     this.fastWeaponSpawn = fastWeaponSpawn;
+    return this;
+  }
+
+  public CustomGameRulesBuilder setShowHealth(Boolean showHealth) {
+    this.showHealth = showHealth;
     return this;
   }
 }
