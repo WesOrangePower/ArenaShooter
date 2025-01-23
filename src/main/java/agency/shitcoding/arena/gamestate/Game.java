@@ -9,7 +9,20 @@ import agency.shitcoding.arena.localization.LangPlayer;
 import agency.shitcoding.arena.models.*;
 import agency.shitcoding.arena.statistics.GameOutcome;
 import agency.shitcoding.arena.worlds.ArenaWorld;
+import com.google.common.cache.CacheBuilder;
+import com.google.common.cache.CacheLoader;
+import com.google.common.cache.LoadingCache;
+import com.google.common.collect.ImmutableList;
+import java.time.Instant;
+import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.TimeUnit;
+import java.util.function.Consumer;
+import java.util.stream.Collectors;
+
+import com.google.common.collect.Iterables;
 import lombok.Getter;
+import lombok.extern.slf4j.Slf4j;
 import net.kyori.adventure.audience.Audience;
 import net.kyori.adventure.bossbar.BossBar;
 import net.kyori.adventure.text.Component;
@@ -17,6 +30,7 @@ import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.kyori.adventure.title.Title;
 import org.bukkit.Bukkit;
+import org.bukkit.GameMode;
 import org.bukkit.SoundCategory;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Item;
@@ -28,17 +42,14 @@ import org.bukkit.util.Vector;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.time.Instant;
-import java.util.*;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.function.Consumer;
-import java.util.stream.Collectors;
-
+@Slf4j
 @Getter
 public abstract class Game {
+  private static final LoadingCache<Game, ImmutableList<Player>> spectatorCache = CacheBuilder.newBuilder()
+      .expireAfterWrite(5, TimeUnit.SECONDS)
+      .build(CacheLoader.from(Game::calculateSpectators));
   protected final Scoreboard scoreboard;
   private final RespawnInvulnerability respawnInvulnerability = new RespawnInvulnerability();
-  private final Set<Player> spectators = new HashSet<>();
   protected final Map<Player, Integer> statKills = new HashMap<>();
   protected final Map<Player, Integer> statDeaths = new HashMap<>();
   protected final Set<Player> players = new HashSet<>();
@@ -47,7 +58,7 @@ public abstract class Game {
   protected final Set<Player> diedOnce = new HashSet<>();
   protected final Consumer<AnnouncerConstant> announcer =
       ac ->
-          players.forEach(
+          Iterables.concat(players, getSpectators()).forEach(
               p ->
                   p.playSound(
                       p,
@@ -180,10 +191,18 @@ public abstract class Game {
         player.showTitle(title);
       }
     }
+
+    for (Player spectator : getSpectators()) {
+      var langPlayer = LangPlayer.of(spectator);
+      var localizedReason = langPlayer.getLocalized(reason, toFormat);
+      spectator.showTitle(
+          Title.title(Component.text(localizedReason, NamedTextColor.GREEN), Component.empty())
+      );
+    }
   }
 
   private void unregister() {
-    for (Player player : players) {
+    for (Player player : Iterables.concat(players, getSpectators())) {
       Lobby.getInstance().sendPlayer(player);
     }
     TournamentAccessor.getInstance().getTournament().ifPresent(Tournament::endGame);
@@ -265,7 +284,7 @@ public abstract class Game {
 
     String timeString = String.format("%02d:%02d", minutes, seconds);
     var mm = MiniMessage.miniMessage();
-    for (Player player : players) {
+    for (Player player : Iterables.concat(players, getSpectators())) {
       LangPlayer langPlayer = new LangPlayer(player);
       var name = mm.deserialize(langPlayer.getLocalized("game.bossbar.title", timeString));
 
@@ -280,6 +299,12 @@ public abstract class Game {
               });
       bossBar.name(name);
       bossBar.progress(fraction);
+    }
+
+    for (Player spectator: getSpectators()) {
+      if (!spectator.getScoreboard().equals(scoreboard)) {
+        spectator.setScoreboard(scoreboard);
+      }
     }
   }
 
@@ -473,5 +498,23 @@ public abstract class Game {
 
   public LootPointFilter getLootPointFilter() {
     return (lootPoint, player) -> lootPoint.isSpawnPoint();
+  }
+
+  private static ImmutableList<Player> calculateSpectators(Game game) {
+    return Bukkit.getOnlinePlayers()
+        .stream()
+        .filter(p -> !game.players.contains(p))
+        .filter(p -> p.getWorld().equals(game.arenaWorld.getShifted().getLowerBound().getWorld()))
+        .filter(p -> p.getGameMode().equals(GameMode.SPECTATOR))
+        .collect(ImmutableList.toImmutableList());
+  }
+
+  public ImmutableList<Player> getSpectators() {
+    try {
+      return spectatorCache.get(this);
+    } catch (Exception e) {
+      log.error("Failed to get spectators", e);
+      return ImmutableList.of();
+    }
   }
 }

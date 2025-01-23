@@ -134,6 +134,9 @@ public class LightningGunListener implements Listener {
     if (entity.getType() == EntityType.GUARDIAN && entity.isInvisible()) {
       return false;
     }
+    if (entity.getType() == EntityType.PLAYER && ((Player)entity).getGameMode() != GameMode.ADVENTURE) {
+      return false;
+    }
 
     return entity.getType() != EntityType.PLAYER || !entity.getUniqueId()
         .equals(shooter.getUniqueId());

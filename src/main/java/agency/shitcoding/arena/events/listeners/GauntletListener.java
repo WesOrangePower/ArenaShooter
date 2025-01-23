@@ -43,12 +43,12 @@ public class GauntletListener implements Listener {
     world.spawnParticle(Particle.ELECTRIC_SPARK, at, 1, 0, 0, 0, 0);
 
     Set<LivingEntity> affectedEntities = new HashSet<>();
-    at.getWorld().getNearbyEntities(at, 1, 1, 1).stream()
-        .filter(LivingEntity.class::isInstance)
+    at.getWorld().getNearbyLivingEntities(at, 1, 1, 1).stream()
+        .filter(e -> !IgnoreEntities.shouldIgnoreEntity(e))
         .filter(entity -> entity != player)
         .forEach(
             entity -> {
-              affectedEntities.add((LivingEntity) entity);
+              affectedEntities.add(entity);
               world.spawnParticle(Particle.ELECTRIC_SPARK, at, 1, 0, 0, 0);
               world.playSound(at, Sound.ENTITY_GUARDIAN_ATTACK, 1f, 1f);
               if (bloodParticles) {

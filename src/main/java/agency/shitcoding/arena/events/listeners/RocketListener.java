@@ -148,6 +148,8 @@ public class RocketListener implements Listener {
     }
     at.getWorld().playSound(at, SoundConstants.ROCKET_DET, .75f, 1f);
     at.getNearbyLivingEntities(3, 3, 3)
+        .stream()
+        .filter(entity -> !IgnoreEntities.shouldIgnoreEntity(entity))
         .forEach(
             entity -> {
               Location entityLoc = entity.getLocation();

@@ -33,7 +33,9 @@ public class ArenaDeathMatchTabCompleter {
       SuggesterBuilder.builder()
           .at(2)
           .inCase((s, a) -> s.hasPermission(ArenaDeathMatchCommand.ADMIN_PERM))
-          .suggest(() -> List.of("create", "next", "add", "status", "kick", "end", "enroll", "gameRules"))
+          .suggest(
+              () ->
+                  List.of("create", "next", "add", "status", "kick", "end", "enroll", "gameRules"))
 
           // create
           .at(3)
@@ -52,7 +54,11 @@ public class ArenaDeathMatchTabCompleter {
           .rule()
           .inCaseArgIsIgnoreCase(1, "create")
           .inCase((s, a) -> a.length >= 6)
-          .suggest(() -> StorageProvider.getArenaStorage().getArenas().stream().map(Arena::getName).toList())
+          .suggest(
+              () ->
+                  StorageProvider.getArenaStorage().getArenas().stream()
+                      .map(Arena::getName)
+                      .toList())
 
           // add
           .at(3)
@@ -60,15 +66,21 @@ public class ArenaDeathMatchTabCompleter {
           .suggestPlayers()
           .at(4)
           .inCaseArgIsIgnoreCase(1, "add")
-          .inCase((s, a) -> TournamentAccessor.getInstance().getTournament()
-              .map(Tournament::isTeamTournament)
-              .orElse(false))
+          .inCase(
+              (s, a) ->
+                  TournamentAccessor.getInstance()
+                      .getTournament()
+                      .map(Tournament::isTeamTournament)
+                      .orElse(false))
           .suggestEnumLower(() -> ETeam.class)
-
           .at(3)
           .inCaseArgIsIgnoreCase(1, "kick")
-          .suggest(() -> TournamentAccessor.getInstance().getTournament().map(Tournament::getPlayerNames).orElse(List.of()))
-
+          .suggest(
+              () ->
+                  TournamentAccessor.getInstance()
+                      .getTournament()
+                      .map(Tournament::getPlayerNames)
+                      .orElse(List.of()))
           .build();
 
   private List<SuggestionRule> trailingArenaRules() {
@@ -76,21 +88,21 @@ public class ArenaDeathMatchTabCompleter {
     var arenas = StorageProvider.getArenaStorage().getArenas();
 
     for (Arena arena : arenas) {
-      rules.add(new SuggestionRule(
-          (s, a) -> {
-            if (a.length < 6) {
-              return false;
-            }
-            RuleSet rulesSet;
-            try {
-              rulesSet = RuleSet.valueOf(a[3].toUpperCase());
-            } catch (IllegalArgumentException e) {
-              throw new RuntimeException(e);
-            }
-            return arena.getSupportedRuleSets().contains(rulesSet);
-          },
-          () -> List.of(arena.getName())
-      ));
+      rules.add(
+          new SuggestionRule(
+              (s, a) -> {
+                if (a.length < 6) {
+                  return false;
+                }
+                RuleSet rulesSet;
+                try {
+                  rulesSet = RuleSet.valueOf(a[3].toUpperCase());
+                } catch (IllegalArgumentException e) {
+                  throw new RuntimeException(e);
+                }
+                return arena.getSupportedRuleSets().contains(rulesSet);
+              },
+              () -> List.of(arena.getName())));
     }
 
     return rules;
@@ -185,7 +197,16 @@ public class ArenaDeathMatchTabCompleter {
       return Arrays.stream(RuleSet.values()).map(Enum::name).map(String::toLowerCase).toList();
     }
     if (args.length == 3) {
-      return StorageProvider.getArenaStorage().getArenas().stream().map(Arena::getName).toList();
+      RuleSet rulesSet;
+      try {
+        rulesSet = RuleSet.valueOf(args[1].toUpperCase());
+      } catch (IllegalArgumentException e) {
+        return List.of();
+      }
+      return StorageProvider.getArenaStorage().getArenas().stream()
+          .filter(arena -> arena.getSupportedRuleSets().contains(rulesSet))
+          .map(Arena::getName)
+          .toList();
     }
     return List.of();
   }

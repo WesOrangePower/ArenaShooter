@@ -54,7 +54,7 @@ public class ShotgunListener implements Listener {
       knockbackMap.put(entity, knockbackMap.getOrDefault(entity, 0d) + .1);
     });
 
-    if (damageMap.keySet().size() == 1
+    if (damageMap.size() == 1
         && affectedEntities.size() == PELLETS_AMOUNT
         && !isInTeam(player, affectedEntities.getFirst())) {
       damageMap.keySet().stream().findFirst().ifPresent(e -> {

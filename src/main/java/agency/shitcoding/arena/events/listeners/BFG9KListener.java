@@ -19,6 +19,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.util.Vector;
+
 @Log4j2
 public class BFG9KListener implements Listener {
 
@@ -38,29 +39,29 @@ public class BFG9KListener implements Listener {
 
     Location eyeLocation = player.getEyeLocation();
 
-    eyeLocation.getWorld().playSound(eyeLocation,
-        SoundConstants.BFG_FIRE,
-        .5f,
-        1f);
+    eyeLocation.getWorld().playSound(eyeLocation, SoundConstants.BFG_FIRE, .5f, 1f);
 
-    Bukkit.getScheduler().runTaskLater(ArenaShooter.getInstance(),
-        () -> fireBFG(player, player.getEyeLocation().getDirection()),
-        10);
-
+    Bukkit.getScheduler()
+        .runTaskLater(
+            ArenaShooter.getInstance(),
+            () -> fireBFG(player, player.getEyeLocation().getDirection()),
+            10);
   }
 
   private void fireBFG(Player player, Vector lookingVector) {
     if (player.getInventory().getItemInMainHand().getType().equals(BFG))
-      player.launchProjectile(DragonFireball.class, lookingVector, proj -> {
-        proj.setIsIncendiary(false);
-        proj.setYield(0f);
-        proj.setDirection(lookingVector.clone());
-        Bukkit.getScheduler().runTaskLater(ArenaShooter.getInstance(), proj::remove, 20 * 5L);
-      });
+      player.launchProjectile(
+          DragonFireball.class,
+          lookingVector,
+          proj -> {
+            proj.setIsIncendiary(false);
+            proj.setYield(0f);
+            proj.setDirection(lookingVector.clone());
+            Bukkit.getScheduler().runTaskLater(ArenaShooter.getInstance(), proj::remove, 20 * 5L);
+          });
     else {
       // return ammo
-      new AmmoUpdateEvent(player, Weapon.BFG9K.ammoPerShot, Weapon.BFG9K.ammo)
-          .fire();
+      new AmmoUpdateEvent(player, Weapon.BFG9K.ammoPerShot, Weapon.BFG9K.ammo).fire();
     }
   }
 
@@ -79,19 +80,18 @@ public class BFG9KListener implements Listener {
 
     proj.remove();
 
-    w.getNearbyLivingEntities(at, 1, 1, 1)
-        .stream()
+    w.getNearbyLivingEntities(at, 1.5, 1.5, 1.5).stream()
         .filter(le -> !le.equals(shooter))
-        .forEach(hit -> {
-          Location loc = hit.getLocation();
-          new GameDamageEvent(shooter, hit,
-              GameplayConstants.BFG_DAMAGE, Weapon.BFG9K)
-              .fire();
-          Vector away = loc.toVector().subtract(at.toVector()).normalize();
-          away.setY(0.5);
-          away.multiply(1.5);
-          hit.setVelocity(away);
-        });
+        .filter(entity -> !IgnoreEntities.shouldIgnoreEntity(entity))
+        .forEach(
+            hit -> {
+              Location loc = hit.getLocation();
+              new GameDamageEvent(shooter, hit, GameplayConstants.BFG_DAMAGE, Weapon.BFG9K).fire();
+              Vector away = loc.toVector().subtract(at.toVector()).normalize();
+              away.setY(0.5);
+              away.multiply(1.5);
+              hit.setVelocity(away);
+            });
 
     w.spawnParticle(Particle.PORTAL, at, 5, .75, .75, .75, 2);
     w.spawnParticle(Particle.SNOWBALL, at, 20, 3, 3, 3, 0);
@@ -99,7 +99,7 @@ public class BFG9KListener implements Listener {
 
     Runnable flashes = () -> w.spawnParticle(Particle.FLASH, at, 3, 2, 2, 2, .2);
 
-    for (long delay : new long[]{2, 4, 8, 10, 12, 14, 16, 18, 20}) {
+    for (long delay : new long[] {2, 4, 8, 10, 12, 14, 16, 18, 20}) {
       Bukkit.getScheduler().runTaskLater(ArenaShooter.getInstance(), flashes, delay);
     }
 
@@ -117,68 +117,68 @@ public class BFG9KListener implements Listener {
     boom(projLoc, blockData, SoundConstants.ROCKET_DET);
 
     var lasers = new ArrayList<GuardianLaser>();
-    Bukkit.getScheduler().runTaskLater(ArenaShooter.getInstance(), () -> {
-      lasers.forEach(GuardianLaser::close);
-      lasers.clear();
-    }, 20L);
+    Bukkit.getScheduler()
+        .runTaskLater(
+            ArenaShooter.getInstance(),
+            () -> {
+              lasers.forEach(GuardianLaser::close);
+              lasers.clear();
+            },
+            20L);
 
-    projLoc.getNearbyLivingEntities(40d, 20d, le -> !le.equals(shooter))
-        .forEach(hit -> {
-          Location loc = hit.getEyeLocation();
-          World w = loc.getWorld();
+    projLoc
+        .getNearbyLivingEntities(
+            40d, 20d, le -> !le.equals(shooter) && !IgnoreEntities.shouldIgnoreEntity(le))
+        .forEach(
+            hit -> {
+              Location loc = hit.getEyeLocation();
+              World w = loc.getWorld();
 
-          var to1 = loc.toVector().subtract(projLoc.toVector()).normalize();
-          var rt1 = w.rayTrace(
-              projLoc,
-              to1,
-              30,
-              FluidCollisionMode.NEVER, // ignore fluid
-              true, // ignore passable
-              1,
-              en -> en.equals(hit)
-          );
-          if (rt1 == null) {
-            return;
-          }
-          var shooterLoc = shooter.getEyeLocation();
-          var to2 = loc.toVector().subtract(shooterLoc.toVector()).normalize();
-          var rt2 = w.rayTrace(
-              shooterLoc,
-              to2,
-              30,
-              FluidCollisionMode.NEVER, // ignore fluid
-              true, // ignore passable
-              1,
-              en -> en.equals(hit)
-          );
+              var to1 = loc.toVector().subtract(projLoc.toVector()).normalize();
+              var rt1 =
+                  w.rayTrace(
+                      projLoc,
+                      to1,
+                      30,
+                      FluidCollisionMode.NEVER, // ignore fluid
+                      true, // ignore passable
+                      1,
+                      en -> en.equals(hit));
+              if (rt1 == null) {
+                return;
+              }
+              var shooterLoc = shooter.getEyeLocation();
+              var to2 = loc.toVector().subtract(shooterLoc.toVector()).normalize();
+              var rt2 =
+                  w.rayTrace(
+                      shooterLoc,
+                      to2,
+                      30,
+                      FluidCollisionMode.NEVER, // ignore fluid
+                      true, // ignore passable
+                      1,
+                      en -> en.equals(hit));
 
-          if (rt2 == null) {
-            return;
-          }
+              if (rt2 == null) {
+                return;
+              }
 
-          if (rt1.getHitEntity() == hit && rt2.getHitEntity() == hit) {
-            particleLine(projLoc, hit.getEyeLocation(), Particle.COMPOSTER, 16);
+              if (rt1.getHitEntity() == hit && rt2.getHitEntity() == hit) {
+                particleLine(projLoc, hit.getEyeLocation(), Particle.COMPOSTER, 16);
 
-            var l = new GuardianLaser(projLoc, hit.getEyeLocation());
-            l.startBeam();
-            lasers.add(l);
+                var l = new GuardianLaser(projLoc, hit.getEyeLocation());
+                l.startBeam();
+                lasers.add(l);
 
-            w.spawnParticle(Particle.BLOCK_CRACK, loc,
-                5, .75, .75, .75,
-                blockData);
-            w.spawnParticle(Particle.BLOCK_CRACK, hit.getLocation(),
-                5, .75, .75, .75,
-                blockData);
-            double distanceFromProj = projLoc.distance(hit.getLocation());
-            double damageFactor = 1d / (Math.max(1.5, Math.min(distanceFromProj, .01)) - .5);
-            double damage = GameplayConstants.BFG_SPREAD_DAMAGE * damageFactor;
-            new GameDamageEvent(shooter,
-                hit,
-                damage,
-                Weapon.BFG9K)
-                .fire();
-          }
-        });
+                w.spawnParticle(Particle.BLOCK_CRACK, loc, 5, .75, .75, .75, blockData);
+                w.spawnParticle(
+                    Particle.BLOCK_CRACK, hit.getLocation(), 5, .75, .75, .75, blockData);
+                double distanceFromProj = projLoc.distance(hit.getLocation());
+                double damageFactor = 1d / (Math.max(1.5, Math.min(distanceFromProj, .01)) - .5);
+                double damage = GameplayConstants.BFG_SPREAD_DAMAGE * damageFactor;
+                new GameDamageEvent(shooter, hit, damage, Weapon.BFG9K).fire();
+              }
+            });
   }
 
   @SuppressWarnings("SameParameterValue")
@@ -204,12 +204,9 @@ public class BFG9KListener implements Listener {
       for (int dy = -2; dy < 2; dy++) {
         for (int dz = -2; dz < 2; dz++) {
           Location loc = new Location(w, x + dx, y + dy, z + dz);
-          w.spawnParticle(Particle.BLOCK_CRACK, loc, 5, .75, .75, .75,
-              blockData
-          );
+          w.spawnParticle(Particle.BLOCK_CRACK, loc, 5, .75, .75, .75, blockData);
         }
       }
     }
   }
-
 }

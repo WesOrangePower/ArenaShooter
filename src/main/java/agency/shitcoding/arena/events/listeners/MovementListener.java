@@ -6,6 +6,7 @@ import agency.shitcoding.arena.gamestate.GameOrchestrator;
 import agency.shitcoding.arena.models.Weapon;
 import com.destroystokyo.paper.event.player.PlayerJumpEvent;
 import lombok.Getter;
+import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.Particle;
@@ -14,10 +15,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageEvent;
-import org.bukkit.event.player.PlayerMoveEvent;
-import org.bukkit.event.player.PlayerQuitEvent;
-import org.bukkit.event.player.PlayerRespawnEvent;
-import org.bukkit.event.player.PlayerToggleFlightEvent;
+import org.bukkit.event.player.*;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.util.Vector;
 
@@ -37,7 +35,6 @@ public class MovementListener implements Listener {
     player.setAllowFlight(false);
   }
 
-
   @EventHandler
   public void onPlayerSpawn(PlayerRespawnEvent event) {
     if (event.getPlayer().getGameMode() != GameMode.ADVENTURE) {
@@ -51,25 +48,27 @@ public class MovementListener implements Listener {
   public void playerMoveOutsideArena(PlayerMoveEvent event) {
     Player player = event.getPlayer();
     Location location = player.getLocation();
-    GameOrchestrator.getInstance().getGameByPlayer(player).map(Game::getArena)
-        .ifPresent(arena -> {
-          if (!arena.isInside(location)) {
-            if (player.getGameMode() == GameMode.ADVENTURE) {
-              new GameDamageEvent(null, player, 100, Weapon.GAUNTLET)
-                  .fire();
-              return;
-            }
-            if (player.getGameMode() == GameMode.SPECTATOR) {
-              // midway between lower and upperbounds
-              Location lower = arena.getLowerBound();
-              Location upper = arena.getUpperBound();
-              double x = (lower.getX() + upper.getX()) / 2;
-              double y = (lower.getY() + upper.getY()) / 2;
-              double z = (lower.getZ() + upper.getZ()) / 2;
-              player.teleport(new Location(lower.getWorld(), x, y, z));
-            }
-          }
-        });
+    GameOrchestrator.getInstance()
+        .getGameByPlayer(player)
+        .map(Game::getArena)
+        .ifPresent(
+            arena -> {
+              if (!arena.isInside(location)) {
+                if (player.getGameMode() == GameMode.ADVENTURE) {
+                  new GameDamageEvent(null, player, 100, Weapon.GAUNTLET).fire();
+                  return;
+                }
+                if (player.getGameMode() == GameMode.SPECTATOR) {
+                  // midway between lower and upperbounds
+                  Location lower = arena.getLowerBound();
+                  Location upper = arena.getUpperBound();
+                  double x = (lower.getX() + upper.getX()) / 2;
+                  double y = (lower.getY() + upper.getY()) / 2;
+                  double z = (lower.getZ() + upper.getZ()) / 2;
+                  player.teleport(new Location(lower.getWorld(), x, y, z));
+                }
+              }
+            });
   }
 
   @EventHandler
@@ -94,10 +93,13 @@ public class MovementListener implements Listener {
       effect = new PotionEffect(WEAKNESS, INFINITE_DURATION, 10, false, false, false);
       player.addPotionEffect(effect);
     }
-    GameOrchestrator.getInstance().getGameByPlayer(player)
-        .ifPresent(game -> game.getArena().getRamps().stream()
-            .filter(ramp -> ramp.isTouching(player))
-            .forEach(ramp -> ramp.apply(player)));
+    GameOrchestrator.getInstance()
+        .getGameByPlayer(player)
+        .ifPresent(
+            game ->
+                game.getArena().getRamps().stream()
+                    .filter(ramp -> ramp.isTouching(player))
+                    .forEach(ramp -> ramp.apply(player)));
   }
 
   @EventHandler
@@ -132,4 +134,18 @@ public class MovementListener implements Listener {
     }
   }
 
+  @EventHandler
+  public void spectatorTeleportCleanup(PlayerTeleportEvent event) {
+    Player player = event.getPlayer();
+    if (player.getGameMode() != GameMode.SPECTATOR) {
+      return;
+    }
+    if (GameOrchestrator.getInstance().getGames().stream()
+        .map(Game::getSpectators)
+        .noneMatch(s -> s.contains(player))) {
+      return;
+    }
+    player.setScoreboard(Bukkit.getScoreboardManager().getMainScoreboard());
+    player.activeBossBars().forEach(b -> b.removeViewer(player));
+  }
 }

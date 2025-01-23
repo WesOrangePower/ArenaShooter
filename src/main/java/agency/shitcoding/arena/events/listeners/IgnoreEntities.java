@@ -1,8 +1,11 @@
 package agency.shitcoding.arena.events.listeners;
 
 import agency.shitcoding.arena.models.Keys;
+import org.bukkit.GameMode;
 import org.bukkit.NamespacedKey;
 import org.bukkit.entity.Entity;
+import org.bukkit.entity.EntityType;
+import org.bukkit.entity.Player;
 import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.persistence.PersistentDataType;
 import org.jetbrains.annotations.Nullable;
@@ -19,6 +22,9 @@ public class IgnoreEntities {
   public static boolean shouldIgnoreEntity(@Nullable Entity entity) {
     if (entity == null) {
       return false;
+    }
+    if (entity.getType() == EntityType.PLAYER && ((Player)entity).getGameMode() != GameMode.ADVENTURE) {
+      return true;
     }
     if (!entity.getPersistentDataContainer().has(IGNORE_HIT_KEY, PersistentDataType.BOOLEAN)) {
       return false;
