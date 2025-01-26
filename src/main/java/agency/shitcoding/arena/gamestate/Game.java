@@ -483,8 +483,7 @@ public abstract class Game {
   }
 
   protected void playSound(Player p, AnnouncerConstant constant) {
-    String sound = LangPlayer.of(p).getLangContext().translateAnnounce(constant);
-    playSound(p, sound);
+    announcer.announce(constant, p);
   }
 
   public void announceToAll(AnnouncerConstant announcerConstant) {

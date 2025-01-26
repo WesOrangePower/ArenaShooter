@@ -3,8 +3,8 @@ package agency.shitcoding.arena.gamestate;
 import static java.util.Objects.requireNonNull;
 import static net.kyori.adventure.text.minimessage.MiniMessage.miniMessage;
 
-import agency.shitcoding.arena.gamestate.announcer.AnnouncerConstant;
 import agency.shitcoding.arena.ArenaShooter;
+import agency.shitcoding.arena.gamestate.announcer.AnnouncerConstant;
 import agency.shitcoding.arena.gamestate.team.ETeam;
 import agency.shitcoding.arena.gamestate.team.GameTeam;
 import agency.shitcoding.arena.gamestate.team.TeamGame;
@@ -13,7 +13,9 @@ import agency.shitcoding.arena.localization.LangPlayer;
 import agency.shitcoding.arena.models.*;
 import agency.shitcoding.arena.worlds.ArenaWorld;
 import java.util.Optional;
+import java.util.Set;
 import java.util.function.Function;
+import java.util.stream.Collectors;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import net.kyori.adventure.text.Component;
@@ -193,11 +195,8 @@ public class CTFGame extends TeamGame {
   }
 
   protected void announceTeam(ETeam team, AnnouncerConstant key) {
-    getTeamManager()
-        .getTeam(team)
-        .getPlayers()
-        .forEach(
-            p -> p.playSound(p, LangPlayer.of(p).getLangContext().translateAnnounce(key), 1f, 1f));
+    Set<Player> teamPlayers = getTeamManager().getTeam(team).getPlayers();
+    announcer.announce(key, teamPlayers);
   }
 
   protected void announceTeam(
@@ -208,11 +207,11 @@ public class CTFGame extends TeamGame {
   }
 
   protected void announceOtherTeams(ETeam team, AnnouncerConstant key) {
-    getTeamManager().getTeams().values().stream()
+    Set<Player> otherTeamMembers = getTeamManager().getTeams().values().stream()
         .filter(t -> t.getETeam() != team)
         .flatMap(t -> t.getPlayers().stream())
-        .forEach(
-            p -> p.playSound(p, LangPlayer.of(p).getLangContext().translateAnnounce(key), 1f, 1f));
+        .collect(Collectors.toSet());
+    announcer.announce(key, otherTeamMembers);
   }
 
   protected void announceOtherTeams(

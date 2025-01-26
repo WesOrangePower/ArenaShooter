@@ -7,8 +7,8 @@ import agency.shitcoding.arena.gamestate.team.TeamGame;
 import agency.shitcoding.arena.models.door.Door;
 import agency.shitcoding.arena.models.door.DoorTrigger;
 import java.lang.reflect.InvocationTargetException;
-import lombok.Getter;
-import lombok.Setter;
+
+import lombok.*;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.attribute.Attribute;

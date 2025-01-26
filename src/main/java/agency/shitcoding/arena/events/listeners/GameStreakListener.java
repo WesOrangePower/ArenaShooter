@@ -1,5 +1,6 @@
 package agency.shitcoding.arena.events.listeners;
 
+import agency.shitcoding.arena.gamestate.announcer.Announcer;
 import agency.shitcoding.arena.gamestate.announcer.AnnouncerConstant;
 import agency.shitcoding.arena.events.GameStreakUpdateEvent;
 import agency.shitcoding.arena.gamestate.CosmeticsService;
@@ -52,7 +53,6 @@ public class GameStreakListener implements Listener {
     p.playSound(p, sound, SoundCategory.VOICE, .8f, 1f);
   }
   private void playSound(Player p, AnnouncerConstant constant) {
-    var sound = LangPlayer.of(p).getLangContext().translateAnnounce(constant);
-    playSound(p, sound);
+    Announcer.getInstance().announce(constant, p);
   }
 }

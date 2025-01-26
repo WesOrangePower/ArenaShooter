@@ -2,6 +2,7 @@ package agency.shitcoding.arena.events.listeners;
 
 import static org.bukkit.Sound.ENTITY_PLAYER_HURT;
 
+import agency.shitcoding.arena.gamestate.announcer.Announcer;
 import agency.shitcoding.arena.gamestate.announcer.AnnouncerConstant;
 import agency.shitcoding.arena.ArenaShooter;
 import agency.shitcoding.arena.GameplayConstants;
@@ -220,9 +221,7 @@ public class DamageListener implements Listener {
     if (event.getWeapon() == Weapon.GAUNTLET) {
       var killer = event.getKiller();
       if (killer != null) {
-        var sound =
-            LangPlayer.of(killer).getLangContext().translateAnnounce(AnnouncerConstant.HUMILIATION);
-        killer.playSound(killer, sound, .5f, 1f);
+        Announcer.getInstance().announce(AnnouncerConstant.HUMILIATION, killer);
       }
     }
   }
