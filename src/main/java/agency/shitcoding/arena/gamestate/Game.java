@@ -2,7 +2,8 @@ package agency.shitcoding.arena.gamestate;
 
 import static agency.shitcoding.arena.GameplayConstants.GAME_END_TIMER_TICKS;
 
-import agency.shitcoding.arena.AnnouncerConstant;
+import agency.shitcoding.arena.gamestate.announcer.Announcer;
+import agency.shitcoding.arena.gamestate.announcer.AnnouncerConstant;
 import agency.shitcoding.arena.ArenaShooter;
 import agency.shitcoding.arena.events.MajorBuffTracker;
 import agency.shitcoding.arena.localization.LangPlayer;
@@ -17,7 +18,6 @@ import java.time.Instant;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
-import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
 import com.google.common.collect.Iterables;
@@ -56,16 +56,7 @@ public abstract class Game {
   protected final List<PlayerScore> scores = new ArrayList<>();
   protected final MajorBuffTracker majorBuffTracker = new MajorBuffTracker();
   protected final Set<Player> diedOnce = new HashSet<>();
-  protected final Consumer<AnnouncerConstant> announcer =
-      ac ->
-          Iterables.concat(players, getSpectators()).forEach(
-              p ->
-                  p.playSound(
-                      p,
-                      LangPlayer.of(p).getLangContext().translateAnnounce(ac),
-                      SoundCategory.VOICE,
-                      1f,
-                      1f));
+  protected final Announcer announcer = Announcer.getInstance();
   protected Map<Player, BossBar> bossBarMap = new ConcurrentHashMap<>();
   protected RuleSet ruleSet;
   protected GameRules gameRules;
@@ -224,7 +215,7 @@ public abstract class Game {
     if (waitingManager != null) {
       waitingManager.cleanup();
     }
-    announcer.accept(AnnouncerConstant.FIGHT);
+    announceToAll(AnnouncerConstant.FIGHT);
     for (Player player : players) {
       LangPlayer.of(player).sendRichLocalized("game.start.message");
       arena.spawn(player, this, getLootPointFilter());
@@ -311,19 +302,19 @@ public abstract class Game {
   private void timeEvents(long remainingSeconds) {
     boolean fiveMinutes = remainingSeconds == 300;
     if (fiveMinutes) {
-      announcer.accept(AnnouncerConstant.FIVE_MINUTE);
+      announceToAll(AnnouncerConstant.FIVE_MINUTE);
     }
     if (remainingSeconds == 60) {
-      announcer.accept(AnnouncerConstant.ONE_MINUTE);
+      announceToAll(AnnouncerConstant.ONE_MINUTE);
     }
     if (remainingSeconds == 3) {
-      announcer.accept(AnnouncerConstant.THREE);
+      announceToAll(AnnouncerConstant.THREE);
     }
     if (remainingSeconds == 2) {
-      announcer.accept(AnnouncerConstant.TWO);
+      announceToAll(AnnouncerConstant.TWO);
     }
     if (remainingSeconds == 1) {
-      announcer.accept(AnnouncerConstant.ONE);
+      announceToAll(AnnouncerConstant.ONE);
     }
   }
 
@@ -494,6 +485,11 @@ public abstract class Game {
   protected void playSound(Player p, AnnouncerConstant constant) {
     String sound = LangPlayer.of(p).getLangContext().translateAnnounce(constant);
     playSound(p, sound);
+  }
+
+  public void announceToAll(AnnouncerConstant announcerConstant) {
+    announcer.announce(announcerConstant, players);
+    announcer.announce(announcerConstant, getSpectators());
   }
 
   public LootPointFilter getLootPointFilter() {

@@ -7,6 +7,7 @@ import agency.shitcoding.arena.events.GameShootEvent;
 import agency.shitcoding.arena.gamestate.GameOrchestrator;
 import agency.shitcoding.arena.gamestate.team.TeamGame;
 import agency.shitcoding.arena.models.Weapon;
+import java.util.*;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Particle;
@@ -18,8 +19,6 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 import org.bukkit.util.Vector;
-
-import java.util.*;
 
 public class ShotgunListener implements Listener {
 

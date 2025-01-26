@@ -2,7 +2,7 @@ package agency.shitcoding.arena.events.listeners;
 
 import static org.bukkit.Sound.ENTITY_PLAYER_HURT;
 
-import agency.shitcoding.arena.AnnouncerConstant;
+import agency.shitcoding.arena.gamestate.announcer.AnnouncerConstant;
 import agency.shitcoding.arena.ArenaShooter;
 import agency.shitcoding.arena.GameplayConstants;
 import agency.shitcoding.arena.SoundConstants;

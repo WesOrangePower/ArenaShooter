@@ -18,12 +18,12 @@ public class LocalizationService {
     return instance;
   }
 
-  public static final String [] SUPPORTED_LOCALES = { "en", "ru", "et", "uk", "pt" };
   private final Map<String, ResourceBundle> bundles = new HashMap<>();
 
   public LocalizationService() {
-    for (String locale : SUPPORTED_LOCALES) {
-      bundles.put(locale, ResourceBundle.getBundle("localization.arena", Locale.of(locale)));
+    for (SupportedLocale locale : SupportedLocale.values()) {
+      var localeStr = locale.getLocale();
+      bundles.put(localeStr, ResourceBundle.getBundle("localization.arena", Locale.of(localeStr)));
     }
   }
 
@@ -55,11 +55,6 @@ public class LocalizationService {
   }
 
   public boolean isSupported(String locale) {
-    for (String supportedLocale : SUPPORTED_LOCALES) {
-      if (supportedLocale.equals(locale)) {
-        return true;
-      }
-    }
-    return false;
+    return SupportedLocale.isSupported(locale);
   }
 }

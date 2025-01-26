@@ -3,7 +3,7 @@ package agency.shitcoding.arena.gamestate;
 import static java.util.Objects.requireNonNull;
 import static net.kyori.adventure.text.minimessage.MiniMessage.miniMessage;
 
-import agency.shitcoding.arena.AnnouncerConstant;
+import agency.shitcoding.arena.gamestate.announcer.AnnouncerConstant;
 import agency.shitcoding.arena.ArenaShooter;
 import agency.shitcoding.arena.gamestate.team.ETeam;
 import agency.shitcoding.arena.gamestate.team.GameTeam;

@@ -2,7 +2,7 @@ package agency.shitcoding.arena.localization;
 
 import static net.kyori.adventure.text.minimessage.MiniMessage.miniMessage;
 
-import agency.shitcoding.arena.AnnouncerConstant;
+import agency.shitcoding.arena.gamestate.announcer.AnnouncerConstant;
 import agency.shitcoding.arena.SoundConstants;
 import java.util.List;
 import java.util.Locale;
@@ -13,12 +13,17 @@ import net.kyori.adventure.text.Component;
 public class LangContext implements Announcer {
 
   private final String locale;
+  private  SupportedLocale supportedLocale = null;
 
   public LangContext(String locale) {
     this.locale = locale;
   }
   public LangContext(Locale locale) {
     this.locale = locale.getLanguage();
+  }
+  public LangContext(SupportedLocale locale) {
+    this.locale = locale.getLocale();
+    this.supportedLocale = locale;
   }
 
   public LangContext() {
@@ -41,5 +46,14 @@ public class LangContext implements Announcer {
 
   public Component getRichLocalized(String key, Object... args) {
     return miniMessage().deserialize(getLocalized(key, args));
+  }
+
+
+  public SupportedLocale getSupportedLocale() {
+    if (supportedLocale == null) {
+      supportedLocale = SupportedLocale.fromString(locale);
+    }
+
+    return supportedLocale;
   }
 }

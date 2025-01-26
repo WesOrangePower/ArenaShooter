@@ -1,7 +1,6 @@
 package agency.shitcoding.arena.events.listeners;
 
-import agency.shitcoding.arena.AnnouncerConstant;
-import agency.shitcoding.arena.SoundConstants;
+import agency.shitcoding.arena.gamestate.announcer.AnnouncerConstant;
 import agency.shitcoding.arena.events.GameStreakUpdateEvent;
 import agency.shitcoding.arena.gamestate.CosmeticsService;
 import agency.shitcoding.arena.gamestate.WeaponMods;
