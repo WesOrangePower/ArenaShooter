@@ -57,6 +57,8 @@ public abstract class Game {
   protected final MajorBuffTracker majorBuffTracker = new MajorBuffTracker();
   protected final Set<Player> diedOnce = new HashSet<>();
   protected final Announcer announcer = Announcer.getInstance();
+  @Nullable
+  protected LootManager lootManager;
   protected Map<Player, BossBar> bossBarMap = new ConcurrentHashMap<>();
   protected RuleSet ruleSet;
   protected GameRules gameRules;
@@ -131,7 +133,9 @@ public abstract class Game {
     if (ammoActionBarTask != null) {
       ammoActionBarTask.cancel();
     }
-    LootManagerProvider.cleanup(arena);
+    if (lootManager != null) {
+      lootManager.cleanup();
+    }
 
     Optional.ofNullable(scoreboardObjective).ifPresent(Objective::unregister);
     Optional.ofNullable(healthObjective).ifPresent(Objective::unregister);
@@ -221,7 +225,8 @@ public abstract class Game {
       arena.spawn(player, this, getLootPointFilter());
     }
     gamestage = GameStage.IN_PROGRESS;
-    LootManagerProvider.create(this, arena, this::preprocessLootPoints);
+    var processedLootPoints = preprocessLootPoints(arena.getLootPoints());
+    lootManager = new LootManager(processedLootPoints, this);
     startGameStage2();
     this.gameStart = Instant.now();
     this.gameTimerTask =

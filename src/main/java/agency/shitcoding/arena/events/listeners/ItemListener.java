@@ -3,7 +3,6 @@ package agency.shitcoding.arena.events.listeners;
 import agency.shitcoding.arena.gamestate.Game;
 import agency.shitcoding.arena.gamestate.GameOrchestrator;
 import agency.shitcoding.arena.gamestate.LootManager;
-import agency.shitcoding.arena.gamestate.LootManagerProvider;
 import agency.shitcoding.arena.localization.LangPlayer;
 import agency.shitcoding.arena.models.*;
 import org.bukkit.entity.Item;
@@ -48,7 +47,8 @@ public class ItemListener implements Listener {
       }
       powerup = first.get();
     } else {
-      LootManager lootManager = LootManagerProvider.get(game.getArena()).orElseThrow();
+      LootManager lootManager = game.getLootManager();
+      assert lootManager != null;
       LootPointInstance lootPointInstance = lootManager.getLootPoints().get(i);
       powerup = lootPointInstance.getLootPoint().getType();
     }
@@ -75,7 +75,7 @@ public class ItemListener implements Listener {
       }
       item.remove();
       if (i > 0) {
-        LootManager lootManager = LootManagerProvider.get(game.getArena()).orElseThrow();
+        LootManager lootManager = game.getLootManager();
         LootPointInstance lootPointInstance = lootManager.getLootPoints().get(i);
         lootPointInstance.setLooted(true);
       }
