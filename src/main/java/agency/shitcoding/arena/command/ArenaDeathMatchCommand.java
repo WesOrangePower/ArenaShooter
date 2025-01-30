@@ -53,7 +53,7 @@ public final class ArenaDeathMatchCommand extends CommandInst {
       case "create" -> new ArenaCreateCmd(sender, args);
       case "host" -> new ArenaHostCmd(sender, args);
       case "join" -> new ArenaJoinCmd(sender, args);
-      case "forcestart" -> new ArenaForcestartCmd(sender, args);
+      case "forcestart" -> new ArenaForceStartCmd(sender, args);
       case "leave" -> new ArenaLeaveCmd(sender, args);
       case "utils" -> new ArenaUtilsCmd(sender, args);
       default -> new ArenaHelpCmd(sender, args, HELP);

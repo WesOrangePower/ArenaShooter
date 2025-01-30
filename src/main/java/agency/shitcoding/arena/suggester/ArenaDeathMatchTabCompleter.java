@@ -82,6 +82,14 @@ public class ArenaDeathMatchTabCompleter {
                       .map(Tournament::getPlayerNames)
                       .orElse(List.of()))
           .build();
+  private final Suggester forceStartSuggester = SuggesterBuilder.builder()
+      .at(2)
+      .suggest(
+          () ->
+              GameOrchestrator.getInstance().getGames().stream()
+                  .flatMap(g -> g.getPlayers().stream().map(Player::getName))
+                  .toList())
+      .build();
 
   private List<SuggestionRule> trailingArenaRules() {
     var rules = new ArrayList<SuggestionRule>();
@@ -166,10 +174,7 @@ public class ArenaDeathMatchTabCompleter {
   }
 
   private List<String> resolveForceStart() {
-    if (args.length == 2) {
-      return GameOrchestrator.getInstance().getUsedArenaNames();
-    }
-    return List.of();
+    return forceStartSuggester.suggest(sender, args);
   }
 
   private List<String> resolveTournament() {
