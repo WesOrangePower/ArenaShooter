@@ -7,9 +7,13 @@ import agency.shitcoding.arena.events.listeners.protocol.AnvilTextInputPacketAda
 import agency.shitcoding.arena.gamestate.CleanUp;
 import agency.shitcoding.arena.gamestate.Game;
 import agency.shitcoding.arena.gamestate.GameOrchestrator;
+import agency.shitcoding.arena.gamestate.announcer.AnnouncementSkipProvider;
+import agency.shitcoding.arena.gamestate.announcer.AnnouncerConstant;
+import agency.shitcoding.arena.gamestate.announcer.HardcodedStaticAnnouncementSkipProvider;
 import agency.shitcoding.arena.statistics.StatisticsService;
 import agency.shitcoding.arena.statistics.StatisticsServiceImpl;
 import agency.shitcoding.arena.storage.CosmeticsUpdater;
+import agency.shitcoding.arena.storage.skips.YamlSkipProvider;
 import com.comphenix.protocol.ProtocolLibrary;
 import com.comphenix.protocol.ProtocolManager;
 import com.github.yannicklamprecht.worldborder.api.WorldBorderApi;
@@ -56,16 +60,40 @@ public final class ArenaShooter extends JavaPlugin {
     worldBorderApi =
         new ArenaWorldBorderApi(
             (PersistenceWrapper) worldBorderApiRegisteredServiceProvider.getProvider());
-    Bukkit.getScheduler().runTaskLater(
-        this, () -> {
-          protocolManager = ProtocolLibrary.getProtocolManager();
-          if (isProtocolLibEnabled()) {
-            protocolManager.addPacketListener(new AnvilTextInputPacketAdapter());
-          } else {
-            getLogger().info("ProtocolLib not found. Cannot use anvil text input");
-          }
-        }, 20L * 5
-    );
+    Bukkit.getScheduler()
+        .runTaskLater(
+            this,
+            () -> {
+              protocolManager = ProtocolLibrary.getProtocolManager();
+              if (isProtocolLibEnabled()) {
+                protocolManager.addPacketListener(new AnvilTextInputPacketAdapter());
+              } else {
+                getLogger().info("ProtocolLib not found. Cannot use anvil text input");
+              }
+            },
+            20L * 5);
+
+    setupAnnouncer();
+  }
+
+  private void setupAnnouncer() {
+    var dataFile = getDataFolder();
+    if (!dataFile.exists()) {
+      //noinspection ResultOfMethodCallIgnored
+      dataFile.mkdirs();
+    }
+    var dataPath = dataFile.toPath();
+    var file = dataPath.resolve("sound_skips.yaml").toFile();
+    if (!file.exists()) file = dataPath.resolve("sound_skips.yml").toFile();
+    AnnouncementSkipProvider skipProvider;
+    if (file.exists()) {
+      skipProvider = new YamlSkipProvider(file);
+    } else {
+      getLogger().warning("No announcer skips found, using default values");
+      skipProvider = new HardcodedStaticAnnouncementSkipProvider();
+    }
+    getLogger().info(() -> "Using " + skipProvider.getClass().getSimpleName() + " for announcer skips.");
+    AnnouncerConstant.setAnnouncementSkipProvider(skipProvider);
   }
 
   private void initSchedulers() {
