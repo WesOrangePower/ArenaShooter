@@ -6,6 +6,9 @@ import agency.shitcoding.arena.gamestate.GameOrchestrator;
 import agency.shitcoding.arena.gamestate.team.GameTeam;
 import agency.shitcoding.arena.gamestate.team.TeamGame;
 import org.bukkit.GameMode;
+import org.bukkit.Material;
+import org.bukkit.Tag;
+import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Fireball;
 import org.bukkit.entity.HumanEntity;
 import org.bukkit.entity.Player;
@@ -149,14 +152,50 @@ public class BlockerListener implements Listener {
     }
 
     if (event.getClickedBlock() != null
-        && event.getClickedBlock().getType().name().contains("TRAPDOOR")) {
+        && Tag.TRAPDOORS.isTagged(event.getClickedBlock().getType())) {
+      event.setCancelled(true);
+    }
+  }
+
+  @EventHandler
+  private void disableGates(PlayerInteractEvent event) {
+    if (event.getPlayer().getGameMode() != GameMode.ADVENTURE) {
+      return;
+    }
+
+    if (event.getClickedBlock() != null
+        && Tag.FENCE_GATES.isTagged(event.getClickedBlock().getType())) {
+      event.setCancelled(true);
+    }
+  }
+
+  @EventHandler
+  private void disableClayPots(PlayerInteractEvent event) {
+    if (event.getPlayer().getGameMode() != GameMode.ADVENTURE) {
+      return;
+    }
+
+    if (event.getClickedBlock() != null
+        && Tag.FLOWER_POTS.isTagged(event.getClickedBlock().getType())) {
+      event.setCancelled(true);
+    }
+  }
+
+  @EventHandler
+  private void disablePaintingBreaking(EntityDamageByEntityEvent event) {
+    if (event.getDamager() instanceof Player player && player.getGameMode() != GameMode.ADVENTURE) {
+      return;
+    }
+
+    if (event.getEntity().getType() == EntityType.PAINTING) {
       event.setCancelled(true);
     }
   }
 
   @EventHandler
   private void disableKillCommand(PlayerCommandPreprocessEvent event) {
-    if (event.getMessage().startsWith("/kill")) {
+    if (event.getMessage().startsWith("/kill")
+        || event.getMessage().startsWith("/minecraft:kill")) {
       event.getPlayer().sendRichMessage("<red>Gubami");
       event.setCancelled(true);
     }

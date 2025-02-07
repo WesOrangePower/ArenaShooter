@@ -6,13 +6,14 @@ import agency.shitcoding.arena.models.*;
 import agency.shitcoding.arena.models.door.Door;
 import agency.shitcoding.arena.models.door.DoorTrigger;
 import java.io.File;
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.io.IOException;
+import java.nio.file.FileSystems;
+import java.nio.file.WatchService;
+import java.util.*;
 import java.util.stream.Collectors;
 
-import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.configuration.Configuration;
 import org.bukkit.configuration.ConfigurationSection;
@@ -20,13 +21,48 @@ import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.util.Vector;
 import org.jetbrains.annotations.Nullable;
 
-@RequiredArgsConstructor
+import static agency.shitcoding.arena.storage.StorageFactory.getConfiguration;
+import static java.nio.file.StandardWatchEventKinds.ENTRY_MODIFY;
+
+@Slf4j
 public class ConfigurationArenaStorage implements ArenaStorage {
 
   public static final File FILE =
       new File(ArenaShooter.getInstance().getDataFolder(), "arenas.yml");
 
-  private final Configuration configuration;
+  private Configuration configuration;
+  private final WatchService watchService;
+
+  public ConfigurationArenaStorage(Configuration configuration) {
+    this.configuration = configuration;
+    try {
+      watchService = FileSystems.getDefault().newWatchService();
+      FILE.getParentFile().toPath().register(watchService, ENTRY_MODIFY);
+    } catch (IOException e) {
+      throw new RuntimeException(e);
+    }
+
+    Bukkit.getScheduler()
+        .runTaskTimer(
+            ArenaShooter.getInstance(),
+            () -> {
+              var key = watchService.poll();
+              if (key != null) {
+                for (var event : key.pollEvents()) {
+                  if (event.context().equals(FILE.getName())) {
+                    log.info("File changes detected at {}. Reloading config", FILE.getAbsolutePath());
+                    load();
+                  }
+                }
+              }
+            },
+            0,
+            60);
+  }
+
+  public void load() {
+    configuration = getConfiguration(FILE);
+  }
 
   @Override
   public Collection<Arena> getArenas() {
@@ -64,6 +100,7 @@ public class ConfigurationArenaStorage implements ArenaStorage {
     var upperBound = arenaSection.getLocation(Conf.Arenas.upperBound);
     var lootPointsSection = arenaSection.getConfigurationSection(Conf.Arenas.lootPointsSection);
     var portalsSection = arenaSection.getConfigurationSection(Conf.Arenas.portalsSection);
+    var windTunnelsSection = arenaSection.getConfigurationSection(Conf.Arenas.windTunnelsSection);
     var rampsSection = arenaSection.getConfigurationSection(Conf.Arenas.rampsSection);
     var doorsSection = arenaSection.getConfigurationSection(Conf.Arenas.doorsSection);
     var doorTriggersSection = arenaSection.getConfigurationSection(Conf.Arenas.doorTriggersSection);
@@ -77,6 +114,9 @@ public class ConfigurationArenaStorage implements ArenaStorage {
     }
     if (portalsSection == null) {
       portalsSection = arenaSection.createSection(Conf.Arenas.portalsSection);
+    }
+    if (windTunnelsSection == null) {
+      windTunnelsSection = arenaSection.createSection(Conf.Arenas.windTunnelsSection);
     }
     if (rampsSection == null) {
       rampsSection = arenaSection.createSection(Conf.Arenas.rampsSection);
@@ -106,6 +146,16 @@ public class ConfigurationArenaStorage implements ArenaStorage {
       }
       Portal portal = parsePortal(id, configurationSection);
       portals.add(portal);
+    }
+
+    Set<WindTunnel> windTunnels = new HashSet<>();
+    for (String id : windTunnelsSection.getKeys(false)) {
+      var configurationSection = windTunnelsSection.getConfigurationSection(id);
+      if (configurationSection == null) {
+        continue;
+      }
+      WindTunnel windTunnel = parseWindTunnel(id, configurationSection);
+      windTunnels.add(windTunnel);
     }
 
     Set<Ramp> ramps = new HashSet<>();
@@ -145,6 +195,7 @@ public class ConfigurationArenaStorage implements ArenaStorage {
         upperBound,
         lootPoints,
         portals,
+        windTunnels,
         ramps,
         doors,
         doorTriggers,
@@ -203,6 +254,17 @@ public class ConfigurationArenaStorage implements ArenaStorage {
     }
 
     return new Portal(id, firstLocation, secondLocation, targetLocation);
+  }
+
+  private WindTunnel parseWindTunnel(String windTunnelId, ConfigurationSection windTunnelSection) {
+    Location firstCorner = windTunnelSection.getLocation(Conf.Arenas.WindTunnels.firstCorner);
+    Location secondCorner = windTunnelSection.getLocation(Conf.Arenas.WindTunnels.secondCorner);
+    Vector velocity = windTunnelSection.getVector(Conf.Arenas.WindTunnels.velocity);
+
+    if (firstCorner == null || secondCorner == null || velocity == null) {
+      throw new RuntimeException("Failed to parse wind tunnel " + windTunnelId);
+    }
+    return new WindTunnel(windTunnelId, firstCorner, secondCorner, velocity);
   }
 
   private Ramp parseRamp(String rampId, ConfigurationSection rampSection) {

@@ -33,6 +33,7 @@ public class Arena implements Cloneable {
   private Location upperBound;
   private Set<LootPoint> lootPoints;
   private Set<Portal> portals;
+  private Set<WindTunnel> windTunnels;
   private Set<Ramp> ramps;
   private Set<LootPoint> weaponLootPoints;
   private Set<Door> doors;
@@ -48,6 +49,7 @@ public class Arena implements Cloneable {
       Location upperBound,
       Set<LootPoint> lootPoints,
       Set<Portal> portals,
+      Set<WindTunnel> windTunnels,
       Set<Ramp> ramps,
       Set<Door> doors,
       Set<DoorTrigger> doorTriggers,
@@ -60,6 +62,7 @@ public class Arena implements Cloneable {
     this.upperBound = upperBound;
     this.lootPoints = lootPoints;
     this.portals = portals;
+    this.windTunnels = windTunnels;
     this.ramps = ramps;
     this.doors = doors;
     this.doorTriggers = doorTriggers;
@@ -189,6 +192,7 @@ public class Arena implements Cloneable {
         upperBound.clone(),
         newLootPoints,
         portals,
+        windTunnels,
         ramps,
         doors,
         doorTriggers,
@@ -207,6 +211,7 @@ public class Arena implements Cloneable {
       arena.upperBound = upperBound.clone();
       arena.lootPoints = cloneSet(lootPoints);
       arena.portals = cloneSet(portals);
+      arena.windTunnels = cloneSet(windTunnels);
       arena.ramps = cloneSet(ramps);
       arena.weaponLootPoints = cloneSet(weaponLootPoints);
       arena.doors = cloneSet(doors);

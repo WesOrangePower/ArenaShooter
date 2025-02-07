@@ -4,6 +4,7 @@ import agency.shitcoding.arena.events.GameDamageEvent;
 import agency.shitcoding.arena.gamestate.Game;
 import agency.shitcoding.arena.gamestate.GameOrchestrator;
 import agency.shitcoding.arena.models.Weapon;
+import agency.shitcoding.arena.models.WindTunnel;
 import com.destroystokyo.paper.event.player.PlayerJumpEvent;
 import lombok.Getter;
 import org.bukkit.Bukkit;
@@ -96,10 +97,16 @@ public class MovementListener implements Listener {
     GameOrchestrator.getInstance()
         .getGameByPlayer(player)
         .ifPresent(
-            game ->
-                game.getArena().getRamps().stream()
-                    .filter(ramp -> ramp.isTouching(player))
-                    .forEach(ramp -> ramp.apply(player)));
+            game -> {
+              game.getArena().getRamps().stream()
+                  .filter(ramp -> ramp.isTouching(player))
+                  .forEach(ramp -> ramp.apply(player));
+              game.getArena().getWindTunnels().stream()
+                  .filter(tunnel -> tunnel.isInside(player))
+                  .map(WindTunnel::getVelocity)
+                  .reduce(Vector::add)
+                  .ifPresent(player::setVelocity);
+            });
   }
 
   @EventHandler

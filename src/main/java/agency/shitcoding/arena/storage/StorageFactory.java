@@ -25,7 +25,7 @@ public final class StorageFactory {
     return new ConfigurationCosmeticsStorage(getConfiguration(ConfigurationCosmeticsStorage.FILE));
   }
 
-  private static Configuration getConfiguration(File file) {
+  public static Configuration getConfiguration(File file) {
     try {
       File parent = file.getParentFile();
       if (parent != null && !parent.exists() && parent.mkdirs()) {
