@@ -1,5 +1,6 @@
 package agency.shitcoding.arena.storage;
 
+import agency.shitcoding.arena.ArenaShooter;
 import org.bukkit.configuration.Configuration;
 import org.bukkit.configuration.MemoryConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -11,10 +12,11 @@ import java.util.logging.Logger;
 public final class StorageFactory {
 
   private static final Logger LOG = Logger.getLogger(StorageFactory.class.getName());
-
+  public static final File ARENA_CFG_FILE =
+      new File(ArenaShooter.getInstance().getDataFolder(), "arenas.yml");
 
   public static ArenaStorage createArenaStorage() {
-    return new ConfigurationArenaStorage(getConfiguration(ConfigurationArenaStorage.FILE));
+    return new MappedConfigurationArenaStorage(getConfiguration(ARENA_CFG_FILE));
   }
 
   public static FaqStorage createFaqStorage() {
@@ -43,6 +45,5 @@ public final class StorageFactory {
     }
   }
 
-  private StorageFactory() {
-  }
+  private StorageFactory() {}
 }

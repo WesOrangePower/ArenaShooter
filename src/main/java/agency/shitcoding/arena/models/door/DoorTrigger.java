@@ -1,6 +1,9 @@
 package agency.shitcoding.arena.models.door;
 
 import java.util.List;
+
+import agency.shitcoding.arena.storage.framework.ConfigurationMappable;
+import agency.shitcoding.arena.storage.framework.annotation.MappedField;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -9,11 +12,16 @@ import org.bukkit.Location;
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
-public class DoorTrigger implements Cloneable {
-  private String triggerId;
+public class DoorTrigger implements Cloneable, ConfigurationMappable {
+  private String id;
+
+  @MappedField("door_ids")
   private List<String> doorIds;
+
+  @MappedField("trigger_type")
   private int triggerType;
-  private Location location;
+
+  @MappedField private Location location;
 
   public DoorTrigger clone() {
     try {
@@ -27,5 +35,5 @@ public class DoorTrigger implements Cloneable {
 
   public static final int INTERACTION = 1;
   public static final int PROXIMITY = 1 << 1;
-//  public static final int SHOOT = 1 << 2; TODO
+  //  public static final int SHOOT = 1 << 2; TODO
 }

@@ -2,6 +2,8 @@ package agency.shitcoding.arena.models.door;
 
 import agency.shitcoding.arena.ArenaShooter;
 import agency.shitcoding.arena.SoundConstants;
+import agency.shitcoding.arena.storage.framework.ConfigurationMappable;
+import agency.shitcoding.arena.storage.framework.annotation.MappedField;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.bukkit.Bukkit;
@@ -15,21 +17,32 @@ import org.bukkit.util.Vector;
 
 @Data
 @NoArgsConstructor
-public class Door implements Cloneable {
-  private String doorId;
+public class Door implements Cloneable, ConfigurationMappable {
+  private String id;
+
+  @MappedField("door_type")
   private int doorType;
+
+  @MappedField("animation_time")
   private int animationTime;
+
+  @MappedField("close_after_ticks")
   private int closeAfterTicks = -1;
+
+  @MappedField("replace_air")
   private boolean replaceAir = false;
-  private Location edge1;
-  private Location edge2;
+
+  @MappedField private Location edge1;
+  @MappedField private Location edge2;
+
+  @MappedField("destination_center")
   private Location destinationCenter;
 
   private boolean open = false;
   BlockDisplay[] blockDisplays;
 
   public Door(
-      String doorId,
+      String id,
       int doorType,
       int animationTime,
       int closeAfterTicks,
@@ -37,7 +50,7 @@ public class Door implements Cloneable {
       Location edge1,
       Location edge2,
       Location destinationCenter) {
-    this.doorId = doorId;
+    this.id = id;
     this.doorType = doorType;
     this.animationTime = animationTime;
     this.closeAfterTicks = closeAfterTicks;
@@ -46,6 +59,7 @@ public class Door implements Cloneable {
     this.edge2 = edge2;
     this.destinationCenter = destinationCenter;
   }
+
   private Location getMinimalLocation(Location loc1, Location loc2) {
     return new Location(
         loc1.getWorld(),
@@ -146,11 +160,7 @@ public class Door implements Cloneable {
     }
     this.open = true;
 
-    Bukkit.getScheduler()
-        .runTask(
-            ArenaShooter.getInstance(),
-            this::startOpen
-        );
+    Bukkit.getScheduler().runTask(ArenaShooter.getInstance(), this::startOpen);
 
     edge1.getWorld().playSound(getCenter(edge1, edge2), SoundConstants.PAD, 1f, 1f);
 

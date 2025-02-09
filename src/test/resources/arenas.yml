@@ -1,0 +1,2435 @@
+arena:
+  lobby_location:
+    ==: org.bukkit.Location
+    world: world
+    x: -1.0
+    y: 63.0
+    z: -1.0
+    pitch: 0.0
+    yaw: 0.0
+  arenas:
+    q3dm7:
+      lower_bound:
+        ==: org.bukkit.Location
+        world: q3dm7
+        x: -7.5
+        y: 90.5
+        z: 224.5
+        pitch: -2.2755976
+        yaw: 0.76257324
+      upper_bound:
+        ==: org.bukkit.Location
+        world: q3dm7
+        x: 89.5
+        y: 130.5
+        z: 336.5
+        pitch: 47.754387
+        yaw: 92.00757
+      loot_points:
+        LP0:
+          type: SHOTGUN
+          location:
+            ==: org.bukkit.Location
+            world: q3dm7
+            x: -2.5
+            y: 111.5
+            z: 307.5
+            pitch: 20.904371
+            yaw: -90.40405
+          is_spawn_point: true
+          markers: 0
+        LP1:
+          type: ROCKET_BOX
+          location:
+            ==: org.bukkit.Location
+            world: q3dm7
+            x: 2.5
+            y: 111.5
+            z: 302.5
+            pitch: 12.2999735
+            yaw: -89.95117
+          is_spawn_point: true
+          markers: 0
+        LP2:
+          type: CELL_BOX
+          location:
+            ==: org.bukkit.Location
+            world: q3dm7
+            x: 2.5
+            y: 111.5
+            z: 300.5
+            pitch: 12.2999735
+            yaw: -89.65112
+          is_spawn_point: true
+          markers: 0
+        LP3:
+          type: SHELL_BOX
+          location:
+            ==: org.bukkit.Location
+            world: q3dm7
+            x: 20.5
+            y: 104.5
+            z: 304.5
+            pitch: 3.0001926
+            yaw: 179.14807
+          is_spawn_point: true
+          markers: 0
+        LP4:
+          type: BULLET_BOX
+          location:
+            ==: org.bukkit.Location
+            world: q3dm7
+            x: 21.5
+            y: 107.5
+            z: 288.5
+            pitch: 38.39987
+            yaw: 90.04761
+          is_spawn_point: true
+          markers: 0
+        LP5:
+          type: BULLET_BOX
+          location:
+            ==: org.bukkit.Location
+            world: q3dm7
+            x: 21.5
+            y: 107.5
+            z: 286.5
+            pitch: 31.34984
+            yaw: 91.397705
+          is_spawn_point: true
+          markers: 0
+        LP6:
+          type: ROCKET_LAUNCHER
+          location:
+            ==: org.bukkit.Location
+            world: q3dm7
+            x: 0.5
+            y: 104.5
+            z: 277.5
+            pitch: 87.75001
+            yaw: -89.956665
+          is_spawn_point: true
+          markers: 0
+        LP7:
+          type: STIM_PACK
+          location:
+            ==: org.bukkit.Location
+            world: q3dm7
+            x: 5.5
+            y: 101.5
+            z: 272.5
+            pitch: 60.900116
+            yaw: -90.8584
+          is_spawn_point: true
+          markers: 0
+        LP8:
+          type: BULLET_BOX
+          location:
+            ==: org.bukkit.Location
+            world: q3dm7
+            x: 23.5
+            y: 101.5
+            z: 273.5
+            pitch: 45.750107
+            yaw: -89.81128
+          is_spawn_point: true
+          markers: 0
+        LP9:
+          type: BULLET_BOX
+          location:
+            ==: org.bukkit.Location
+            world: q3dm7
+            x: 25.5
+            y: 101.5
+            z: 273.5
+            pitch: 45.750107
+            yaw: -89.81128
+          is_spawn_point: true
+          markers: 0
+        LP10:
+          type: STIM_PACK
+          location:
+            ==: org.bukkit.Location
+            world: q3dm7
+            x: 33.5
+            y: 102.5
+            z: 276.5
+            pitch: 1.6499702
+            yaw: 90.1886
+          is_spawn_point: true
+          markers: 0
+        LP11:
+          type: STIM_PACK
+          location:
+            ==: org.bukkit.Location
+            world: q3dm7
+            x: 33.5
+            y: 102.5
+            z: 278.5
+            pitch: 60.14988
+            yaw: 93.03931
+          is_spawn_point: true
+          markers: 0
+        LP12:
+          type: CELL_BOX
+          location:
+            ==: org.bukkit.Location
+            world: q3dm7
+            x: 31.5
+            y: 102.5
+            z: 281.5
+            pitch: 65.55009
+            yaw: 0.63464355
+          is_spawn_point: true
+          markers: 0
+        LP13:
+          type: STIM_PACK
+          location:
+            ==: org.bukkit.Location
+            world: q3dm7
+            x: 56.5
+            y: 104.5
+            z: 301.5
+            pitch: 23.250069
+            yaw: 178.97656
+          is_spawn_point: true
+          markers: 0
+        LP14:
+          type: STIM_PACK
+          location:
+            ==: org.bukkit.Location
+            world: q3dm7
+            x: 56.5
+            y: 104.5
+            z: 275.5
+            pitch: 14.400065
+            yaw: 0.1784668
+          is_spawn_point: true
+          markers: 0
+        LP15:
+          type: QUAD_DAMAGE
+          location:
+            ==: org.bukkit.Location
+            world: q3dm7
+            x: 81.5
+            y: 106.5
+            z: 288.5
+            pitch: 7.3502326
+            yaw: 90.335205
+          is_spawn_point: true
+          markers: 0
+        LP16:
+          type: PROTECTION
+          location:
+            ==: org.bukkit.Location
+            world: q3dm7
+            x: 81.5
+            y: 106.5
+            z: 288.5
+            pitch: 7.3502326
+            yaw: 90.335205
+          is_spawn_point: true
+          markers: 0
+        LP17:
+          type: RAILGUN
+          location:
+            ==: org.bukkit.Location
+            world: q3dm7
+            x: 73.5
+            y: 99.5
+            z: 288.5
+            pitch: 17.400253
+            yaw: 90.63696
+          is_spawn_point: true
+          markers: 0
+        LP18:
+          type: CELL_BOX
+          location:
+            ==: org.bukkit.Location
+            world: q3dm7
+            x: 62.5
+            y: 104.5
+            z: 310.5
+            pitch: 10.349795
+            yaw: 83.132324
+          is_spawn_point: true
+          markers: 0
+        LP19:
+          type: STIM_PACK
+          location:
+            ==: org.bukkit.Location
+            world: q3dm7
+            x: 62.5
+            y: 104.5
+            z: 320.5
+            pitch: 86.39997
+            yaw: 89.87988
+          is_spawn_point: true
+          markers: 0
+        LP20:
+          type: SHELL_BOX
+          location:
+            ==: org.bukkit.Location
+            world: q3dm7
+            x: 50.5
+            y: 104.5
+            z: 309.5
+            pitch: 17.399933
+            yaw: 1.685669
+          is_spawn_point: true
+          markers: 0
+        LP21:
+          type: BULLET_BOX
+          location:
+            ==: org.bukkit.Location
+            world: q3dm7
+            x: 29.5
+            y: 104.5
+            z: 297.5
+            pitch: 6.3000116
+            yaw: -3.4210205
+          is_spawn_point: true
+          markers: 0
+        LP22:
+          type: BULLET_BOX
+          location:
+            ==: org.bukkit.Location
+            world: q3dm7
+            x: 28.5
+            y: 104.5
+            z: 297.5
+            pitch: 6.3000116
+            yaw: -3.4210205
+          is_spawn_point: true
+          markers: 0
+        LP23:
+          type: BULLET_BOX
+          location:
+            ==: org.bukkit.Location
+            world: q3dm7
+            x: 27.5
+            y: 104.5
+            z: 297.5
+            pitch: 0.9001159
+            yaw: -0.5673828
+          is_spawn_point: true
+          markers: 0
+        LP24:
+          type: MEDICAL_KIT
+          location:
+            ==: org.bukkit.Location
+            world: q3dm7
+            x: 20.5
+            y: 104.5
+            z: 331.5
+            pitch: 1.3501836
+            yaw: -179.51575
+          is_spawn_point: true
+          markers: 0
+        LP25:
+          type: MEDICAL_KIT
+          location:
+            ==: org.bukkit.Location
+            world: q3dm7
+            x: 19.5
+            y: 104.5
+            z: 331.5
+            pitch: 1.3501836
+            yaw: -179.51575
+          is_spawn_point: true
+          markers: 0
+        LP26:
+          type: STIM_PACK
+          location:
+            ==: org.bukkit.Location
+            world: q3dm7
+            x: 42.5
+            y: 109.5
+            z: 331.5
+            pitch: 11.249816
+            yaw: 90.926025
+          is_spawn_point: true
+          markers: 0
+        LP27:
+          type: ROCKET_LAUNCHER
+          location:
+            ==: org.bukkit.Location
+            world: q3dm7
+            x: 35.5
+            y: 112.5
+            z: 310.5
+            pitch: 89.09999
+            yaw: -92.37537
+          is_spawn_point: true
+          markers: 0
+        LP28:
+          type: STIM_PACK
+          location:
+            ==: org.bukkit.Location
+            world: q3dm7
+            x: 27.5
+            y: 112.5
+            z: 300.5
+            pitch: 28.800106
+            yaw: -1.4638672
+          is_spawn_point: true
+          markers: 0
+        LP29:
+          type: STIM_PACK
+          location:
+            ==: org.bukkit.Location
+            world: q3dm7
+            x: 27.5
+            y: 112.5
+            z: 303.5
+            pitch: 46.500233
+            yaw: 0.1850586
+          is_spawn_point: true
+          markers: 0
+        LP30:
+          type: STIM_PACK
+          location:
+            ==: org.bukkit.Location
+            world: q3dm7
+            x: 25.5
+            y: 99.5
+            z: 327.5
+            pitch: 17.850431
+            yaw: 178.97522
+          is_spawn_point: true
+          markers: 0
+        LP31:
+          type: STIM_PACK
+          location:
+            ==: org.bukkit.Location
+            world: q3dm7
+            x: 27.5
+            y: 99.5
+            z: 327.5
+            pitch: -1.199621
+            yaw: 177.62427
+          is_spawn_point: true
+          markers: 0
+        LP32:
+          type: ROCKET_BOX
+          location:
+            ==: org.bukkit.Location
+            world: q3dm7
+            x: 27.5
+            y: 99.5
+            z: 325.5
+            pitch: 16.649858
+            yaw: 175.52844
+          is_spawn_point: true
+          markers: 0
+        LP33:
+          type: SHELL_BOX
+          location:
+            ==: org.bukkit.Location
+            world: q3dm7
+            x: 25.5
+            y: 99.5
+            z: 325.5
+            pitch: 15.899818
+            yaw: -176.2174
+          is_spawn_point: true
+          markers: 0
+        LP34:
+          type: CELL_BOX
+          location:
+            ==: org.bukkit.Location
+            world: q3dm7
+            x: 20.5
+            y: 106.5
+            z: 261.5
+            pitch: 63.450165
+            yaw: -88.75598
+          is_spawn_point: true
+          markers: 0
+        LP35:
+          type: SHELL_BOX
+          location:
+            ==: org.bukkit.Location
+            world: q3dm7
+            x: 27.5
+            y: 106.5
+            z: 244.5
+            pitch: 0.75027883
+            yaw: -88.90918
+          is_spawn_point: true
+          markers: 0
+        LP36:
+          type: SHELL_BOX
+          location:
+            ==: org.bukkit.Location
+            world: q3dm7
+            x: 27.5
+            y: 106.5
+            z: 242.5
+            pitch: -0.6000386
+            yaw: -88.4563
+          is_spawn_point: true
+          markers: 0
+        LP37:
+          type: RAILGUN
+          location:
+            ==: org.bukkit.Location
+            world: q3dm7
+            x: 38.5
+            y: 106.5
+            z: 234.5
+            pitch: 7.9499555
+            yaw: -0.5529785
+          is_spawn_point: true
+          markers: 0
+        LP38:
+          type: MEDICAL_KIT
+          location:
+            ==: org.bukkit.Location
+            world: q3dm7
+            x: 49.5
+            y: 106.5
+            z: 243.5
+            pitch: 25.200079
+            yaw: 90.19763
+          is_spawn_point: true
+          markers: 0
+        LP39:
+          type: CELL_BOX
+          location:
+            ==: org.bukkit.Location
+            world: q3dm7
+            x: 49.5
+            y: 106.5
+            z: 259.5
+            pitch: 81.45028
+            yaw: 90.20093
+          is_spawn_point: true
+          markers: 0
+        LP40:
+          type: MEDICAL_KIT
+          location:
+            ==: org.bukkit.Location
+            world: q3dm7
+            x: 57.5
+            y: 93.5
+            z: 293.5
+            pitch: 37.199966
+            yaw: 91.25122
+          is_spawn_point: true
+          markers: 0
+        LP41:
+          type: CELL_BOX
+          location:
+            ==: org.bukkit.Location
+            world: q3dm7
+            x: 48.5
+            y: 91.5
+            z: 274.5
+            pitch: 20.999853
+            yaw: 1.1313477
+          is_spawn_point: true
+          markers: 0
+        LP42:
+          type: ARMOR_SHARD
+          location:
+            ==: org.bukkit.Location
+            world: q3dm7
+            x: 0.5
+            y: 107.5
+            z: 290.5
+            pitch: 31.649992
+            yaw: 179.58546
+          is_spawn_point: true
+          markers: 0
+        LP43:
+          type: ARMOR_SHARD
+          location:
+            ==: org.bukkit.Location
+            world: q3dm7
+            x: 1.5
+            y: 107.5
+            z: 290.5
+            pitch: 8.249986
+            yaw: -177.41446
+          is_spawn_point: true
+          markers: 0
+        LP44:
+          type: ARMOR_SHARD
+          location:
+            ==: org.bukkit.Location
+            world: q3dm7
+            x: 2.5
+            y: 107.5
+            z: 290.5
+            pitch: 19.199991
+            yaw: -179.2144
+          is_spawn_point: true
+          markers: 0
+        LP45:
+          type: ARMOR_SHARD
+          location:
+            ==: org.bukkit.Location
+            world: q3dm7
+            x: 3.5
+            y: 107.5
+            z: 290.5
+            pitch: -0.5999716
+            yaw: 178.23558
+          is_spawn_point: true
+          markers: 0
+        LP46:
+          type: LIGHT_ARMOR
+          location:
+            ==: org.bukkit.Location
+            world: q3dm7
+            x: 2.5
+            y: 111.5
+            z: 313.5
+            pitch: 76.0501
+            yaw: -89.81378
+          is_spawn_point: true
+          markers: 0
+        LP47:
+          type: LIGHT_ARMOR
+          location:
+            ==: org.bukkit.Location
+            world: q3dm7
+            x: 38.5
+            y: 99.5
+            z: 310.5
+            pitch: -0.14986266
+            yaw: 92.88559
+          is_spawn_point: true
+          markers: 0
+        LP48:
+          type: ARMOR_SHARD
+          location:
+            ==: org.bukkit.Location
+            world: q3dm7
+            x: 57.5
+            y: 93.5
+            z: 283.5
+            pitch: -2.0999901
+            yaw: 34.200775
+          is_spawn_point: true
+          markers: 0
+        LP49:
+          type: PLASMA_GUN
+          location:
+            ==: org.bukkit.Location
+            world: q3dm7
+            x: 35.5
+            y: 104.5
+            z: 329.5
+            pitch: -0.45024288
+            yaw: 179.99861
+          is_spawn_point: true
+          markers: 0
+        LP50:
+          type: MEGA_HEALTH
+          location:
+            ==: org.bukkit.Location
+            world: q3dm7
+            x: 38.5
+            y: 91.5
+            z: 289.5
+            pitch: -0.30029505
+            yaw: 179.99945
+          is_spawn_point: true
+          markers: 0
+        LP51:
+          type: LIGHTNING_GUN
+          location:
+            ==: org.bukkit.Location
+            world: q3dm7
+            x: 43.5
+            y: 112.5
+            z: 298.5
+            pitch: 0.3275749
+            yaw: 89.443275
+          is_spawn_point: true
+          markers: 0
+        LP52:
+          type: LIGHTNING_BOX
+          location:
+            ==: org.bukkit.Location
+            world: q3dm7
+            x: 41.5
+            y: 104.5
+            z: 329.5
+            pitch: -0.6001548
+            yaw: -179.6583
+          is_spawn_point: true
+          markers: 0
+        LP53:
+          type: LIGHTNING_BOX
+          location:
+            ==: org.bukkit.Location
+            world: q3dm7
+            x: 31.5
+            y: 102.5
+            z: 289.5
+            pitch: -0.90029883
+            yaw: -90.11191
+          is_spawn_point: true
+          markers: 0
+        LP54:
+          type: LIGHTNING_BOX
+          location:
+            ==: org.bukkit.Location
+            world: q3dm7
+            x: 26.5
+            y: 100.5
+            z: 288.5
+            pitch: -2.250391
+            yaw: 136.54553
+          is_spawn_point: true
+          markers: 0
+        LP55:
+          type: BFG9K
+          is_spawn_point: false
+          location:
+            ==: org.bukkit.Location
+            world: q3dm7
+            x: 69.5
+            y: 111.5
+            z: 306.5
+            pitch: 90.0
+            yaw: 0.0
+          markers: 0
+      allow_host: true
+      portals:
+        '1':
+          first_location:
+            ==: org.bukkit.Location
+            world: q3dm7
+            x: 39.0
+            y: 92.0
+            z: 287.0
+            pitch: 0.0
+            yaw: 0.0
+          second_location:
+            ==: org.bukkit.Location
+            world: q3dm7
+            x: 37.0
+            y: 94.0
+            z: 287.0
+            pitch: 0.0
+            yaw: 0.0
+          target_location:
+            ==: org.bukkit.Location
+            world: q3dm7
+            x: 38.0
+            y: 106.0
+            z: 234.0
+            pitch: 0.0
+            yaw: 0.0
+      ramps:
+        RP_0:
+          first_location:
+            ==: org.bukkit.Location
+            world: q3dm7
+            x: 78.0
+            y: 98.0
+            z: 289.0
+            pitch: 0.0
+            yaw: 0.0
+          second_location:
+            ==: org.bukkit.Location
+            world: q3dm7
+            x: 76.0
+            y: 98.0
+            z: 287.0
+            pitch: 0.0
+            yaw: 0.0
+          multiply: false
+          vector:
+            ==: Vector
+            x: 1.2
+            y: 1.25
+            z: 0.0
+        RP_1:
+          first_location:
+            ==: org.bukkit.Location
+            world: q3dm7
+            x: 1.0
+            y: 103.0
+            z: 306.0
+            pitch: 0.0
+            yaw: 0.0
+          second_location:
+            ==: org.bukkit.Location
+            world: q3dm7
+            x: 3.0
+            y: 103.0
+            z: 308.0
+            pitch: 0.0
+            yaw: 0.0
+          multiply: false
+          vector:
+            ==: Vector
+            x: -1.2
+            y: 1.35
+            z: 0.0
+      authors:
+      - mrx
+      doors:
+        '1':
+          first_location:
+            ==: org.bukkit.Location
+            world: q3dm7
+            x: 19.0
+            y: 103.0
+            z: 328.0
+            pitch: 0.0
+            yaw: 0.0
+          second_location:
+            ==: org.bukkit.Location
+            world: q3dm7
+            x: 18.0
+            y: 103.0
+            z: 321.0
+            pitch: 0.0
+            yaw: 0.0
+          destination_center:
+            ==: org.bukkit.Location
+            world: q3dm7
+            x: 16.0
+            y: 102.9
+            z: 325.0
+            pitch: 0.0
+            yaw: 0.0
+          door_type: 1
+          animation_time: 15
+          close_after_ticks: 60
+          replace_air: false
+        '2':
+          first_location:
+            ==: org.bukkit.Location
+            world: q3dm7
+            x: 21.0
+            y: 103.0
+            z: 328.0
+            pitch: 0.0
+            yaw: 0.0
+          second_location:
+            ==: org.bukkit.Location
+            world: q3dm7
+            x: 20.0
+            y: 103.0
+            z: 321.0
+            pitch: 0.0
+            yaw: 0.0
+          destination_center:
+            ==: org.bukkit.Location
+            world: q3dm7
+            x: 24.0
+            y: 102.9
+            z: 325.0
+            pitch: 0.0
+            yaw: 0.0
+          door_type: 1
+          animation_time: 15
+          close_after_ticks: 60
+          replace_air: false
+        '3':
+          first_location:
+            ==: org.bukkit.Location
+            world: q3dm7
+            x: 46.0
+            y: 90.0
+            z: 273.0
+            pitch: 0.0
+            yaw: 0.0
+          second_location:
+            ==: org.bukkit.Location
+            world: q3dm7
+            x: 33.0
+            y: 90.0
+            z: 275.0
+            pitch: 0.0
+            yaw: 0.0
+          destination_center:
+            ==: org.bukkit.Location
+            world: q3dm7
+            x: 27.0
+            y: 89.9
+            z: 274.5
+            pitch: 0.0
+            yaw: 0.0
+          door_type: 1
+          animation_time: 30
+          close_after_ticks: 60
+          replace_air: false
+        '4':
+          first_location:
+            ==: org.bukkit.Location
+            world: q3dm7
+            x: 60.0
+            y: 113.0
+            z: 303.0
+            pitch: 0.0
+            yaw: 0.0
+          second_location:
+            ==: org.bukkit.Location
+            world: q3dm7
+            x: 60.0
+            y: 111.0
+            z: 303.0
+            pitch: 0.0
+            yaw: 0.0
+          destination_center:
+            ==: org.bukkit.Location
+            world: q3dm7
+            x: 59.0
+            y: 112.0
+            z: 304.0
+            pitch: 0.0
+            yaw: 0.0
+          door_type: 1
+          animation_time: 10
+          close_after_ticks: 40
+          replace_air: false
+      door_triggers:
+        '1':
+          trigger_type: 1
+          location:
+            ==: org.bukkit.Location
+            world: q3dm7
+            x: 26.0
+            y: 113.0
+            z: 305.0
+            pitch: 0.0
+            yaw: 0.0
+          door_ids:
+          - '1'
+          - '2'
+        '2':
+          trigger_type: 1
+          location:
+            ==: org.bukkit.Location
+            world: q3dm7
+            x: 33.0
+            y: 92.0
+            z: 274.0
+            pitch: 0.0
+            yaw: 0.0
+          door_ids:
+          - '3'
+        '3':
+          trigger_type: 2
+          location:
+            ==: org.bukkit.Location
+            world: q3dm7
+            x: 60.0
+            y: 112.0
+            z: 302.0
+            pitch: 0.0
+            yaw: 0.0
+          door_ids:
+          - '4'
+        '4':
+          trigger_type: 2
+          location:
+            ==: org.bukkit.Location
+            world: q3dm7
+            x: 61.0
+            y: 111.0
+            z: 304.0
+            pitch: 0.0
+            yaw: 0.0
+          door_ids:
+          - '4'
+      tags: !!set {}
+      supported_rulesets:
+      - DM
+      - LMS
+      - INSTAGIB
+      - TDM
+      - ROF
+    q3dm7_test:
+      lower_bound:
+        ==: org.bukkit.Location
+        world: q3dm7_test
+        x: -7.5
+        y: 90.5
+        z: 224.5
+        pitch: -2.2755976
+        yaw: 0.76257324
+      upper_bound:
+        ==: org.bukkit.Location
+        world: q3dm7_test
+        x: 89.5
+        y: 130.5
+        z: 336.5
+        pitch: 47.754387
+        yaw: 92.00757
+      loot_points:
+        LP0:
+          type: SHOTGUN
+          location:
+            ==: org.bukkit.Location
+            world: q3dm7_test
+            x: -2.5
+            y: 111.5
+            z: 307.5
+            pitch: 20.904371
+            yaw: -90.40405
+        LP1:
+          type: ROCKET_BOX
+          location:
+            ==: org.bukkit.Location
+            world: q3dm7_test
+            x: 2.5
+            y: 111.5
+            z: 302.5
+            pitch: 12.2999735
+            yaw: -89.95117
+        LP2:
+          type: CELL_BOX
+          location:
+            ==: org.bukkit.Location
+            world: q3dm7_test
+            x: 2.5
+            y: 111.5
+            z: 300.5
+            pitch: 12.2999735
+            yaw: -89.65112
+        LP3:
+          type: SHELL_BOX
+          location:
+            ==: org.bukkit.Location
+            world: q3dm7_test
+            x: 20.5
+            y: 104.5
+            z: 304.5
+            pitch: 3.0001926
+            yaw: 179.14807
+        LP4:
+          type: BULLET_BOX
+          location:
+            ==: org.bukkit.Location
+            world: q3dm7_test
+            x: 21.5
+            y: 107.5
+            z: 288.5
+            pitch: 38.39987
+            yaw: 90.04761
+        LP5:
+          type: BULLET_BOX
+          location:
+            ==: org.bukkit.Location
+            world: q3dm7_test
+            x: 21.5
+            y: 107.5
+            z: 286.5
+            pitch: 31.34984
+            yaw: 91.397705
+        LP6:
+          type: ROCKET_LAUNCHER
+          location:
+            ==: org.bukkit.Location
+            world: q3dm7_test
+            x: 0.5
+            y: 104.5
+            z: 277.5
+            pitch: 87.75001
+            yaw: -89.956665
+        LP7:
+          type: STIM_PACK
+          location:
+            ==: org.bukkit.Location
+            world: q3dm7_test
+            x: 5.5
+            y: 101.5
+            z: 272.5
+            pitch: 60.900116
+            yaw: -90.8584
+        LP8:
+          type: BULLET_BOX
+          location:
+            ==: org.bukkit.Location
+            world: q3dm7_test
+            x: 23.5
+            y: 101.5
+            z: 273.5
+            pitch: 45.750107
+            yaw: -89.81128
+        LP9:
+          type: BULLET_BOX
+          location:
+            ==: org.bukkit.Location
+            world: q3dm7_test
+            x: 25.5
+            y: 101.5
+            z: 273.5
+            pitch: 45.750107
+            yaw: -89.81128
+        LP10:
+          type: STIM_PACK
+          location:
+            ==: org.bukkit.Location
+            world: q3dm7_test
+            x: 33.5
+            y: 102.5
+            z: 276.5
+            pitch: 1.6499702
+            yaw: 90.1886
+        LP11:
+          type: STIM_PACK
+          location:
+            ==: org.bukkit.Location
+            world: q3dm7_test
+            x: 33.5
+            y: 102.5
+            z: 278.5
+            pitch: 60.14988
+            yaw: 93.03931
+        LP12:
+          type: CELL_BOX
+          location:
+            ==: org.bukkit.Location
+            world: q3dm7_test
+            x: 31.5
+            y: 102.5
+            z: 281.5
+            pitch: 65.55009
+            yaw: 0.63464355
+        LP13:
+          type: STIM_PACK
+          location:
+            ==: org.bukkit.Location
+            world: q3dm7_test
+            x: 56.5
+            y: 104.5
+            z: 301.5
+            pitch: 23.250069
+            yaw: 178.97656
+        LP14:
+          type: STIM_PACK
+          location:
+            ==: org.bukkit.Location
+            world: q3dm7_test
+            x: 56.5
+            y: 104.5
+            z: 275.5
+            pitch: 14.400065
+            yaw: 0.1784668
+        LP15:
+          type: QUAD_DAMAGE
+          location:
+            ==: org.bukkit.Location
+            world: q3dm7_test
+            x: 81.5
+            y: 106.5
+            z: 288.5
+            pitch: 7.3502326
+            yaw: 90.335205
+        LP16:
+          type: PROTECTION
+          location:
+            ==: org.bukkit.Location
+            world: q3dm7_test
+            x: 81.5
+            y: 106.5
+            z: 288.5
+            pitch: 7.3502326
+            yaw: 90.335205
+        LP17:
+          type: RAILGUN
+          location:
+            ==: org.bukkit.Location
+            world: q3dm7_test
+            x: 73.5
+            y: 99.5
+            z: 288.5
+            pitch: 17.400253
+            yaw: 90.63696
+        LP18:
+          type: CELL_BOX
+          location:
+            ==: org.bukkit.Location
+            world: q3dm7_test
+            x: 62.5
+            y: 104.5
+            z: 310.5
+            pitch: 10.349795
+            yaw: 83.132324
+        LP19:
+          type: STIM_PACK
+          location:
+            ==: org.bukkit.Location
+            world: q3dm7_test
+            x: 62.5
+            y: 104.5
+            z: 320.5
+            pitch: 86.39997
+            yaw: 89.87988
+        LP20:
+          type: SHELL_BOX
+          location:
+            ==: org.bukkit.Location
+            world: q3dm7_test
+            x: 50.5
+            y: 104.5
+            z: 309.5
+            pitch: 17.399933
+            yaw: 1.685669
+        LP21:
+          type: BULLET_BOX
+          location:
+            ==: org.bukkit.Location
+            world: q3dm7_test
+            x: 29.5
+            y: 104.5
+            z: 297.5
+            pitch: 6.3000116
+            yaw: -3.4210205
+        LP22:
+          type: BULLET_BOX
+          location:
+            ==: org.bukkit.Location
+            world: q3dm7_test
+            x: 28.5
+            y: 104.5
+            z: 297.5
+            pitch: 6.3000116
+            yaw: -3.4210205
+        LP23:
+          type: BULLET_BOX
+          location:
+            ==: org.bukkit.Location
+            world: q3dm7_test
+            x: 27.5
+            y: 104.5
+            z: 297.5
+            pitch: 0.9001159
+            yaw: -0.5673828
+        LP24:
+          type: MEDICAL_KIT
+          location:
+            ==: org.bukkit.Location
+            world: q3dm7_test
+            x: 20.5
+            y: 104.5
+            z: 331.5
+            pitch: 1.3501836
+            yaw: -179.51575
+        LP25:
+          type: MEDICAL_KIT
+          location:
+            ==: org.bukkit.Location
+            world: q3dm7_test
+            x: 19.5
+            y: 104.5
+            z: 331.5
+            pitch: 1.3501836
+            yaw: -179.51575
+        LP26:
+          type: STIM_PACK
+          location:
+            ==: org.bukkit.Location
+            world: q3dm7_test
+            x: 42.5
+            y: 109.5
+            z: 331.5
+            pitch: 11.249816
+            yaw: 90.926025
+        LP27:
+          type: ROCKET_LAUNCHER
+          location:
+            ==: org.bukkit.Location
+            world: q3dm7_test
+            x: 35.5
+            y: 112.5
+            z: 310.5
+            pitch: 89.09999
+            yaw: -92.37537
+        LP28:
+          type: STIM_PACK
+          location:
+            ==: org.bukkit.Location
+            world: q3dm7_test
+            x: 27.5
+            y: 112.5
+            z: 300.5
+            pitch: 28.800106
+            yaw: -1.4638672
+        LP29:
+          type: STIM_PACK
+          location:
+            ==: org.bukkit.Location
+            world: q3dm7_test
+            x: 27.5
+            y: 112.5
+            z: 303.5
+            pitch: 46.500233
+            yaw: 0.1850586
+        LP30:
+          type: STIM_PACK
+          location:
+            ==: org.bukkit.Location
+            world: q3dm7_test
+            x: 25.5
+            y: 99.5
+            z: 327.5
+            pitch: 17.850431
+            yaw: 178.97522
+        LP31:
+          type: STIM_PACK
+          location:
+            ==: org.bukkit.Location
+            world: q3dm7_test
+            x: 27.5
+            y: 99.5
+            z: 327.5
+            pitch: -1.199621
+            yaw: 177.62427
+        LP32:
+          type: ROCKET_BOX
+          location:
+            ==: org.bukkit.Location
+            world: q3dm7_test
+            x: 27.5
+            y: 99.5
+            z: 325.5
+            pitch: 16.649858
+            yaw: 175.52844
+        LP33:
+          type: SHELL_BOX
+          location:
+            ==: org.bukkit.Location
+            world: q3dm7_test
+            x: 25.5
+            y: 99.5
+            z: 325.5
+            pitch: 15.899818
+            yaw: -176.2174
+        LP34:
+          type: CELL_BOX
+          location:
+            ==: org.bukkit.Location
+            world: q3dm7_test
+            x: 20.5
+            y: 106.5
+            z: 261.5
+            pitch: 63.450165
+            yaw: -88.75598
+        LP35:
+          type: SHELL_BOX
+          location:
+            ==: org.bukkit.Location
+            world: q3dm7_test
+            x: 27.5
+            y: 106.5
+            z: 244.5
+            pitch: 0.75027883
+            yaw: -88.90918
+        LP36:
+          type: SHELL_BOX
+          location:
+            ==: org.bukkit.Location
+            world: q3dm7_test
+            x: 27.5
+            y: 106.5
+            z: 242.5
+            pitch: -0.6000386
+            yaw: -88.4563
+        LP37:
+          type: RAILGUN
+          location:
+            ==: org.bukkit.Location
+            world: q3dm7_test
+            x: 38.5
+            y: 106.5
+            z: 234.5
+            pitch: 7.9499555
+            yaw: -0.5529785
+        LP38:
+          type: MEDICAL_KIT
+          location:
+            ==: org.bukkit.Location
+            world: q3dm7_test
+            x: 49.5
+            y: 106.5
+            z: 243.5
+            pitch: 25.200079
+            yaw: 90.19763
+        LP39:
+          type: CELL_BOX
+          location:
+            ==: org.bukkit.Location
+            world: q3dm7_test
+            x: 49.5
+            y: 106.5
+            z: 259.5
+            pitch: 81.45028
+            yaw: 90.20093
+        LP40:
+          type: MEDICAL_KIT
+          location:
+            ==: org.bukkit.Location
+            world: q3dm7_test
+            x: 57.5
+            y: 93.5
+            z: 293.5
+            pitch: 37.199966
+            yaw: 91.25122
+        LP41:
+          type: CELL_BOX
+          location:
+            ==: org.bukkit.Location
+            world: q3dm7_test
+            x: 48.5
+            y: 91.5
+            z: 274.5
+            pitch: 20.999853
+            yaw: 1.1313477
+        LP42:
+          type: ARMOR_SHARD
+          location:
+            ==: org.bukkit.Location
+            world: q3dm7_test
+            x: 0.5
+            y: 107.5
+            z: 290.5
+            pitch: 31.649992
+            yaw: 179.58546
+        LP43:
+          type: ARMOR_SHARD
+          location:
+            ==: org.bukkit.Location
+            world: q3dm7_test
+            x: 1.5
+            y: 107.5
+            z: 290.5
+            pitch: 8.249986
+            yaw: -177.41446
+        LP44:
+          type: ARMOR_SHARD
+          location:
+            ==: org.bukkit.Location
+            world: q3dm7_test
+            x: 2.5
+            y: 107.5
+            z: 290.5
+            pitch: 19.199991
+            yaw: -179.2144
+        LP45:
+          type: ARMOR_SHARD
+          location:
+            ==: org.bukkit.Location
+            world: q3dm7_test
+            x: 3.5
+            y: 107.5
+            z: 290.5
+            pitch: -0.5999716
+            yaw: 178.23558
+        LP46:
+          type: LIGHT_ARMOR
+          location:
+            ==: org.bukkit.Location
+            world: q3dm7_test
+            x: 2.5
+            y: 111.5
+            z: 313.5
+            pitch: 76.0501
+            yaw: -89.81378
+        LP47:
+          type: LIGHT_ARMOR
+          location:
+            ==: org.bukkit.Location
+            world: q3dm7_test
+            x: 38.5
+            y: 99.5
+            z: 310.5
+            pitch: -0.14986266
+            yaw: 92.88559
+        LP48:
+          type: ARMOR_SHARD
+          location:
+            ==: org.bukkit.Location
+            world: q3dm7_test
+            x: 57.5
+            y: 93.5
+            z: 283.5
+            pitch: -2.0999901
+            yaw: 34.200775
+        LP49:
+          type: PLASMA_GUN
+          location:
+            ==: org.bukkit.Location
+            world: q3dm7_test
+            x: 35.5
+            y: 104.5
+            z: 329.5
+            pitch: -0.45024288
+            yaw: 179.99861
+        LP50:
+          type: MEGA_HEALTH
+          location:
+            ==: org.bukkit.Location
+            world: q3dm7_test
+            x: 38.5
+            y: 91.5
+            z: 289.5
+            pitch: -0.30029505
+            yaw: 179.99945
+        LP51:
+          type: LIGHTNING_GUN
+          location:
+            ==: org.bukkit.Location
+            world: q3dm7_test
+            x: 43.5
+            y: 112.5
+            z: 298.5
+            pitch: 0.3275749
+            yaw: 89.443275
+        LP52:
+          type: LIGHTNING_BOX
+          location:
+            ==: org.bukkit.Location
+            world: q3dm7_test
+            x: 41.5
+            y: 104.5
+            z: 329.5
+            pitch: -0.6001548
+            yaw: -179.6583
+        LP53:
+          type: LIGHTNING_BOX
+          location:
+            ==: org.bukkit.Location
+            world: q3dm7_test
+            x: 31.5
+            y: 102.5
+            z: 289.5
+            pitch: -0.90029883
+            yaw: -90.11191
+        LP54:
+          type: LIGHTNING_BOX
+          location:
+            ==: org.bukkit.Location
+            world: q3dm7_test
+            x: 26.5
+            y: 100.5
+            z: 288.5
+            pitch: -2.250391
+            yaw: 136.54553
+        LP55:
+          type: BFG9K
+          location:
+            ==: org.bukkit.Location
+            world: q3dm7_test
+            x: 19.5
+            y: 109.5
+            z: 331.5
+            pitch: -1.9500004
+            yaw: -133.605
+      allow_host: false
+      portals:
+        '1':
+          first_location:
+            ==: org.bukkit.Location
+            world: q3dm7_test
+            x: 39.0
+            y: 92.0
+            z: 287.0
+            pitch: 0.0
+            yaw: 0.0
+          second_location:
+            ==: org.bukkit.Location
+            world: q3dm7_test
+            x: 37.0
+            y: 94.0
+            z: 287.0
+            pitch: 0.0
+            yaw: 0.0
+          target_location:
+            ==: org.bukkit.Location
+            world: q3dm7_test
+            x: 38.0
+            y: 106.0
+            z: 234.0
+            pitch: 0.0
+            yaw: 0.0
+      ramps:
+        RP_0:
+          first_location:
+            ==: org.bukkit.Location
+            world: q3dm7_test
+            x: 78.0
+            y: 98.0
+            z: 289.0
+            pitch: 0.0
+            yaw: 0.0
+          second_location:
+            ==: org.bukkit.Location
+            world: q3dm7_test
+            x: 76.0
+            y: 98.0
+            z: 287.0
+            pitch: 0.0
+            yaw: 0.0
+          multiply: false
+          vector:
+            ==: Vector
+            x: 1.2
+            y: 1.25
+            z: 0.0
+        RP_1:
+          first_location:
+            ==: org.bukkit.Location
+            world: q3dm7_test
+            x: 1.0
+            y: 103.0
+            z: 306.0
+            pitch: 0.0
+            yaw: 0.0
+          second_location:
+            ==: org.bukkit.Location
+            world: q3dm7_test
+            x: 3.0
+            y: 103.0
+            z: 308.0
+            pitch: 0.0
+            yaw: 0.0
+          multiply: false
+          vector:
+            ==: Vector
+            x: -1.2
+            y: 1.35
+            z: 0.0
+      authors:
+      - mrx
+      doors: {}
+      door_triggers: {}
+    q3dm6:
+      lower_bound:
+        ==: org.bukkit.Location
+        world: q3dm6
+        x: 264.5
+        y: 74.5
+        z: -17.5
+        pitch: 6.750133
+        yaw: -55.825714
+      upper_bound:
+        ==: org.bukkit.Location
+        world: q3dm6
+        x: 323.5
+        y: 100.5
+        z: 39.5
+        pitch: 3.449781
+        yaw: -177.77338
+      allow_host: true
+      loot_points:
+        LP0:
+          type: PLASMA_GUN
+          location:
+            ==: org.bukkit.Location
+            world: q3dm6
+            x: 274.5
+            y: 84.5
+            z: 21.5
+            pitch: 0.74960977
+            yaw: 89.22009
+          is_spawn_point: true
+          markers: 0
+        LP1:
+          type: LIGHT_ARMOR
+          location:
+            ==: org.bukkit.Location
+            world: q3dm6
+            x: 268.5
+            y: 82.5
+            z: 27.5
+            pitch: 0.44966185
+            yaw: -90.188354
+          is_spawn_point: true
+          markers: 0
+        LP2:
+          type: LIGHTNING_BOX
+          location:
+            ==: org.bukkit.Location
+            world: q3dm6
+            x: 274.5
+            y: 78.5
+            z: 27.5
+            pitch: -1.0499636
+            yaw: -90.63367
+          is_spawn_point: true
+          markers: 0
+        LP3:
+          type: MEDICAL_KIT
+          location:
+            ==: org.bukkit.Location
+            world: q3dm6
+            x: 275.5
+            y: 78.5
+            z: 27.5
+            pitch: -0.7498348
+            yaw: -90.78369
+          is_spawn_point: true
+          markers: 0
+        LP4:
+          type: BULLET_BOX
+          location:
+            ==: org.bukkit.Location
+            world: q3dm6
+            x: 275.5
+            y: 78.5
+            z: 26.5
+            pitch: -0.44975293
+            yaw: -90.63403
+          is_spawn_point: true
+          markers: 0
+        LP5:
+          type: CELL_BOX
+          location:
+            ==: org.bukkit.Location
+            world: q3dm6
+            x: 275.5
+            y: 78.5
+            z: 28.5
+            pitch: -0.59986526
+            yaw: -89.73889
+          is_spawn_point: true
+          markers: 0
+        LP6:
+          type: ROCKET_BOX
+          location:
+            ==: org.bukkit.Location
+            world: q3dm6
+            x: 276.5
+            y: 78.5
+            z: 27.5
+            pitch: -1.3496608
+            yaw: -90.04309
+          is_spawn_point: true
+          markers: 0
+        LP7:
+          type: STIM_PACK
+          location:
+            ==: org.bukkit.Location
+            world: q3dm6
+            x: 280.5
+            y: 84.5
+            z: 23.5
+            pitch: 0.1504658
+            yaw: -0.35290527
+          is_spawn_point: true
+          markers: 0
+        LP8:
+          type: SHELL_BOX
+          location:
+            ==: org.bukkit.Location
+            world: q3dm6
+            x: 294.5
+            y: 84.5
+            z: 24.5
+            pitch: 0.9008226
+            yaw: 0.08557129
+          is_spawn_point: true
+          markers: 0
+        LP9:
+          type: ROCKET_BOX
+          location:
+            ==: org.bukkit.Location
+            world: q3dm6
+            x: 295.5
+            y: 84.5
+            z: 24.5
+            pitch: 0.4504344
+            yaw: -0.21252441
+          is_spawn_point: true
+          markers: 0
+        LP10:
+          type: SHOTGUN
+          location:
+            ==: org.bukkit.Location
+            world: q3dm6
+            x: 285.5
+            y: 78.5
+            z: 25.5
+            pitch: -1.1996744
+            yaw: -179.92859
+          is_spawn_point: true
+          markers: 0
+        LP11:
+          type: QUAD_DAMAGE
+          location:
+            ==: org.bukkit.Location
+            world: q3dm6
+            x: 286.5
+            y: 78.5
+            z: 10.5
+            pitch: -0.14923967
+            yaw: -89.91687
+          is_spawn_point: true
+          markers: 0
+        LP12:
+          type: ROCKET_BOX
+          location:
+            ==: org.bukkit.Location
+            world: q3dm6
+            x: 320.5
+            y: 81.5
+            z: 6.5
+            pitch: 2.100974
+            yaw: -89.45105
+          is_spawn_point: true
+          markers: 0
+        LP13:
+          type: MEDICAL_KIT
+          location:
+            ==: org.bukkit.Location
+            world: q3dm6
+            x: 308.5
+            y: 84.5
+            z: 7.5
+            pitch: 1.0499681
+            yaw: 90.10132
+          is_spawn_point: true
+          markers: 0
+        LP14:
+          type: CELL_BOX
+          location:
+            ==: org.bukkit.Location
+            world: q3dm6
+            x: 293.5
+            y: 90.5
+            z: 31.5
+            pitch: 0.6003896
+            yaw: 91.60779
+          is_spawn_point: true
+          markers: 0
+        LP15:
+          type: RAILGUN
+          location:
+            ==: org.bukkit.Location
+            world: q3dm6
+            x: 291.5
+            y: 90.5
+            z: 31.5
+            pitch: -0.29960078
+            yaw: 92.35791
+          is_spawn_point: true
+          markers: 0
+        LP16:
+          type: LIGHTNING_BOX
+          location:
+            ==: org.bukkit.Location
+            world: q3dm6
+            x: 279.5
+            y: 87.5
+            z: 38.5
+            pitch: 0.45050734
+            yaw: -179.59192
+          is_spawn_point: true
+          markers: 0
+        LP17:
+          type: ROCKET_LAUNCHER
+          location:
+            ==: org.bukkit.Location
+            world: q3dm6
+            x: 273.5
+            y: 90.5
+            z: 10.5
+            pitch: -0.7495115
+            yaw: -89.74036
+          is_spawn_point: true
+          markers: 0
+        LP18:
+          type: MEGA_HEALTH
+          location:
+            ==: org.bukkit.Location
+            world: q3dm6
+            x: 294.5
+            y: 90.5
+            z: -14.5
+            pitch: -6.0498714E-6
+            yaw: -0.3449707
+          is_spawn_point: true
+          markers: 0
+        LP19:
+          type: LIGHT_ARMOR
+          location:
+            ==: org.bukkit.Location
+            world: q3dm6
+            x: 309.5
+            y: 90.5
+            z: -11.5
+            pitch: -1.950051
+            yaw: 89.500244
+          is_spawn_point: true
+          markers: 0
+        LP20:
+          type: ROCKET_BOX
+          location:
+            ==: org.bukkit.Location
+            world: q3dm6
+            x: 320.5
+            y: 81.5
+            z: 6.5
+            pitch: -0.14983846
+            yaw: 89.48125
+          is_spawn_point: true
+          markers: 0
+        LP21:
+          type: MEDICAL_KIT
+          location:
+            ==: org.bukkit.Location
+            world: q3dm6
+            x: 298.5
+            y: 79.5
+            z: -14.5
+            pitch: 0.60104376
+            yaw: -90.81741
+          is_spawn_point: true
+          markers: 0
+        LP22:
+          type: CELL_BOX
+          location:
+            ==: org.bukkit.Location
+            world: q3dm6
+            x: 297.5
+            y: 79.5
+            z: -8.5
+            pitch: 0.45131797
+            yaw: -90.3689
+          is_spawn_point: true
+          markers: 0
+        LP23:
+          type: SHELL_BOX
+          location:
+            ==: org.bukkit.Location
+            world: q3dm6
+            x: 291.5
+            y: 81.5
+            z: -11.5
+            pitch: 1.1997821
+            yaw: -90.81799
+          is_spawn_point: true
+          markers: 0
+        LP24:
+          type: BULLET_BOX
+          location:
+            ==: org.bukkit.Location
+            world: q3dm6
+            x: 291.5
+            y: 81.5
+            z: -5.5
+            pitch: 0.44984478
+            yaw: -90.66739
+          is_spawn_point: true
+          markers: 0
+        LP25:
+          type: SHOTGUN
+          location:
+            ==: org.bukkit.Location
+            world: q3dm6
+            x: 274.5
+            y: 83.5
+            z: -4.5
+            pitch: 43.5006
+            yaw: 173.93121
+          is_spawn_point: true
+          markers: 0
+        LP26:
+          type: MEDICAL_KIT
+          location:
+            ==: org.bukkit.Location
+            world: q3dm6
+            x: 273.5
+            y: 83.5
+            z: -6.5
+            pitch: 1.2006538
+            yaw: -89.471436
+          is_spawn_point: true
+          markers: 0
+        LP27:
+          type: LIGHTNING_GUN
+          location:
+            ==: org.bukkit.Location
+            world: q3dm6
+            x: 305.5
+            y: 78.5
+            z: 2.5
+            pitch: -1.2001543
+            yaw: 0.12237549
+          is_spawn_point: true
+          markers: 0
+      portals: {}
+      ramps:
+        RP_0:
+          first_location:
+            ==: org.bukkit.Location
+            world: q3dm6
+            x: 309.0
+            y: 83.0
+            z: 8.0
+            pitch: 0.0
+            yaw: 0.0
+          second_location:
+            ==: org.bukkit.Location
+            world: q3dm6
+            x: 311.0
+            y: 83.0
+            z: 10.0
+            pitch: 0.0
+            yaw: 0.0
+          multiply: false
+          vector:
+            ==: Vector
+            x: 0.1
+            y: 1.25
+            z: 0.4
+        RP_1:
+          first_location:
+            ==: org.bukkit.Location
+            world: q3dm6
+            x: 278.0
+            y: 77.0
+            z: 11.0
+            pitch: 0.0
+            yaw: 0.0
+          second_location:
+            ==: org.bukkit.Location
+            world: q3dm6
+            x: 276.0
+            y: 77.0
+            z: 9.0
+            pitch: 0.0
+            yaw: 0.0
+          multiply: false
+          vector:
+            ==: Vector
+            x: -0.4
+            y: 1.55
+            z: 0.0
+        RP_2:
+          first_location:
+            ==: org.bukkit.Location
+            world: q3dm6
+            x: 305.0
+            y: 77.0
+            z: -13.0
+            pitch: 0.0
+            yaw: 0.0
+          second_location:
+            ==: org.bukkit.Location
+            world: q3dm6
+            x: 307.0
+            y: 77.0
+            z: -11.0
+            pitch: 0.0
+            yaw: 0.0
+          multiply: false
+          vector:
+            ==: Vector
+            x: 0.5
+            y: 1.55
+            z: 0.0
+      authors:
+      - markovav
+      - Pozilay_Molb
+      - WesOrangePower
+      - Zoo_Men
+      doors: {}
+      door_triggers: {}
+      tags: !!set {}
+      supported_rulesets:
+      - DM
+      - LMS
+      - INSTAGIB
+      - TDM
+      - ROF
+    q3ctf7:
+      authors:
+      - mrx
+      - WesOrangePower
+      lower_bound:
+        ==: org.bukkit.Location
+        world: q3ctf7
+        x: -8.5
+        y: 95.5
+        z: 226.5
+        pitch: 10.350013
+        yaw: 0.29999352
+      upper_bound:
+        ==: org.bukkit.Location
+        world: q3ctf7
+        x: 56.5
+        y: 136.5
+        z: 333.5
+        pitch: 21.750011
+        yaw: 165.15002
+      allow_host: true
+      loot_points:
+        LP0:
+          type: ROCKET_LAUNCHER
+          is_spawn_point: true
+          location:
+            ==: org.bukkit.Location
+            world: q3ctf7
+            x: 18.5
+            y: 101.5
+            z: 257.5
+            pitch: 0.44988072
+            yaw: -43.349884
+          markers: 0
+        LP1:
+          type: PLASMA_GUN
+          is_spawn_point: true
+          location:
+            ==: org.bukkit.Location
+            world: q3ctf7
+            x: 38.5
+            y: 102.5
+            z: 277.5
+            pitch: 1.4998688
+            yaw: 179.85022
+          markers: 0
+        LP2:
+          type: ROCKET_BOX
+          is_spawn_point: true
+          location:
+            ==: org.bukkit.Location
+            world: q3ctf7
+            x: 26.5
+            y: 106.5
+            z: 245.5
+            pitch: 4.3498726
+            yaw: -89.54975
+          markers: 0
+        LP3:
+          type: ROCKET_BOX
+          is_spawn_point: true
+          location:
+            ==: org.bukkit.Location
+            world: q3ctf7
+            x: 26.5
+            y: 106.5
+            z: 247.5
+            pitch: 0.8998721
+            yaw: -90.749756
+          markers: 0
+        LP4:
+          type: SHELL_BOX
+          is_spawn_point: true
+          location:
+            ==: org.bukkit.Location
+            world: q3ctf7
+            x: 38.5
+            y: 114.5
+            z: 261.5
+            pitch: 4.049875
+            yaw: 179.70032
+          markers: 0
+        LP5:
+          type: SHOTGUN
+          is_spawn_point: true
+          location:
+            ==: org.bukkit.Location
+            world: q3ctf7
+            x: 38.5
+            y: 114.5
+            z: 254.5
+            pitch: -0.6001183
+            yaw: 0.7503676
+          markers: 0
+        LP6:
+          type: BULLET_BOX
+          is_spawn_point: true
+          location:
+            ==: org.bukkit.Location
+            world: q3ctf7
+            x: 49.5
+            y: 106.5
+            z: 260.5
+            pitch: -4.2001214
+            yaw: 135.90034
+          markers: 0
+        LP7:
+          type: MEDICAL_KIT
+          is_spawn_point: true
+          location:
+            ==: org.bukkit.Location
+            world: q3ctf7
+            x: 38.5
+            y: 106.5
+            z: 260.5
+            pitch: -1.0468066E-4
+            yaw: 179.70029
+          markers: 0
+        LP8:
+          type: RAILGUN
+          is_spawn_point: true
+          location:
+            ==: org.bukkit.Location
+            world: q3ctf7
+            x: 0.5
+            y: 104.5
+            z: 277.5
+            pitch: 1.349872
+            yaw: -89.399506
+          markers: 0
+        LP9:
+          type: CELL_BOX
+          is_spawn_point: true
+          location:
+            ==: org.bukkit.Location
+            world: q3ctf7
+            x: 0.5
+            y: 106.5
+            z: 256.5
+            pitch: -0.45012587
+            yaw: 0.9003906
+          markers: 0
+        LP10:
+          type: CELL_BOX
+          is_spawn_point: true
+          location:
+            ==: org.bukkit.Location
+            world: q3ctf7
+            x: 0.5
+            y: 107.5
+            z: 290.5
+            pitch: 0.59984225
+            yaw: -178.6496
+          markers: 0
+        LP11:
+          type: ROCKET_LAUNCHER
+          is_spawn_point: true
+          location:
+            ==: org.bukkit.Location
+            world: q3ctf7
+            x: 2.5
+            y: 104.5
+            z: 307.5
+            pitch: -1.4659762E-4
+            yaw: -89.699066
+          markers: 0
+        LP12:
+          type: ROCKET_BOX
+          is_spawn_point: true
+          location:
+            ==: org.bukkit.Location
+            world: q3ctf7
+            x: 15.5
+            y: 104.5
+            z: 307.5
+            pitch: -0.90014994
+            yaw: 91.050995
+          markers: 0
+        LP13:
+          type: SHOTGUN
+          is_spawn_point: true
+          location:
+            ==: org.bukkit.Location
+            world: q3ctf7
+            x: 35.5
+            y: 112.5
+            z: 298.5
+            pitch: 1.1998765
+            yaw: 0.3010254
+          markers: 0
+        LP14:
+          type: MEDICAL_KIT
+          is_spawn_point: true
+          location:
+            ==: org.bukkit.Location
+            world: q3ctf7
+            x: 19.5
+            y: 104.5
+            z: 309.5
+            pitch: -0.9001519
+            yaw: 1.9509277
+          markers: 0
+        LP15:
+          type: SHELL_BOX
+          is_spawn_point: true
+          location:
+            ==: org.bukkit.Location
+            world: q3ctf7
+            x: 44.5
+            y: 104.5
+            z: 311.5
+            pitch: -0.15019037
+            yaw: 89.10089
+          markers: 0
+        LP16:
+          type: BULLET_BOX
+          is_spawn_point: true
+          location:
+            ==: org.bukkit.Location
+            world: q3ctf7
+            x: 44.5
+            y: 104.5
+            z: 310.5
+            pitch: -0.9001891
+            yaw: 89.401
+          markers: 0
+        LP17:
+          type: BULLET_BOX
+          is_spawn_point: true
+          location:
+            ==: org.bukkit.Location
+            world: q3ctf7
+            x: 43.5
+            y: 104.5
+            z: 297.5
+            pitch: -1.2001905
+            yaw: 23.400757
+          markers: 0
+        LP18:
+          type: NOTHING
+          is_spawn_point: true
+          location:
+            ==: org.bukkit.Location
+            world: q3ctf7
+            x: 38.5
+            y: 107.5
+            z: 228.5
+            pitch: 3.299992
+            yaw: 0.15063477
+          markers: 16
+        LP19:
+          type: NOTHING
+          is_spawn_point: true
+          location:
+            ==: org.bukkit.Location
+            world: q3ctf7
+            x: 43.5
+            y: 110.5
+            z: 331.5
+            pitch: 2.8499942
+            yaw: 94.05133
+          markers: 8
+        LP20:
+          type: NOTHING
+          is_spawn_point: true
+          location:
+            ==: org.bukkit.Location
+            world: q3ctf7
+            x: 35.5
+            y: 106.5
+            z: 229.5
+            pitch: 0.29999036
+            yaw: 1.3516846
+          markers: 4
+        LP21:
+          type: NOTHING
+          is_spawn_point: true
+          location:
+            ==: org.bukkit.Location
+            world: q3ctf7
+            x: 29.5
+            y: 106.5
+            z: 230.5
+            pitch: 0.8999503
+            yaw: 0.75146484
+          markers: 4
+        LP22:
+          type: NOTHING
+          is_spawn_point: true
+          location:
+            ==: org.bukkit.Location
+            world: q3ctf7
+            x: 41.5
+            y: 106.5
+            z: 229.5
+            pitch: 0.59993476
+            yaw: 0.9005127
+          markers: 4
+        LP23:
+          type: NOTHING
+          is_spawn_point: true
+          location:
+            ==: org.bukkit.Location
+            world: q3ctf7
+            x: 46.5
+            y: 106.5
+            z: 230.5
+            pitch: -0.3000061
+            yaw: 1.6506348
+          markers: 4
+        LP24:
+          type: NOTHING
+          is_spawn_point: true
+          location:
+            ==: org.bukkit.Location
+            world: q3ctf7
+            x: 19.5
+            y: 104.5
+            z: 331.5
+            pitch: 2.9999964
+            yaw: -173.2511
+          markers: 2
+        LP25:
+          type: NOTHING
+          is_spawn_point: true
+          location:
+            ==: org.bukkit.Location
+            world: q3ctf7
+            x: 32.5
+            y: 109.5
+            z: 331.5
+            pitch: 13.499996
+            yaw: 106.94824
+          markers: 2
+        LP26:
+          type: NOTHING
+          is_spawn_point: true
+          location:
+            ==: org.bukkit.Location
+            world: q3ctf7
+            x: 27.5
+            y: 104.5
+            z: 326.5
+            pitch: 0.1500127
+            yaw: -179.55298
+          markers: 2
+        LP27:
+          type: NOTHING
+          is_spawn_point: true
+          location:
+            ==: org.bukkit.Location
+            world: q3ctf7
+            x: 42.5
+            y: 104.5
+            z: 325.5
+            pitch: -1.5000075
+            yaw: 143.09717
+          markers: 2
+        LP28:
+          type: ROCKET_LAUNCHER
+          is_spawn_point: true
+          location:
+            ==: org.bukkit.Location
+            world: q3ctf7
+            x: 38.5
+            y: 99.5
+            z: 310.5
+            pitch: -1.0499921
+            yaw: 90.15015
+          markers: 0
+        LP29:
+          type: MEDICAL_KIT
+          is_spawn_point: true
+          location:
+            ==: org.bukkit.Location
+            world: q3ctf7
+            x: 26.5
+            y: 100.5
+            z: 288.5
+            pitch: 0.15000956
+            yaw: 116.700195
+          markers: 0
+      portals: {}
+      ramps: {}
+      doors: {}
+      door_triggers: {}
+      tags: !!set {}
+      supported_rulesets:
+      - CTF

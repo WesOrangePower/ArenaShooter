@@ -48,8 +48,8 @@ public final class LootSpawnTask implements Runnable {
                       i.getPersistentDataContainer()
                               .has(Keys.LOOT_POINT_KEY, PersistentDataType.INTEGER)
                           && i.getPersistentDataContainer()
-                                  .get(Keys.LOOT_POINT_KEY, PersistentDataType.INTEGER)
-                              == instance.getLootPoint().getId())
+                              .get(Keys.LOOT_POINT_KEY, PersistentDataType.STRING)
+                              .equals(instance.getLootPoint().getId()))
               .findAny();
 
       if (any.isEmpty()) instance.setLooted(true);
@@ -68,7 +68,7 @@ public final class LootSpawnTask implements Runnable {
                     i.getPersistentDataContainer()
                         .set(
                             Keys.LOOT_POINT_KEY,
-                            PersistentDataType.INTEGER,
+                            PersistentDataType.STRING,
                             instance.getLootPoint().getId());
                     i.setCanMobPickup(false);
                     i.setWillAge(false);

@@ -1,22 +1,21 @@
 package agency.shitcoding.arena.models;
 
-import lombok.AllArgsConstructor;
-import lombok.EqualsAndHashCode;
-import lombok.Getter;
-import lombok.Setter;
+import agency.shitcoding.arena.storage.framework.ConfigurationMappable;
+import agency.shitcoding.arena.storage.framework.annotation.MappedField;
+import lombok.*;
 import org.bukkit.Location;
 
-@Getter
 @AllArgsConstructor
-@EqualsAndHashCode
-public class LootPoint implements Cloneable {
+@NoArgsConstructor
+@Setter
+@Getter
+public class LootPoint implements Cloneable, ConfigurationMappable {
 
-  private int id;
-  private Location location;
-  private boolean isSpawnPoint;
-  private Powerup type;
-  @Setter
-  private int markers;
+  private String id;
+  @MappedField private Location location;
+  @MappedField("is_spawn_point") private boolean isSpawnPoint;
+  @MappedField private Powerup type;
+  @MappedField private int markers;
 
   @Override
   public LootPoint clone() {
@@ -28,5 +27,27 @@ public class LootPoint implements Cloneable {
     } catch (CloneNotSupportedException e) {
       throw new AssertionError();
     }
+  }
+
+  @Override
+  public boolean equals(Object o) {
+    if (o == null || getClass() != o.getClass()) return false;
+
+    LootPoint lootPoint = (LootPoint) o;
+    return isSpawnPoint() == lootPoint.isSpawnPoint()
+        && getMarkers() == lootPoint.getMarkers()
+        && getId().equals(lootPoint.getId())
+        && getLocation().equals(lootPoint.getLocation())
+        && getType() == lootPoint.getType();
+  }
+
+  @Override
+  public int hashCode() {
+    int result = getId().hashCode();
+    result = 31 * result + getLocation().hashCode();
+    result = 31 * result + Boolean.hashCode(isSpawnPoint());
+    result = 31 * result + getType().hashCode();
+    result = 31 * result + getMarkers();
+    return result;
   }
 }
