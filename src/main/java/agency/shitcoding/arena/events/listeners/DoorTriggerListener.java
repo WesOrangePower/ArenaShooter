@@ -23,10 +23,11 @@ public class DoorTriggerListener implements Listener {
         .filter(trigger -> (trigger.getTriggerType() & DoorTrigger.PROXIMITY) != 0)
         .filter(trigger -> trigger.getLocation().distance(player.getLocation()) < 1.1d)
         .map(DoorTrigger::getDoorIds)
-        .forEach(doorIds -> game.getArena().getDoors().stream()
-            .filter(door -> doorIds.contains(door.getDoorId()))
-            .forEach(Door::open)
-        );
+        .forEach(
+            doorIds ->
+                game.getArena().getDoors().stream()
+                    .filter(door -> doorIds.contains(door.getId()))
+                    .forEach(Door::open));
   }
 
   @EventHandler
@@ -42,9 +43,10 @@ public class DoorTriggerListener implements Listener {
         .filter(trigger -> (trigger.getTriggerType() & DoorTrigger.INTERACTION) == 1)
         .filter(trigger -> trigger.getLocation().getBlock().equals(event.getClickedBlock()))
         .map(DoorTrigger::getDoorIds)
-        .forEach(doorIds -> game.getArena().getDoors().stream()
-            .filter(door -> doorIds.contains(door.getDoorId()))
-            .forEach(Door::open)
-        );
+        .forEach(
+            doorIds ->
+                game.getArena().getDoors().stream()
+                    .filter(door -> doorIds.contains(door.getId()))
+                    .forEach(Door::open));
   }
 }

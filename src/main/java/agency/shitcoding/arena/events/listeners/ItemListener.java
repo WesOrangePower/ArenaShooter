@@ -12,7 +12,6 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerAttemptPickupItemEvent;
 import org.bukkit.persistence.PersistentDataType;
 
-import java.util.Arrays;
 import java.util.Optional;
 
 public class ItemListener implements Listener {
@@ -20,9 +19,9 @@ public class ItemListener implements Listener {
   @EventHandler
   public void onItemPickup(PlayerAttemptPickupItemEvent event) {
     Item item = event.getItem();
-    Integer i = item.getPersistentDataContainer()
-        .get(Keys.LOOT_POINT_KEY, PersistentDataType.INTEGER);
-    if (i == null) {
+    String s =
+        item.getPersistentDataContainer().get(Keys.LOOT_POINT_KEY, PersistentDataType.STRING);
+    if (s == null) {
       return;
     }
     event.setCancelled(true);
@@ -38,20 +37,10 @@ public class ItemListener implements Listener {
     }
 
     Powerup powerup;
-    if (i < 0) {
-      Optional<Powerup> first = Arrays.stream(Powerup.values())
-          .filter(p -> p.getItemStack().getType() == event.getItem().getItemStack().getType())
-          .findFirst();
-      if (first.isEmpty()) {
-        return;
-      }
-      powerup = first.get();
-    } else {
-      LootManager lootManager = game.getLootManager();
-      assert lootManager != null;
-      LootPointInstance lootPointInstance = lootManager.getLootPoints().get(i);
-      powerup = lootPointInstance.getLootPoint().getType();
-    }
+    LootManager lootManager = game.getLootManager();
+    assert lootManager != null;
+    LootPointInstance lootPointInstance = lootManager.getLootPoints().get(s);
+    powerup = lootPointInstance.getLootPoint().getType();
 
     boolean isPickedUp = powerup.getOnPickup().apply(player);
 
@@ -62,23 +51,19 @@ public class ItemListener implements Listener {
       if (powerup.getType() == PowerupType.AMMO) {
         Ammo ammo = Powerup.getAmmo(powerup);
         if (ammo == null) {
-          throw new IllegalStateException("Ammo type not found for PowerupType.AMMO powerup " + powerup.name());
+          throw new IllegalStateException(
+              "Ammo type not found for PowerupType.AMMO powerup " + powerup.name());
         }
         var color = "#" + Integer.toHexString(Ammo.AMMO_COLORS[ammo.slot]);
-        powerupName = String.format("<color:%s>%s %s</color>",
-            color, Ammo.AMMO_PICT[ammo.slot], powerupName
-        );
+        powerupName =
+            String.format("<color:%s>%s %s</color>", color, Ammo.AMMO_PICT[ammo.slot], powerupName);
       }
       langPlayer.sendRichLocalized("powerup.pickup.self", powerupName);
       if (powerup.getType() == PowerupType.MAJOR_BUFF) {
         handleMajorBuff(player, game, powerup);
       }
       item.remove();
-      if (i > 0) {
-        LootManager lootManager = game.getLootManager();
-        LootPointInstance lootPointInstance = lootManager.getLootPoints().get(i);
-        lootPointInstance.setLooted(true);
-      }
+      lootPointInstance.setLooted(true);
     }
   }
 
@@ -89,9 +74,7 @@ public class ItemListener implements Listener {
       }
       var lang = LangPlayer.of(gamePlayer);
       lang.sendRichLocalized(
-          "powerup.pickup.other", player.getName(),
-          lang.getLocalized(powerup.getDisplayName())
-      );
+          "powerup.pickup.other", player.getName(), lang.getLocalized(powerup.getDisplayName()));
     }
   }
 }

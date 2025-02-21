@@ -72,7 +72,8 @@ public enum ArenaSetField {
               return;
             }
             Location centerLocation = unshifted(ar, ((Player) p).getLocation().toCenterLocation());
-            LootPoint lootPoint = new LootPoint(ar.getLootPoints().size(), centerLocation, true, powerup, 0);
+            LootPoint lootPoint =
+                new LootPoint("LP_" + ar.getLootPoints().size(), centerLocation, true, powerup, 0);
             ar.getLootPoints().add(lootPoint);
             arenaStorage.storeArena(ar);
             p.sendRichMessage(
@@ -84,9 +85,8 @@ public enum ArenaSetField {
                     + centerLocation);
           }
           case GET ->
-              ar.getLootPoints()
-                  .stream()
-                  .sorted(Comparator.comparingInt(LootPoint::getId))
+              ar.getLootPoints().stream()
+                  .sorted(Comparator.comparing(LootPoint::getId))
                   .forEach(
                       lp ->
                           p.sendMessage(
@@ -98,15 +98,8 @@ public enum ArenaSetField {
               p.sendRichMessage("<red>Powerup ID must be specified.");
               return;
             }
-            int id;
-            try {
-              id = Integer.parseInt(v);
-            } catch (NumberFormatException e) {
-              p.sendRichMessage("<red>Invalid powerup ID. Must be a number.");
-              return;
-            }
             ar.getLootPoints().stream()
-                .filter(lp -> lp.getId() == id)
+                .filter(lp -> lp.getId().equals(v))
                 .findFirst()
                 .ifPresentOrElse(
                     lp -> {
@@ -114,7 +107,7 @@ public enum ArenaSetField {
                       arenaStorage.storeArena(ar);
                       p.sendRichMessage("<green>Powerup " + lp.getType().name() + " removed.");
                     },
-                    () -> p.sendRichMessage("<red>Powerup " + id + " not found."));
+                    () -> p.sendRichMessage("<red>Powerup " + v + " not found."));
           }
         }
       }),
@@ -425,8 +418,7 @@ public enum ArenaSetField {
           case GET -> {
             for (Door door : ar.getDoors()) {
               Component component =
-                  Component.text(
-                          "Door " + door.getDoorId() + " type " + door.getDoorType() + " at ")
+                  Component.text("Door " + door.getId() + " type " + door.getDoorType() + " at ")
                       .append(locationComponent(door.getEdge1()))
                       .append(Component.text(" and "))
                       .append(locationComponent(door.getEdge2()))
@@ -449,7 +441,7 @@ public enum ArenaSetField {
             }
 
             ar.getDoors().stream()
-                .filter(d -> d.getDoorId().equals(v))
+                .filter(d -> d.getId().equals(v))
                 .findFirst()
                 .ifPresentOrElse(
                     door -> {
@@ -495,7 +487,7 @@ public enum ArenaSetField {
               Component component =
                   Component.text(
                           "Trigger "
-                              + trigger.getTriggerId()
+                              + trigger.getId()
                               + " type "
                               + trigger.getTriggerType()
                               + " at ")
@@ -512,7 +504,7 @@ public enum ArenaSetField {
             }
 
             ar.getDoorTriggers().stream()
-                .filter(t -> t.getTriggerId().equals(v))
+                .filter(t -> t.getId().equals(v))
                 .findFirst()
                 .ifPresentOrElse(
                     trigger -> {
@@ -524,18 +516,9 @@ public enum ArenaSetField {
           }
         }
       }),
-  TAG(
-      a -> a == SET || a == GET || a == REMOVE,
-      new TagMutationProcessor()
-  ),
-  LP_MARKER(
-      a -> a == SET || a == GET || a == REMOVE,
-      new LootPointMarkerMutationProcessor()
-  ),
-  RULESET(
-      a -> a == ADD || a == REMOVE || a == GET,
-      new RuleSetMutationProcessor()
-  );
+  TAG(a -> a == SET || a == GET || a == REMOVE, new TagMutationProcessor()),
+  LP_MARKER(a -> a == SET || a == GET || a == REMOVE, new LootPointMarkerMutationProcessor()),
+  RULESET(a -> a == ADD || a == REMOVE || a == GET, new RuleSetMutationProcessor());
 
   public final Predicate<ArenaSetAction> supports;
   public final QuadConsumer<Arena, ArenaSetAction, @Nullable String, @NotNull CommandSender>
@@ -559,9 +542,7 @@ public enum ArenaSetField {
   private static Location unshifted(Arena arena, Location location) {
     var arenaWorld = WorldFactory.getInstance().findByWorld(location.getWorld().getName());
     if (arenaWorld.isEmpty()) {
-      location.setWorld(
-        Bukkit.getWorld(arena.getName())
-      );
+      location.setWorld(Bukkit.getWorld(arena.getName()));
       return location;
     }
     var original = arenaWorld.get().getOrigin();

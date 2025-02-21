@@ -116,13 +116,31 @@
       <artifactId>lombok</artifactId>
       <version>1.18.34</version>
     </dependency>
-
     <dependency>
       <groupId>com.github.yannicklamprecht</groupId>
       <artifactId>worldborderapi</artifactId>
       <version>1.210.1</version>
       <classifier>dev</classifier>
       <scope>provided</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>junit</groupId>
+      <artifactId>junit</artifactId>
+      <version>4.13.2</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.mockito</groupId>
+      <artifactId>mockito-core</artifactId>
+      <version>5.14.2</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>com.github.seeseemelk</groupId>
+      <artifactId>MockBukkit-v1.20</artifactId>
+      <version>3.80.0</version>
+      <scope>test</scope>
     </dependency>
   </dependencies>
 

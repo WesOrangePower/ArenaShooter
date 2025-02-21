@@ -16,16 +16,13 @@ import org.bukkit.scheduler.BukkitTask;
 @Setter
 public class LootManager {
 
-  private Map<Integer, LootPointInstance> lootPoints;
+  private Map<String, LootPointInstance> lootPoints;
   private final Game game;
 
   public LootManager(Collection<LootPoint> template, Game game) {
     this.game = game;
     lootPoints = new HashMap<>(template.size());
-    template.stream()
-        .sorted(Comparator.comparingInt(LootPoint::getId))
-        .filter(lp -> lp.getType() != Powerup.NOTHING)
-        .forEach(this::generateInstance);
+    template.stream().filter(lp -> lp.getType() != Powerup.NOTHING).forEach(this::generateInstance);
   }
 
   public void cleanup() {

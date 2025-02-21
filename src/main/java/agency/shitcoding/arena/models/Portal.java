@@ -1,7 +1,11 @@
 package agency.shitcoding.arena.models;
 
 import agency.shitcoding.arena.events.GameDamageEvent;
+import agency.shitcoding.arena.storage.framework.ConfigurationMappable;
+import agency.shitcoding.arena.storage.framework.annotation.MappedField;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 import org.bukkit.Location;
 import org.bukkit.Particle;
 import org.bukkit.Sound;
@@ -9,19 +13,30 @@ import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.util.BoundingBox;
 
-public class Portal implements Cloneable {
+@NoArgsConstructor
+@Getter
+@Setter
+public class Portal implements Cloneable, ConfigurationMappable {
+
+  @Getter @Setter private String id;
 
   @Getter
-  private final String id;
-  @Getter
+  @Setter
+  @MappedField("first_location")
   private Location firstLocation;
+
   @Getter
+  @Setter
+  @MappedField("second_location")
   private Location secondLocation;
+
   @Getter
+  @Setter
+  @MappedField("target_location")
   private Location targetLocation;
 
-  public Portal(String id, Location firstLocation, Location secondLocation,
-      Location targetLocation) {
+  public Portal(
+      String id, Location firstLocation, Location secondLocation, Location targetLocation) {
     this.id = id;
     this.firstLocation = firstLocation;
     this.secondLocation = secondLocation;
@@ -86,5 +101,29 @@ public class Portal implements Cloneable {
     } catch (CloneNotSupportedException e) {
       throw new AssertionError();
     }
+  }
+
+  @Override
+  public boolean equals(Object o) {
+    if (o == null || getClass() != o.getClass()) return false;
+
+    Portal portal = (Portal) o;
+    return getId().equals(portal.getId())
+        && getFirstLocation().equals(portal.getFirstLocation())
+        && getSecondLocation().equals(portal.getSecondLocation())
+        && getTargetLocation().equals(portal.getTargetLocation())
+        && getLowerBlock().equals(portal.getLowerBlock())
+        && getUpperBlock().equals(portal.getUpperBlock());
+  }
+
+  @Override
+  public int hashCode() {
+    int result = getId().hashCode();
+    result = 31 * result + getFirstLocation().hashCode();
+    result = 31 * result + getSecondLocation().hashCode();
+    result = 31 * result + getTargetLocation().hashCode();
+    result = 31 * result + getLowerBlock().hashCode();
+    result = 31 * result + getUpperBlock().hashCode();
+    return result;
   }
 }

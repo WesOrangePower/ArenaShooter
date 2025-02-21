@@ -2,7 +2,11 @@ package agency.shitcoding.arena.models;
 
 import agency.shitcoding.arena.ArenaShooter;
 import agency.shitcoding.arena.SoundConstants;
+import agency.shitcoding.arena.storage.framework.ConfigurationMappable;
+import agency.shitcoding.arena.storage.framework.annotation.MappedField;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.SoundCategory;
@@ -13,16 +17,24 @@ import org.bukkit.util.Vector;
 import java.util.HashSet;
 import java.util.Set;
 
-public class Ramp implements Cloneable {
+@Setter
+@Getter
+@NoArgsConstructor
+public class Ramp implements Cloneable, ConfigurationMappable {
 
-  @Getter private final String id;
-  @Getter private Location firstLocation;
-  @Getter private Location secondLocation;
-  @Getter private final boolean multiply;
-  @Getter private Vector vector;
+  private String id;
 
-  public Ramp(String id, Location firstLocation, Location secondLocation, boolean multiply,
-      Vector vector) {
+  @MappedField("first_location")
+  private Location firstLocation;
+
+  @MappedField("second_location")
+  private Location secondLocation;
+
+  @MappedField private boolean multiply;
+  @MappedField private Vector vector;
+
+  public Ramp(
+      String id, Location firstLocation, Location secondLocation, boolean multiply, Vector vector) {
     this.id = id;
     this.firstLocation = firstLocation;
     this.secondLocation = secondLocation;
@@ -77,5 +89,27 @@ public class Ramp implements Cloneable {
     } catch (CloneNotSupportedException e) {
       throw new AssertionError();
     }
+  }
+
+  @Override
+  public boolean equals(Object o) {
+    if (o == null || getClass() != o.getClass()) return false;
+
+    Ramp ramp = (Ramp) o;
+    return isMultiply() == ramp.isMultiply()
+        && getId().equals(ramp.getId())
+        && getFirstLocation().equals(ramp.getFirstLocation())
+        && getSecondLocation().equals(ramp.getSecondLocation())
+        && getVector().equals(ramp.getVector());
+  }
+
+  @Override
+  public int hashCode() {
+    int result = getId().hashCode();
+    result = 31 * result + getFirstLocation().hashCode();
+    result = 31 * result + getSecondLocation().hashCode();
+    result = 31 * result + Boolean.hashCode(isMultiply());
+    result = 31 * result + getVector().hashCode();
+    return result;
   }
 }

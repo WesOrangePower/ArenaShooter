@@ -81,24 +81,11 @@ public class LootPointMarkerMutationProcessor extends AbstractProcessor {
   }
 
   private Validation<String, ArenaLootPointReference> validateGet(String lootPointId, Arena arena) {
-    Validation<String, Integer> validatedInt = validateInt(lootPointId);
-    if (validatedInt.isInvalid()) {
-      return Validation.invalid(validatedInt.getError());
-    }
-    int intVal = validatedInt.get();
-    var attempt = Try.of(() -> new ArenaLootPointReference(arena, intVal));
+    var attempt = Try.of(() -> new ArenaLootPointReference(arena, lootPointId));
     if (attempt.isFailure()) {
       return Validation.invalid(attempt.getCause().getMessage());
     }
     return Validation.valid(attempt.get());
-  }
-
-  private Validation<String, Integer> validateInt(String value) {
-    try {
-      return Validation.valid(Integer.parseInt(value));
-    } catch (NumberFormatException e) {
-      return Validation.invalid("Invalid loot point index");
-    }
   }
 
   /**
@@ -136,15 +123,15 @@ public class LootPointMarkerMutationProcessor extends AbstractProcessor {
   @Data
   static class ArenaLootPointReference {
     private final Arena arena;
-    private final int lootPointId;
+    private final String lootPointId;
     private LootPoint lootPoint;
 
-    public ArenaLootPointReference(Arena arena, int lootPointId) {
+    public ArenaLootPointReference(Arena arena, String lootPointId) {
       this.arena = arena;
       this.lootPointId = lootPointId;
       this.lootPoint =
           arena.getLootPoints().stream()
-              .filter(point -> point.getId() == lootPointId)
+              .filter(point -> point.getId().equals(lootPointId))
               .findFirst()
               .orElseThrow(
                   () -> new IllegalArgumentException("Loot point " + lootPointId + " not found"));

@@ -6,14 +6,13 @@ import agency.shitcoding.arena.models.*;
 import agency.shitcoding.arena.models.door.Door;
 import agency.shitcoding.arena.models.door.DoorTrigger;
 import java.io.File;
-import java.io.IOException;
-import java.nio.file.FileSystems;
-import java.nio.file.WatchService;
-import java.util.*;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
-import lombok.extern.slf4j.Slf4j;
-import org.bukkit.Bukkit;
+import lombok.RequiredArgsConstructor;
 import org.bukkit.Location;
 import org.bukkit.configuration.Configuration;
 import org.bukkit.configuration.ConfigurationSection;
@@ -21,48 +20,19 @@ import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.util.Vector;
 import org.jetbrains.annotations.Nullable;
 
-import static agency.shitcoding.arena.storage.StorageFactory.getConfiguration;
-import static java.nio.file.StandardWatchEventKinds.ENTRY_MODIFY;
-
-@Slf4j
-public class ConfigurationArenaStorage implements ArenaStorage {
+/**
+ * @deprecated Use {@link MappedConfigurationArenaStorage} instead.
+ * This is used only for migration purposes.
+*/
+@SuppressWarnings("DeprecatedIsStillUsed")
+@RequiredArgsConstructor
+@Deprecated(since = "21.02.2025")
+public class LegacyConfigurationArenaStorage implements ArenaStorage {
 
   public static final File FILE =
       new File(ArenaShooter.getInstance().getDataFolder(), "arenas.yml");
 
-  private Configuration configuration;
-  private final WatchService watchService;
-
-  public ConfigurationArenaStorage(Configuration configuration) {
-    this.configuration = configuration;
-    try {
-      watchService = FileSystems.getDefault().newWatchService();
-      FILE.getParentFile().toPath().register(watchService, ENTRY_MODIFY);
-    } catch (IOException e) {
-      throw new RuntimeException(e);
-    }
-
-    Bukkit.getScheduler()
-        .runTaskTimer(
-            ArenaShooter.getInstance(),
-            () -> {
-              var key = watchService.poll();
-              if (key != null) {
-                for (var event : key.pollEvents()) {
-                  if (event.context().equals(FILE.getName())) {
-                    log.info("File changes detected at {}. Reloading config", FILE.getAbsolutePath());
-                    load();
-                  }
-                }
-              }
-            },
-            0,
-            60);
-  }
-
-  public void load() {
-    configuration = getConfiguration(FILE);
-  }
+  private final Configuration configuration;
 
   @Override
   public Collection<Arena> getArenas() {
@@ -105,8 +75,10 @@ public class ConfigurationArenaStorage implements ArenaStorage {
     var doorsSection = arenaSection.getConfigurationSection(Conf.Arenas.doorsSection);
     var doorTriggersSection = arenaSection.getConfigurationSection(Conf.Arenas.doorTriggersSection);
     var tags = new HashSet<>(arenaSection.getStringList(Conf.Arenas.tags));
-    var supportedRuleSets = arenaSection.getStringList(Conf.Arenas.supportedRuleSets).stream()
-        .map(RuleSet::valueOf).collect(Collectors.toSet());
+    var supportedRuleSets =
+        arenaSection.getStringList(Conf.Arenas.supportedRuleSets).stream()
+            .map(RuleSet::valueOf)
+            .collect(Collectors.toSet());
     var allowHost = arenaSection.getBoolean(Conf.Arenas.allowHost, true);
 
     if (lootPointsSection == null) {
@@ -234,14 +206,12 @@ public class ConfigurationArenaStorage implements ArenaStorage {
   }
 
   private LootPoint parseLootPoint(String lootPointId, ConfigurationSection lootPointSection) {
-
-    int id = Integer.parseInt(lootPointId.substring(2));
     Location location = lootPointSection.getLocation(Conf.Arenas.LootPoints.location);
     boolean isSpawnPoint = lootPointSection.getBoolean(Conf.Arenas.LootPoints.isSpawnPoint, true);
     Powerup type = Powerup.valueOf(lootPointSection.getString(Conf.Arenas.LootPoints.type));
     int markers = lootPointSection.getInt(Conf.Arenas.LootPoints.markers, 0);
 
-    return new LootPoint(id, location, isSpawnPoint, type, markers);
+    return new LootPoint(lootPointId, location, isSpawnPoint, type, markers);
   }
 
   private Portal parsePortal(String id, ConfigurationSection portalSection) {
@@ -372,9 +342,9 @@ public class ConfigurationArenaStorage implements ArenaStorage {
     }
 
     for (Door door : arena.getDoors()) {
-      var doorSection = allDoorsSection.getConfigurationSection(door.getDoorId());
+      var doorSection = allDoorsSection.getConfigurationSection(door.getId());
       if (doorSection == null) {
-        doorSection = allDoorsSection.createSection(door.getDoorId());
+        doorSection = allDoorsSection.createSection(door.getId());
       }
       doorSection.set(Conf.Arenas.Doors.firstLocation, door.getEdge1());
       doorSection.set(Conf.Arenas.Doors.secondLocation, door.getEdge2());
@@ -394,10 +364,9 @@ public class ConfigurationArenaStorage implements ArenaStorage {
     }
 
     for (DoorTrigger doorTrigger : arena.getDoorTriggers()) {
-      var doorTriggerSection =
-          allDoorTriggersSection.getConfigurationSection(doorTrigger.getTriggerId());
+      var doorTriggerSection = allDoorTriggersSection.getConfigurationSection(doorTrigger.getId());
       if (doorTriggerSection == null) {
-        doorTriggerSection = allDoorTriggersSection.createSection(doorTrigger.getTriggerId());
+        doorTriggerSection = allDoorTriggersSection.createSection(doorTrigger.getId());
       }
       doorTriggerSection.set(Conf.Arenas.DoorTriggers.triggerType, doorTrigger.getTriggerType());
       doorTriggerSection.set(Conf.Arenas.DoorTriggers.location, doorTrigger.getLocation());
@@ -432,7 +401,7 @@ public class ConfigurationArenaStorage implements ArenaStorage {
 
   private void removeLeftoverDoors(ConfigurationSection allDoorsSection, Arena arena) {
     for (String key : allDoorsSection.getKeys(false)) {
-      if (arena.getDoors().stream().noneMatch(d -> d.getDoorId().equals(key))) {
+      if (arena.getDoors().stream().noneMatch(d -> d.getId().equals(key))) {
         allDoorsSection.set(key, null);
       }
     }
@@ -441,7 +410,7 @@ public class ConfigurationArenaStorage implements ArenaStorage {
   private void removeLeftoverDoorTriggers(
       ConfigurationSection allDoorTriggersSection, Arena arena) {
     for (String key : allDoorTriggersSection.getKeys(false)) {
-      if (arena.getDoorTriggers().stream().noneMatch(dt -> dt.getTriggerId().equals(key))) {
+      if (arena.getDoorTriggers().stream().noneMatch(dt -> dt.getId().equals(key))) {
         allDoorTriggersSection.set(key, null);
       }
     }

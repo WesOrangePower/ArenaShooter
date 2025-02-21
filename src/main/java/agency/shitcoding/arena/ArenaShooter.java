@@ -13,6 +13,7 @@ import agency.shitcoding.arena.gamestate.announcer.HardcodedStaticAnnouncementSk
 import agency.shitcoding.arena.statistics.StatisticsService;
 import agency.shitcoding.arena.statistics.StatisticsServiceImpl;
 import agency.shitcoding.arena.storage.CosmeticsUpdater;
+import agency.shitcoding.arena.storage.MigrationDetector;
 import agency.shitcoding.arena.storage.skips.YamlSkipProvider;
 import com.comphenix.protocol.ProtocolLibrary;
 import com.comphenix.protocol.ProtocolManager;
@@ -27,19 +28,23 @@ import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
 
 @Getter
-public final class ArenaShooter extends JavaPlugin {
+public class ArenaShooter extends JavaPlugin {
 
   private ArenaWorldBorderApi worldBorderApi;
   private StatisticsService statisticsService;
   private ProtocolManager protocolManager = null;
 
+  private static ArenaShooter plugin;
+
   public static ArenaShooter getInstance() {
-    return getPlugin(ArenaShooter.class);
+    return plugin;
   }
 
   @Override
   public void onEnable() {
+    plugin = this;
     CleanUp.onStart();
+    new MigrationDetector().detectMigration();
     registerListeners();
 
     Objects.requireNonNull(getCommand("arenaDeathMatch".toLowerCase()))

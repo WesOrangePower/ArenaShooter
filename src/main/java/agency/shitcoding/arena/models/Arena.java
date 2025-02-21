@@ -8,6 +8,8 @@ import agency.shitcoding.arena.models.door.Door;
 import agency.shitcoding.arena.models.door.DoorTrigger;
 import java.lang.reflect.InvocationTargetException;
 
+import agency.shitcoding.arena.storage.framework.ConfigurationMappable;
+import agency.shitcoding.arena.storage.framework.annotation.MappedField;
 import lombok.*;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
@@ -24,23 +26,39 @@ import org.jetbrains.annotations.Nullable;
 
 @Getter
 @Setter
-public class Arena implements Cloneable {
+@NoArgsConstructor
+public class Arena implements Cloneable, ConfigurationMappable {
   public static final Random spawnPointRandomizer = new Random();
   private boolean shifted = false;
   private String name;
-  private List<String> authors;
+  @MappedField private List<String> authors;
+
+  @MappedField("lower_bound")
   private Location lowerBound;
+
+  @MappedField("upper_bound")
   private Location upperBound;
+  @MappedField("loot_points")
   private Set<LootPoint> lootPoints;
+  @MappedField
   private Set<Portal> portals;
+  @MappedField("wind_tunnels")
   private Set<WindTunnel> windTunnels;
+  @MappedField
   private Set<Ramp> ramps;
-  private Set<LootPoint> weaponLootPoints;
+  @MappedField
   private Set<Door> doors;
+  @MappedField("door_triggers")
   private Set<DoorTrigger> doorTriggers;
+  @MappedField("allow_host")
   private boolean allowHost;
+  @MappedField
   private Set<String> tags;
+  @MappedField("supported_rulesets")
   private Set<RuleSet> supportedRuleSets;
+
+
+  private transient Set<LootPoint> weaponLootPoints;
 
   public Arena(
       String name,
@@ -84,8 +102,10 @@ public class Arena implements Cloneable {
     if (weaponLootPoints == null) {
       weaponLootPoints =
           lootPoints.stream()
-              .filter(lootPoint -> lootPoint.getType().getType() == PowerupType.WEAPON
-                  || lootPoint.getType().getType() == PowerupType.SPAWN)
+              .filter(
+                  lootPoint ->
+                      lootPoint.getType().getType() == PowerupType.WEAPON
+                          || lootPoint.getType().getType() == PowerupType.SPAWN)
               .collect(Collectors.toSet());
     }
     return weaponLootPoints;
@@ -160,10 +180,10 @@ public class Arena implements Cloneable {
   }
 
   private LootPoint findLootPointToSpawn(LootPointFilter filter, Player player) {
-    Set<LootPoint> weaponLootPoints = getWeaponLootPoints()
-        .stream()
-        .filter(lp -> filter.filter(lp, player))
-        .collect(Collectors.toSet());
+    Set<LootPoint> weaponLootPoints =
+        getWeaponLootPoints().stream()
+            .filter(lp -> filter.filter(lp, player))
+            .collect(Collectors.toSet());
     int size = weaponLootPoints.size();
     if (size == 0) {
       throw new IllegalStateException("No loot points to spawn player " + player.getName());
@@ -179,28 +199,6 @@ public class Arena implements Cloneable {
     return null;
   }
 
-  public Arena copy() {
-    var newLootPoints = new HashSet<LootPoint>();
-    for (LootPoint lootPoint : lootPoints) {
-      newLootPoints.add(lootPoint.clone());
-    }
-
-    return new Arena(
-        name,
-        authors,
-        lowerBound.clone(),
-        upperBound.clone(),
-        newLootPoints,
-        portals,
-        windTunnels,
-        ramps,
-        doors,
-        doorTriggers,
-        allowHost,
-        tags,
-        supportedRuleSets);
-  }
-
   @Override
   public Arena clone() {
     try {
@@ -213,7 +211,7 @@ public class Arena implements Cloneable {
       arena.portals = cloneSet(portals);
       arena.windTunnels = cloneSet(windTunnels);
       arena.ramps = cloneSet(ramps);
-      arena.weaponLootPoints = cloneSet(weaponLootPoints);
+      arena.weaponLootPoints = null;
       arena.doors = cloneSet(doors);
       arena.doorTriggers = cloneSet(doorTriggers);
       arena.tags = shallowCloneSet(tags);
@@ -246,5 +244,15 @@ public class Arena implements Cloneable {
   @Contract("null -> null")
   private static <T> Set<T> shallowCloneSet(Set<T> set) {
     return set == null ? null : new HashSet<>(set);
+  }
+
+  @Override
+  public String getId() {
+    return getName();
+  }
+
+  @Override
+  public void setId(String id) {
+    setName(id);
   }
 }
