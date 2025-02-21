@@ -39,6 +39,7 @@ public class ArenaCreateCmd extends CommandInst {
         new HashSet<>(),
         new HashSet<>(),
         new HashSet<>(),
+        new HashSet<>(),
         true,
         new HashSet<>(),
         new HashSet<>()

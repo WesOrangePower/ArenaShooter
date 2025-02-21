@@ -1,6 +1,5 @@
 package agency.shitcoding.arena.command;
 
-import org.jetbrains.annotations.NotNull;
 
 public final class Conf {
 
@@ -16,6 +15,7 @@ public final class Conf {
     public static final String upperBound = "upper_bound";
     public static final String lootPointsSection = "loot_points";
     public static final String portalsSection = "portals";
+    public static final String windTunnelsSection = "wind_tunnels";
     public static final String rampsSection = "ramps";
     public static final String doorsSection = "doors";
     public static final String doorTriggersSection = "door_triggers";
@@ -40,6 +40,16 @@ public final class Conf {
       public static final String targetLocation = "target_location";
 
       private Portals() {}
+    }
+
+    public static class WindTunnels {
+
+      public static final String id = "id";
+      public static final String firstCorner = "first_corner";
+      public static final String secondCorner = "second_corner";
+      public static final String velocity = "velocity";
+
+      private WindTunnels() {}
     }
 
     public static class Ramps {

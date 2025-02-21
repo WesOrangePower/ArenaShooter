@@ -38,15 +38,25 @@ public class Arena implements Cloneable, ConfigurationMappable {
 
   @MappedField("upper_bound")
   private Location upperBound;
+  @MappedField("loot_points")
+  private Set<LootPoint> lootPoints;
+  @MappedField
+  private Set<Portal> portals;
+  @MappedField("wind_tunnels")
+  private Set<WindTunnel> windTunnels;
+  @MappedField
+  private Set<Ramp> ramps;
+  @MappedField
+  private Set<Door> doors;
+  @MappedField("door_triggers")
+  private Set<DoorTrigger> doorTriggers;
+  @MappedField("allow_host")
+  private boolean allowHost;
+  @MappedField
+  private Set<String> tags;
+  @MappedField("supported_rulesets")
+  private Set<RuleSet> supportedRuleSets;
 
-  @MappedField("loot_points") private Set<LootPoint> lootPoints;
-  @MappedField private Set<Portal> portals;
-  @MappedField private Set<Ramp> ramps;
-  @MappedField private Set<Door> doors;
-  @MappedField("door_triggers") private Set<DoorTrigger> doorTriggers;
-  @MappedField("allow_host") private boolean allowHost;
-  @MappedField private Set<String> tags;
-  @MappedField("supported_rulesets") private Set<RuleSet> supportedRuleSets;
 
   private transient Set<LootPoint> weaponLootPoints;
 
@@ -57,6 +67,7 @@ public class Arena implements Cloneable, ConfigurationMappable {
       Location upperBound,
       Set<LootPoint> lootPoints,
       Set<Portal> portals,
+      Set<WindTunnel> windTunnels,
       Set<Ramp> ramps,
       Set<Door> doors,
       Set<DoorTrigger> doorTriggers,
@@ -69,6 +80,7 @@ public class Arena implements Cloneable, ConfigurationMappable {
     this.upperBound = upperBound;
     this.lootPoints = lootPoints;
     this.portals = portals;
+    this.windTunnels = windTunnels;
     this.ramps = ramps;
     this.doors = doors;
     this.doorTriggers = doorTriggers;
@@ -197,6 +209,7 @@ public class Arena implements Cloneable, ConfigurationMappable {
       arena.upperBound = upperBound.clone();
       arena.lootPoints = cloneSet(lootPoints);
       arena.portals = cloneSet(portals);
+      arena.windTunnels = cloneSet(windTunnels);
       arena.ramps = cloneSet(ramps);
       arena.weaponLootPoints = null;
       arena.doors = cloneSet(doors);

@@ -70,6 +70,7 @@ public class LegacyConfigurationArenaStorage implements ArenaStorage {
     var upperBound = arenaSection.getLocation(Conf.Arenas.upperBound);
     var lootPointsSection = arenaSection.getConfigurationSection(Conf.Arenas.lootPointsSection);
     var portalsSection = arenaSection.getConfigurationSection(Conf.Arenas.portalsSection);
+    var windTunnelsSection = arenaSection.getConfigurationSection(Conf.Arenas.windTunnelsSection);
     var rampsSection = arenaSection.getConfigurationSection(Conf.Arenas.rampsSection);
     var doorsSection = arenaSection.getConfigurationSection(Conf.Arenas.doorsSection);
     var doorTriggersSection = arenaSection.getConfigurationSection(Conf.Arenas.doorTriggersSection);
@@ -85,6 +86,9 @@ public class LegacyConfigurationArenaStorage implements ArenaStorage {
     }
     if (portalsSection == null) {
       portalsSection = arenaSection.createSection(Conf.Arenas.portalsSection);
+    }
+    if (windTunnelsSection == null) {
+      windTunnelsSection = arenaSection.createSection(Conf.Arenas.windTunnelsSection);
     }
     if (rampsSection == null) {
       rampsSection = arenaSection.createSection(Conf.Arenas.rampsSection);
@@ -114,6 +118,16 @@ public class LegacyConfigurationArenaStorage implements ArenaStorage {
       }
       Portal portal = parsePortal(id, configurationSection);
       portals.add(portal);
+    }
+
+    Set<WindTunnel> windTunnels = new HashSet<>();
+    for (String id : windTunnelsSection.getKeys(false)) {
+      var configurationSection = windTunnelsSection.getConfigurationSection(id);
+      if (configurationSection == null) {
+        continue;
+      }
+      WindTunnel windTunnel = parseWindTunnel(id, configurationSection);
+      windTunnels.add(windTunnel);
     }
 
     Set<Ramp> ramps = new HashSet<>();
@@ -153,6 +167,7 @@ public class LegacyConfigurationArenaStorage implements ArenaStorage {
         upperBound,
         lootPoints,
         portals,
+        windTunnels,
         ramps,
         doors,
         doorTriggers,
@@ -209,6 +224,17 @@ public class LegacyConfigurationArenaStorage implements ArenaStorage {
     }
 
     return new Portal(id, firstLocation, secondLocation, targetLocation);
+  }
+
+  private WindTunnel parseWindTunnel(String windTunnelId, ConfigurationSection windTunnelSection) {
+    Location firstCorner = windTunnelSection.getLocation(Conf.Arenas.WindTunnels.firstCorner);
+    Location secondCorner = windTunnelSection.getLocation(Conf.Arenas.WindTunnels.secondCorner);
+    Vector velocity = windTunnelSection.getVector(Conf.Arenas.WindTunnels.velocity);
+
+    if (firstCorner == null || secondCorner == null || velocity == null) {
+      throw new RuntimeException("Failed to parse wind tunnel " + windTunnelId);
+    }
+    return new WindTunnel(windTunnelId, firstCorner, secondCorner, velocity);
   }
 
   private Ramp parseRamp(String rampId, ConfigurationSection rampSection) {

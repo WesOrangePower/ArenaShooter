@@ -1,11 +1,8 @@
 package agency.shitcoding.arena.worlds;
 
 import agency.shitcoding.arena.ArenaShooter;
+import agency.shitcoding.arena.models.*;
 import agency.shitcoding.arena.util.FileUtil;
-import agency.shitcoding.arena.models.Arena;
-import agency.shitcoding.arena.models.LootPoint;
-import agency.shitcoding.arena.models.Portal;
-import agency.shitcoding.arena.models.Ramp;
 import agency.shitcoding.arena.models.door.Door;
 import agency.shitcoding.arena.models.door.DoorTrigger;
 import java.io.File;
@@ -13,6 +10,8 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.util.Collection;
 import java.util.List;
+import java.util.stream.Stream;
+
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import net.kyori.adventure.util.TriState;
@@ -106,6 +105,8 @@ public class ArenaWorld {
             shifted.getPortals().stream().map(Portal::getFirstLocation).toList(),
             shifted.getPortals().stream().map(Portal::getSecondLocation).toList(),
             shifted.getPortals().stream().map(Portal::getTargetLocation).toList(),
+            shifted.getWindTunnels().stream().map(WindTunnel::getFirstCorner).toList(),
+            shifted.getWindTunnels().stream().map(WindTunnel::getSecondCorner).toList(),
             shifted.getDoorTriggers().stream().map(DoorTrigger::getLocation).toList(),
             shifted.getDoors().stream().map(Door::getEdge1).toList(),
             shifted.getDoors().stream().map(Door::getEdge2).toList(),
