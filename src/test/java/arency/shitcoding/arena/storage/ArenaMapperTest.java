@@ -56,6 +56,12 @@ public class ArenaMapperTest {
                 new Location(world, 1d, 3d, 3d),
                 new Location(world, 1d, 2d, 3d))),
         Set.of(
+            new WindTunnel(
+                "WT_1",
+                new Location(world, 1d, 2d, 3d),
+                new Location(world, 2d, 3d, 4d),
+                new Vector(0, 1, 0))),
+        Set.of(
             new Ramp(
                 "RP_1",
                 new Location(world, 1d, 2d, 3d),
@@ -92,6 +98,7 @@ public class ArenaMapperTest {
     assertEquals(arena.getUpperBound(), readArena.getUpperBound());
     assertTrue(arena.getLootPoints().containsAll(readArena.getLootPoints()));
     assertTrue(arena.getPortals().containsAll(readArena.getPortals()));
+    assertTrue(arena.getWindTunnels().containsAll(readArena.getWindTunnels()));
     assertTrue(arena.getRamps().containsAll(readArena.getRamps()));
     assertTrue(arena.getWeaponLootPoints().containsAll(readArena.getWeaponLootPoints()));
     assertTrue(arena.getDoors().containsAll(readArena.getDoors()));

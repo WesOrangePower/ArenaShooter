@@ -1,16 +1,28 @@
 package agency.shitcoding.arena.models;
 
+import agency.shitcoding.arena.storage.framework.ConfigurationMappable;
+import agency.shitcoding.arena.storage.framework.annotation.MappedField;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.util.BoundingBox;
 import org.bukkit.util.Vector;
 
-public class WindTunnel implements Cloneable {
-  @Getter private String id;
-  @Getter private Location firstCorner;
-  @Getter private Location secondCorner;
-  @Getter private Vector velocity;
+import java.util.Objects;
+
+@Getter
+@Setter
+@NoArgsConstructor
+public class WindTunnel implements Cloneable, ConfigurationMappable {
+  private String id;
+  @MappedField("first_corner")
+  private Location firstCorner;
+  @MappedField("second_corner")
+  private Location secondCorner;
+  @MappedField
+  private Vector velocity;
 
   public WindTunnel(String id, Location firstCorner, Location secondCorner, Vector velocity) {
     this.id = id;
@@ -43,5 +55,22 @@ public class WindTunnel implements Cloneable {
     } catch (CloneNotSupportedException e) {
       throw new AssertionError();
     }
+  }
+
+  @Override
+  public boolean equals(Object o) {
+    if (o == null || getClass() != o.getClass()) return false;
+
+    WindTunnel that = (WindTunnel) o;
+    return Objects.equals(getId(), that.getId()) && Objects.equals(getFirstCorner(), that.getFirstCorner()) && Objects.equals(getSecondCorner(), that.getSecondCorner()) && Objects.equals(getVelocity(), that.getVelocity());
+  }
+
+  @Override
+  public int hashCode() {
+    int result = Objects.hashCode(getId());
+    result = 31 * result + Objects.hashCode(getFirstCorner());
+    result = 31 * result + Objects.hashCode(getSecondCorner());
+    result = 31 * result + Objects.hashCode(getVelocity());
+    return result;
   }
 }
