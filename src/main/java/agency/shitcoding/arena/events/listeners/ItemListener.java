@@ -20,7 +20,7 @@ public class ItemListener implements Listener {
   public void onItemPickup(PlayerAttemptPickupItemEvent event) {
     Item item = event.getItem();
     String s =
-        item.getPersistentDataContainer().get(Keys.LOOT_POINT_KEY, PersistentDataType.STRING);
+        item.getPersistentDataContainer().get(Keys.getLootPointKey(), PersistentDataType.STRING);
     if (s == null) {
       return;
     }

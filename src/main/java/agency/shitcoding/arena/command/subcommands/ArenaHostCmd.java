@@ -1,6 +1,6 @@
 package agency.shitcoding.arena.command.subcommands;
 
-import agency.shitcoding.arena.command.ArenaDeathMatchCommand;
+import agency.shitcoding.arena.command.ArenaCommand;
 import agency.shitcoding.arena.command.CommandInst;
 import agency.shitcoding.arena.gamestate.*;
 import agency.shitcoding.arena.gamestate.team.ETeam;
@@ -104,7 +104,7 @@ public class ArenaHostCmd extends CommandInst {
       return false;
     }
 
-    if (!arena.isAllowHost() && !sender.hasPermission(ArenaDeathMatchCommand.ADMIN_PERM)) {
+    if (!arena.isAllowHost() && !sender.hasPermission(ArenaCommand.ADMIN_PERM)) {
       lang.sendRichLocalized("command.host.arenaNotAllowed");
       return false;
     }

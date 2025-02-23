@@ -255,7 +255,7 @@ public class DamageListener implements Listener {
                 itemStack,
                 i -> {
                   i.getPersistentDataContainer()
-                      .set(Keys.LOOT_POINT_KEY, PersistentDataType.INTEGER, -1);
+                      .set(Keys.getLootPointKey(), PersistentDataType.STRING, "");
                   i.setCanMobPickup(false);
                 });
 

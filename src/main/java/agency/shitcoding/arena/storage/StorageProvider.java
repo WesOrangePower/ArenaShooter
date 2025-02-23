@@ -13,6 +13,7 @@ public final class StorageProvider {
 
   public static ArenaStorage getArenaStorage() {
     if (arenaStorage == null) {
+      new MigrationDetector().detectMigration();
       arenaStorage = StorageFactory.createArenaStorage();
     }
     return arenaStorage;

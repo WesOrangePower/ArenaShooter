@@ -11,8 +11,10 @@ public final class Keys {
   // minecraft keys support only lowercase snake case
   // ********************
 
-  public static final NamespacedKey LOOT_POINT_KEY = new NamespacedKey(ArenaShooter.getInstance(),
-      "loot_point_id");
+
+  public static NamespacedKey getLootPointKey() {
+    return new NamespacedKey(ArenaShooter.getInstance(), "loot_point_id");
+  }
 
 
   public static NamespacedKey getPlayerAmmoKey() {

@@ -1,6 +1,6 @@
 package agency.shitcoding.arena.command.subcommands;
 
-import agency.shitcoding.arena.command.ArenaDeathMatchCommand;
+import agency.shitcoding.arena.command.ArenaCommand;
 import agency.shitcoding.arena.command.CommandInst;
 import agency.shitcoding.arena.models.Arena;
 import agency.shitcoding.arena.storage.StorageProvider;
@@ -49,7 +49,7 @@ public class ArenaCreateCmd extends CommandInst {
   }
 
   private boolean validate() {
-    String adminPerm = ArenaDeathMatchCommand.getAdminPerm();
+    String adminPerm = ArenaCommand.getAdminPerm();
     if (!sender.hasPermission(adminPerm)) {
       sender.sendRichMessage("<dark_red>You don't have permission to access this command");
       return false;

@@ -1,6 +1,6 @@
 package agency.shitcoding.arena.suggester;
 
-import agency.shitcoding.arena.command.ArenaDeathMatchCommand;
+import agency.shitcoding.arena.command.ArenaCommand;
 import agency.shitcoding.arena.command.subcommands.arenamutation.ArenaSetAction;
 import agency.shitcoding.arena.command.subcommands.arenamutation.ArenaSetField;
 import agency.shitcoding.arena.gamestate.GameOrchestrator;
@@ -24,7 +24,7 @@ import org.jetbrains.annotations.Nullable;
 import static java.util.stream.IntStream.range;
 
 @RequiredArgsConstructor
-public class ArenaDeathMatchTabCompleter {
+public class ArenaTabCompleter {
 
   private final CommandSender sender;
   private final String[] args;
@@ -32,7 +32,7 @@ public class ArenaDeathMatchTabCompleter {
   private final Suggester tournamentSuggester =
       SuggesterBuilder.builder()
           .at(2)
-          .inCase((s, a) -> s.hasPermission(ArenaDeathMatchCommand.ADMIN_PERM))
+          .inCase((s, a) -> s.hasPermission(ArenaCommand.ADMIN_PERM))
           .suggest(
               () ->
                   List.of("create", "next", "add", "status", "kick", "end", "enroll", "gameRules"))
@@ -117,7 +117,7 @@ public class ArenaDeathMatchTabCompleter {
   }
 
   public @Nullable List<String> onTabComplete() {
-    boolean isAdmin = sender.hasPermission(ArenaDeathMatchCommand.ADMIN_PERM);
+    boolean isAdmin = sender.hasPermission(ArenaCommand.ADMIN_PERM);
     if (isAdmin) {
       return resolveAdmin();
     }

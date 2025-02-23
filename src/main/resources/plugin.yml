@@ -6,7 +6,9 @@ author: WesOrangePower
 depend: [ JellyLib, JellyGuiApi, ProtocolLib ]
 softdepend: [ worldborderapi, JellyRestart ]
 commands:
-  arenadeathmatch:
+  arena:
     description: Arena Deathmatch Command
-    usage: /arenadeathmatch
-    aliases: [ arena ]
+    usage: /arena
+  leave:
+    description: Leave the game
+    usage: /leave

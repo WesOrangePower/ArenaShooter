@@ -1,6 +1,7 @@
 package agency.shitcoding.arena;
 
-import agency.shitcoding.arena.command.ArenaDeathMatchCommandInvoker;
+import agency.shitcoding.arena.command.ArenaCommandInvoker;
+import agency.shitcoding.arena.command.LeaveCommandInvoker;
 import agency.shitcoding.arena.events.PortalListener;
 import agency.shitcoding.arena.events.listeners.*;
 import agency.shitcoding.arena.events.listeners.protocol.AnvilTextInputPacketAdapter;
@@ -13,7 +14,6 @@ import agency.shitcoding.arena.gamestate.announcer.HardcodedStaticAnnouncementSk
 import agency.shitcoding.arena.statistics.StatisticsService;
 import agency.shitcoding.arena.statistics.StatisticsServiceImpl;
 import agency.shitcoding.arena.storage.CosmeticsUpdater;
-import agency.shitcoding.arena.storage.MigrationDetector;
 import agency.shitcoding.arena.storage.skips.YamlSkipProvider;
 import com.comphenix.protocol.ProtocolLibrary;
 import com.comphenix.protocol.ProtocolManager;
@@ -33,6 +33,7 @@ public class ArenaShooter extends JavaPlugin {
   private ArenaWorldBorderApi worldBorderApi;
   private StatisticsService statisticsService;
   private ProtocolManager protocolManager = null;
+  private String version = null;
 
   private static ArenaShooter plugin;
 
@@ -44,11 +45,10 @@ public class ArenaShooter extends JavaPlugin {
   public void onEnable() {
     plugin = this;
     CleanUp.onStart();
-    new MigrationDetector().detectMigration();
     registerListeners();
 
-    Objects.requireNonNull(getCommand("arenaDeathMatch".toLowerCase()))
-        .setExecutor(ArenaDeathMatchCommandInvoker.getInstance());
+    Objects.requireNonNull(getCommand("arena")).setExecutor(ArenaCommandInvoker.getInstance());
+    Objects.requireNonNull(getCommand("leave")).setExecutor(LeaveCommandInvoker.getInstance());
 
     GameOrchestrator.getInstance().unregisterScoreboard();
 
@@ -97,7 +97,8 @@ public class ArenaShooter extends JavaPlugin {
       getLogger().warning("No announcer skips found, using default values");
       skipProvider = new HardcodedStaticAnnouncementSkipProvider();
     }
-    getLogger().info(() -> "Using " + skipProvider.getClass().getSimpleName() + " for announcer skips.");
+    getLogger()
+        .info(() -> "Using " + skipProvider.getClass().getSimpleName() + " for announcer skips.");
     AnnouncerConstant.setAnnouncementSkipProvider(skipProvider);
   }
 
@@ -161,5 +162,12 @@ public class ArenaShooter extends JavaPlugin {
     for (Listener listener : listeners) {
       getServer().getPluginManager().registerEvents(listener, this);
     }
+  }
+
+  public String getVersion() {
+    if (version == null) {
+      version = getClass().getPackage().getImplementationVersion();
+    }
+    return version;
   }
 }

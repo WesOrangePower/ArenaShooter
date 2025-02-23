@@ -1,6 +1,6 @@
 package agency.shitcoding.arena.command.subcommands;
 
-import agency.shitcoding.arena.command.ArenaDeathMatchCommand;
+import agency.shitcoding.arena.command.ArenaCommand;
 import agency.shitcoding.arena.command.CommandInst;
 import agency.shitcoding.arena.command.subcommands.arenamutation.ArenaSetAction;
 import agency.shitcoding.arena.command.subcommands.arenamutation.ArenaSetField;
@@ -41,7 +41,7 @@ public class ArenaSetCmd extends CommandInst {
   }
 
   private boolean validate() {
-    String adminPerm = ArenaDeathMatchCommand.getAdminPerm();
+    String adminPerm = ArenaCommand.getAdminPerm();
     if (!sender.hasPermission(adminPerm)) {
       sender.sendRichMessage("<dark_red>You don't have permissions to access this command");
       return false;

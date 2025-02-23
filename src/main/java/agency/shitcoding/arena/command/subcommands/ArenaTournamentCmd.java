@@ -1,6 +1,6 @@
 package agency.shitcoding.arena.command.subcommands;
 
-import static agency.shitcoding.arena.command.ArenaDeathMatchCommand.ADMIN_PERM;
+import static agency.shitcoding.arena.command.ArenaCommand.ADMIN_PERM;
 import static agency.shitcoding.arena.command.subcommands.TournamentInputValidator.tournamentInputValidator;
 
 import agency.shitcoding.arena.command.CommandInst;

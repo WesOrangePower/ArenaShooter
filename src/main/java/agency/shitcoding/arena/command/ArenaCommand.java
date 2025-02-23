@@ -6,7 +6,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
-public final class ArenaDeathMatchCommand extends CommandInst {
+public final class ArenaCommand extends CommandInst {
 
   public static final String ADMIN_PERM = "jelly.arena.admin";
   private static final HelpEntry[] HELP = new HelpEntry[]{
@@ -22,8 +22,8 @@ public final class ArenaDeathMatchCommand extends CommandInst {
       new HelpEntry("forcestart", "Force start a game")
   };
 
-  public ArenaDeathMatchCommand(@NotNull CommandSender sender,
-      @NotNull String[] args) {
+  public ArenaCommand(@NotNull CommandSender sender,
+                      @NotNull String[] args) {
     super(sender, args);
   }
 

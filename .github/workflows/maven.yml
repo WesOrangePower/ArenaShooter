@@ -4,6 +4,7 @@ on:
   push:
     branches: 
     - master
+
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -30,7 +31,12 @@ jobs:
         username: ${{ secrets.USERNAME }}
         key: ${{ secrets.KEY }}
         port: ${{ secrets.PORT }}
-        script: rm -f /var/edenor/Arena/plugins/ArenaShooter*.jar && cd /var/edenor/Arena/plugins/ && wget --user ${{ secrets.MAVEN_USERNAME }} --password ${{ secrets.MAVEN_PASSWORD }} https://nexus.jellycraft.net/repository/maven-releases/agency/shitcoding/ArenaShooter/1.0/ArenaShooter-1.0.jar -O ArenaShooter.jar
+        script: |
+          rm -f /var/edenor/Arena/plugins/ArenaShooter*.jar
+          cd /var/edenor/Arena/plugins/
+          wget \
+          "https://nexus.jellycraft.net/service/rest/v1/search/assets/download?sort=version&maven.groupId=agency.shitcoding&maven.artifactId=ArenaShooter&maven.extension=jar" \
+          -O ArenaShooter.jar
     - name: Restart server
       uses: appleboy/ssh-action@v1.0.3
       with:
@@ -38,4 +44,8 @@ jobs:
         username: ${{ secrets.USERNAME }}
         key: ${{ secrets.KEY }}
         port: ${{ secrets.PORT }}
-        script: docker exec -t Arena sh -c "cd /dist && ./run_command \"JellyRestart:restart start 60\""
+        script: >
+          docker exec 
+          -t Arena
+          sh 
+          -c "cd /dist && ./run_command \"JellyRestart:restart start 60\""

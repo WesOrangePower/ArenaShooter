@@ -13,7 +13,7 @@ public class MigrationDetector {
     }
 
     var config = YamlConfiguration.loadConfiguration(ARENA_CFG_FILE);
-    if (!config.contains("arena") && !config.contains("storage")) {
+    if (!config.contains("arena") || config.contains("storage")) {
       return;
     }
     log.info("Detected legacy storage format, migrating to new format");

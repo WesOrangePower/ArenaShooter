@@ -1,8 +1,6 @@
 package agency.shitcoding.arena.command.subcommands;
 
-import static agency.shitcoding.arena.storage.StorageFactory.ARENA_CFG_FILE;
-
-import agency.shitcoding.arena.command.ArenaDeathMatchCommand;
+import agency.shitcoding.arena.command.ArenaCommand;
 import agency.shitcoding.arena.command.CommandInst;
 import agency.shitcoding.arena.events.GameDamageEvent;
 import agency.shitcoding.arena.events.listeners.GauntletListener;
@@ -12,12 +10,10 @@ import agency.shitcoding.arena.gamestate.CosmeticsService;
 import agency.shitcoding.arena.models.Ammo;
 import agency.shitcoding.arena.models.Powerup;
 import agency.shitcoding.arena.models.Weapon;
-import agency.shitcoding.arena.storage.LegacyConfigurationArenaStorage;
-import agency.shitcoding.arena.storage.StorageProvider;
+
 import java.util.Arrays;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
-import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
@@ -61,26 +57,6 @@ public class ArenaUtilsCmd extends CommandInst {
           Ammo.maxAmmoForPlayer(p);
           sender.sendMessage("Given");
         }
-        case "migrate" -> {
-          try {
-            LegacyConfigurationArenaStorage legacy =
-                new LegacyConfigurationArenaStorage(
-                    YamlConfiguration.loadConfiguration(LegacyConfigurationArenaStorage.FILE));
-            var arenas = legacy.getArenas();
-            sender.sendRichMessage("<green>Found " + arenas.size() + " arenas to migrate");
-            arenas.forEach(
-                arena -> {
-                  sender.sendRichMessage("<green>Migrating arena " + arena.getName());
-                  StorageProvider.getArenaStorage().storeArena(arena);
-                });
-            sender.sendRichMessage(
-                "<green>Migration complete. You may now delete the old records from " + ARENA_CFG_FILE);
-          } catch (Exception e) {
-            sender.sendRichMessage(
-                "<dark_red>Failed to migrate arenas, check console for details.");
-            e.printStackTrace();
-          }
-        }
         case "powerup" -> {
           Player p = (Player) sender;
           if (args.length == 4) {
@@ -103,7 +79,7 @@ public class ArenaUtilsCmd extends CommandInst {
   }
 
   private boolean validate() {
-    String adminPerm = ArenaDeathMatchCommand.getAdminPerm();
+    String adminPerm = ArenaCommand.getAdminPerm();
     if (!sender.hasPermission(adminPerm)) {
       sender.sendRichMessage("<dark_red>You don't have permission to access this command.");
       return false;

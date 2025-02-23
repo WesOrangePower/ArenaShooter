@@ -43,7 +43,7 @@ public class ArenaForceStartCmd extends CommandInst {
   }
 
   private Validation<String, Game> validate() {
-    if (!sender.hasPermission(ArenaDeathMatchCommand.ADMIN_PERM)) {
+    if (!sender.hasPermission(ArenaCommand.ADMIN_PERM)) {
       return invalid("command.noPermission");
     }
     if (args.length != 2) {

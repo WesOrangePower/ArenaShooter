@@ -6,7 +6,7 @@
 
   <groupId>agency.shitcoding</groupId>
   <artifactId>ArenaShooter</artifactId>
-  <version>1.0</version>
+  <version>1.1.0-SNAPSHOT</version>
   <packaging>jar</packaging>
 
   <name>ArenaShooter</name>
@@ -32,28 +32,22 @@
         <artifactId>maven-jar-plugin</artifactId>
         <version>3.4.1</version>
         <configuration>
-          <finalName>${project.artifactId}</finalName>
           <outputDirectory>server/plugins</outputDirectory>
+          <archive>
+            <manifest>
+              <addDefaultImplementationEntries>true</addDefaultImplementationEntries>
+            </manifest>
+          </archive>
         </configuration>
       </plugin>
-<!--      <plugin>-->
-<!--        <groupId>org.apache.maven.plugins</groupId>-->
-<!--        <artifactId>maven-shade-plugin</artifactId>-->
-<!--        <version>3.2.4</version>-->
-<!--        <executions>-->
-<!--          <execution>-->
-<!--            <phase>package</phase>-->
-<!--            <goals>-->
-<!--              <goal>shade</goal>-->
-<!--            </goals>-->
-<!--            <configuration>-->
-<!--              <finalName>${project.artifactId}</finalName>-->
-<!--              <outputDirectory>server/plugins</outputDirectory>-->
-<!--              <createDependencyReducedPom>false</createDependencyReducedPom>-->
-<!--            </configuration>-->
-<!--          </execution>-->
-<!--        </executions>-->
-<!--      </plugin>-->
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-release-plugin</artifactId>
+        <version>3.1.1</version>
+        <configuration>
+          <tagNameFormat>v@{version}</tagNameFormat>
+        </configuration>
+      </plugin>
     </plugins>
     <resources>
       <resource>

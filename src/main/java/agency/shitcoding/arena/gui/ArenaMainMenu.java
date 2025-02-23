@@ -1,7 +1,7 @@
 package agency.shitcoding.arena.gui;
 
 import agency.shitcoding.arena.ArenaShooter;
-import agency.shitcoding.arena.command.ArenaDeathMatchCommand;
+import agency.shitcoding.arena.command.ArenaCommand;
 import agency.shitcoding.arena.gamestate.Game;
 import agency.shitcoding.arena.gamestate.GameOrchestrator;
 import agency.shitcoding.arena.gamestate.team.TeamGame;
@@ -33,17 +33,21 @@ public class ArenaMainMenu {
 
   public ArenaMainMenu(Player player) {
     this.player = new LangPlayer(player);
-    this.title = Component.text(this.player.getLocalized("menu.main.title"),
-        TextColor.color(0xaa2222), TextDecoration.BOLD);
+    this.title =
+        Component.text(
+            this.player.getLocalized("menu.main.title", ArenaShooter.getInstance().getVersion()),
+            TextColor.color(0xaa2222),
+            TextDecoration.BOLD);
   }
 
   public static ItemSlot backButton(LangPlayer player, Runnable action) {
     return ItemBuilder.builder()
         .withMaterial(Material.ARROW)
-        .withName(Component.text(player.getLocalized("menu.backButton.name"),
-            TextColor.color(0xbb2222)))
-        .withLoreLine(Component.text(player.getLocalized("menu.backButton.description"),
-            TextColor.color(0x882222)))
+        .withName(
+            Component.text(player.getLocalized("menu.backButton.name"), TextColor.color(0xbb2222)))
+        .withLoreLine(
+            Component.text(
+                player.getLocalized("menu.backButton.description"), TextColor.color(0x882222)))
         .withClickAction((type, ctx) -> action.run())
         .build();
   }
@@ -55,10 +59,11 @@ public class ArenaMainMenu {
   }
 
   private View getView() {
-    ViewBuilder viewBuilder = ViewBuilder.builder()
-        .withTitle(title)
-        .withHolder(player.getPlayer())
-        .withSize(InventorySize.DOUBLE_CHEST_NO_BOTTOM_ROW);
+    ViewBuilder viewBuilder =
+        ViewBuilder.builder()
+            .withTitle(title)
+            .withHolder(player.getPlayer())
+            .withSize(InventorySize.DOUBLE_CHEST_NO_BOTTOM_ROW);
 
     ItemSlot[] itemSlots = getGameButtons();
     int row = 2;
@@ -70,9 +75,9 @@ public class ArenaMainMenu {
     viewBuilder.addItemSlot(settingsButton());
     viewBuilder.addItemSlot(statsButton());
     viewBuilder.addItemSlot(cosmeticsButton());
-//    viewBuilder.addItemSlot(faqButton());
+    //    viewBuilder.addItemSlot(faqButton());
 
-    if (player.getPlayer().hasPermission(ArenaDeathMatchCommand.ADMIN_PERM) && isJellyRestartLoaded())
+    if (player.getPlayer().hasPermission(ArenaCommand.ADMIN_PERM) && isJellyRestartLoaded())
       viewBuilder.addItemSlot(restartServerButton());
 
     return viewBuilder.build();
@@ -81,15 +86,17 @@ public class ArenaMainMenu {
   private ItemSlot cosmeticsButton() {
     return ItemBuilder.builder()
         .withMaterial(Material.CHEST)
-        .withName(Component.text(player.getLocalized("menu.cosmetics.title"), TextColor.color(0xa94366)))
+        .withName(
+            Component.text(player.getLocalized("menu.cosmetics.title"), TextColor.color(0xa94366)))
         .withLoreLine(player.getLocalized("menu.cosmetics.description"))
         .withLoreLine(Component.text(""))
-        .withLoreLine(Component.text(player.getLocalized("menu.lore.open")).color(NamedTextColor.GRAY))
-        .withClickAction((clickType, clickContext) -> new CosmeticsMenu(player.getPlayer()).render())
+        .withLoreLine(
+            Component.text(player.getLocalized("menu.lore.open")).color(NamedTextColor.GRAY))
+        .withClickAction(
+            (clickType, clickContext) -> new CosmeticsMenu(player.getPlayer()).render())
         .withSlot(2, 7)
         .build();
   }
-
 
   private ItemSlot faqButton() {
     return ItemBuilder.builder()
@@ -123,9 +130,8 @@ public class ArenaMainMenu {
   }
 
   private Component[] getStatsLore() {
-    Statistics statistics = ArenaShooter.getInstance()
-        .getStatisticsService()
-        .getStatistics(player.getPlayer());
+    Statistics statistics =
+        ArenaShooter.getInstance().getStatisticsService().getStatistics(player.getPlayer());
 
     MiniMessage mm = MiniMessage.miniMessage();
 
@@ -137,29 +143,29 @@ public class ArenaMainMenu {
     var open = player.getLocalized("menu.lore.open");
     var openLead = player.getLocalized("menu.lore.open.leaderboard");
 
-    return new Component[]{
-        mm.deserialize(totalKills),
-        mm.deserialize(totalGames),
-        mm.deserialize(matchesWon),
-        mm.deserialize(killDeathRatio),
-        Component.text(""),
-        mm.deserialize("<gray><i>" + open),
-        mm.deserialize("<gray><i>" + openLead)
+    return new Component[] {
+      mm.deserialize(totalKills),
+      mm.deserialize(totalGames),
+      mm.deserialize(matchesWon),
+      mm.deserialize(killDeathRatio),
+      Component.text(""),
+      mm.deserialize("<gray><i>" + open),
+      mm.deserialize("<gray><i>" + openLead)
     };
-
   }
 
   private ItemSlot settingsButton() {
-    return ItemBuilder.builder().
-        withMaterial(Material.REDSTONE).
-        withName(
-            Component.text(player.getLocalized("menu.settings.title"), TextColor.color(0xa94366))).
-        withLoreLine(player.getLocalized("menu.settings.description")).
-        withLoreLine(Component.text("")).
-        withLoreLine(Component.text(player.getLocalized("menu.lore.open")).color(NamedTextColor.GRAY)).
-        withClickAction(((clickType, clickContext) -> new SettingsMenu(player.getPlayer()).open())).
-        withSlot(2, 3).
-        build();
+    return ItemBuilder.builder()
+        .withMaterial(Material.REDSTONE)
+        .withName(
+            Component.text(player.getLocalized("menu.settings.title"), TextColor.color(0xa94366)))
+        .withLoreLine(player.getLocalized("menu.settings.description"))
+        .withLoreLine(Component.text(""))
+        .withLoreLine(
+            Component.text(player.getLocalized("menu.lore.open")).color(NamedTextColor.GRAY))
+        .withClickAction(((clickType, clickContext) -> new SettingsMenu(player.getPlayer()).open()))
+        .withSlot(2, 3)
+        .build();
   }
 
   private ItemSlot[] getGameButtons() {
@@ -187,8 +193,9 @@ public class ArenaMainMenu {
     return ItemBuilder.builder()
         .withMaterial(Material.TARGET)
         .withAmount(count)
-        .withName(Component.text(player.getLocalized("menu.selectButton.title"),
-            TextColor.color(0x22bb22)))
+        .withName(
+            Component.text(
+                player.getLocalized("menu.selectButton.title"), TextColor.color(0x22bb22)))
         .withLoreLine(Component.text(player.getLocalized("menu.selectButton.description")))
         .withClickAction((type, ctx) -> new JoinGameMenu(player.getPlayer()).render())
         .build();
@@ -197,28 +204,31 @@ public class ArenaMainMenu {
   public static ItemSlot joinGameButton(LangPlayer player, Game game) {
     var rulesetName = player.getLocalized(game.getRuleSet().getName());
     var arenaName = game.getArena().getName();
-    Component name = MiniMessage.miniMessage().deserialize(
-        player.getLocalized("menu.joinButton.title", rulesetName, arenaName)
-    );
+    Component name =
+        MiniMessage.miniMessage()
+            .deserialize(player.getLocalized("menu.joinButton.title", rulesetName, arenaName));
 
-    Material material = switch (game.getGamestage()) {
-      case IN_PROGRESS -> Material.YELLOW_WOOL;
-      case WAITING -> Material.GREEN_WOOL;
-      case FINISHED -> Material.PURPLE_WOOL;
-    };
-    String[] playerNames = game.getPlayers().stream()
-        .map(Player::getName)
-        .toArray(String[]::new);
+    Material material =
+        switch (game.getGamestage()) {
+          case IN_PROGRESS -> Material.YELLOW_WOOL;
+          case WAITING -> Material.GREEN_WOOL;
+          case FINISHED -> Material.PURPLE_WOOL;
+        };
+    String[] playerNames = game.getPlayers().stream().map(Player::getName).toArray(String[]::new);
 
-    ItemSlot item = ItemBuilder.builder()
-        .withName(name)
-        .withMaterial(material)
-        .withLoreLine(Component.text(player.getLocalized("menu.joinButton.playerCount",
-            game.getPlayers().size(), game.getGameRules().maxPlayers()
-        )))
-        .withLoreLine(Component.text(Arrays.toString(playerNames)))
-        .withClickAction((type, ctx) -> arenaJoinClickAction(player.getPlayer(), game))
-        .build();
+    ItemSlot item =
+        ItemBuilder.builder()
+            .withName(name)
+            .withMaterial(material)
+            .withLoreLine(
+                Component.text(
+                    player.getLocalized(
+                        "menu.joinButton.playerCount",
+                        game.getPlayers().size(),
+                        game.getGameRules().maxPlayers())))
+            .withLoreLine(Component.text(Arrays.toString(playerNames)))
+            .withClickAction((type, ctx) -> arenaJoinClickAction(player.getPlayer(), game))
+            .build();
 
     // This is needed for some reason
     item.getItemStack().editMeta(m -> m.displayName(name));
@@ -238,10 +248,11 @@ public class ArenaMainMenu {
   private ItemSlot hostGameButton() {
     return ItemBuilder.builder()
         .withMaterial(Material.DIAMOND_SWORD)
-        .withName(Component.text(player.getLocalized("menu.hostButton.name"),
-            TextColor.color(0x22bb22)))
-        .withLore(Component.text(player.getLocalized("menu.hostButton.description"),
-            TextColor.color(0x228822)))
+        .withName(
+            Component.text(player.getLocalized("menu.hostButton.name"), TextColor.color(0x22bb22)))
+        .withLore(
+            Component.text(
+                player.getLocalized("menu.hostButton.description"), TextColor.color(0x228822)))
         .withClickAction(
             ((clickType, clickContext) -> new HostGameMenu(player.getPlayer()).render()))
         .build();
@@ -250,10 +261,11 @@ public class ArenaMainMenu {
   private ItemSlot leaveButton() {
     return ItemBuilder.builder()
         .withMaterial(Material.ARROW)
-        .withName(Component.text(player.getLocalized("menu.leaveButton.name"),
-            TextColor.color(0xbb2222)))
-        .withLore(Component.text(player.getLocalized("menu.leaveButton.description"),
-            TextColor.color(0x882222)))
+        .withName(
+            Component.text(player.getLocalized("menu.leaveButton.name"), TextColor.color(0xbb2222)))
+        .withLore(
+            Component.text(
+                player.getLocalized("menu.leaveButton.description"), TextColor.color(0x882222)))
         .withClickAction(
             ((clickType, clickContext) -> player.getPlayer().performCommand("arena leave")))
         .build();
@@ -262,18 +274,24 @@ public class ArenaMainMenu {
   private ItemSlot restartServerButton() {
     return ItemBuilder.builder()
         .withMaterial(Material.REDSTONE_BLOCK)
-        .withName(Component.text(player.getLocalized("menu.restartServerButton.name"),
-            TextColor.color(0xbb2222)))
-        .withLore(Component.text(player.getLocalized("menu.restartServerButton.description"),
-            TextColor.color(0x882222)))
+        .withName(
+            Component.text(
+                player.getLocalized("menu.restartServerButton.name"), TextColor.color(0xbb2222)))
+        .withLore(
+            Component.text(
+                player.getLocalized("menu.restartServerButton.description"),
+                TextColor.color(0x882222)))
         .withClickAction(
-            ((clickType, clickContext) -> player.getPlayer().performCommand("jellyrestart:restart start 5")))
+            ((clickType, clickContext) ->
+                player.getPlayer().performCommand("jellyrestart:restart start 5")))
         .withSlot(4, 8)
         .build();
   }
 
   private static boolean isJellyRestartLoaded() {
-    return ArenaShooter.getInstance().getServer().getPluginManager().isPluginEnabled("JellyRestart");
+    return ArenaShooter.getInstance()
+        .getServer()
+        .getPluginManager()
+        .isPluginEnabled("JellyRestart");
   }
-
 }
