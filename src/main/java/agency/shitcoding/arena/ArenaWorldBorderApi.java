@@ -6,6 +6,7 @@ import com.github.yannicklamprecht.worldborder.plugin.PersistenceWrapper;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
+@Deprecated
 public class ArenaWorldBorderApi extends PersistenceWrapper {
 
   public ArenaWorldBorderApi(PersistenceWrapper worldBorderApi) {
