@@ -25,8 +25,8 @@ A PaperMC plugin turning a Minecraft server into a fast-paced boomer arena shoot
 ## Resource Pack
 
 Though technically not required, it is highly recommended to use a resource pack built for this game mode. The official
-one is: [ArenaShooterResourcePack](https://github.com/EdenorMC/ArenaShooterResourcePack)
+one is: [ArenaShooterResourcePack](https://github.com/EdenorMC/ArenaShooterResourcePack).
 
 ## Public instance
 
-*Coming soon...*
+Available at `arena.shitcoding.agency`. Instance provided by EdenorMC.
