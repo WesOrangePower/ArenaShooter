@@ -1,6 +1,7 @@
 package agency.shitcoding.arena.gamestate;
 
 import agency.shitcoding.arena.ArenaShooter;
+import agency.shitcoding.arena.util.FileUtil;
 import agency.shitcoding.arena.worlds.WorldFactory;
 import lombok.extern.log4j.Log4j2;
 
@@ -29,17 +30,7 @@ public class CleanUp {
 
     for (var file : files) {
       log.info("Deleting world: {}", file.getName());
-      boolean isWindows = System.getProperty("os.name").toLowerCase().startsWith("windows");
-      String absolutePath = file.getAbsolutePath();
-      try {
-      Runtime.getRuntime()
-          .exec(
-              isWindows
-                  ? new String[] {"rmdir", "/s", "/q", absolutePath}
-                  : new String[] {"rm", "-rf", absolutePath});
-      } catch (Exception e) {
-        log.error("Failed to delete world: {}", file.getName(), e);
-      }
+      FileUtil.deleteWorld(file.getName());
     }
 
   }

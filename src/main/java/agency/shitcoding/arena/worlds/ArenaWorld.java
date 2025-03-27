@@ -2,16 +2,16 @@ package agency.shitcoding.arena.worlds;
 
 import agency.shitcoding.arena.ArenaShooter;
 import agency.shitcoding.arena.models.*;
-import agency.shitcoding.arena.util.FileUtil;
 import agency.shitcoding.arena.models.door.Door;
 import agency.shitcoding.arena.models.door.DoorTrigger;
+import agency.shitcoding.arena.util.FileUtil;
+import com.onarandombox.MultiverseCore.MultiverseCore;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.util.Collection;
 import java.util.List;
-import java.util.stream.Stream;
-
+import java.util.Optional;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import net.kyori.adventure.util.TriState;
@@ -32,25 +32,40 @@ public class ArenaWorld {
       return;
     }
 
-    var dd =
-        ArenaShooter.getInstance()
-            .getDataFolder() // plugins/ArenaShooter
-            .toPath()
-            .toAbsolutePath()
-            .getParent()
-            .getParent();
-    var template = dd.resolve(origin.getName());
-    if (!Files.exists(template)) {
-      throw new IllegalStateException(
-          "Template world for arena " + origin.getName() + " does not exist");
-    }
-
     var worldName =
         String.format("generated__%s__%s", origin.getName(), System.currentTimeMillis());
-    try {
-      copyStructure(template.toFile(), dd.resolve(worldName).toFile());
-    } catch (IOException e) {
-      throw new RuntimeException("Failed to copy template world for arena " + origin.getName(), e);
+
+    Optional<MultiverseCore> mvApi = ArenaShooter.getMultiverseApi();
+    if (mvApi.isPresent()) {
+      if (mvApi.get().getMVWorldManager().cloneWorld(origin.getName(), worldName)) {
+        generated = true;
+      }
+      if (generated && mvApi.get().getMVWorldManager().loadWorld(worldName)) {
+        this.world = ArenaShooter.getInstance().getServer().getWorld(worldName);
+        return;
+      }
+    }
+
+    if (!generated) {
+      var dd =
+          ArenaShooter.getInstance()
+              .getDataFolder() // plugins/ArenaShooter
+              .toPath()
+              .toAbsolutePath()
+              .getParent()
+              .getParent();
+      var template = dd.resolve(origin.getName());
+      if (!Files.exists(template)) {
+        throw new IllegalStateException(
+            "Template world for arena " + origin.getName() + " does not exist");
+      }
+
+      try {
+        copyStructure(template.toFile(), dd.resolve(worldName).toFile());
+      } catch (IOException e) {
+        throw new RuntimeException(
+            "Failed to copy template world for arena " + origin.getName(), e);
+      }
     }
 
     this.world = ArenaShooter.getInstance().getServer().createWorld(getWorldCreator(worldName));
@@ -83,17 +98,7 @@ public class ArenaWorld {
       return;
     }
     ArenaShooter.getInstance().getServer().unloadWorld(world, false);
-    try {
-      boolean isWindows = System.getProperty("os.name").toLowerCase().startsWith("windows");
-      if (isWindows) { return; } // fixme, windows does not find `rmdir`
-      Runtime.getRuntime()
-          .exec(
-              isWindows
-                  ? new String[] {"rmdir", "/s", "/q", world.getWorldFolder().getAbsolutePath()}
-                  : new String[] {"rm", "-rf", world.getWorldFolder().getAbsolutePath()});
-    } catch (IOException e) {
-      throw new RuntimeException("Failed to delete world for arena " + origin.getName(), e);
-    }
+    FileUtil.deleteWorld(world);
   }
 
   public void shiftArena() {

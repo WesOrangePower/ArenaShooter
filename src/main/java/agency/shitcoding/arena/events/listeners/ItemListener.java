@@ -19,11 +19,13 @@ public class ItemListener implements Listener {
   @EventHandler
   public void onItemPickup(PlayerAttemptPickupItemEvent event) {
     Item item = event.getItem();
-    String s =
-        item.getPersistentDataContainer().get(Keys.getLootPointKey(), PersistentDataType.STRING);
-    if (s == null) {
+    String powerupId =
+        item.getPersistentDataContainer().get(Keys.getPowerupKey(), PersistentDataType.STRING);
+    if (powerupId == null) {
       return;
     }
+    String lootPointId =
+        item.getPersistentDataContainer().get(Keys.getLootPointKey(), PersistentDataType.STRING);
     event.setCancelled(true);
     Player player = event.getPlayer();
     Optional<Game> gameByPlayer = GameOrchestrator.getInstance().getGameByPlayer(player);
@@ -36,11 +38,9 @@ public class ItemListener implements Listener {
       return;
     }
 
-    Powerup powerup;
+    Powerup powerup = Powerup.valueOf(powerupId);
     LootManager lootManager = game.getLootManager();
     assert lootManager != null;
-    LootPointInstance lootPointInstance = lootManager.getLootPoints().get(s);
-    powerup = lootPointInstance.getLootPoint().getType();
 
     boolean isPickedUp = powerup.getOnPickup().apply(player);
 
@@ -63,7 +63,10 @@ public class ItemListener implements Listener {
         handleMajorBuff(player, game, powerup);
       }
       item.remove();
-      lootPointInstance.setLooted(true);
+      if (lootPointId != null) {
+        LootPointInstance lootPointInstance = lootManager.getLootPoints().get(lootPointId);
+        lootPointInstance.setLooted(true);
+      }
     }
   }
 

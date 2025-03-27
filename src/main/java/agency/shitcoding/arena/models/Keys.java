@@ -16,6 +16,9 @@ public final class Keys {
     return new NamespacedKey(ArenaShooter.getInstance(), "loot_point_id");
   }
 
+  public static NamespacedKey getPowerupKey() {
+    return new NamespacedKey(ArenaShooter.getInstance(), "powerup");
+  }
 
   public static NamespacedKey getPlayerAmmoKey() {
     return new NamespacedKey(ArenaShooter.getInstance(), "ammo_values");

@@ -246,6 +246,9 @@ public class DamageListener implements Listener {
     if (itemStack == null) return;
 
     itemStack.lore(List.of(Component.text(UUID.randomUUID().toString())));
+    var optWeapon = Weapon.getWeapon(itemStack);
+    if (optWeapon.isEmpty()) return;
+    var weapon = optWeapon.get();
 
     item =
         deathLocation
@@ -255,7 +258,7 @@ public class DamageListener implements Listener {
                 itemStack,
                 i -> {
                   i.getPersistentDataContainer()
-                      .set(Keys.getLootPointKey(), PersistentDataType.STRING, "");
+                      .set(Keys.getPowerupKey(), PersistentDataType.STRING, weapon.getPowerUp().name());
                   i.setCanMobPickup(false);
                 });
 
@@ -343,7 +346,26 @@ public class DamageListener implements Listener {
                               rng.nextDouble() - .5,
                               rng.nextDouble() - .5,
                               rng.nextDouble() - .5)));
-              Bukkit.getScheduler().runTaskLater(ArenaShooter.getInstance(), item::remove, 20 * 3L);
+              var task =
+                  Bukkit.getScheduler()
+                      .runTaskTimer(
+                          ArenaShooter.getInstance(),
+                          () ->
+                              world.spawnParticle(
+                                  Particle.REDSTONE,
+                                  item.getLocation().clone().subtract(0d, -0.2, 0d),
+                                  1,
+                                  new Particle.DustOptions(Color.RED, 1f)),
+                          0L,
+                          1L);
+              Bukkit.getScheduler()
+                  .runTaskLater(
+                      ArenaShooter.getInstance(),
+                      () -> {
+                        task.cancel();
+                        item.remove();
+                      },
+                      20 * 3L);
             });
 
     world.playSound(eyeLoc, org.bukkit.Sound.ENTITY_PLAYER_BIG_FALL, 1f, 1);

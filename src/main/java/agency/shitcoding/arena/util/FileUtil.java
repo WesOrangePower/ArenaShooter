@@ -1,16 +1,21 @@
 package agency.shitcoding.arena.util;
 
-import io.vavr.control.Try;
-import org.jetbrains.annotations.NotNull;
-
+import static agency.shitcoding.arena.ArenaShooter.getMultiverseApi;
 import static org.codehaus.plexus.util.FileUtils.copyFileToDirectory;
 
+import agency.shitcoding.arena.ArenaShooter;
+import io.vavr.control.Try;
 import java.io.File;
 import java.io.FileFilter;
 import java.io.IOException;
+import org.bukkit.World;
+import org.jetbrains.annotations.NotNull;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @SuppressWarnings("unused")
 public class FileUtil {
+  private static final Logger log = LoggerFactory.getLogger(FileUtil.class);
 
   private static final FileFilter ALLOW_ALL_FILTER = pathname -> true;
 
@@ -96,4 +101,49 @@ public class FileUtil {
       }
     }
   }
+
+  public static void deleteWorld(String worldFolderName) {
+    getMultiverseApi()
+        .ifPresentOrElse(
+            mvApi -> {
+              try {
+              if (!mvApi.getMVWorldManager().deleteWorld(worldFolderName)) {
+                deleteWorldFolderForce(worldFolderName);
+              }
+              } catch (IllegalArgumentException e) {
+                deleteWorldFolderForce(worldFolderName);
+              }
+            },
+            () -> deleteWorldFolderForce(worldFolderName));
+  }
+
+  public static void deleteWorld(World world) {
+    deleteWorld(world.getName());
+  }
+
+  private static void deleteWorldFolderForce(String worldFolderName) {
+    var root =
+        ArenaShooter.getInstance()
+            .getDataFolder()
+            .toPath()
+            .toAbsolutePath()
+            .getParent()
+            .getParent();
+
+    var worldFolder = root.resolve(worldFolderName).toFile();
+
+    boolean isWindows = System.getProperty("os.name").toLowerCase().startsWith("windows");
+    String absolutePath = worldFolder.getAbsolutePath();
+    try {
+      Runtime.getRuntime()
+          .exec(
+              isWindows
+                  ? new String[] {"rmdir", "/s", "/q", absolutePath}
+                  : new String[] {"rm", "-rf", absolutePath});
+    } catch (Exception e) {
+      log.error("Failed to delete world: {}", worldFolder.getName(), e);
+    }
+  }
+
+  private FileUtil() {}
 }

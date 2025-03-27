@@ -1,5 +1,2 @@
-- Added `/leave` command as an alias to `/arena leave`.
-- Removed `/arenadeathmatch`. Its alias `/arena` is now primary.
-- Added versioning to the plugin.
-- Added ConfigurationMapper to map arenas to `arenas.yml` config file.
-- Changed `arenas.yml` layout.
+- Now uses Multiverse-Core API if available
+- Fixed non-LootPoint dropped items not being picked up

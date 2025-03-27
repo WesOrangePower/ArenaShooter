@@ -21,6 +21,9 @@ import com.github.yannicklamprecht.worldborder.api.WorldBorderApi;
 import com.github.yannicklamprecht.worldborder.plugin.PersistenceWrapper;
 import java.io.File;
 import java.util.Objects;
+import java.util.Optional;
+
+import com.onarandombox.MultiverseCore.MultiverseCore;
 import lombok.Getter;
 import org.bukkit.Bukkit;
 import org.bukkit.event.Listener;
@@ -162,6 +165,15 @@ public class ArenaShooter extends JavaPlugin {
     for (Listener listener : listeners) {
       getServer().getPluginManager().registerEvents(listener, this);
     }
+  }
+
+  public static Optional<MultiverseCore> getMultiverseApi() {
+    var plugin =
+        ArenaShooter.getInstance().getServer().getPluginManager().getPlugin("Multiverse-Core");
+    if (plugin == null) {
+      return Optional.empty();
+    }
+    return Optional.of((MultiverseCore) plugin);
   }
 
   public String getVersion() {

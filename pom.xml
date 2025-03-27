@@ -79,6 +79,11 @@
       <id>dmulloy2-repo</id>
       <url>https://repo.dmulloy2.net/repository/public/</url>
     </repository>
+    <repository>
+      <id>multiverse-releases</id>
+      <name>Multiverse Repository</name>
+      <url>https://repo.onarandombox.com/multiverse-releases/</url>
+    </repository>
   </repositories>
 
   <dependencies>
@@ -116,6 +121,12 @@
       <version>1.210.1</version>
       <classifier>dev</classifier>
       <scope>provided</scope>
+    </dependency>
+      <dependency>
+        <groupId>com.onarandombox.multiversecore</groupId>
+        <artifactId>multiverse-core</artifactId>
+        <version>4.3.12</version>
+        <scope>provided</scope>
     </dependency>
 
     <dependency>

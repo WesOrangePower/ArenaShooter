@@ -1,5 +1,8 @@
 package agency.shitcoding.arena.events.listeners;
 
+import static agency.shitcoding.arena.GameplayConstants.PROTECTION_POTION_EFFECT;
+import static agency.shitcoding.arena.GameplayConstants.QUAD_DAMAGE_POTION_EFFECT;
+
 import agency.shitcoding.arena.ArenaShooter;
 import agency.shitcoding.arena.events.GameStreakUpdateEvent;
 import agency.shitcoding.arena.gamestate.Game;
@@ -12,6 +15,7 @@ import agency.shitcoding.arena.models.GameStage;
 import agency.shitcoding.arena.models.Keys;
 import agency.shitcoding.arena.models.Powerup;
 import com.destroystokyo.paper.event.player.PlayerPostRespawnEvent;
+import java.util.Optional;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.title.Title;
@@ -22,33 +26,27 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.PlayerDeathEvent;
-import org.bukkit.inventory.ItemStack;
 import org.bukkit.persistence.PersistentDataType;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.util.Vector;
 
-import java.util.Optional;
-
-import static agency.shitcoding.arena.GameplayConstants.PROTECTION_POTION_EFFECT;
-import static agency.shitcoding.arena.GameplayConstants.QUAD_DAMAGE_POTION_EFFECT;
-
 public class AutoRespawnListener implements Listener {
 
-  private static void dropPowerup(Player p, ItemStack itemStack) {
+  private static void dropPowerup(Player p, Powerup powerup) {
     Location location = p.getLocation().toCenterLocation().clone();
 
-    var item = location.getWorld().dropItem(location,
-        itemStack,
-        i -> {
-          i.getPersistentDataContainer().set(
-              Keys.getLootPointKey(),
-              PersistentDataType.STRING,
-              ""
-          );
-          i.setCanMobPickup(false);
-        }
-    );
-    item.setVelocity(new Vector(0f, .2f, 0f));
+    var item =
+        location
+            .getWorld()
+            .dropItem(
+                location,
+                powerup.getItemStack(),
+                i -> {
+                  i.getPersistentDataContainer()
+                      .set(Keys.getPowerupKey(), PersistentDataType.STRING, powerup.name());
+                  i.setCanMobPickup(false);
+                });
+    item.setVelocity(new Vector(0f, .02f, 0f));
   }
 
   @EventHandler
@@ -62,19 +60,20 @@ public class AutoRespawnListener implements Listener {
     final Player killer = p.getKiller() == p ? null : p.getKiller();
     boolean killedThemselves = killer == null;
 
-    GameOrchestrator.getInstance().getGameByPlayer(p)
+    GameOrchestrator.getInstance()
+        .getGameByPlayer(p)
         .ifPresent(
             game -> {
               PotionEffect quadDamagePotionEffect = p.getPotionEffect(QUAD_DAMAGE_POTION_EFFECT);
               if (quadDamagePotionEffect != null) {
                 game.getMajorBuffTracker().setQuadDamageTicks(quadDamagePotionEffect.getDuration());
-                dropPowerup(p, Powerup.QUAD_DAMAGE.getItemStack());
+                dropPowerup(p, Powerup.QUAD_DAMAGE);
               }
 
               PotionEffect protectionPotionEffect = p.getPotionEffect(PROTECTION_POTION_EFFECT);
               if (protectionPotionEffect != null) {
                 game.getMajorBuffTracker().setProtectionTicks(protectionPotionEffect.getDuration());
-                dropPowerup(p, Powerup.PROTECTION.getItemStack());
+                dropPowerup(p, Powerup.PROTECTION);
               }
 
               game.onPlayerDeath(p);
@@ -88,31 +87,38 @@ public class AutoRespawnListener implements Listener {
               } else {
                 game.updateScore(killer, 1);
               }
-            }
-        );
+            });
 
     p.clearActivePotionEffects();
     p.setGameMode(GameMode.SPECTATOR);
     var l = LangPlayer.of(p);
-    p.showTitle(Title.title(
-        Component.text(l.getLocalized("game.death.title.title"), NamedTextColor.RED),
-        Component.text(killer == null
-            ? l.getLocalized("game.death.title.self")
-            : l.getLocalized("game.death.title.other", killer.getName()), NamedTextColor.YELLOW)
-    ));
+    p.showTitle(
+        Title.title(
+            Component.text(l.getLocalized("game.death.title.title"), NamedTextColor.RED),
+            Component.text(
+                killer == null
+                    ? l.getLocalized("game.death.title.self")
+                    : l.getLocalized("game.death.title.other", killer.getName()),
+                NamedTextColor.YELLOW)));
 
-    Bukkit.getScheduler().runTaskLater(ArenaShooter.getInstance(), () -> {
-      Optional<Game> gameByPlayer = GameOrchestrator.getInstance().getGameByPlayer(p);
-      gameByPlayer.ifPresentOrElse(game -> game.getArena().spawn(p, game, game.getLootPointFilter()),
-          () -> Lobby.getInstance().sendPlayer(p));
-    }, 60);
+    Bukkit.getScheduler()
+        .runTaskLater(
+            ArenaShooter.getInstance(),
+            () -> {
+              Optional<Game> gameByPlayer = GameOrchestrator.getInstance().getGameByPlayer(p);
+              gameByPlayer.ifPresentOrElse(
+                  game -> game.getArena().spawn(p, game, game.getLootPointFilter()),
+                  () -> Lobby.getInstance().sendPlayer(p));
+            },
+            60);
   }
 
   @EventHandler
   public void onPlayerRespawn(PlayerPostRespawnEvent event) {
     Player player = event.getPlayer();
     Optional<Game> gameByPlayer = GameOrchestrator.getInstance().getGameByPlayer(player);
-    gameByPlayer.ifPresentOrElse(game -> game.getArena().spawn(player, game, game.getLootPointFilter()),
+    gameByPlayer.ifPresentOrElse(
+        game -> game.getArena().spawn(player, game, game.getLootPointFilter()),
         () -> Lobby.getInstance().sendPlayer(player));
   }
 
@@ -122,8 +128,7 @@ public class AutoRespawnListener implements Listener {
       var oldStreak = score.getStreak().copy();
       score.getStreak().setConsequentRailHit(0);
       score.getStreak().setFragStreak(0);
-      new GameStreakUpdateEvent(score.getStreak(), oldStreak, p, g)
-          .fire();
+      new GameStreakUpdateEvent(score.getStreak(), oldStreak, p, g).fire();
     }
   }
 }
