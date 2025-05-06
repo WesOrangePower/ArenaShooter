@@ -14,7 +14,8 @@ public class ConstantAnnouncementSkip implements AnnouncementSkip {
   public long getSkipTime(SupportedLocale locale) {
     var skipTime = skipMap.get(locale);
     if (skipTime == null) {
-      throw new IllegalArgumentException("No mapping for locale: " + locale);
+      // Fallback to default locale
+      skipTime = skipMap.get(SupportedLocale.getDefault());
     }
     return skipTime;
   }

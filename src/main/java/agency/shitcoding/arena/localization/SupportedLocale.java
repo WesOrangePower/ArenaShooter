@@ -37,4 +37,10 @@ public enum SupportedLocale {
     }
     return false;
   }
+
+  public static SupportedLocale[] ALL = values();
+
+  public static SupportedLocale getDefault() {
+    return EN;
+  }
 }

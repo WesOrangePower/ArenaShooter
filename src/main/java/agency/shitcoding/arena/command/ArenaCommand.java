@@ -12,7 +12,8 @@ public final class ArenaCommand extends CommandInst {
   private static final HelpEntry[] HELP = new HelpEntry[]{
       new HelpEntry("join", "Join an arena"),
       new HelpEntry("host", "Host a game"),
-      new HelpEntry("leave", "Leave an arena")
+      new HelpEntry("leave", "Leave an arena"),
+      new HelpEntry("tutorial", "Start the tutorial")
   };
   private static final HelpEntry[] HELP_ADMIN = new HelpEntry[]{
       new HelpEntry("set", "Set the arena's spawn points"),
@@ -56,6 +57,7 @@ public final class ArenaCommand extends CommandInst {
       case "forcestart" -> new ArenaForceStartCmd(sender, args);
       case "leave" -> new ArenaLeaveCmd(sender, args);
       case "utils" -> new ArenaUtilsCmd(sender, args);
+      case "tutorial" -> new ArenaTutorialCmd(sender, args);
       default -> new ArenaHelpCmd(sender, args, HELP);
     };
     command.execute();

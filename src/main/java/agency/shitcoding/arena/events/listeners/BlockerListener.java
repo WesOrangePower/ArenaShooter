@@ -5,6 +5,8 @@ import agency.shitcoding.arena.gamestate.Game;
 import agency.shitcoding.arena.gamestate.GameOrchestrator;
 import agency.shitcoding.arena.gamestate.team.GameTeam;
 import agency.shitcoding.arena.gamestate.team.TeamGame;
+import agency.shitcoding.arena.models.Keys;
+import lombok.val;
 import org.bukkit.GameMode;
 import org.bukkit.Material;
 import org.bukkit.Tag;
@@ -27,6 +29,7 @@ import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerItemDamageEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.event.player.PlayerSwapHandItemsEvent;
+import org.bukkit.persistence.PersistentDataType;
 
 public class BlockerListener implements Listener {
 
@@ -216,6 +219,20 @@ public class BlockerListener implements Listener {
       if (player.getGameMode() == GameMode.ADVENTURE) {
         event.setCancelled(true);
       }
+    }
+  }
+
+  @EventHandler
+  private void disableMarkedEntityDrops(EntityDeathEvent event) {
+    Boolean disableDrop =
+        event
+            .getEntity()
+            .getPersistentDataContainer()
+            .get(Keys.noDropOnDeath(), PersistentDataType.BOOLEAN);
+
+    if (Boolean.TRUE.equals(disableDrop)) {
+      event.getDrops().clear();
+      event.setDroppedExp(0);
     }
   }
 }

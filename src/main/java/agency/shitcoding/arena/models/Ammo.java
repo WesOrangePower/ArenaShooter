@@ -79,4 +79,14 @@ public enum Ammo {
     }
     p.sendActionBar(builder);
   }
+
+  public Powerup getPowerup() {
+    return switch (this) {
+      case BULLETS -> Powerup.BULLET_BOX;
+      case SHELLS -> Powerup.SHELL_BOX;
+      case ROCKETS -> Powerup.ROCKET_BOX;
+      case LIGHTNING -> Powerup.LIGHTNING_BOX;
+      case CELLS -> Powerup.CELL_BOX;
+    };
+  }
 }

@@ -41,7 +41,15 @@ public class LootManager {
     }
   }
 
-  private void generateInstance(LootPoint lootPoint) {
+  public void generateInstanceNoDelay(LootPoint lootPoint) {
+    generateInstance(lootPoint, true);
+  }
+
+  public void generateInstance(LootPoint lootPoint) {
+    generateInstance(lootPoint, false);
+  }
+
+  public void generateInstance(LootPoint lootPoint, boolean noDelay) {
     LootPointInstance instance = new LootPointInstance(lootPoint);
     instance.setLooted(true);
     BukkitTask bukkitTask;
@@ -64,7 +72,7 @@ public class LootManager {
               .runTaskTimer(
                   ArenaShooter.getInstance(),
                   spawnTask,
-                  lootPoint.getType().getOffset(),
+                  noDelay ? 0 : lootPoint.getType().getOffset(),
                   lootPoint.getType().getSpawnInterval());
     }
     instance.setSpawnTask(bukkitTask);

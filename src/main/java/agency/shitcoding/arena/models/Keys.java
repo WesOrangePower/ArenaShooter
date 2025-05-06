@@ -45,6 +45,10 @@ public final class Keys {
     return new NamespacedKey(ArenaShooter.getInstance(), "ctf_flag");
   }
 
+  public static @NotNull NamespacedKey noDropOnDeath() {
+    return new NamespacedKey(ArenaShooter.getInstance(), "no_drop_on_death");
+  }
+
   private Keys() {
   }
 }

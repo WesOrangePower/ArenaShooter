@@ -3,6 +3,7 @@ package agency.shitcoding.arena.models;
 import agency.shitcoding.arena.gamestate.*;
 import agency.shitcoding.arena.gamestate.team.ETeam;
 import agency.shitcoding.arena.gamestate.team.TeamDeathMatchGameFactory;
+import agency.shitcoding.arena.gamestate.tutorial.TutorialGameFactory;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.bukkit.Material;
@@ -45,7 +46,12 @@ public enum RuleSet {
       true,
       new ItemStack(Material.RED_WOOL),
       new CTFGameFactory(),
-      new CTFGameRules());
+      new CTFGameRules()),
+  TUTORIAL("ruleset.tutorial",
+      false,
+      new ItemStack(Material.TRIAL_KEY),
+      new TutorialGameFactory(),
+      new TutorialGameRules());
 
   private final String name;
   private final boolean teamBased;

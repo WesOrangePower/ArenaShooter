@@ -61,7 +61,7 @@ public class DamageListener implements Listener {
     attribute.setBaseValue(GameplayConstants.BASE_HEALTH);
   }
 
-  @EventHandler
+  @EventHandler(ignoreCancelled = true)
   public void onDamage(GameDamageEvent event) {
     @Nullable Player dealer = event.getDealer();
     LivingEntity victim = event.getVictim();
@@ -134,8 +134,11 @@ public class DamageListener implements Listener {
         new GameFragEvent(playerVictim, dealer, event.getWeapon(), isGibbed).fire();
       }
     }
+  }
 
-    applyDamage(victim, dealer, event.getDamage());
+  @EventHandler(ignoreCancelled = true, priority = EventPriority.MONITOR)
+  public void applyDamage(GameDamageEvent event) {
+    applyDamage(event.getVictim(), event.getDealer(), event.getDamage());
   }
 
   private void applyDamage(LivingEntity victim, Player dealer, double damage) {
@@ -258,7 +261,10 @@ public class DamageListener implements Listener {
                 itemStack,
                 i -> {
                   i.getPersistentDataContainer()
-                      .set(Keys.getPowerupKey(), PersistentDataType.STRING, weapon.getPowerUp().name());
+                      .set(
+                          Keys.getPowerupKey(),
+                          PersistentDataType.STRING,
+                          weapon.getPowerUp().name());
                   i.setCanMobPickup(false);
                 });
 

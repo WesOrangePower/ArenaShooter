@@ -1,9 +1,10 @@
 package agency.shitcoding.arena.gamestate.announcer;
 
-import java.util.Map;
 
 import static agency.shitcoding.arena.gamestate.announcer.AnnouncerConstant.*;
 import static agency.shitcoding.arena.localization.SupportedLocale.*;
+
+import java.util.Map;
 
 public class HardcodedStaticAnnouncementSkipProvider implements AnnouncementSkipProvider {
   public static Map<AnnouncerConstant, AnnouncementSkip> constantSkipMap =
@@ -197,10 +198,76 @@ public class HardcodedStaticAnnouncementSkipProvider implements AnnouncementSkip
                   .fromMillies(RU, 1989)
                   .fromMillies(UK, 1547)
                   .addGraceTimeToAll()
-                  .build()));
+                  .build()),
+          Map.entry(
+              TUTORIAL_INTRODUCTION,
+              ConstantAnnouncementSkip.builder().fromMillies(EN, 9462).build()),
+          Map.entry(
+              TUTORIAL_MOVEMENT_1,
+              ConstantAnnouncementSkip.builder().fromMillies(EN, 19191).build()),
+          Map.entry(
+              TUTORIAL_MOVEMENT_2,
+              ConstantAnnouncementSkip.builder().fromMillies(EN, 16800).build()),
+          Map.entry(
+              TUTORIAL_AMMO_1, ConstantAnnouncementSkip.builder().fromMillies(EN, 47469).build()),
+          Map.entry(
+              TUTORIAL_AMMO_2, ConstantAnnouncementSkip.builder().fromMillies(EN, 6873).build()),
+          Map.entry(
+              TUTORIAL_WEAPON_GAUNTLET,
+              ConstantAnnouncementSkip.builder().fromMillies(EN, 17900).build()),
+          Map.entry(
+              TUTORIAL_WEAPON_MACHINEGUN,
+              ConstantAnnouncementSkip.builder().fromMillies(EN, 12566).build()),
+          Map.entry(
+              TUTORIAL_WEAPON_SHOTGUN,
+              ConstantAnnouncementSkip.builder().fromMillies(EN, 10895).build()),
+          Map.entry(
+              TUTORIAL_WEAPON_ROCKETLAUNCHER,
+              ConstantAnnouncementSkip.builder().fromMillies(EN, 12463).build()),
+          Map.entry(
+              TUTORIAL_RULESET_ROF,
+              ConstantAnnouncementSkip.builder().fromMillies(EN, 4712).build()),
+          Map.entry(
+              TUTORIAL_WEAPON_PLASMAGUN,
+              ConstantAnnouncementSkip.builder().fromMillies(EN, 8899).build()),
+          Map.entry(
+              TUTORIAL_WEAPON_LIGHTNINGGUN,
+              ConstantAnnouncementSkip.builder().fromMillies(EN, 10307).build()),
+          Map.entry(
+              TUTORIAL_WEAPON_RAILGUN,
+              ConstantAnnouncementSkip.builder().fromMillies(EN, 14320).build()),
+          Map.entry(
+              TUTORIAL_RULESET_INSTAGIB,
+              ConstantAnnouncementSkip.builder().fromMillies(EN, 7231).build()),
+          Map.entry(
+              TUTORIAL_WEAPON_BFG9K,
+              ConstantAnnouncementSkip.builder().fromMillies(EN, 11641).build()),
+          Map.entry(
+              TUTORIAL_WEAPON_1, ConstantAnnouncementSkip.builder().fromMillies(EN, 3600).build()),
+          Map.entry(
+              TUTORIAL_ROCKETJUMPING_1,
+              ConstantAnnouncementSkip.builder().fromMillies(EN, 8806).build()),
+          Map.entry(
+              TUTORIAL_POWERUPS_1,
+              ConstantAnnouncementSkip.builder().fromMillies(EN, 25762).build()),
+          Map.entry(
+              TUTORIAL_POWERUPS_2,
+              ConstantAnnouncementSkip.builder().fromMillies(EN, 8831).build()),
+          Map.entry(
+              TUTORIAL_POWERUPS_3,
+              ConstantAnnouncementSkip.builder().fromMillies(EN, 20705).build()),
+          Map.entry(
+              TUTORIAL_CONCLUSION,
+              ConstantAnnouncementSkip.builder().fromMillies(EN, 5878).build()),
+          Map.entry(
+              TUTORIAL_PRIZE, ConstantAnnouncementSkip.builder().fromMillies(EN, 3183).build()),
+          Map.entry(
+              TUTORIAL_GOODLUCK, ConstantAnnouncementSkip.builder().fromMillies(EN, 794).build()));
+
+  private final AnnouncementSkip DEFAULT = locale -> 0;
 
   @Override
   public AnnouncementSkip getAnnouncementSkip(AnnouncerConstant announcerConstant) {
-    return constantSkipMap.get(announcerConstant);
+    return constantSkipMap.getOrDefault(announcerConstant, DEFAULT);
   }
 }
