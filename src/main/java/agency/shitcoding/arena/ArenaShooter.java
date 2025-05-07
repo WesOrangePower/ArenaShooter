@@ -5,12 +5,14 @@ import agency.shitcoding.arena.command.LeaveCommandInvoker;
 import agency.shitcoding.arena.events.PortalListener;
 import agency.shitcoding.arena.events.listeners.*;
 import agency.shitcoding.arena.events.listeners.protocol.AnvilTextInputPacketAdapter;
+import agency.shitcoding.arena.events.listeners.protocol.TextDisplayTranslationPacketAdapter;
 import agency.shitcoding.arena.gamestate.CleanUp;
 import agency.shitcoding.arena.gamestate.Game;
 import agency.shitcoding.arena.gamestate.GameOrchestrator;
 import agency.shitcoding.arena.gamestate.announcer.AnnouncementSkipProvider;
 import agency.shitcoding.arena.gamestate.announcer.AnnouncerConstant;
 import agency.shitcoding.arena.gamestate.announcer.HardcodedStaticAnnouncementSkipProvider;
+import agency.shitcoding.arena.hologram.HologramListener;
 import agency.shitcoding.arena.statistics.StatisticsService;
 import agency.shitcoding.arena.statistics.StatisticsServiceImpl;
 import agency.shitcoding.arena.storage.CosmeticsUpdater;
@@ -75,6 +77,7 @@ public class ArenaShooter extends JavaPlugin {
               protocolManager = ProtocolLibrary.getProtocolManager();
               if (isProtocolLibEnabled()) {
                 protocolManager.addPacketListener(new AnvilTextInputPacketAdapter());
+                protocolManager.addPacketListener(new TextDisplayTranslationPacketAdapter());
               } else {
                 getLogger().info("ProtocolLib not found. Cannot use anvil text input");
               }
@@ -160,6 +163,7 @@ public class ArenaShooter extends JavaPlugin {
           new MessageListener(),
           new DoorTriggerListener(),
           new CTFFlagListener(),
+          HologramListener.getInstance()
         };
 
     for (Listener listener : listeners) {

@@ -158,7 +158,7 @@ public class ArenaTabCompleter {
 
   private List<String> resolveUtils() {
     if (args.length == 2) {
-      return List.of("gib", "tracers", "guns", "powerup", "helix", "cutter");
+      return List.of("gib", "tracers", "guns", "powerup", "helix", "cutter", "hologramtest");
     }
     if (args.length == 3) {
       if (args[1].equalsIgnoreCase("guns")) {
