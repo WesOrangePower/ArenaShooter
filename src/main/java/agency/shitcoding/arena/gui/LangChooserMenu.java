@@ -1,6 +1,7 @@
 package agency.shitcoding.arena.gui;
 
 import agency.shitcoding.arena.gamestate.Lobby;
+import agency.shitcoding.arena.hologram.PersistentHologramManager;
 import agency.shitcoding.arena.localization.LangPlayer;
 import net.jellycraft.guiapi.Item;
 import net.jellycraft.guiapi.api.InventorySize;
@@ -46,6 +47,7 @@ public class LangChooserMenu {
           langPlayer.sendRichLocalized("menu.settings.lang.langChanged", langName);
           ViewRegistry.closeForPlayer(langPlayer.getPlayer());
           Lobby.getInstance().sendPlayer(langPlayer.getPlayer());
+          PersistentHologramManager.getInstance().reload();
         }).build();
   }
 

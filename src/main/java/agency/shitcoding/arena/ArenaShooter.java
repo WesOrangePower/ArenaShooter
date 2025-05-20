@@ -4,6 +4,7 @@ import agency.shitcoding.arena.command.ArenaCommandInvoker;
 import agency.shitcoding.arena.command.LeaveCommandInvoker;
 import agency.shitcoding.arena.events.PortalListener;
 import agency.shitcoding.arena.events.listeners.*;
+import agency.shitcoding.arena.events.listeners.HologramListener;
 import agency.shitcoding.arena.events.listeners.protocol.AnvilTextInputPacketAdapter;
 import agency.shitcoding.arena.events.listeners.protocol.TextDisplayTranslationPacketAdapter;
 import agency.shitcoding.arena.gamestate.CleanUp;
@@ -12,24 +13,20 @@ import agency.shitcoding.arena.gamestate.GameOrchestrator;
 import agency.shitcoding.arena.gamestate.announcer.AnnouncementSkipProvider;
 import agency.shitcoding.arena.gamestate.announcer.AnnouncerConstant;
 import agency.shitcoding.arena.gamestate.announcer.HardcodedStaticAnnouncementSkipProvider;
-import agency.shitcoding.arena.hologram.HologramListener;
+import agency.shitcoding.arena.hologram.PersistentHologramManager;
 import agency.shitcoding.arena.statistics.StatisticsService;
 import agency.shitcoding.arena.statistics.StatisticsServiceImpl;
 import agency.shitcoding.arena.storage.CosmeticsUpdater;
 import agency.shitcoding.arena.storage.skips.YamlSkipProvider;
 import com.comphenix.protocol.ProtocolLibrary;
 import com.comphenix.protocol.ProtocolManager;
-import com.github.yannicklamprecht.worldborder.api.WorldBorderApi;
-import com.github.yannicklamprecht.worldborder.plugin.PersistenceWrapper;
+import com.onarandombox.MultiverseCore.MultiverseCore;
 import java.io.File;
 import java.util.Objects;
 import java.util.Optional;
-
-import com.onarandombox.MultiverseCore.MultiverseCore;
 import lombok.Getter;
 import org.bukkit.Bukkit;
 import org.bukkit.event.Listener;
-import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
 
 @Getter
@@ -61,15 +58,7 @@ public class ArenaShooter extends JavaPlugin {
 
     initSchedulers();
 
-    RegisteredServiceProvider<WorldBorderApi> worldBorderApiRegisteredServiceProvider =
-        getServer().getServicesManager().getRegistration(WorldBorderApi.class);
-    if (worldBorderApiRegisteredServiceProvider == null) {
-      getLogger().info("WorldBorderApi not found. Cannot use red screen");
-      return;
-    }
-    worldBorderApi =
-        new ArenaWorldBorderApi(
-            (PersistenceWrapper) worldBorderApiRegisteredServiceProvider.getProvider());
+    worldBorderApi = new ArenaWorldBorderApi();
     Bukkit.getScheduler()
         .runTaskLater(
             this,
@@ -85,6 +74,7 @@ public class ArenaShooter extends JavaPlugin {
             20L * 5);
 
     setupAnnouncer();
+    PersistentHologramManager.getInstance().reload();
   }
 
   private void setupAnnouncer() {
@@ -140,8 +130,6 @@ public class ArenaShooter extends JavaPlugin {
           new AutoRespawnListener(),
           new BlockerListener(),
           new DamageListener(),
-          new InteractListener(),
-          new LobbyListener(),
           new InteractListener(),
           new LobbyListener(),
           new MovementListener(),

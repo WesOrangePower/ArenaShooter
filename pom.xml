@@ -116,17 +116,10 @@
       <version>1.18.34</version>
     </dependency>
     <dependency>
-      <groupId>com.github.yannicklamprecht</groupId>
-      <artifactId>worldborderapi</artifactId>
-      <version>1.210.1</version>
-      <classifier>dev</classifier>
+      <groupId>com.onarandombox.multiversecore</groupId>
+      <artifactId>multiverse-core</artifactId>
+      <version>4.3.12</version>
       <scope>provided</scope>
-    </dependency>
-      <dependency>
-        <groupId>com.onarandombox.multiversecore</groupId>
-        <artifactId>multiverse-core</artifactId>
-        <version>4.3.12</version>
-        <scope>provided</scope>
     </dependency>
 
     <dependency>

@@ -1,10 +1,13 @@
 package agency.shitcoding.arena.hologram;
 
 import agency.shitcoding.arena.ArenaShooter;
+import agency.shitcoding.arena.events.listeners.HologramListener;
 import io.papermc.paper.threadedregions.scheduler.ScheduledTask;
+import io.vavr.Lazy;
 import lombok.Getter;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.TextDisplay;
+import org.bukkit.util.BoundingBox;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.Range;
 
@@ -14,6 +17,7 @@ public final class Hologram {
   private @Nullable HologramAction onClick;
   private int lifetime;
   private @Nullable ScheduledTask task = null;
+  private final Lazy<BoundingBox> boundingBox = Lazy.of(() -> entity.getBoundingBox().expand(.5));
 
   public Hologram(TextDisplay entity, HologramAction onClick, int lifetime) {
     this.entity = entity;
@@ -43,6 +47,7 @@ public final class Hologram {
                   ArenaShooter.getInstance(),
                   (t) -> {
                     if (entity != null) {
+                      setOnClick(null);
                       entity.remove();
                       entity = null;
                     }
@@ -53,6 +58,19 @@ public final class Hologram {
     if (task != null) {
       task.cancel();
       task = null;
+    }
+  }
+
+  public BoundingBox getBoundingBox() {
+    return boundingBox.get();
+  }
+
+  public void remove() {
+    setOnClick(null);
+    setLifetime(0);
+    if (entity != null) {
+      entity.remove();
+      entity = null;
     }
   }
 }

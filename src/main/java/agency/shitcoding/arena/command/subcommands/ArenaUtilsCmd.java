@@ -7,13 +7,15 @@ import agency.shitcoding.arena.events.listeners.GauntletListener;
 import agency.shitcoding.arena.events.listeners.RailListener;
 import agency.shitcoding.arena.events.listeners.ShotgunListener;
 import agency.shitcoding.arena.gamestate.CosmeticsService;
-import agency.shitcoding.arena.hologram.Holograms;
+import agency.shitcoding.arena.hologram.HologramFactory;
+import agency.shitcoding.arena.hologram.PersistentHologramManager;
 import agency.shitcoding.arena.models.Ammo;
 import agency.shitcoding.arena.models.Powerup;
 import agency.shitcoding.arena.models.Weapon;
 
 import java.util.Arrays;
 
+import agency.shitcoding.arena.storage.StorageProvider;
 import net.kyori.adventure.text.Component;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
@@ -77,13 +79,17 @@ public class ArenaUtilsCmd extends CommandInst {
             sender.sendMessage("Available powerups: " + Arrays.toString(Powerup.values()));
           }
         }
+        case "reloadconfig" -> {
+          StorageProvider.reload();
+          PersistentHologramManager.getInstance().reload();
+        }
         case "hologramtest" -> {
           if (args.length < 3) {
             sender.sendRichMessage("<dark_red>Requires text");
           }
           var text = String.join(" ", Arrays.copyOfRange(args, 2, args.length));
           if (sender instanceof Player player) {
-            Holograms.hologram(
+            HologramFactory.hologram(
                 Component.text(text),
                 player.getEyeLocation().clone().add(player.getEyeLocation().getDirection()),
                 (cl) -> cl.sendMessage(text),

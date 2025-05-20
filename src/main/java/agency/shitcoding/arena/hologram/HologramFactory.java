@@ -8,7 +8,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.Range;
 
-public class Holograms {
+public class HologramFactory {
   public static Hologram hologram(@NotNull Component content, @NotNull Location location) {
     return hologram(content, location, null, 0);
   }

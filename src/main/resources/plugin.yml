@@ -4,7 +4,7 @@ main: agency.shitcoding.arena.ArenaShooter
 api-version: '1.21'
 author: WesOrangePower
 depend: [ JellyLib, JellyGuiApi, ProtocolLib ]
-softdepend: [ worldborderapi, JellyRestart, Multiverse-Core ]
+softdepend: [ JellyRestart, Multiverse-Core ]
 commands:
   arena:
     description: Arena Deathmatch Command

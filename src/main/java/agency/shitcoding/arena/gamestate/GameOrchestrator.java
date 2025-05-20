@@ -13,15 +13,19 @@ import org.bukkit.entity.Player;
 import org.bukkit.scoreboard.Objective;
 import org.bukkit.scoreboard.Scoreboard;
 import org.bukkit.scoreboard.Team;
+import org.jetbrains.annotations.Nullable;
 
 public final class GameOrchestrator {
 
   @Getter private static final GameOrchestrator instance = new GameOrchestrator();
   @Getter private final Set<Game> games = new HashSet<>();
   private final Map<Game, Scoreboard> scoreboards = new HashMap<>();
+  /**
+   * Used to block players from creating multiple games at once.
+   */
+  private final Set<Player> lockedPlayers = new HashSet<>();
 
-  private GameOrchestrator() {
-  }
+  private GameOrchestrator() {}
 
   /**
    * This will block soo hard.
@@ -30,13 +34,26 @@ public final class GameOrchestrator {
    * @param arena Source arena, template
    * @return the created Game
    */
-  public Game createGame(RuleSet ruleSet, Arena arena, GameRules gameRules) {
+  public Game createGame(RuleSet ruleSet, Arena arena, GameRules gameRules, @Nullable Player lock)
+      throws PlayerLockedException {
+    if (lock != null) {
+      if (lockedPlayers.contains(lock)) {
+        throw new PlayerLockedException();
+      }
+      lockedPlayers.add(lock);
+    }
 
-    var worldArena = WorldFactory.getInstance().newWorld(arena);
+    try {
+      var worldArena = WorldFactory.getInstance().newWorld(arena);
 
-    Game game = ruleSet.getGameFactory().createGame(worldArena, gameRules);
-    games.add(game);
-    return game;
+      var game = ruleSet.getGameFactory().createGame(worldArena, gameRules);
+      games.add(game);
+      return game;
+    } finally {
+      if (lock != null) {
+        lockedPlayers.remove(lock);
+      }
+    }
   }
 
   public Optional<Game> getGameByPlayer(Player player) {

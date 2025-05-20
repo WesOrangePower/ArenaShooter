@@ -1,11 +1,12 @@
-package agency.shitcoding.arena.hologram;
+package agency.shitcoding.arena.events.listeners;
 
+import agency.shitcoding.arena.hologram.Hologram;
 import java.util.ArrayList;
 import java.util.List;
-import org.bukkit.entity.EntityType;
+import java.util.Objects;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
-import org.bukkit.event.player.PlayerInteractAtEntityEvent;
+import org.bukkit.event.player.PlayerInteractEvent;
 
 public class HologramListener implements Listener {
   private static HologramListener instance;
@@ -27,16 +28,19 @@ public class HologramListener implements Listener {
   }
 
   @EventHandler
-  public void onHologramClick(PlayerInteractAtEntityEvent event) {
+  public void onHologramClick(PlayerInteractEvent event) {
     var player = event.getPlayer();
-    var entity = event.getRightClicked();
-    if (entity.getType() == EntityType.TEXT_DISPLAY) {
+    var eyeLocation = player.getEyeLocation();
+    var direction = eyeLocation.getDirection();
+    var location = eyeLocation.clone();
+    for (float i = 0f; i < 3.5f; i += .5f) {
+      location.add(direction.clone().multiply(i));
       for (var hologram : holograms) {
-        if (hologram.getEntity().equals(entity)) {
-          event.setCancelled(true);
-          if (hologram.getOnClick() != null) {
-            hologram.getOnClick().accept(player);
-          }
+        if (!hologram.getEntity().getLocation().getWorld().equals(location.getWorld())) {
+          continue;
+        }
+        if (hologram.getBoundingBox().contains(location.toVector())) {
+          Objects.requireNonNull(hologram.getOnClick()).accept(player);
           return;
         }
       }

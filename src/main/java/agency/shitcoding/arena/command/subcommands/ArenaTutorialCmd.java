@@ -1,7 +1,9 @@
 package agency.shitcoding.arena.command.subcommands;
 
 import agency.shitcoding.arena.command.CommandInst;
+import agency.shitcoding.arena.gamestate.Game;
 import agency.shitcoding.arena.gamestate.GameOrchestrator;
+import agency.shitcoding.arena.gamestate.PlayerLockedException;
 import agency.shitcoding.arena.gamestate.tutorial.TutorialArenaFactory;
 import agency.shitcoding.arena.localization.LangPlayer;
 import agency.shitcoding.arena.models.RuleSet;
@@ -19,13 +21,19 @@ public class ArenaTutorialCmd extends CommandInst {
   public void execute() {
     if (validate()) {
       var arena = TutorialArenaFactory.getTutorialArena();
+      var player = (Player) sender;
       if (arena == null) {
-        LangPlayer.of((Player) sender).sendRichLocalized("command.tutorial.notSetUp");
+        LangPlayer.of(player).sendRichLocalized("command.tutorial.notSetUp");
         return;
       }
-      var game = GameOrchestrator.getInstance()
-          .createGame(RuleSet.TUTORIAL, arena, RuleSet.TUTORIAL.getDefaultGameRules());
-      game.addPlayer((Player)sender);
+      Game game;
+      try {
+        game = GameOrchestrator.getInstance()
+            .createGame(RuleSet.TUTORIAL, arena, RuleSet.TUTORIAL.getDefaultGameRules(), player);
+      } catch (PlayerLockedException e) {
+        return;
+      }
+      game.addPlayer(player);
       game.forceStart();
     }
   }

@@ -46,7 +46,16 @@ public class ArenaHostCmd extends CommandInst {
 
   private void hostGameSync() {
     String broadcastKey;
-    Game game = GameOrchestrator.getInstance().createGame(ruleSet, arena, gameRules);
+    Game game;
+    try {
+      if (sender instanceof Player player) {
+        game = GameOrchestrator.getInstance().createGame(ruleSet, arena, gameRules, player);
+      } else {
+        game = GameOrchestrator.getInstance().createGame(ruleSet, arena, gameRules, null);
+      }
+    } catch (PlayerLockedException e) {
+      return;
+    }
     if (game instanceof TeamGame teamGame) {
       teamGame.addPlayer((Player) sender, team);
       broadcastKey = "command.host.broadcast.team";

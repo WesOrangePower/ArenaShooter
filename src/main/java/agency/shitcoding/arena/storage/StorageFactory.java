@@ -14,6 +14,8 @@ public final class StorageFactory {
   private static final Logger LOG = Logger.getLogger(StorageFactory.class.getName());
   public static final File ARENA_CFG_FILE =
       new File(ArenaShooter.getInstance().getDataFolder(), "arenas.yml");
+  public static final File HOLOGRAM_CFG_FILE =
+      new File(ArenaShooter.getInstance().getDataFolder(), "holograms.yml");
 
   public static ArenaStorage createArenaStorage() {
     return new MappedConfigurationArenaStorage(getConfiguration(ARENA_CFG_FILE));
@@ -25,6 +27,10 @@ public final class StorageFactory {
 
   public static CosmeticsStorage createCosmeticsStorage() {
     return new ConfigurationCosmeticsStorage(getConfiguration(ConfigurationCosmeticsStorage.FILE));
+  }
+
+  public static HologramStorage createHologramStorage() {
+    return new MappedConfigurationHologramStorage(getConfiguration(HOLOGRAM_CFG_FILE));
   }
 
   public static Configuration getConfiguration(File file) {

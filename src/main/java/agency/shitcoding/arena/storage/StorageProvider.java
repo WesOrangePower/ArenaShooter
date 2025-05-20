@@ -5,11 +5,9 @@ public final class StorageProvider {
   private static ArenaStorage arenaStorage;
   private static FaqStorage faqStorage;
   private static CosmeticsStorage cosmeticsStorage;
+  private static HologramStorage hologramStorage;
 
-
-  private StorageProvider() {
-
-  }
+  private StorageProvider() {}
 
   public static ArenaStorage getArenaStorage() {
     if (arenaStorage == null) {
@@ -31,5 +29,19 @@ public final class StorageProvider {
       cosmeticsStorage = StorageFactory.createCosmeticsStorage();
     }
     return cosmeticsStorage;
+  }
+
+  public static HologramStorage getHologramStorage() {
+    if (hologramStorage == null) {
+      hologramStorage = StorageFactory.createHologramStorage();
+    }
+    return hologramStorage;
+  }
+
+  public static void reload() {
+    arenaStorage = null;
+    faqStorage = null;
+    cosmeticsStorage = null;
+    hologramStorage = null;
   }
 }

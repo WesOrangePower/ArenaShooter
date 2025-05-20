@@ -1,9 +1,8 @@
 package agency.shitcoding.arena.models;
 
-import agency.shitcoding.arena.gamestate.Game;
-import agency.shitcoding.arena.gamestate.GameOrchestrator;
-import agency.shitcoding.arena.gamestate.PlayerScore;
-import agency.shitcoding.arena.gamestate.TournamentAccessor;
+import static net.kyori.adventure.text.minimessage.MiniMessage.miniMessage;
+
+import agency.shitcoding.arena.gamestate.*;
 import agency.shitcoding.arena.gamestate.team.ETeam;
 import agency.shitcoding.arena.gamestate.team.TeamGame;
 import agency.shitcoding.arena.gamestate.team.TeamScore;
@@ -11,17 +10,13 @@ import agency.shitcoding.arena.localization.LangPlayer;
 import com.google.common.base.Preconditions;
 import io.vavr.Tuple2;
 import io.vavr.control.Either;
-
 import java.util.*;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
-
 import lombok.Getter;
 import lombok.Setter;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
-
-import static net.kyori.adventure.text.minimessage.MiniMessage.miniMessage;
 
 @Getter
 public class Tournament {
@@ -35,8 +30,7 @@ public class Tournament {
   private final boolean publicJoin;
   private int arenaPointer = 0;
   private Game currentGame;
-  @Setter
-  private GameRules gameRules;
+  @Setter private GameRules gameRules;
 
   public Tournament(
       boolean publicJoin, RuleSet ruleSet, int gameCount, int maxPlayerCount, Arena[] arenas) {
@@ -122,7 +116,13 @@ public class Tournament {
     }
 
     final int gamePointer = arenaPointer;
-    currentGame = GameOrchestrator.getInstance().createGame(ruleSet, nextArena(), ruleSet.getDefaultGameRules());
+    try {
+      currentGame =
+          GameOrchestrator.getInstance()
+              .createGame(ruleSet, nextArena(), ruleSet.getDefaultGameRules(), null);
+    } catch (PlayerLockedException e) {
+      throw new RuntimeException(e);
+    }
     games[gamePointer] = currentGame;
 
     for (String playerName : playerNames) {
@@ -197,8 +197,7 @@ public class Tournament {
       }
     }
 
-    return scores.entrySet()
-        .stream()
+    return scores.entrySet().stream()
         .map(e -> new Tuple2<>(e.getKey(), e.getValue()))
         .sorted(Comparator.comparingInt(t -> t._2))
         .collect(Collectors.toList())
