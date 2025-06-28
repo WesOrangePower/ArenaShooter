@@ -1,5 +1,8 @@
 package agency.shitcoding.arena.events.listeners;
 
+import static org.bukkit.potion.PotionEffect.INFINITE_DURATION;
+import static org.bukkit.potion.PotionEffectType.*;
+
 import agency.shitcoding.arena.events.GameDamageEvent;
 import agency.shitcoding.arena.gamestate.Game;
 import agency.shitcoding.arena.gamestate.GameOrchestrator;
@@ -19,10 +22,6 @@ import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.player.*;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.util.Vector;
-
-import static org.bukkit.potion.PotionEffect.INFINITE_DURATION;
-import static org.bukkit.potion.PotionEffectType.JUMP;
-import static org.bukkit.potion.PotionEffectType.WEAKNESS;
 
 @Getter
 public class MovementListener implements Listener {
@@ -89,7 +88,7 @@ public class MovementListener implements Listener {
     if (player.getLocation().subtract(0, 1, 0).getBlock().getType().isSolid()) {
       player.setWalkSpeed(.4f);
       event.getPlayer().setAllowFlight(true);
-      var effect = new PotionEffect(JUMP, INFINITE_DURATION, 2, false, false, false);
+      var effect = new PotionEffect(JUMP_BOOST, INFINITE_DURATION, 2, false, false, false);
       player.addPotionEffect(effect);
       effect = new PotionEffect(WEAKNESS, INFINITE_DURATION, 10, false, false, false);
       player.addPotionEffect(effect);

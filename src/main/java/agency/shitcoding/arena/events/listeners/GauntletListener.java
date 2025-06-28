@@ -67,7 +67,7 @@ public class GauntletListener implements Listener {
       var offset = spray.clone().multiply(i);
       at.getWorld()
           .spawnParticle(
-              Particle.REDSTONE,
+              Particle.DUST,
               at.clone().add(offset),
               1,
               random.nextDouble(.5),

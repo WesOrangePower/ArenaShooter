@@ -25,7 +25,7 @@ public class CosmeticsService {
   private final Map<Player, ItemStack[]> playerWeapons;
 
   private CosmeticsService() {
-    this.playerWeapons = new HashMap<>();
+    this.playerWeapons = new WeakHashMap<>();
   }
 
   private static CosmeticsService instance = null;

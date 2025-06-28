@@ -61,7 +61,7 @@ public class PlasmaListener implements Listener {
         && player.getGameMode() == GameMode.ADVENTURE) {
 
       var isSlimaGun = isSlimaGun(player);
-      var sound = isSlimaGun ? Sound.ENTITY_SLIME_JUMP_SMALL.key().asString()
+      var sound = isSlimaGun ? Registry.SOUNDS.getKeyOrThrow(Sound.ENTITY_SLIME_JUMP_SMALL).asString()
           : SoundConstants.PLASMA_FIRE;
 
       player.getLocation().getWorld()
@@ -95,7 +95,7 @@ public class PlasmaListener implements Listener {
 
     if (hitEntity == null) {
       if (snowball.getShooter() instanceof Player player && isSlimaGun(player)) {
-        at.getWorld().spawnParticle(Particle.SLIME, at, 5, 1.5, 1.5, 1.5, 0);
+        at.getWorld().spawnParticle(Particle.ITEM_SLIME, at, 5, 1.5, 1.5, 1.5, 0);
       } else {
         at.getWorld().spawnParticle(Particle.ELECTRIC_SPARK, at, 5, 1.5, 1.5, 1.5, 0);
       }

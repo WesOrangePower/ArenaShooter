@@ -135,11 +135,11 @@ public class RocketListener implements Listener {
   }
 
   private void explodeCat(Location at, Player shooter) {
-    explode(at, shooter, new Particle[]{ Particle.HEART, Particle.EXPLOSION_HUGE });
+    explode(at, shooter, new Particle[]{ Particle.HEART, Particle.EXPLOSION_EMITTER });
   }
 
   private void explode(Location at, Player shooter) {
-    explode(at, shooter, new Particle[] {Particle.EXPLOSION_NORMAL, Particle.EXPLOSION_HUGE});
+    explode(at, shooter, new Particle[] {Particle.EXPLOSION, Particle.EXPLOSION_EMITTER});
   }
 
   private void explode(Location at, Player shooter, Particle[] particles) {

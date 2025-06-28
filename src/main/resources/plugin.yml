@@ -1,10 +1,10 @@
 name: ArenaShooter
 version: '${project.version}'
 main: agency.shitcoding.arena.ArenaShooter
-api-version: '1.21'
+api-version: '1.21.6'
 author: WesOrangePower
 depend: [ JellyLib, JellyGuiApi, ProtocolLib ]
-softdepend: [ worldborderapi, JellyRestart, Multiverse-Core ]
+softdepend: [ JellyRestart, Multiverse-Core ]
 commands:
   arena:
     description: Arena Deathmatch Command

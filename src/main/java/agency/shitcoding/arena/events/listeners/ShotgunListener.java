@@ -57,7 +57,7 @@ public class ShotgunListener implements Listener {
         && affectedEntities.size() == PELLETS_AMOUNT
         && !isInTeam(player, affectedEntities.getFirst())) {
       damageMap.keySet().stream().findFirst().ifPresent(e -> {
-        e.addPotionEffect(new PotionEffect(PotionEffectType.SLOW, 60, 2, false, false, false));
+        e.addPotionEffect(new PotionEffect(PotionEffectType.SLOWNESS, 60, 2, false, false, false));
         e.setFireTicks(20 * 3);
       });
     }
@@ -104,9 +104,9 @@ public class ShotgunListener implements Listener {
         if (Math.random() < .3) {
           surface.getWorld().spawnParticle(Particle.FLAME, surface, 1, 0, 0, 0, 0);
         }
-        surface.getWorld().spawnParticle(Particle.BLOCK_CRACK, surface, 5, .1, .1, .1,
+        surface.getWorld().spawnParticle(Particle.BLOCK, surface, 5, .1, .1, .1,
             at.getBlock().getBlockData());
-        surface.getWorld().spawnParticle(Particle.SMOKE_NORMAL, surface, 3, .01, .01, .01, .01);
+        surface.getWorld().spawnParticle(Particle.SMOKE, surface, 3, .01, .01, .01, .01);
         break;
       }
 
@@ -118,7 +118,7 @@ public class ShotgunListener implements Listener {
           .map(LivingEntity.class::cast)
           .findFirst();
       if (first.isPresent()) {
-        at.getWorld().spawnParticle(Particle.BLOCK_CRACK, at, 10, .2, .2, .2,
+        at.getWorld().spawnParticle(Particle.BLOCK, at, 10, .2, .2, .2,
             Material.REDSTONE_BLOCK.createBlockData());
         return first;
       }

@@ -44,11 +44,11 @@ public class RailListener implements Listener {
     Vector lookingVector = eyeLocation.getDirection();
     World world = eyeLocation.getWorld();
     boolean isBubbleGun = isBubbleGun(player);
-    var particle = isBubbleGun ? Particle.WATER_BUBBLE : Particle.WAX_OFF;
+    var particle = isBubbleGun ? Particle.BUBBLE : Particle.WAX_OFF;
     var helixParticle = isBubbleGun ? Particle.NAUTILUS : Particle.CRIMSON_SPORE;
     var sound =
         isBubbleGun
-            ? Sound.BLOCK_BUBBLE_COLUMN_WHIRLPOOL_INSIDE.key().value()
+            ? Registry.SOUNDS.getKeyOrThrow(Sound.BLOCK_BUBBLE_COLUMN_WHIRLPOOL_INSIDE).value()
             : SoundConstants.RAIL_FIRE;
 
     world.playSound(player, sound, .75f, 1f);

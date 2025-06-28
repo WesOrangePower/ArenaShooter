@@ -17,23 +17,18 @@ import agency.shitcoding.arena.storage.CosmeticsUpdater;
 import agency.shitcoding.arena.storage.skips.YamlSkipProvider;
 import com.comphenix.protocol.ProtocolLibrary;
 import com.comphenix.protocol.ProtocolManager;
-import com.github.yannicklamprecht.worldborder.api.WorldBorderApi;
-import com.github.yannicklamprecht.worldborder.plugin.PersistenceWrapper;
+import com.onarandombox.MultiverseCore.MultiverseCore;
 import java.io.File;
 import java.util.Objects;
 import java.util.Optional;
-
-import com.onarandombox.MultiverseCore.MultiverseCore;
 import lombok.Getter;
 import org.bukkit.Bukkit;
 import org.bukkit.event.Listener;
-import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
 
 @Getter
 public class ArenaShooter extends JavaPlugin {
 
-  private ArenaWorldBorderApi worldBorderApi;
   private StatisticsService statisticsService;
   private ProtocolManager protocolManager = null;
   private String version = null;
@@ -59,15 +54,6 @@ public class ArenaShooter extends JavaPlugin {
 
     initSchedulers();
 
-    RegisteredServiceProvider<WorldBorderApi> worldBorderApiRegisteredServiceProvider =
-        getServer().getServicesManager().getRegistration(WorldBorderApi.class);
-    if (worldBorderApiRegisteredServiceProvider == null) {
-      getLogger().info("WorldBorderApi not found. Cannot use red screen");
-      return;
-    }
-    worldBorderApi =
-        new ArenaWorldBorderApi(
-            (PersistenceWrapper) worldBorderApiRegisteredServiceProvider.getProvider());
     Bukkit.getScheduler()
         .runTaskLater(
             this,
@@ -156,7 +142,6 @@ public class ArenaShooter extends JavaPlugin {
           new ItemListener(),
           new GameStreakListener(),
           new PortalListener(),
-          new AutoClickerBlocker(),
           new MessageListener(),
           new DoorTriggerListener(),
           new CTFFlagListener(),

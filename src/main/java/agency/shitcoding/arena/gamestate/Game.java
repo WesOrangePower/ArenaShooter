@@ -91,7 +91,7 @@ public abstract class Game {
         .getWorld()
         .getNearbyEntities(BoundingBox.of(arena.getLowerBound(), arena.getUpperBound()))
         .stream()
-        .filter(e -> e.getType() == EntityType.DROPPED_ITEM)
+        .filter(e -> e.getType() == EntityType.ITEM)
         .map(Item.class::cast)
         .forEach(
             item -> {

@@ -94,7 +94,7 @@ public class BFG9KListener implements Listener {
             });
 
     w.spawnParticle(Particle.PORTAL, at, 5, .75, .75, .75, 2);
-    w.spawnParticle(Particle.SNOWBALL, at, 20, 3, 3, 3, 0);
+    w.spawnParticle(Particle.ITEM_SNOWBALL, at, 20, 3, 3, 3, 0);
     boom(at, Material.EMERALD_BLOCK.createBlockData(), SoundConstants.BFG_HIT);
 
     Runnable flashes = () -> w.spawnParticle(Particle.FLASH, at, 3, 2, 2, 2, .2);
@@ -170,9 +170,9 @@ public class BFG9KListener implements Listener {
                 l.startBeam();
                 lasers.add(l);
 
-                w.spawnParticle(Particle.BLOCK_CRACK, loc, 5, .75, .75, .75, blockData);
+                w.spawnParticle(Particle.BLOCK, loc, 5, .75, .75, .75, blockData);
                 w.spawnParticle(
-                    Particle.BLOCK_CRACK, hit.getLocation(), 5, .75, .75, .75, blockData);
+                    Particle.BLOCK, hit.getLocation(), 5, .75, .75, .75, blockData);
                 double distanceFromProj = projLoc.distance(hit.getLocation());
                 double damageFactor = 1d / (Math.max(1.5, Math.min(distanceFromProj, .01)) - .5);
                 double damage = GameplayConstants.BFG_SPREAD_DAMAGE * damageFactor;
@@ -204,7 +204,7 @@ public class BFG9KListener implements Listener {
       for (int dy = -2; dy < 2; dy++) {
         for (int dz = -2; dz < 2; dz++) {
           Location loc = new Location(w, x + dx, y + dy, z + dz);
-          w.spawnParticle(Particle.BLOCK_CRACK, loc, 5, .75, .75, .75, blockData);
+          w.spawnParticle(Particle.BLOCK, loc, 5, .75, .75, .75, blockData);
         }
       }
     }

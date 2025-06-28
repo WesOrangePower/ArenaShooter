@@ -22,6 +22,7 @@ import net.kyori.adventure.title.Title;
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
+import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -29,6 +30,7 @@ import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.persistence.PersistentDataType;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.util.Vector;
+import org.jetbrains.annotations.NotNull;
 
 public class AutoRespawnListener implements Listener {
 
@@ -92,14 +94,8 @@ public class AutoRespawnListener implements Listener {
     p.clearActivePotionEffects();
     p.setGameMode(GameMode.SPECTATOR);
     var l = LangPlayer.of(p);
-    p.showTitle(
-        Title.title(
-            Component.text(l.getLocalized("game.death.title.title"), NamedTextColor.RED),
-            Component.text(
-                killer == null
-                    ? l.getLocalized("game.death.title.self")
-                    : l.getLocalized("game.death.title.other", killer.getName()),
-                NamedTextColor.YELLOW)));
+    Title title = getDeathTitle(l, killer);
+    p.showTitle(title);
 
     Bukkit.getScheduler()
         .runTaskLater(
@@ -111,6 +107,21 @@ public class AutoRespawnListener implements Listener {
                   () -> Lobby.getInstance().sendPlayer(p));
             },
             60);
+  }
+
+  private static @NotNull Title getDeathTitle(LangPlayer l, Player killer) {
+    String localized = l.getLocalized("game.death.title.title");
+    if (l.getPlayer().getName().equals("markovav") && Math.random() > 0.95) {
+      localized = "Bed destroyed";
+      l.getPlayer().playSound(l.getPlayer(), Sound.ENTITY_ENDER_DRAGON_AMBIENT, 1f, 1f);
+    }
+    return Title.title(
+        Component.text(localized, NamedTextColor.RED),
+        Component.text(
+            killer == null
+                ? l.getLocalized("game.death.title.self")
+                : l.getLocalized("game.death.title.other", killer.getName()),
+            NamedTextColor.YELLOW));
   }
 
   @EventHandler

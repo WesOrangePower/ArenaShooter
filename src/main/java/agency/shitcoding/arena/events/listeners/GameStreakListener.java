@@ -6,6 +6,7 @@ import agency.shitcoding.arena.events.GameStreakUpdateEvent;
 import agency.shitcoding.arena.gamestate.CosmeticsService;
 import agency.shitcoding.arena.gamestate.WeaponMods;
 import agency.shitcoding.arena.localization.LangPlayer;
+import org.bukkit.Registry;
 import org.bukkit.Sound;
 import org.bukkit.SoundCategory;
 import org.bukkit.entity.Player;
@@ -29,7 +30,9 @@ public class GameStreakListener implements Listener {
         return;
       }
 
-      playSound(p, Sound.ENTITY_PLAYER_LEVELUP.key().value());
+
+
+      playSound(p, Registry.SOUNDS.getKeyOrThrow(Sound.ENTITY_PLAYER_LEVELUP).value());
       LangPlayer.of(p).sendRichLocalized("easter.bubbleGun.message");
       CosmeticsService.getInstance().addWeaponMod(p, WeaponMods.getBubbleGun());
     }

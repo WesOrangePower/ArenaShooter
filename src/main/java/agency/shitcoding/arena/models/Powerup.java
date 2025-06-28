@@ -296,7 +296,7 @@ public enum Powerup {
     if (Math.abs(player.getHealth() - BASE_HEALTH) < .01 || BASE_HEALTH < player.getHealth()) {
       return false;
     }
-    Optional.ofNullable(player.getAttribute(Attribute.GENERIC_MAX_HEALTH))
+    Optional.ofNullable(player.getAttribute(Attribute.MAX_HEALTH))
         .ifPresent(t -> t.setBaseValue(BASE_HEALTH));
     player.setHealth(Math.min(player.getHealth() + amount, BASE_HEALTH));
     return true;

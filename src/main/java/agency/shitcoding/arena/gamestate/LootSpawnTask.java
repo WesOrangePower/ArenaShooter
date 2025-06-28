@@ -40,7 +40,7 @@ public final class LootSpawnTask implements Runnable {
       @SuppressWarnings("DataFlowIssue")
       Optional<Item> any =
           location.getNearbyEntities(.5, .5, .5).stream()
-              .filter(e -> e.getType() == EntityType.DROPPED_ITEM)
+              .filter(e -> e.getType() == EntityType.ITEM)
               .map(Item.class::cast)
               .filter(
                   i ->

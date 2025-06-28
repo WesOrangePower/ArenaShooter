@@ -17,7 +17,7 @@ public class NoAmmoListener implements Listener {
     Location eyeLocation = player.getEyeLocation();
     Location inFace = eyeLocation.clone().add(eyeLocation.getDirection());
     World world = inFace.getWorld();
-    world.spawnParticle(Particle.SMOKE_NORMAL, inFace, 1, 0, 0, 0, 0);
+    world.spawnParticle(Particle.SMOKE, inFace, 1, 0, 0, 0, 0);
     player.playSound(player, SoundConstants.NOAMMO, .5f, 2f);
   }
 }

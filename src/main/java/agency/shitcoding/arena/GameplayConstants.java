@@ -8,8 +8,8 @@ public final class GameplayConstants {
 
   public static final int QUAD_DAMAGE_DURATION = 30 * 20;
   public static final int QUAD_DAMAGE_MULTIPLIER = 4;
-  public static final PotionEffectType QUAD_DAMAGE_POTION_EFFECT = PotionEffectType.INCREASE_DAMAGE;
-  public static final PotionEffectType PROTECTION_POTION_EFFECT = PotionEffectType.DAMAGE_RESISTANCE;
+  public static final PotionEffectType QUAD_DAMAGE_POTION_EFFECT = PotionEffectType.STRENGTH;
+  public static final PotionEffectType PROTECTION_POTION_EFFECT = PotionEffectType.RESISTANCE;
   public static final int QUAD_DAMAGE_SPAWN_OFFSET_TICKS = 45 * 20;
   public static final int QUAD_DAMAGE_SPAWN_INTERVAL_TICKS = 120 * 20;
 

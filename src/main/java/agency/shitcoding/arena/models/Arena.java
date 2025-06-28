@@ -136,7 +136,7 @@ public class Arena implements Cloneable, ConfigurationMappable {
       player.setAllowFlight(true);
     }
     DamageListener.setBaseHealth(player);
-    Optional.ofNullable(player.getAttribute(Attribute.GENERIC_MAX_HEALTH))
+    Optional.ofNullable(player.getAttribute(Attribute.MAX_HEALTH))
         .map(AttributeInstance::getBaseValue)
         .ifPresent(player::setHealth);
     if (!game.getRuleSet().getDefaultGameRules().doRespawn()

@@ -51,7 +51,7 @@ public class DamageListener implements Listener {
   private Random rng;
 
   public static void setBaseHealth(Player player) {
-    var attribute = player.getAttribute(Attribute.GENERIC_MAX_HEALTH);
+    var attribute = player.getAttribute(Attribute.MAX_HEALTH);
     if (attribute == null) {
       return;
     }
@@ -143,8 +143,6 @@ public class DamageListener implements Listener {
       if (victimPlayer.getGameMode() != GameMode.ADVENTURE) {
         return;
       }
-      Optional.ofNullable(ArenaShooter.getInstance().getWorldBorderApi())
-          .ifPresent(api -> api.sendRedScreen(victimPlayer, (long) damage * 4));
     }
 
     /* Set last dealer as last damage source for the victim */
@@ -352,7 +350,7 @@ public class DamageListener implements Listener {
                           ArenaShooter.getInstance(),
                           () ->
                               world.spawnParticle(
-                                  Particle.REDSTONE,
+                                  Particle.DUST,
                                   item.getLocation().clone().subtract(0d, -0.2, 0d),
                                   1,
                                   new Particle.DustOptions(Color.RED, 1f)),
@@ -370,7 +368,7 @@ public class DamageListener implements Listener {
 
     world.playSound(eyeLoc, org.bukkit.Sound.ENTITY_PLAYER_BIG_FALL, 1f, 1);
     world.spawnParticle(
-        Particle.BLOCK_CRACK,
+        Particle.BLOCK,
         eyeLoc,
         15,
         .5,
@@ -385,7 +383,7 @@ public class DamageListener implements Listener {
 
     switch (weapon) {
       case ROCKET_LAUNCHER -> {
-        world.spawnParticle(Particle.EXPLOSION_HUGE, eyeLoc, 1);
+        world.spawnParticle(Particle.EXPLOSION_EMITTER, eyeLoc, 1);
         world.playSound(eyeLoc, org.bukkit.Sound.ENTITY_GENERIC_EXPLODE, 1f, 2);
       }
       case RAILGUN -> {
@@ -393,7 +391,7 @@ public class DamageListener implements Listener {
         world.playSound(eyeLoc, org.bukkit.Sound.ENTITY_LIGHTNING_BOLT_THUNDER, .4f, 2);
       }
       case GAUNTLET -> {
-        world.spawnParticle(Particle.VILLAGER_ANGRY, eyeLoc, 10, .5, .5, .5, .8);
+        world.spawnParticle(Particle.ANGRY_VILLAGER, eyeLoc, 10, .5, .5, .5, .8);
         world.playSound(eyeLoc, org.bukkit.Sound.ENTITY_PLAYER_ATTACK_SWEEP, .4f, 2);
       }
     }
