@@ -21,12 +21,18 @@ public final class WeaponItemGenerator {
     return generate(player, weapon, false);
   }
 
+  @SuppressWarnings("UnstableApiUsage")
   public static ItemStack generateMod(Player player, Weapon weapon, String mod) {
     ItemStack item = new ItemStack(weapon.item, 1);
-    String name = LangPlayer.of(player).getLocalized(weapon.translatableName + "." + mod);
+    String name = LangPlayer.of(player).getLocalized(weapon.translatableName + ".mod." + mod);
     item.editMeta(meta ->
         meta.displayName(Component.text(name, TextColor.color(weapon.color.asRGB())))
     );
+    var cmd = CustomModelData.customModelData()
+        .addString(mod)
+        .build();
+    item.setData(DataComponentTypes.CUSTOM_MODEL_DATA, cmd);
+
     return item;
   }
 
@@ -39,7 +45,7 @@ public final class WeaponItemGenerator {
       CosmeticsService cosmetics = CosmeticsService.getInstance();
       String weaponModName = cosmetics.getWeaponModName(player, weapon);
       String translatableName = Optional.ofNullable(weaponModName)
-          .map(s -> weapon.translatableName + "." + s)
+          .map(s -> weapon.translatableName + ".mod." + s)
           .orElse(weapon.translatableName);
 
       name = LangPlayer.of(player).getLocalized(translatableName);

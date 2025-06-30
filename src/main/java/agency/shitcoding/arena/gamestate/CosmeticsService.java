@@ -38,6 +38,9 @@ public class CosmeticsService {
   }
 
   public void addWeaponMod(Player player, WeaponMod weaponMod) {
+    if (getAvailableWeaponMods(player, weaponMod.weapon()).contains(weaponMod)) {
+      return;
+    }
     StorageProvider.getCosmeticsStorage().storeWeaponMod(player.getName(), weaponMod.mod());
     dropCache(player);
   }
