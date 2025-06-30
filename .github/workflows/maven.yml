@@ -35,7 +35,7 @@ jobs:
           rm -f /var/edenor/Arena/plugins/ArenaShooter*.jar
           cd /var/edenor/Arena/plugins/
           wget \
-          "https://nexus.jellycraft.net/service/rest/v1/search/assets/download?sort=version&maven.groupId=agency.shitcoding&maven.artifactId=ArenaShooter&maven.extension=jar" \
+          "https://nexus.jellycraft.net/service/rest/v1/search/assets/download?sort=version&repository=maven-snapshots&maven.groupId=agency.shitcoding&maven.artifactId=ArenaShooter&maven.extension=jar" \
           -O ArenaShooter.jar
     - name: Restart server
       uses: appleboy/ssh-action@v1.0.3
