@@ -1,6 +1,6 @@
 package agency.shitcoding.arena.gui;
 
-import static agency.shitcoding.arena.gui.ArenaMainMenu.backButton;
+import static agency.shitcoding.arena.gui.ArenaControlPanels.arrowsAndBackButton;
 
 import agency.shitcoding.arena.ArenaShooter;
 import agency.shitcoding.arena.localization.LangPlayer;
@@ -15,9 +15,6 @@ import net.jellycraft.guiapi.api.InventorySize;
 import net.jellycraft.guiapi.api.ViewRenderer;
 import net.jellycraft.guiapi.api.fluent.ItemBuilder;
 import net.jellycraft.guiapi.api.fluent.ViewBuilder;
-import net.jellycraft.guiapi.api.paginated.ControlPanelItem;
-import net.jellycraft.guiapi.api.paginated.ControlPanelVisibility;
-import net.jellycraft.guiapi.api.paginated.ControlPanels;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import org.bukkit.Material;
@@ -42,17 +39,7 @@ public class StatsMenu {
       return;
     }
 
-    MiniMessage mm = MiniMessage.miniMessage();
-    var cp = ControlPanels.namedArrows(
-        mm.deserialize("<aqua>" + player.getLocalized("menu.previousArrow")),
-        mm.deserialize("<aqua>" + player.getLocalized("menu.nextArrow"))
-    );
-
-    cp.slots[4] = new ControlPanelItem(
-        ControlPanelVisibility.ALWAYS,
-        backButton(player, () -> new ArenaMainMenu(player.getPlayer()).render())
-    );
-
+    var cp = arrowsAndBackButton(player, () -> new ArenaMainMenu(player.getPlayer()).render());
 
     var view = ViewBuilder.builder()
             .withTitle(Component.text(player.getLocalized("menu.stat.title")))

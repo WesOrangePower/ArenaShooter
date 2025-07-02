@@ -11,6 +11,7 @@ import net.kyori.adventure.text.Component;
 
 @Getter
 public class LangContext implements Announcer {
+  public static final LangContext DEFAULT = new LangContext(SupportedLocale.EN);
 
   private final String locale;
   private  SupportedLocale supportedLocale = null;

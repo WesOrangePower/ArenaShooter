@@ -25,6 +25,8 @@ import org.bukkit.entity.Player;
 
 import java.util.Arrays;
 
+import static agency.shitcoding.arena.gui.GuiUtils.addModelData;
+
 public class ArenaMainMenu {
 
   public final Component title;
@@ -40,17 +42,6 @@ public class ArenaMainMenu {
             TextDecoration.BOLD);
   }
 
-  public static ItemSlot backButton(LangPlayer player, Runnable action) {
-    return ItemBuilder.builder()
-        .withMaterial(Material.ARROW)
-        .withName(
-            Component.text(player.getLocalized("menu.backButton.name"), TextColor.color(0xbb2222)))
-        .withLoreLine(
-            Component.text(
-                player.getLocalized("menu.backButton.description"), TextColor.color(0x882222)))
-        .withClickAction((type, ctx) -> action.run())
-        .build();
-  }
 
   public void render() {
     View view = getView();
@@ -84,7 +75,7 @@ public class ArenaMainMenu {
   }
 
   private ItemSlot cosmeticsButton() {
-    return ItemBuilder.builder()
+    return addModelData("cosmetics", ItemBuilder.builder()
         .withMaterial(Material.CHEST)
         .withName(
             Component.text(player.getLocalized("menu.cosmetics.title"), TextColor.color(0xa94366)))
@@ -95,18 +86,7 @@ public class ArenaMainMenu {
         .withClickAction(
             (clickType, clickContext) -> new CosmeticsMenu(player.getPlayer()).render())
         .withSlot(2, 7)
-        .build();
-  }
-
-  private ItemSlot faqButton() {
-    return ItemBuilder.builder()
-        .withMaterial(Material.BOOK)
-        .withName(Component.text(player.getLocalized("menu.help.title"), TextColor.color(0xa94366)))
-        .withLoreLine(player.getLocalized("menu.lore.open"))
-        .withLoreLine(player.getLocalized("menu.help.description"))
-        .withClickAction((clickType, clickContext) -> new FaqMenu(player.getPlayer()).render())
-        .withSlot(2, 7)
-        .build();
+        .build());
   }
 
   private ItemSlot statsButton() {
@@ -126,7 +106,7 @@ public class ArenaMainMenu {
                   }
                 }));
 
-    return itemBuilder.build();
+    return addModelData("stats", itemBuilder.build());
   }
 
   private Component[] getStatsLore() {
@@ -155,7 +135,7 @@ public class ArenaMainMenu {
   }
 
   private ItemSlot settingsButton() {
-    return ItemBuilder.builder()
+    return addModelData("settings", ItemBuilder.builder()
         .withMaterial(Material.REDSTONE)
         .withName(
             Component.text(player.getLocalized("menu.settings.title"), TextColor.color(0xa94366)))
@@ -165,7 +145,7 @@ public class ArenaMainMenu {
             Component.text(player.getLocalized("menu.lore.open")).color(NamedTextColor.GRAY))
         .withClickAction(((clickType, clickContext) -> new SettingsMenu(player.getPlayer()).open()))
         .withSlot(2, 3)
-        .build();
+        .build());
   }
 
   private ItemSlot[] getGameButtons() {
@@ -272,8 +252,8 @@ public class ArenaMainMenu {
   }
 
   private ItemSlot restartServerButton() {
-    return ItemBuilder.builder()
-        .withMaterial(Material.REDSTONE_BLOCK)
+    return addModelData("restart", ItemBuilder.builder()
+        .withMaterial(Material.REDSTONE)
         .withName(
             Component.text(
                 player.getLocalized("menu.restartServerButton.name"), TextColor.color(0xbb2222)))
@@ -285,7 +265,7 @@ public class ArenaMainMenu {
             ((clickType, clickContext) ->
                 player.getPlayer().performCommand("jellyrestart:restart start 5")))
         .withSlot(4, 8)
-        .build();
+        .build());
   }
 
   private static boolean isJellyRestartLoaded() {
@@ -294,4 +274,5 @@ public class ArenaMainMenu {
         .getPluginManager()
         .isPluginEnabled("JellyRestart");
   }
+
 }

@@ -4,28 +4,32 @@ import agency.shitcoding.arena.WeaponItemGenerator;
 import agency.shitcoding.arena.models.Keys;
 import agency.shitcoding.arena.models.Weapon;
 import agency.shitcoding.arena.storage.StorageProvider;
+import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 import static org.bukkit.persistence.PersistentDataType.STRING;
 
 public class CosmeticsService {
 
-  public static final Map<Weapon, WeaponMod[]> weaponMods = new EnumMap<>(Weapon.class);
-
-  static {
-    weaponMods.put(Weapon.ROCKET_LAUNCHER, new WeaponMod[] {WeaponMods.getKittyCannon()});
-    weaponMods.put(Weapon.RAILGUN, new WeaponMod[] {WeaponMods.getBubbleGun()});
-    weaponMods.put(Weapon.PLASMA_GUN, new WeaponMod[] {WeaponMods.getSlimaGun()});
-  }
+  private final Map<Weapon, WeaponMod[]> weaponMods;
 
   private final Map<Player, ItemStack[]> playerWeapons;
 
   private CosmeticsService() {
     this.playerWeapons = new WeakHashMap<>();
+    weaponMods =
+        Arrays.stream(WeaponMods.REGISTRY)
+            .collect(
+                Collectors.groupingBy(
+                    WeaponMod::weapon,
+                    () -> new EnumMap<>(Weapon.class),
+                    Collectors.collectingAndThen(
+                        Collectors.toList(), list -> list.toArray(WeaponMod[]::new))));
   }
 
   private static CosmeticsService instance = null;
@@ -43,6 +47,15 @@ public class CosmeticsService {
     }
     StorageProvider.getCosmeticsStorage().storeWeaponMod(player.getName(), weaponMod.mod());
     dropCache(player);
+  }
+
+  public void addWeaponMod(String playerName, WeaponMod weaponMod) {
+    Player player = Bukkit.getPlayerExact(playerName);
+    if (player != null) {
+      addWeaponMod(player, weaponMod);
+      return;
+    }
+    StorageProvider.getCosmeticsStorage().storeWeaponMod(playerName, weaponMod.mod());
   }
 
   public ItemStack getWeapon(Player player, Weapon weaponType) {
@@ -102,5 +115,17 @@ public class CosmeticsService {
   public @Nullable WeaponMod getWeaponMod(Player player, Weapon weapon) {
     var val = getWeaponModName(player, weapon);
     return val == null ? null : new WeaponMod(weapon, val);
+  }
+
+  public List<WeaponMod> getAllAvailableWeaponMods(String playerName) {
+    return StorageProvider.getCosmeticsStorage().getWeaponMods(playerName)
+        .stream()
+        .map(WeaponMods::findByName)
+        .filter(Objects::nonNull)
+        .toList();
+  }
+
+  public void removeWeaponMod(String playerName, WeaponMod weaponMod) {
+    StorageProvider.getCosmeticsStorage().deleteWeaponMod(playerName, weaponMod.mod());
   }
 }

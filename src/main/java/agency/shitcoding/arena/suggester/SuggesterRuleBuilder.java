@@ -39,6 +39,11 @@ public class SuggesterRuleBuilder {
         (sender, args) -> args.length > argIndex && args[argIndex].equalsIgnoreCase(value));
   }
 
+  public SuggesterRuleBuilder inCaseArgIsNotIgnoreCase(int argIndex, String value) {
+    return inCase(
+        (sender, args) -> args.length > argIndex && !args[argIndex].equalsIgnoreCase(value));
+  }
+
   public SuggesterBuilder suggest(@NotNull Supplier<List<String>> suggestions) {
     parent.addRule(new SuggestionRule(condition, suggestions));
     return parent;

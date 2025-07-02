@@ -56,6 +56,7 @@ public final class ArenaCommand extends CommandInst {
       case "forcestart" -> new ArenaForceStartCmd(sender, args);
       case "leave" -> new ArenaLeaveCmd(sender, args);
       case "utils" -> new ArenaUtilsCmd(sender, args);
+      case "cosmetics" -> new ArenaCosmeticsCmd(sender, args);
       default -> new ArenaHelpCmd(sender, args, HELP);
     };
     command.execute();

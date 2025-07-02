@@ -11,7 +11,7 @@ import net.jellycraft.guiapi.api.fluent.ViewBuilder;
 import org.bukkit.entity.Player;
 import su.jellycraft.jellylib.utils.HeadDatabaseUtil;
 
-import static agency.shitcoding.arena.gui.ArenaMainMenu.backButton;
+import static agency.shitcoding.arena.gui.ArenaControlPanels.backButton;
 
 public class LangChooserMenu {
 

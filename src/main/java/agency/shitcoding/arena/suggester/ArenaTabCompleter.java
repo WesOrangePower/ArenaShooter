@@ -1,6 +1,7 @@
 package agency.shitcoding.arena.suggester;
 
 import agency.shitcoding.arena.command.ArenaCommand;
+import agency.shitcoding.arena.command.subcommands.ArenaCosmeticsCmd;
 import agency.shitcoding.arena.command.subcommands.arenamutation.ArenaSetAction;
 import agency.shitcoding.arena.command.subcommands.arenamutation.ArenaSetField;
 import agency.shitcoding.arena.gamestate.GameOrchestrator;
@@ -82,6 +83,7 @@ public class ArenaTabCompleter {
                       .map(Tournament::getPlayerNames)
                       .orElse(List.of()))
           .build();
+
   private final Suggester forceStartSuggester = SuggesterBuilder.builder()
       .at(2)
       .suggest(
@@ -142,7 +144,7 @@ public class ArenaTabCompleter {
 
   private List<String> resolveAdmin() {
     if (args.length == 1) {
-      return List.of("set", "create", "host", "join", "leave", "utils", "forceStart", "tournament");
+      return List.of("set", "create", "host", "join", "leave", "utils", "forceStart", "tournament", "cosmetics");
     }
 
     return switch (args[0].toLowerCase()) {
@@ -152,6 +154,7 @@ public class ArenaTabCompleter {
       case "utils" -> resolveUtils();
       case "forcestart" -> resolveForceStart();
       case "tournament" -> resolveTournament();
+      case "cosmetics" -> resolveCosmetics();
       default -> List.of();
     };
   }
@@ -239,5 +242,9 @@ public class ArenaTabCompleter {
           .toList();
     }
     return List.of();
+  }
+
+  private List<String> resolveCosmetics() {
+    return ArenaCosmeticsCmd.SUGGESTER.suggest(sender, args);
   }
 }

@@ -3,13 +3,9 @@ package agency.shitcoding.arena.storage;
 public final class StorageProvider {
 
   private static ArenaStorage arenaStorage;
-  private static FaqStorage faqStorage;
   private static CosmeticsStorage cosmeticsStorage;
 
-
-  private StorageProvider() {
-
-  }
+  private StorageProvider() {}
 
   public static ArenaStorage getArenaStorage() {
     if (arenaStorage == null) {
@@ -17,13 +13,6 @@ public final class StorageProvider {
       arenaStorage = StorageFactory.createArenaStorage();
     }
     return arenaStorage;
-  }
-
-  public static FaqStorage getFaqStorage() {
-    if (faqStorage == null) {
-      faqStorage = StorageFactory.createFaqStorage();
-    }
-    return faqStorage;
   }
 
   public static CosmeticsStorage getCosmeticsStorage() {

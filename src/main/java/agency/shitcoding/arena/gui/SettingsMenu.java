@@ -1,6 +1,6 @@
 package agency.shitcoding.arena.gui;
 
-import static agency.shitcoding.arena.gui.ArenaMainMenu.backButton;
+import static agency.shitcoding.arena.gui.ArenaControlPanels.backButton;
 
 import agency.shitcoding.arena.localization.LangPlayer;
 import net.jellycraft.guiapi.api.InventorySize;

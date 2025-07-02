@@ -19,10 +19,6 @@ public final class StorageFactory {
     return new MappedConfigurationArenaStorage(getConfiguration(ARENA_CFG_FILE));
   }
 
-  public static FaqStorage createFaqStorage() {
-    return new ConfigurationFaqStorage(getConfiguration(ConfigurationFaqStorage.FILE));
-  }
-
   public static CosmeticsStorage createCosmeticsStorage() {
     return new ConfigurationCosmeticsStorage(getConfiguration(ConfigurationCosmeticsStorage.FILE));
   }
