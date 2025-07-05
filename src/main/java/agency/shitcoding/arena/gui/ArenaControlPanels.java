@@ -13,7 +13,7 @@ import net.kyori.adventure.text.format.TextColor;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import org.bukkit.Material;
 
-import static agency.shitcoding.arena.gui.GuiUtils.addModelData;
+import static agency.shitcoding.arena.util.ItemStackUtil.addModelData;
 import static net.kyori.adventure.text.minimessage.MiniMessage.miniMessage;
 
 public interface ArenaControlPanels {

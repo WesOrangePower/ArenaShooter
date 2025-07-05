@@ -160,7 +160,7 @@ public enum Powerup {
   SHOTGUN(
       "powerup.shotgun",
       PowerupType.WEAPON,
-      new ItemStack(Weapon.SHOTGUN.item),
+      weaponPowerup(Weapon.SHOTGUN),
       player -> giveWeaponOrAmmo(player, Weapon.SHOTGUN),
       SHOTGUN_SPAWN_INTERVAL_TICKS,
       SHOTGUN_SPAWN_OFFSET_TICKS
@@ -168,7 +168,7 @@ public enum Powerup {
   ROCKET_LAUNCHER(
       "powerup.rocketLauncher",
       PowerupType.WEAPON,
-      new ItemStack(Weapon.ROCKET_LAUNCHER.item),
+      weaponPowerup(Weapon.ROCKET_LAUNCHER),
       player -> giveWeaponOrAmmo(player, Weapon.ROCKET_LAUNCHER),
       ROCKET_LAUNCHER_SPAWN_INTERVAL_TICKS,
       ROCKET_LAUNCHER_SPAWN_OFFSET_TICKS
@@ -176,7 +176,7 @@ public enum Powerup {
   LIGHTNING_GUN(
       "powerup.lightningGun",
       PowerupType.WEAPON,
-      new ItemStack(Weapon.LIGHTNING_GUN.item),
+      weaponPowerup(Weapon.LIGHTNING_GUN),
       player -> giveWeaponOrAmmo(player, Weapon.LIGHTNING_GUN),
       LIGHTNING_GUN_SPAWN_INTERVAL_TICKS,
       LIGHTNING_GUN_SPAWN_OFFSET_TICKS
@@ -184,7 +184,7 @@ public enum Powerup {
   RAILGUN(
       "powerup.railgun",
       PowerupType.WEAPON,
-      new ItemStack(Weapon.RAILGUN.item),
+      weaponPowerup(Weapon.RAILGUN),
       player -> giveWeaponOrAmmo(player, Weapon.RAILGUN),
       RAILGUN_SPAWN_INTERVAL_TICKS,
       RAILGUN_SPAWN_OFFSET_TICKS
@@ -192,7 +192,7 @@ public enum Powerup {
   PLASMA_GUN(
       "powerup.plasmaGun",
       PowerupType.WEAPON,
-      new ItemStack(Weapon.PLASMA_GUN.item),
+      weaponPowerup(Weapon.PLASMA_GUN),
       player -> giveWeaponOrAmmo(player, Weapon.PLASMA_GUN),
       PLASMA_GUN_SPAWN_INTERVAL_TICKS,
       PLASMA_GUN_SPAWN_OFFSET_TICKS
@@ -200,7 +200,7 @@ public enum Powerup {
   MACHINE_GUN(
       "powerup.machineGun",
       PowerupType.WEAPON,
-      new ItemStack(Weapon.MACHINE_GUN.item),
+      weaponPowerup(Weapon.MACHINE_GUN),
       player -> giveWeaponOrAmmo(player, Weapon.MACHINE_GUN),
       MACHINE_GUN_SPAWN_INTERVAL_TICKS,
       MACHINE_GUN_SPAWN_OFFSET_TICKS
@@ -208,7 +208,7 @@ public enum Powerup {
   BFG9K(
       "powerup.bfg9k",
       PowerupType.WEAPON,
-      new ItemStack(Weapon.BFG9K.item),
+      weaponPowerup(Weapon.BFG9K),
       player -> giveWeaponOrAmmo(player, Weapon.BFG9K),
       BFG9K_SPAWN_INTERVAL_TICKS,
       BFG9K_SPAWN_OFFSET_TICKS
@@ -216,7 +216,7 @@ public enum Powerup {
   GAUNTLET(
       "powerup.gauntlet",
       PowerupType.WEAPON,
-      new ItemStack(Weapon.GAUNTLET.item),
+      weaponPowerup(Weapon.GAUNTLET),
       player -> giveWeaponOrAmmo(player, Weapon.GAUNTLET),
       MACHINE_GUN_SPAWN_INTERVAL_TICKS,
       MACHINE_GUN_SPAWN_OFFSET_TICKS
@@ -317,6 +317,10 @@ public enum Powerup {
     }
     Ammo.setAmmoForPlayer(player, ammo, Math.min(ammoValue + amount, ammo.max));
     return true;
+  }
+
+  private static ItemStack weaponPowerup(Weapon weapon) {
+    return weapon.generateItem();
   }
 
   static ItemStack potionItem(Color color) {

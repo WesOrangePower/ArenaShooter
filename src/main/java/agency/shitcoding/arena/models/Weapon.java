@@ -1,5 +1,6 @@
 package agency.shitcoding.arena.models;
 
+import agency.shitcoding.arena.util.ItemStackUtil;
 import lombok.RequiredArgsConstructor;
 import org.bukkit.Color;
 import org.bukkit.Material;
@@ -7,6 +8,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.Arrays;
+import java.util.Locale;
 import java.util.Optional;
 
 @RequiredArgsConstructor
@@ -60,5 +62,11 @@ public enum Weapon {
       case PLASMA_GUN -> Powerup.PLASMA_GUN;
       case BFG9K -> Powerup.BFG9K;
     };
+  }
+
+  public ItemStack generateItem(Weapon this) {
+    return ItemStackUtil.addModelData(
+        this.name().toLowerCase(Locale.ROOT),
+        new ItemStack(this.item));
   }
 }

@@ -25,7 +25,8 @@ import org.bukkit.entity.Player;
 
 import java.util.Arrays;
 
-import static agency.shitcoding.arena.gui.GuiUtils.addModelData;
+import static agency.shitcoding.arena.util.ItemStackUtil.addModelData;
+
 
 public class ArenaMainMenu {
 

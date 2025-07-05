@@ -14,7 +14,7 @@ public enum RuleSet {
   DM(
       "ruleset.dm",
       false,
-      new ItemStack(Weapon.GAUNTLET.item),
+      Weapon.GAUNTLET.generateItem(),
       new DeathMatchGameFactory(),
       new DMGameRules()),
   TDM(
@@ -32,18 +32,18 @@ public enum RuleSet {
   INSTAGIB(
       "ruleset.instagib",
       false,
-      new ItemStack(Weapon.RAILGUN.item),
+      Weapon.RAILGUN.generateItem(),
       new InstagibGameFactory(),
       new InstagibGameRules()),
   ROF(
       "ruleset.rof",
       false,
-      new ItemStack(Weapon.ROCKET_LAUNCHER.item),
+      Weapon.ROCKET_LAUNCHER.generateItem(),
       new ROFGameFactory(),
       new ROFGameRules()),
   CTF("ruleset.ctf",
       true,
-      new ItemStack(Material.RED_WOOL),
+      new ItemStack(ETeam.RED.getIcon()),
       new CTFGameFactory(),
       new CTFGameRules());
 
