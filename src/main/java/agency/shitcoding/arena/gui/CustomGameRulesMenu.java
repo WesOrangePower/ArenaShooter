@@ -1,5 +1,8 @@
 package agency.shitcoding.arena.gui;
 
+import static net.jellycraft.guiapi.api.fluent.ItemBuilder.itemBuilder;
+import static net.jellycraft.guiapi.api.fluent.ViewBuilder.viewBuilder;
+
 import agency.shitcoding.arena.localization.LangPlayer;
 import agency.shitcoding.arena.models.CustomGameRulesBuilder;
 import agency.shitcoding.arena.models.GameRules;
@@ -7,10 +10,10 @@ import java.util.List;
 import java.util.function.Consumer;
 import net.jellycraft.guiapi.Item;
 import net.jellycraft.guiapi.api.ItemSlot;
-import net.jellycraft.guiapi.api.fluent.ItemBuilder;
 import net.jellycraft.guiapi.api.fluent.ViewBuilder;
 import org.bukkit.Material;
 
+@Deprecated(forRemoval = true)
 public class CustomGameRulesMenu {
   private final LangPlayer langPlayer;
   private final Runnable onDiscard;
@@ -39,8 +42,7 @@ public class CustomGameRulesMenu {
   public void render() {
     final int rows = 2;
     var builder =
-        ViewBuilder.builder()
-            .withHolder(langPlayer.getPlayer())
+        viewBuilder(langPlayer.getPlayer())
             .withTitle(langPlayer.getRichLocalized("menu.customRules.title"))
             .withRows(rows);
 
@@ -62,8 +64,7 @@ public class CustomGameRulesMenu {
 
   private List<Item> getButtons() {
     return List.of(
-        ItemBuilder.builder()
-            .withMaterial(Material.CLOCK)
+        itemBuilder(Material.CLOCK)
             .withLore(
                 langPlayer.getRichLocalized(
                     "menu.customRules.value", customGameRulesBuilder.getGameLengthSeconds() / 60))
@@ -80,8 +81,7 @@ public class CustomGameRulesMenu {
                       render();
                     }))
             .build(),
-        ItemBuilder.builder()
-            .withMaterial(Material.BLUE_CARPET)
+        itemBuilder(Material.BLUE_CARPET)
             .withLore(
                 langPlayer.getRichLocalized(
                     "menu.customRules.value", customGameRulesBuilder.getMinPlayers()))
@@ -98,8 +98,7 @@ public class CustomGameRulesMenu {
                       render();
                     }))
             .build(),
-        ItemBuilder.builder()
-            .withMaterial(Material.RED_CARPET)
+        itemBuilder(Material.RED_CARPET)
             .withLore(
                 langPlayer.getRichLocalized(
                     "menu.customRules.value", customGameRulesBuilder.getMaxPlayers()))
@@ -116,8 +115,7 @@ public class CustomGameRulesMenu {
                       render();
                     }))
             .build(),
-        ItemBuilder.builder()
-            .withMaterial(
+        itemBuilder(
                 Boolean.TRUE.equals(customGameRulesBuilder.getDropMostValuableWeaponOnDeath())
                     ? Material.CHEST
                     : Material.ENDER_CHEST)
@@ -133,8 +131,7 @@ public class CustomGameRulesMenu {
                   render();
                 })
             .build(),
-        ItemBuilder.builder()
-            .withMaterial(
+        itemBuilder(
                 Boolean.TRUE.equals(customGameRulesBuilder.getFastWeaponSpawn())
                     ? Material.FEATHER
                     : Material.TURTLE_HELMET)
@@ -149,8 +146,7 @@ public class CustomGameRulesMenu {
                   render();
                 })
             .build(),
-        ItemBuilder.builder()
-            .withMaterial(Material.KELP)
+        itemBuilder(Material.KELP)
             .withLore(
                 langPlayer.getRichLocalized(
                     "menu.customRules.value", customGameRulesBuilder.getShowHealth()))
@@ -164,8 +160,7 @@ public class CustomGameRulesMenu {
   }
 
   private ItemSlot discardButton(@SuppressWarnings("SameParameterValue") int slot) {
-    return ItemBuilder.builder()
-        .withMaterial(Material.RED_STAINED_GLASS_PANE)
+    return itemBuilder(Material.RED_STAINED_GLASS_PANE)
         .withName(langPlayer.getRichLocalized("menu.customRules.discard"))
         .withClickAction((player, event) -> onDiscard.run())
         .withSlot(slot)
@@ -173,8 +168,7 @@ public class CustomGameRulesMenu {
   }
 
   private ItemSlot confirmButton(@SuppressWarnings("SameParameterValue") int slot) {
-    return ItemBuilder.builder()
-        .withMaterial(Material.LIME_STAINED_GLASS_PANE)
+    return itemBuilder(Material.LIME_STAINED_GLASS_PANE)
         .withName(langPlayer.getRichLocalized("menu.customRules.confirm"))
         .withClickAction(
             (player, event) -> onGameRulesChanged.accept(customGameRulesBuilder.build()))

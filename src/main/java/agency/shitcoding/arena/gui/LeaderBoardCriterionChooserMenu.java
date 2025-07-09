@@ -1,15 +1,16 @@
 package agency.shitcoding.arena.gui;
 
+import static net.jellycraft.guiapi.api.fluent.ItemBuilder.itemBuilder;
+import static net.jellycraft.guiapi.api.fluent.ViewBuilder.viewBuilder;
+
 import agency.shitcoding.arena.localization.LangPlayer;
 import agency.shitcoding.arena.statistics.LeaderBoardCriterion;
-import net.jellycraft.guiapi.api.InventorySize;
-import net.jellycraft.guiapi.api.ItemSlot;
-import net.jellycraft.guiapi.api.fluent.ItemBuilder;
-import net.jellycraft.guiapi.api.fluent.ViewBuilder;
-import org.bukkit.Material;
-
 import java.util.ArrayList;
 import java.util.List;
+import net.jellycraft.guiapi.api.InventorySize;
+import net.jellycraft.guiapi.api.ItemSlot;
+import net.jellycraft.guiapi.api.fluent.ViewBuilder;
+import org.bukkit.Material;
 
 public class LeaderBoardCriterionChooserMenu {
   private final LangPlayer player;
@@ -24,13 +25,15 @@ public class LeaderBoardCriterionChooserMenu {
     List<ItemSlot> slots = new ArrayList<>();
     for (int i = 0, criteriaLength = criteria.length; i < criteriaLength; i++) {
       LeaderBoardCriterion criterion = criteria[i];
-      var item = ItemBuilder.builder()
-          .withMaterial(Material.COMPASS)
-          .withName(player.getRichLocalized("menu.lead.criterion." + criterion.name().toLowerCase()))
-          .withLore(player.getRichLocalized("menu.lead.criteria.choose.lore"))
-          .withSlot(i)
-          .withClickAction((ct, ctx) -> new LeaderBoardMenu(player.getPlayer(), criterion).open())
-          .build();
+      var item =
+          itemBuilder(Material.COMPASS)
+              .withName(
+                  player.getRichLocalized("menu.lead.criterion." + criterion.name().toLowerCase()))
+              .withLore(player.getRichLocalized("menu.lead.criteria.choose.lore"))
+              .withSlot(i)
+              .withClickAction(
+                  (ct, ctx) -> new LeaderBoardMenu(player.getPlayer(), criterion).open())
+              .build();
       slots.add(item);
     }
 
@@ -38,10 +41,10 @@ public class LeaderBoardCriterionChooserMenu {
   }
 
   public void open() {
-    var builder = ViewBuilder.builder()
-        .withTitle(player.getRichLocalized("menu.lead.criteria.choose.title"))
-        .withSize(InventorySize.ONE_ROW)
-        .withHolder(player.getPlayer());
+    var builder =
+        viewBuilder(player.getPlayer())
+            .withTitle(player.getRichLocalized("menu.lead.criteria.choose.title"))
+            .withSize(InventorySize.ONE_ROW);
 
     addItems(builder);
 

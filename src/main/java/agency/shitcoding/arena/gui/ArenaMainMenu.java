@@ -1,5 +1,9 @@
 package agency.shitcoding.arena.gui;
 
+import static agency.shitcoding.arena.util.ItemStackUtil.addModelData;
+import static net.jellycraft.guiapi.api.fluent.ItemBuilder.itemBuilder;
+import static net.jellycraft.guiapi.api.fluent.ViewBuilder.viewBuilder;
+
 import agency.shitcoding.arena.ArenaShooter;
 import agency.shitcoding.arena.command.ArenaCommand;
 import agency.shitcoding.arena.gamestate.Game;
@@ -8,11 +12,11 @@ import agency.shitcoding.arena.gamestate.team.TeamGame;
 import agency.shitcoding.arena.gui.settings.TeamSelectGui;
 import agency.shitcoding.arena.localization.LangPlayer;
 import agency.shitcoding.arena.statistics.Statistics;
+import java.util.Arrays;
 import net.jellycraft.guiapi.api.InventorySize;
 import net.jellycraft.guiapi.api.ItemSlot;
 import net.jellycraft.guiapi.api.ViewRegistry;
 import net.jellycraft.guiapi.api.ViewRenderer;
-import net.jellycraft.guiapi.api.fluent.ItemBuilder;
 import net.jellycraft.guiapi.api.fluent.ViewBuilder;
 import net.jellycraft.guiapi.api.views.View;
 import net.kyori.adventure.text.Component;
@@ -22,11 +26,6 @@ import net.kyori.adventure.text.format.TextDecoration;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
-
-import java.util.Arrays;
-
-import static agency.shitcoding.arena.util.ItemStackUtil.addModelData;
-
 
 public class ArenaMainMenu {
 
@@ -43,7 +42,6 @@ public class ArenaMainMenu {
             TextDecoration.BOLD);
   }
 
-
   public void render() {
     View view = getView();
     ViewRenderer viewRenderer = new ViewRenderer(view);
@@ -52,9 +50,8 @@ public class ArenaMainMenu {
 
   private View getView() {
     ViewBuilder viewBuilder =
-        ViewBuilder.builder()
+        viewBuilder(player.getPlayer())
             .withTitle(title)
-            .withHolder(player.getPlayer())
             .withSize(InventorySize.DOUBLE_CHEST_NO_BOTTOM_ROW);
 
     ItemSlot[] itemSlots = getGameButtons();
@@ -76,24 +73,25 @@ public class ArenaMainMenu {
   }
 
   private ItemSlot cosmeticsButton() {
-    return addModelData("cosmetics", ItemBuilder.builder()
-        .withMaterial(Material.CHEST)
-        .withName(
-            Component.text(player.getLocalized("menu.cosmetics.title"), TextColor.color(0xa94366)))
-        .withLoreLine(player.getLocalized("menu.cosmetics.description"))
-        .withLoreLine(Component.text(""))
-        .withLoreLine(
-            Component.text(player.getLocalized("menu.lore.open")).color(NamedTextColor.GRAY))
-        .withClickAction(
-            (clickType, clickContext) -> new CosmeticsMenu(player.getPlayer()).render())
-        .withSlot(2, 7)
-        .build());
+    return addModelData(
+        "cosmetics",
+        itemBuilder(Material.CHEST)
+            .withName(
+                Component.text(
+                    player.getLocalized("menu.cosmetics.title"), TextColor.color(0xa94366)))
+            .withLoreLine(player.getLocalized("menu.cosmetics.description"))
+            .withLoreLine(Component.text(""))
+            .withLoreLine(
+                Component.text(player.getLocalized("menu.lore.open")).color(NamedTextColor.GRAY))
+            .withClickAction(
+                (clickType, clickContext) -> new CosmeticsMenu(player.getPlayer()).render())
+            .withSlot(2, 7)
+            .build());
   }
 
   private ItemSlot statsButton() {
     var itemBuilder =
-        ItemBuilder.builder()
-            .withMaterial(Material.ENCHANTED_BOOK)
+        itemBuilder(Material.ENCHANTED_BOOK)
             .withName(
                 Component.text(player.getLocalized("menu.stat.title"), TextColor.color(0xa94366)))
             .withLore(getStatsLore())
@@ -136,17 +134,20 @@ public class ArenaMainMenu {
   }
 
   private ItemSlot settingsButton() {
-    return addModelData("settings", ItemBuilder.builder()
-        .withMaterial(Material.REDSTONE)
-        .withName(
-            Component.text(player.getLocalized("menu.settings.title"), TextColor.color(0xa94366)))
-        .withLoreLine(player.getLocalized("menu.settings.description"))
-        .withLoreLine(Component.text(""))
-        .withLoreLine(
-            Component.text(player.getLocalized("menu.lore.open")).color(NamedTextColor.GRAY))
-        .withClickAction(((clickType, clickContext) -> new SettingsMenu(player.getPlayer()).open()))
-        .withSlot(2, 3)
-        .build());
+    return addModelData(
+        "settings",
+        itemBuilder(Material.REDSTONE)
+            .withName(
+                Component.text(
+                    player.getLocalized("menu.settings.title"), TextColor.color(0xa94366)))
+            .withLoreLine(player.getLocalized("menu.settings.description"))
+            .withLoreLine(Component.text(""))
+            .withLoreLine(
+                Component.text(player.getLocalized("menu.lore.open")).color(NamedTextColor.GRAY))
+            .withClickAction(
+                ((clickType, clickContext) -> new SettingsMenu(player.getPlayer()).open()))
+            .withSlot(2, 3)
+            .build());
   }
 
   private ItemSlot[] getGameButtons() {
@@ -171,8 +172,7 @@ public class ArenaMainMenu {
   private ItemSlot selectJoinGameMenuButton() {
     var count = Math.min(GameOrchestrator.getInstance().getGames().size(), 64);
 
-    return ItemBuilder.builder()
-        .withMaterial(Material.TARGET)
+    return itemBuilder(Material.TARGET)
         .withAmount(count)
         .withName(
             Component.text(
@@ -198,9 +198,8 @@ public class ArenaMainMenu {
     String[] playerNames = game.getPlayers().stream().map(Player::getName).toArray(String[]::new);
 
     ItemSlot item =
-        ItemBuilder.builder()
+        itemBuilder(material)
             .withName(name)
-            .withMaterial(material)
             .withLoreLine(
                 Component.text(
                     player.getLocalized(
@@ -227,8 +226,7 @@ public class ArenaMainMenu {
   }
 
   private ItemSlot hostGameButton() {
-    return ItemBuilder.builder()
-        .withMaterial(Material.DIAMOND_SWORD)
+    return itemBuilder(Material.DIAMOND_SWORD)
         .withName(
             Component.text(player.getLocalized("menu.hostButton.name"), TextColor.color(0x22bb22)))
         .withLore(
@@ -240,8 +238,7 @@ public class ArenaMainMenu {
   }
 
   private ItemSlot leaveButton() {
-    return ItemBuilder.builder()
-        .withMaterial(Material.ARROW)
+    return itemBuilder(Material.ARROW)
         .withName(
             Component.text(player.getLocalized("menu.leaveButton.name"), TextColor.color(0xbb2222)))
         .withLore(
@@ -253,20 +250,22 @@ public class ArenaMainMenu {
   }
 
   private ItemSlot restartServerButton() {
-    return addModelData("restart", ItemBuilder.builder()
-        .withMaterial(Material.REDSTONE)
-        .withName(
-            Component.text(
-                player.getLocalized("menu.restartServerButton.name"), TextColor.color(0xbb2222)))
-        .withLore(
-            Component.text(
-                player.getLocalized("menu.restartServerButton.description"),
-                TextColor.color(0x882222)))
-        .withClickAction(
-            ((clickType, clickContext) ->
-                player.getPlayer().performCommand("jellyrestart:restart start 5")))
-        .withSlot(4, 8)
-        .build());
+    return addModelData(
+        "restart",
+        itemBuilder(Material.REDSTONE)
+            .withName(
+                Component.text(
+                    player.getLocalized("menu.restartServerButton.name"),
+                    TextColor.color(0xbb2222)))
+            .withLore(
+                Component.text(
+                    player.getLocalized("menu.restartServerButton.description"),
+                    TextColor.color(0x882222)))
+            .withClickAction(
+                ((clickType, clickContext) ->
+                    player.getPlayer().performCommand("jellyrestart:restart start 5")))
+            .withSlot(4, 8)
+            .build());
   }
 
   private static boolean isJellyRestartLoaded() {
@@ -275,5 +274,4 @@ public class ArenaMainMenu {
         .getPluginManager()
         .isPluginEnabled("JellyRestart");
   }
-
 }

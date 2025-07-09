@@ -7,7 +7,7 @@ import agency.shitcoding.arena.command.CommandInst;
 import agency.shitcoding.arena.gamestate.Game;
 import agency.shitcoding.arena.gamestate.GameOrchestrator;
 import agency.shitcoding.arena.gamestate.TournamentAccessor;
-import agency.shitcoding.arena.gui.CustomGameRulesMenu;
+import agency.shitcoding.arena.gui.CustomGameRulesDialog;
 import agency.shitcoding.arena.localization.LangContext;
 import agency.shitcoding.arena.localization.LangPlayer;
 import agency.shitcoding.arena.models.Arena;
@@ -95,14 +95,11 @@ public class ArenaTournamentCmd extends CommandInst {
         .getTournament()
         .ifPresentOrElse(
             t ->
-                new CustomGameRulesMenu(
+                new CustomGameRulesDialog(
                         LangPlayer.of(player),
                         t.getGameRules(),
                         () -> ViewRegistry.closeForPlayer(player),
-                        gameRules -> {
-                          ViewRegistry.closeForPlayer(player);
-                          t.setGameRules(gameRules);
-                        })
+                    t::setGameRules)
                     .render(),
             () -> reply("command.tournament.noOngoing"));
   }

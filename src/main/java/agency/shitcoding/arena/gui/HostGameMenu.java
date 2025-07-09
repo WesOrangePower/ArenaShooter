@@ -1,5 +1,9 @@
 package agency.shitcoding.arena.gui;
 
+import static agency.shitcoding.arena.gui.ArenaControlPanels.backButton;
+import static net.jellycraft.guiapi.api.fluent.ItemBuilder.itemBuilder;
+import static net.jellycraft.guiapi.api.fluent.ViewBuilder.viewBuilder;
+
 import agency.shitcoding.arena.gamestate.GameRuleSerializer;
 import agency.shitcoding.arena.gamestate.team.ETeam;
 import agency.shitcoding.arena.gamestate.team.TeamMeta;
@@ -8,7 +12,6 @@ import agency.shitcoding.arena.models.Arena;
 import agency.shitcoding.arena.models.GameRules;
 import agency.shitcoding.arena.models.RuleSet;
 import agency.shitcoding.arena.storage.StorageProvider;
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -18,8 +21,9 @@ import net.jellycraft.guiapi.api.ClickAction;
 import net.jellycraft.guiapi.api.ItemSlot;
 import net.jellycraft.guiapi.api.ViewRegistry;
 import net.jellycraft.guiapi.api.ViewRenderer;
-import net.jellycraft.guiapi.api.fluent.ItemBuilder;
-import net.jellycraft.guiapi.api.fluent.ViewBuilder;
+import net.jellycraft.guiapi.api.paginated.ControlPanel;
+import net.jellycraft.guiapi.api.paginated.ControlPanelItem;
+import net.jellycraft.guiapi.api.paginated.ControlPanelVisibility;
 import net.jellycraft.guiapi.api.views.PaginatedView;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
@@ -44,13 +48,14 @@ public class HostGameMenu {
   }
 
   private void chooseArena() {
+
     PaginatedView view =
-        ViewBuilder.builder()
-            .withHolder(player.getPlayer())
+        viewBuilder(player.getPlayer())
             .withTitle(player.getLocalized("menu.host.chooseArenaButton.title"))
             .build()
             .toPaginatedView()
             .withItems(getArenaItems())
+            .withControlPanel(backControlPanel())
             .build();
 
     new ViewRenderer(view).render();
@@ -58,12 +63,12 @@ public class HostGameMenu {
 
   private void chooseRuleSet() {
     PaginatedView view =
-        ViewBuilder.builder()
-            .withHolder(player.getPlayer())
+        viewBuilder(player.getPlayer())
             .withTitle(player.getLocalized("menu.host.chooseRulesetButton.title"))
             .build()
             .toPaginatedView()
             .withItems(getRuleSetItems())
+            .withControlPanel(backControlPanel())
             .build();
 
     new ViewRenderer(view).render();
@@ -97,8 +102,7 @@ public class HostGameMenu {
         .map(
             arena -> {
               ItemSlot build =
-                  ItemBuilder.builder()
-                      .withMaterial(Material.IRON_SWORD)
+                  itemBuilder(Material.IRON_SWORD)
                       .withName(Component.text(arena.getName(), NamedTextColor.GOLD))
                       .withLore(getArenaDescription(arena))
                       .withClickAction(arenaClickAction(arena))
@@ -128,8 +132,7 @@ public class HostGameMenu {
         .map(
             ruleSet -> {
               ItemSlot build =
-                  ItemBuilder.builder()
-                      .withItemStack(ruleSet.getMenuBaseItem())
+                  itemBuilder(ruleSet.getMenuBaseItem())
                       .withName(
                           Component.text(
                               player.getLocalized(ruleSet.getName()), NamedTextColor.GOLD))
@@ -151,13 +154,18 @@ public class HostGameMenu {
     String timeString = String.format("%02d:%02d", minutes, seconds);
     var list = new ArrayList<Component>();
     list.add(player.getRichLocalized("menu.host.gameRules.gameLengthSeconds", timeString));
-    list.add( player.getRichLocalized( "menu.host.gameRules.players", gameRules.minPlayers(), gameRules.maxPlayers()));
+    list.add(
+        player.getRichLocalized(
+            "menu.host.gameRules.players", gameRules.minPlayers(), gameRules.maxPlayers()));
     if (gameRules.dropMostValuableWeaponOnDeath()) {
       list.add(player.getRichLocalized("menu.host.gameRules.dropMostValuableWeaponOnDeath"));
     }
     if (gameRules.fastWeaponSpawn()) {
       list.add(player.getRichLocalized("menu.host.gameRules.fastWeaponSpawn"));
     }
+
+    list.add(Component.empty());
+    list.add(player.getRichLocalized("menu.host.gameRules.shiftForOptions"));
 
     return list;
   }
@@ -169,7 +177,7 @@ public class HostGameMenu {
         this.chosenGameRules = ruleSet.getDefaultGameRules();
       }
       if (clickType.isShiftClick()) {
-        new CustomGameRulesMenu(
+        new CustomGameRulesDialog(
                 player,
                 chosenGameRules,
                 this::chooseRuleSet,
@@ -194,8 +202,7 @@ public class HostGameMenu {
 
   private void chooseTeam() {
     PaginatedView view =
-        ViewBuilder.builder()
-            .withHolder(player.getPlayer())
+        viewBuilder(player.getPlayer())
             .withTitle(player.getLocalized("menu.host.chooseTeamButton.title"))
             .build()
             .toPaginatedView()
@@ -211,10 +218,7 @@ public class HostGameMenu {
             team -> {
               final TeamMeta teamMeta = team.getTeamMeta();
               ItemSlot build =
-                  ItemBuilder.builder()
-                      .withMaterial(team.getIcon())
-                      .withClickAction(teamClickAction(team))
-                      .build();
+                  itemBuilder(team.getIcon()).withClickAction(teamClickAction(team)).build();
               ItemStack itemStack = build.getItemStack();
               itemStack.editMeta(
                   meta -> meta.displayName(teamMeta.getDisplayComponent(player.getLangContext())));
@@ -228,5 +232,12 @@ public class HostGameMenu {
       this.chosenTeam = team.name();
       execute();
     };
+  }
+
+  private ControlPanel backControlPanel() {
+    ItemSlot backButton = backButton(player, () -> new ArenaMainMenu(player.getPlayer()).render());
+    backButton.setSlot(8);
+    return new ControlPanel(new ControlPanelItem(ControlPanelVisibility.ALWAYS, backButton))
+        .doNotRequireExtraRow();
   }
 }

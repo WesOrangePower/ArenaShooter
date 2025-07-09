@@ -1,17 +1,17 @@
 package agency.shitcoding.arena.gui;
 
+import static agency.shitcoding.arena.gui.ArenaControlPanels.backButton;
+import static net.jellycraft.guiapi.api.fluent.ItemBuilder.itemBuilder;
+import static net.jellycraft.guiapi.api.fluent.ViewBuilder.viewBuilder;
+
 import agency.shitcoding.arena.gamestate.Lobby;
 import agency.shitcoding.arena.localization.LangPlayer;
 import net.jellycraft.guiapi.Item;
 import net.jellycraft.guiapi.api.InventorySize;
 import net.jellycraft.guiapi.api.ViewRegistry;
 import net.jellycraft.guiapi.api.ViewRenderer;
-import net.jellycraft.guiapi.api.fluent.ItemBuilder;
-import net.jellycraft.guiapi.api.fluent.ViewBuilder;
 import org.bukkit.entity.Player;
 import su.jellycraft.jellylib.utils.HeadDatabaseUtil;
-
-import static agency.shitcoding.arena.gui.ArenaControlPanels.backButton;
 
 public class LangChooserMenu {
 
@@ -22,10 +22,9 @@ public class LangChooserMenu {
   }
 
   public void open() {
-    var builder = new ViewBuilder()
+    var builder = viewBuilder(langPlayer.getPlayer())
         .withTitle(langPlayer.getLocalized("menu.settings.langButton.title"))
-        .withSize(InventorySize.ONE_ROW)
-        .withHolder(langPlayer.getPlayer());
+        .withSize(InventorySize.ONE_ROW);
 
     var langToHead = mapLocaleToHead();
     for (int i = 0; i < langToHead.length; i++) {
@@ -38,7 +37,7 @@ public class LangChooserMenu {
 
   private Item getItem(String lang, String head) {
     var langName = langPlayer.getLocalized("menu.settings.lang." + lang);
-    return ItemBuilder.builder().withItemStack(HeadDatabaseUtil.getHead(head))
+    return itemBuilder(HeadDatabaseUtil.getHead(head))
         .withName(langName)
         .withLoreLine(langPlayer.getLocalized("menu.settings.lang." + lang + ".lore"))
         .withClickAction((type, ctx) -> {

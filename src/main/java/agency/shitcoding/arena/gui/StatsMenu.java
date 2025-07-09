@@ -1,6 +1,8 @@
 package agency.shitcoding.arena.gui;
 
 import static agency.shitcoding.arena.gui.ArenaControlPanels.arrowsAndBackButton;
+import static net.jellycraft.guiapi.api.fluent.ItemBuilder.itemBuilder;
+import static net.jellycraft.guiapi.api.fluent.ViewBuilder.viewBuilder;
 
 import agency.shitcoding.arena.ArenaShooter;
 import agency.shitcoding.arena.localization.LangPlayer;
@@ -13,8 +15,6 @@ import java.util.Locale;
 import net.jellycraft.guiapi.Item;
 import net.jellycraft.guiapi.api.InventorySize;
 import net.jellycraft.guiapi.api.ViewRenderer;
-import net.jellycraft.guiapi.api.fluent.ItemBuilder;
-import net.jellycraft.guiapi.api.fluent.ViewBuilder;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import org.bukkit.Material;
@@ -41,10 +41,9 @@ public class StatsMenu {
 
     var cp = arrowsAndBackButton(player, () -> new ArenaMainMenu(player.getPlayer()).render());
 
-    var view = ViewBuilder.builder()
+    var view = viewBuilder(player.getPlayer())
             .withTitle(Component.text(player.getLocalized("menu.stat.title")))
             .withSize(InventorySize.DOUBLE_CHEST)
-            .withHolder(player.getPlayer())
             .build()
             .toPaginatedView()
             .withItems(gameOutcomes)
@@ -74,8 +73,7 @@ public class StatsMenu {
         ? player.getLocalized("menu.stat.item.killDeathRatio", gameOutcome.kills())
         : player.getLocalized("menu.stat.item.killDeathRatio", (float)gameOutcome.kills() / gameOutcome.deaths());
 
-    return ItemBuilder.builder()
-        .withMaterial(gameOutcome.isWon() ? Material.IRON_SWORD : Material.STONE_SWORD)
+    return itemBuilder(gameOutcome.isWon() ? Material.IRON_SWORD : Material.STONE_SWORD)
         .withName(mm.deserialize(name))
         .withLoreLine(mm.deserialize(playedAt))
         .withLoreLine(mm.deserialize(kills))

@@ -1,10 +1,13 @@
 package agency.shitcoding.arena.gui;
 
+import static agency.shitcoding.arena.util.ItemStackUtil.addModelData;
+import static net.jellycraft.guiapi.api.fluent.ItemBuilder.itemBuilder;
+import static net.kyori.adventure.text.minimessage.MiniMessage.miniMessage;
+
 import agency.shitcoding.arena.localization.LangPlayer;
 import net.jellycraft.guiapi.api.ItemSlot;
 import net.jellycraft.guiapi.api.clickactions.BackwardClickAction;
 import net.jellycraft.guiapi.api.clickactions.ForwardClickAction;
-import net.jellycraft.guiapi.api.fluent.ItemBuilder;
 import net.jellycraft.guiapi.api.paginated.ControlPanel;
 import net.jellycraft.guiapi.api.paginated.ControlPanelItem;
 import net.jellycraft.guiapi.api.paginated.ControlPanelVisibility;
@@ -13,17 +16,13 @@ import net.kyori.adventure.text.format.TextColor;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import org.bukkit.Material;
 
-import static agency.shitcoding.arena.util.ItemStackUtil.addModelData;
-import static net.kyori.adventure.text.minimessage.MiniMessage.miniMessage;
-
 public interface ArenaControlPanels {
   static ControlPanelItem prevArrowNamed(Component prevName) {
     return new ControlPanelItem(
         ControlPanelVisibility.NOT_FIRST_PAGE,
         addModelData(
             "previous",
-            ItemBuilder.builder()
-                .withMaterial(Material.ARROW)
+            itemBuilder(Material.ARROW)
                 .withName(prevName)
                 .withClickAction(new BackwardClickAction())
                 .withSlot(2)
@@ -35,8 +34,7 @@ public interface ArenaControlPanels {
         ControlPanelVisibility.NOT_LAST_PAGE,
         addModelData(
             "next",
-            ItemBuilder.builder()
-                .withMaterial(Material.ARROW)
+            itemBuilder(Material.ARROW)
                 .withName(nextName)
                 .withClickAction(new ForwardClickAction())
                 .withSlot(6)
@@ -64,8 +62,7 @@ public interface ArenaControlPanels {
   static ItemSlot backButton(LangPlayer player, Runnable action) {
     return addModelData(
         "back",
-        ItemBuilder.builder()
-            .withMaterial(Material.ARROW)
+        itemBuilder(Material.ARROW)
             .withName(
                 Component.text(
                     player.getLocalized("menu.backButton.name"), TextColor.color(0xbb2222)))

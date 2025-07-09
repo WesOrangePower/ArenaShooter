@@ -1,6 +1,8 @@
 package agency.shitcoding.arena.gui;
 
 import static agency.shitcoding.arena.gui.ArenaControlPanels.backButton;
+import static net.jellycraft.guiapi.api.fluent.ItemBuilder.itemBuilder;
+import static net.jellycraft.guiapi.api.fluent.ViewBuilder.viewBuilder;
 import static org.bukkit.persistence.PersistentDataType.STRING;
 
 import agency.shitcoding.arena.WeaponItemGenerator;
@@ -11,8 +13,6 @@ import agency.shitcoding.arena.models.Weapon;
 import net.jellycraft.guiapi.Item;
 import net.jellycraft.guiapi.api.InventorySize;
 import net.jellycraft.guiapi.api.ViewRenderer;
-import net.jellycraft.guiapi.api.fluent.ItemBuilder;
-import net.jellycraft.guiapi.api.fluent.ViewBuilder;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.entity.Player;
@@ -29,8 +29,7 @@ public class WeaponChooserMenu {
   }
 
   public void render() {
-    var builder = ViewBuilder.builder()
-        .withHolder(player.getPlayer())
+    var builder = viewBuilder(player.getPlayer())
         .withTitle(player.getLocalized("menu.cosmetics.weaponChooser.title"))
         .withSize(InventorySize.CHEST);
 
@@ -63,7 +62,7 @@ public class WeaponChooserMenu {
   }
 
   private Item defaultWeaponItem(ItemStack item, boolean equals) {
-    var builder = ItemBuilder.builder().withItemStack(item);
+    var builder = itemBuilder(item);
 
     if (equals) {
       builder.withEnchantmentGlare();
@@ -82,7 +81,7 @@ public class WeaponChooserMenu {
   }
 
   private Item modWeaponItem(ItemStack item, String mod, boolean equals) {
-    var builder = ItemBuilder.builder().withItemStack(item);
+    var builder = itemBuilder(item);
 
     if (equals) {
       builder.withEnchantmentGlare();

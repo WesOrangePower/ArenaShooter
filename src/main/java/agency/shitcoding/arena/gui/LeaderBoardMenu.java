@@ -1,6 +1,8 @@
 package agency.shitcoding.arena.gui;
 
 import static agency.shitcoding.arena.gui.ArenaControlPanels.arrowsAndBackButton;
+import static net.jellycraft.guiapi.api.fluent.ItemBuilder.itemBuilder;
+import static net.jellycraft.guiapi.api.fluent.ViewBuilder.viewBuilder;
 
 import agency.shitcoding.arena.ArenaShooter;
 import agency.shitcoding.arena.localization.LangPlayer;
@@ -11,8 +13,6 @@ import java.util.Optional;
 import net.jellycraft.guiapi.Item;
 import net.jellycraft.guiapi.api.InventorySize;
 import net.jellycraft.guiapi.api.ViewRenderer;
-import net.jellycraft.guiapi.api.fluent.ItemBuilder;
-import net.jellycraft.guiapi.api.fluent.ViewBuilder;
 import net.jellycraft.guiapi.api.paginated.ControlPanelItem;
 import net.jellycraft.guiapi.api.paginated.ControlPanelVisibility;
 import net.kyori.adventure.text.Component;
@@ -55,21 +55,19 @@ public class LeaderBoardMenu {
     cp.slots[8] =
         new ControlPanelItem(
             ControlPanelVisibility.ALWAYS,
-            ItemBuilder.builder()
-                .withMaterial(Material.COMPARATOR)
+            itemBuilder(Material.COMPARATOR)
                 .withName(mm.deserialize(player.getLocalized("menu.lead.item.criteria")))
                 .withLoreLine(mm.deserialize(player.getLocalized("menu.lead.item.criteria.lore")))
                 .withClickAction((ct, ctx) -> new LeaderBoardCriterionChooserMenu(player).open())
                 .build());
 
     var view =
-        ViewBuilder.builder()
+        viewBuilder(player.getPlayer())
             .withTitle(
                 player.getRichLocalized(
                     "menu.lead.title",
                     player.getLocalized("menu.lead.criterion." + criterion.name().toLowerCase())))
             .withSize(InventorySize.DOUBLE_CHEST)
-            .withHolder(player.getPlayer())
             .build()
             .toPaginatedView()
             .withItems(leaderboardItems)
@@ -89,8 +87,7 @@ public class LeaderBoardMenu {
     Optional.ofNullable(Bukkit.getPlayer(statistics.playerName))
         .ifPresent(p -> head.editMeta(meta -> ((SkullMeta) meta).setOwningPlayer(p)));
 
-    return ItemBuilder.builder()
-        .withMaterial(Material.PLAYER_HEAD)
+    return itemBuilder(Material.PLAYER_HEAD)
         .withName(name)
         .withLoreLine(
             Component.text(

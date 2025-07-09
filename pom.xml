@@ -102,7 +102,7 @@
     <dependency>
       <groupId>net.jellycraft</groupId>
       <artifactId>JellyGuiApi</artifactId>
-      <version>1.0</version>
+      <version>1.1</version>
       <scope>provided</scope>
     </dependency>
     <dependency>
@@ -136,8 +136,8 @@
     </dependency>
     <dependency>
       <groupId>com.github.seeseemelk</groupId>
-      <artifactId>MockBukkit-v1.20</artifactId>
-      <version>3.80.0</version>
+      <artifactId>MockBukkit-v1.21</artifactId>
+      <version>3.133.0</version>
       <scope>test</scope>
     </dependency>
   </dependencies>

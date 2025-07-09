@@ -1,5 +1,8 @@
 package agency.shitcoding.arena.gui.settings;
 
+import static net.jellycraft.guiapi.api.fluent.ItemBuilder.itemBuilder;
+import static net.jellycraft.guiapi.api.fluent.ViewBuilder.viewBuilder;
+
 import agency.shitcoding.arena.gamestate.team.ETeam;
 import agency.shitcoding.arena.gamestate.team.GameTeam;
 import agency.shitcoding.arena.gamestate.team.TeamGame;
@@ -10,7 +13,6 @@ import net.jellycraft.guiapi.api.InventorySize;
 import net.jellycraft.guiapi.api.ItemSlot;
 import net.jellycraft.guiapi.api.ViewRegistry;
 import net.jellycraft.guiapi.api.ViewRenderer;
-import net.jellycraft.guiapi.api.fluent.ItemBuilder;
 import net.jellycraft.guiapi.api.fluent.ViewBuilder;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
@@ -26,7 +28,7 @@ public class TeamSelectGui {
 
   public TeamSelectGui(Player player, TeamGame game) {
     this.player = new LangPlayer(player);
-    viewBuilder = ViewBuilder.builder().withHolder(player);
+    viewBuilder = viewBuilder(player);
     this.game = game;
   }
 
@@ -50,8 +52,7 @@ public class TeamSelectGui {
 
   private ItemSlot makeItemSlot(ETeam eTeam, GameTeam gameTeam, Set<Player> players, int slot) {
     var playerNames = players.stream().map(Player::getName).toArray(String[]::new);
-    var builder =  ItemBuilder.builder()
-        .withMaterial(eTeam.getIcon())
+    var builder =  itemBuilder(eTeam.getIcon())
         .withName(gameTeam.getTeamMeta().getDisplayComponent(player.getLangContext()))
         .withLoreLine(Component.text(player.getLocalized("menu.join.chooseTeamButton.lore",
             players.size(), NamedTextColor.DARK_PURPLE)))
