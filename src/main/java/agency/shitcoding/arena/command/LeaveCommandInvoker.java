@@ -6,10 +6,10 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabCompleter;
-import org.jetbrains.annotations.NotNull;
+import org.jspecify.annotations.Nullable;
 
 public final class LeaveCommandInvoker implements TabCompleter, CommandExecutor {
-  private static LeaveCommandInvoker instance = null;
+  private static @Nullable LeaveCommandInvoker instance = null;
 
   public static LeaveCommandInvoker getInstance() {
     if (instance == null) {
@@ -20,20 +20,20 @@ public final class LeaveCommandInvoker implements TabCompleter, CommandExecutor 
 
   @Override
   public boolean onCommand(
-      @NotNull CommandSender sender,
-      @NotNull Command command,
-      @NotNull String label,
-      @NotNull String[] args) {
+      CommandSender sender,
+      Command command,
+      String label,
+      String[] args) {
     new ArenaLeaveCmd(sender, args).execute();
     return true;
   }
 
   @Override
   public List<String> onTabComplete(
-      @NotNull CommandSender sender,
-      @NotNull Command command,
-      @NotNull String label,
-      @NotNull String[] args) {
+      CommandSender sender,
+      Command command,
+      String label,
+      String[] args) {
     return List.of();
   }
 }

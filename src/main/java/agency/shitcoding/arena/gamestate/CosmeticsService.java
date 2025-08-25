@@ -1,18 +1,17 @@
 package agency.shitcoding.arena.gamestate;
 
+import static org.bukkit.persistence.PersistentDataType.STRING;
+
 import agency.shitcoding.arena.WeaponItemGenerator;
 import agency.shitcoding.arena.models.Keys;
 import agency.shitcoding.arena.models.Weapon;
 import agency.shitcoding.arena.storage.StorageProvider;
+import java.util.*;
+import java.util.stream.Collectors;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
-import org.jetbrains.annotations.Nullable;
-
-import java.util.*;
-import java.util.stream.Collectors;
-
-import static org.bukkit.persistence.PersistentDataType.STRING;
+import org.jspecify.annotations.Nullable;
 
 public class CosmeticsService {
 
@@ -32,7 +31,7 @@ public class CosmeticsService {
                         Collectors.toList(), list -> list.toArray(WeaponMod[]::new))));
   }
 
-  private static CosmeticsService instance = null;
+  private static @Nullable CosmeticsService instance = null;
 
   public static CosmeticsService getInstance() {
     if (instance == null) {
@@ -117,6 +116,7 @@ public class CosmeticsService {
     return val == null ? null : new WeaponMod(weapon, val);
   }
 
+  @SuppressWarnings("NullableProblems")
   public List<WeaponMod> getAllAvailableWeaponMods(String playerName) {
     return StorageProvider.getCosmeticsStorage().getWeaponMods(playerName)
         .stream()

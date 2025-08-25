@@ -55,7 +55,7 @@ public abstract class TeamGame extends Game {
       var teamMeta = score.getTeam().getTeamMeta();
       var teamName = new LangContext().getLocalized(teamMeta.getDisplayName());
       var qualifier = teamMeta.getChatColor() + teamName;
-      scoreboardObjective.getScore(qualifier).setScore(score.getScore());
+      requireNonNull(scoreboardObjective).getScore(qualifier).setScore(score.getScore());
     }
   }
 

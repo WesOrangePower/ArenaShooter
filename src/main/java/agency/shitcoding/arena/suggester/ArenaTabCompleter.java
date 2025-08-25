@@ -20,7 +20,7 @@ import lombok.RequiredArgsConstructor;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
-import org.jetbrains.annotations.Nullable;
+import org.jspecify.annotations.Nullable;
 
 import static java.util.stream.IntStream.range;
 
@@ -126,7 +126,7 @@ public class ArenaTabCompleter {
     return resolveNonAdmin();
   }
 
-  private List<String> resolveNonAdmin() {
+  private @Nullable List<String> resolveNonAdmin() {
     if (args.length == 1) {
       var list = new ArrayList<>(List.of("join", "host", "leave"));
       if (TournamentAccessor.getInstance().hasTournament()) {
@@ -142,7 +142,7 @@ public class ArenaTabCompleter {
     };
   }
 
-  private List<String> resolveAdmin() {
+  private @Nullable List<String> resolveAdmin() {
     if (args.length == 1) {
       return List.of("set", "create", "host", "join", "leave", "utils", "forceStart", "tournament", "cosmetics");
     }
@@ -176,15 +176,15 @@ public class ArenaTabCompleter {
     return List.of();
   }
 
-  private List<String> resolveForceStart() {
+  private @Nullable List<String> resolveForceStart() {
     return forceStartSuggester.suggest(sender, args);
   }
 
-  private List<String> resolveTournament() {
+  private @Nullable List<String> resolveTournament() {
     return tournamentSuggester.suggest(sender, args);
   }
 
-  private List<String> resolveJoin() {
+  private @Nullable List<String> resolveJoin() {
     if (args.length == 2) {
       return GameOrchestrator.getInstance().getUsedArenaNames();
     }
@@ -244,7 +244,7 @@ public class ArenaTabCompleter {
     return List.of();
   }
 
-  private List<String> resolveCosmetics() {
+  private @Nullable List<String> resolveCosmetics() {
     return ArenaCosmeticsCmd.SUGGESTER.suggest(sender, args);
   }
 }

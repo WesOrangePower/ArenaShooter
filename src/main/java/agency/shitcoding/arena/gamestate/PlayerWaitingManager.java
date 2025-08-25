@@ -5,13 +5,14 @@ import agency.shitcoding.arena.localization.LangPlayer;
 import lombok.RequiredArgsConstructor;
 import org.bukkit.Bukkit;
 import org.bukkit.scheduler.BukkitTask;
+import org.jspecify.annotations.Nullable;
 
 @RequiredArgsConstructor
 public class PlayerWaitingManager {
 
   private final Game game;
-  private BukkitTask playerWaitingTimerTask;
-  private BukkitTask gameStartingTask;
+  private @Nullable BukkitTask playerWaitingTimerTask;
+  private @Nullable BukkitTask gameStartingTask;
   public static final int SECONDS_TO_START = 30;
 
 

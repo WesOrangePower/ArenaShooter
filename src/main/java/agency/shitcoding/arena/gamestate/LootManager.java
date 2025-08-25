@@ -26,9 +26,6 @@ public class LootManager {
   }
 
   public void cleanup() {
-    if (lootPoints == null) {
-      return;
-    }
     for (LootPointInstance lootPoint : lootPoints.values()) {
       Optional.ofNullable(lootPoint.getSpawnTask()).ifPresent(BukkitTask::cancel);
       Location location = lootPoint.getLootPoint().getLocation();

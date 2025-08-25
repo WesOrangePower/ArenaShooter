@@ -12,7 +12,7 @@ import java.util.List;
 import java.util.Optional;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
-import org.jetbrains.annotations.NotNull;
+import org.jspecify.annotations.Nullable;
 
 public class ArenaJoinCmd extends CommandInst {
 
@@ -20,9 +20,9 @@ public class ArenaJoinCmd extends CommandInst {
   public static final int OPT_ARG = 2;
   public static final int MIN_ARGS = 2;
   private final GameOrchestrator gameOrchestrator = GameOrchestrator.getInstance();
-  private LangPlayer lang;
+  private @Nullable LangPlayer lang;
 
-  public ArenaJoinCmd(@NotNull CommandSender sender, @NotNull String[] args) {
+  public ArenaJoinCmd(CommandSender sender, String[] args) {
     super(sender, args);
   }
 
@@ -66,6 +66,7 @@ public class ArenaJoinCmd extends CommandInst {
   private boolean notValid() {
     List<String> arenaNames = gameOrchestrator.getUsedArenaNames();
     String joined = String.join(", ", arenaNames);
+    assert lang != null;
     if (arenaNames.isEmpty()) {
       lang.sendRichLocalized("command.join.noGames");
       return true;

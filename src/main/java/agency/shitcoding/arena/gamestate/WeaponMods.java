@@ -2,7 +2,7 @@ package agency.shitcoding.arena.gamestate;
 
 import agency.shitcoding.arena.models.Weapon;
 import org.jetbrains.annotations.Contract;
-import org.jetbrains.annotations.Nullable;
+import org.jspecify.annotations.Nullable;
 
 public class WeaponMods {
   private static final WeaponMod BUBBLE_GUN = new WeaponMod(Weapon.RAILGUN, "bubble_gun");

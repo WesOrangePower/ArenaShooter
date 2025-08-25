@@ -3,8 +3,7 @@ package agency.shitcoding.arena.suggester;
 import java.util.Collections;
 import java.util.List;
 import org.bukkit.command.CommandSender;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import org.jspecify.annotations.Nullable;
 
 public class SuggesterImpl implements Suggester {
 
@@ -15,7 +14,7 @@ public class SuggesterImpl implements Suggester {
   }
 
   @Override
-  public @Nullable List<String> suggest(@NotNull CommandSender sender, String[] args) {
+  public @Nullable List<String> suggest(CommandSender sender, String[] args) {
     for (SuggestionRule rule : rules) {
       if (rule.condition().test(sender, args)) {
         return rule.suggestions().get();
@@ -25,7 +24,7 @@ public class SuggesterImpl implements Suggester {
   }
 
   @Override
-  public @NotNull Suggester combine(@NotNull Suggester other) {
+  public Suggester combine(Suggester other) {
     rules.addAll(((SuggesterImpl) other).rules);
     return this;
   }

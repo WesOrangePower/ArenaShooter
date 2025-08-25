@@ -16,7 +16,7 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.PotionMeta;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
-import org.jetbrains.annotations.Nullable;
+import org.jspecify.annotations.Nullable;
 
 import java.util.Optional;
 import java.util.function.Function;
@@ -257,7 +257,7 @@ public enum Powerup {
     return true;
   }
 
-  private static boolean giveWeaponOrAmmo(Player player, Weapon weapon) {
+  private static boolean giveWeaponOrAmmo(Player player, @Nullable Weapon weapon) {
     if (weapon == null) {
       return false;
     }
@@ -323,7 +323,7 @@ public enum Powerup {
     return weapon.generateItem();
   }
 
-  static ItemStack potionItem(Color color) {
+  static ItemStack potionItem(@SuppressWarnings("SameParameterValue") Color color) {
     var is = new ItemStack(Material.POTION);
     var meta = ((PotionMeta) is.getItemMeta());
     meta.setColor(color);

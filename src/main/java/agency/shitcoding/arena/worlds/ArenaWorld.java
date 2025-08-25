@@ -18,14 +18,14 @@ import net.kyori.adventure.util.TriState;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.WorldCreator;
-import org.jetbrains.annotations.NotNull;
+import org.jspecify.annotations.Nullable;
 
 @RequiredArgsConstructor
 public class ArenaWorld {
   @Getter private final Arena origin;
-  private Arena shifted = null;
+  private @Nullable Arena shifted = null;
   @Getter private boolean generated;
-  private World world;
+  private @Nullable World world;
 
   public void generate() {
     if (generated) {
@@ -82,7 +82,7 @@ public class ArenaWorld {
     new File(target, "uid.dat").delete();
   }
 
-  private @NotNull WorldCreator getWorldCreator(String worldName) {
+  private WorldCreator getWorldCreator(String worldName) {
     var world = origin.getUpperBound().getWorld();
     WorldCreator worldCreator = new WorldCreator(worldName);
     worldCreator.environment(world.getEnvironment());

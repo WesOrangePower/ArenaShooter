@@ -22,10 +22,12 @@ import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.entity.Item;
 import org.bukkit.entity.Player;
+import org.jspecify.annotations.Nullable;
 
 public class CTFGame extends TeamGame {
-  @Getter private FlagManager flagManager;
-  protected LootPointFilter lootPointFilter = this::lootPointFilter;
+  @Getter @Nullable
+  private FlagManager flagManager;
+  protected final LootPointFilter lootPointFilter = this::lootPointFilter;
 
   @Override
   public LootPointFilter getLootPointFilter() {
@@ -122,6 +124,7 @@ public class CTFGame extends TeamGame {
       return;
     }
 
+    assert flagManager != null;
     Flag carriedFlag = flagManager.getFlagByCarrier(player);
     if (carriedFlag != null) {
       flagManager.dropAtPlayer(player, carriedFlag);
@@ -152,9 +155,10 @@ public class CTFGame extends TeamGame {
       return;
     }
     GameTeam playerTeam = teamOpt.get();
+    ETeam team = requireNonNull(ETeam.getTeamByMaterial(item.getItemStack().getType()));
     GameTeam flagTeam =
-        getTeamManager().getTeam(ETeam.getTeamByMaterial(item.getItemStack().getType()));
-    Flag flag = flagManager.getFlag(flagTeam.getETeam());
+        getTeamManager().getTeam(team);
+    Flag flag = requireNonNull(flagManager).getFlag(flagTeam.getETeam());
 
     if (flag.isDropped()) {
       item.remove();

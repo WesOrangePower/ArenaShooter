@@ -6,6 +6,7 @@ import lombok.Setter;
 import org.bukkit.entity.Player;
 
 import java.util.Optional;
+import org.jspecify.annotations.Nullable;
 
 public class Flag {
   @Getter
@@ -13,6 +14,7 @@ public class Flag {
   @Setter
   private State state;
   @Setter
+  @Nullable
   private Player carrier;
 
   Flag(ETeam team) {

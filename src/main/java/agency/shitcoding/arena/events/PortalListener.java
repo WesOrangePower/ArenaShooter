@@ -11,11 +11,17 @@ public class PortalListener implements Listener {
   @EventHandler
   public void onPortalEnter(PlayerMoveEvent e) {
     Player player = e.getPlayer();
-    GameOrchestrator.getInstance().getGameByPlayer(player)
-        .ifPresent(game -> game.getArena().getPortals().stream()
-            .filter(portal -> portal.getBoundingBox()
-                .contains(player.getLocation().toCenterLocation().toVector()))
-            .findFirst()
-            .ifPresent(portal -> portal.teleport(player)));
+    GameOrchestrator.getInstance()
+        .getGameByPlayer(player)
+        .flatMap(
+            game ->
+                game.getArena().getPortals().stream()
+                    .filter(
+                        portal ->
+                            portal
+                                .getBoundingBox()
+                                .contains(player.getLocation().toCenterLocation().toVector()))
+                    .findFirst())
+        .ifPresent(portal -> portal.teleport(player));
   }
 }

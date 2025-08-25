@@ -10,10 +10,11 @@ import org.bukkit.entity.Player;
 import java.time.Instant;
 import java.util.Set;
 import java.util.stream.Collectors;
+import org.jspecify.annotations.Nullable;
 
 public class LMSGame extends DeathMatchGame {
 
-  private Player winner;
+  private @Nullable Player winner;
 
   public LMSGame(ArenaWorld arena) {
     this(arena, RuleSet.LMS, RuleSet.LMS.getDefaultGameRules());

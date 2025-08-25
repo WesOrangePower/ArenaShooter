@@ -5,9 +5,11 @@ import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Guardian;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Squid;
+import org.jspecify.annotations.NullMarked;
 
 import static agency.shitcoding.arena.events.listeners.IgnoreEntities.ignoreEntity;
 
+@NullMarked
 public class GuardianLaser implements AutoCloseable {
 
   LivingEntity target;

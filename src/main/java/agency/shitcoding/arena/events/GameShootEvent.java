@@ -6,7 +6,6 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import org.bukkit.event.HandlerList;
 import org.bukkit.event.player.PlayerInteractEvent;
-import org.jetbrains.annotations.NotNull;
 
 @EqualsAndHashCode(callSuper = true)
 @Data
@@ -24,12 +23,13 @@ public class GameShootEvent extends GameEvent {
     this.weapon = weapon;
   }
 
+  @SuppressWarnings("unused")
   public static HandlerList getHandlerList() {
     return handlers;
   }
 
   @Override
-  public @NotNull HandlerList getHandlers() {
+  public HandlerList getHandlers() {
     return handlers;
   }
 }

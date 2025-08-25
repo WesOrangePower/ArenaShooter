@@ -4,9 +4,10 @@ import agency.shitcoding.arena.models.Arena;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import org.jspecify.annotations.Nullable;
 
 public class WorldFactory implements WorldManager {
-  private static WorldFactory instance;
+  private static @Nullable WorldFactory instance;
 
   private final List<ArenaWorld> arenaWorlds = new ArrayList<>();
 

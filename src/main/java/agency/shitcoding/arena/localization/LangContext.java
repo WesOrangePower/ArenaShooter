@@ -5,23 +5,21 @@ import static net.kyori.adventure.text.minimessage.MiniMessage.miniMessage;
 import agency.shitcoding.arena.gamestate.announcer.AnnouncerConstant;
 import agency.shitcoding.arena.SoundConstants;
 import java.util.List;
-import java.util.Locale;
 import lombok.Getter;
 import net.kyori.adventure.text.Component;
+import org.jspecify.annotations.Nullable;
 
 @Getter
 public class LangContext implements Announcer {
   public static final LangContext DEFAULT = new LangContext(SupportedLocale.EN);
 
   private final String locale;
-  private  SupportedLocale supportedLocale = null;
+  private @Nullable SupportedLocale supportedLocale = null;
 
   public LangContext(String locale) {
     this.locale = locale;
   }
-  public LangContext(Locale locale) {
-    this.locale = locale.getLanguage();
-  }
+
   public LangContext(SupportedLocale locale) {
     this.locale = locale.getLocale();
     this.supportedLocale = locale;

@@ -1,8 +1,6 @@
 package agency.shitcoding.arena.localization;
 
-
 import agency.shitcoding.arena.models.Keys;
-import java.util.Optional;
 import lombok.Getter;
 import net.kyori.adventure.text.Component;
 import org.bukkit.entity.Player;
@@ -17,25 +15,20 @@ public class LangPlayer {
 
   public LangPlayer(Player player) {
     this.player = player;
-    Optional.ofNullable(player).map(
-            p -> p
-                .getPersistentDataContainer()
-                .get(Keys.getPlayerLocalizationKey(), PersistentDataType.STRING)
-        )
-        .ifPresentOrElse(
-            locale -> this.langContext = new LangContext(locale),
-            () -> {
-              if (player == null) {
-                langContext = new LangContext();
-                return;
-              }
-              var locale = player.locale().getLanguage();
-              if (!LocalizationService.getInstance().isSupported(locale)) {
-                locale = LocalizationService.getInstance().getDefaultLocale();
-              }
-              setLocale(locale);
-            }
-        );
+    var locStr =
+        player
+            .getPersistentDataContainer()
+            .get(Keys.getPlayerLocalizationKey(), PersistentDataType.STRING);
+
+    if (locStr != null) {
+      langContext = new LangContext(locStr);
+      return;
+    }
+    var locale = player.locale().getLanguage();
+    if (!LocalizationService.getInstance().isSupported(locale)) {
+      locale = LocalizationService.getInstance().getDefaultLocale();
+    }
+    setLocale(locale);
   }
 
   public static LangPlayer of(Player player) {
@@ -60,6 +53,8 @@ public class LangPlayer {
 
   public void setLocale(String lang) {
     langContext = new LangContext(lang);
-    player.getPersistentDataContainer().set(Keys.getPlayerLocalizationKey(), PersistentDataType.STRING, lang);
+    player
+        .getPersistentDataContainer()
+        .set(Keys.getPlayerLocalizationKey(), PersistentDataType.STRING, lang);
   }
 }

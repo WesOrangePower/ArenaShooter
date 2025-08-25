@@ -1,15 +1,13 @@
 package agency.shitcoding.arena.suggester;
 
 import org.bukkit.command.CommandSender;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import org.jspecify.annotations.Nullable;
 
 import java.util.List;
 
 public interface Suggester {
   @Nullable
-  List<String> suggest(@NotNull CommandSender sender, @NotNull String[] args);
+  List<String> suggest(CommandSender sender, String[] args);
 
-  @NotNull
-  Suggester combine(@NotNull Suggester other);
+  Suggester combine(Suggester other);
 }

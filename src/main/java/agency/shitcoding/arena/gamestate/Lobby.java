@@ -19,10 +19,11 @@ import org.bukkit.util.BoundingBox;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
+import org.jspecify.annotations.Nullable;
 
 public final class Lobby {
 
-  private static Lobby instance;
+  private static @Nullable Lobby instance;
 
   private Lobby() {
   }

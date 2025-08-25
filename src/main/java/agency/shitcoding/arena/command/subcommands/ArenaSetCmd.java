@@ -1,16 +1,17 @@
 package agency.shitcoding.arena.command.subcommands;
 
+import static java.util.Objects.requireNonNull;
+
 import agency.shitcoding.arena.command.ArenaCommand;
 import agency.shitcoding.arena.command.CommandInst;
 import agency.shitcoding.arena.command.subcommands.arenamutation.ArenaSetAction;
 import agency.shitcoding.arena.command.subcommands.arenamutation.ArenaSetField;
 import agency.shitcoding.arena.models.Arena;
 import agency.shitcoding.arena.storage.StorageProvider;
-import org.bukkit.command.CommandSender;
-import org.jetbrains.annotations.NotNull;
-
 import java.util.Arrays;
 import java.util.Collection;
+import org.bukkit.command.CommandSender;
+import org.jspecify.annotations.Nullable;
 
 public class ArenaSetCmd extends CommandInst {
 
@@ -20,12 +21,12 @@ public class ArenaSetCmd extends CommandInst {
   public static final int ARG_VALUE = 4;
   public static final int MIN_ARGS = 4;
   public static final int ARGS_WITH_VALUE = 5;
-  private Arena arena;
-  private ArenaSetAction action;
-  private ArenaSetField field;
-  private String value;
+  private @Nullable Arena arena;
+  private @Nullable ArenaSetAction action;
+  private @Nullable ArenaSetField field;
+  private @Nullable String value;
 
-  public ArenaSetCmd(@NotNull CommandSender sender, @NotNull String[] args) {
+  public ArenaSetCmd(CommandSender sender, String[] args) {
     super(sender, args);
   }
 
@@ -37,7 +38,9 @@ public class ArenaSetCmd extends CommandInst {
   }
 
   private void setArena() {
-    field.applyValue.accept(arena, action, value, sender);
+    requireNonNull(field)
+        .applyValue
+        .accept(requireNonNull(arena), requireNonNull(action), value, sender);
   }
 
   private boolean validate() {
@@ -60,16 +63,16 @@ public class ArenaSetCmd extends CommandInst {
       action = ArenaSetAction.valueOf(args[ARG_ACTION].toUpperCase());
     } catch (IllegalArgumentException e) {
       sender.sendRichMessage(
-          "<dark_red>Invalid action. Valid actions are: " + Arrays.toString(ArenaSetAction.values()));
+          "<dark_red>Invalid action. Valid actions are: "
+              + Arrays.toString(ArenaSetAction.values()));
       return false;
     }
 
     try {
       field = ArenaSetField.valueOf(args[ARG_FIELD].toUpperCase());
     } catch (IllegalArgumentException e) {
-      Collection<ArenaSetField> supportedFields = Arrays.stream(ArenaSetField.values())
-          .filter(f -> f.supports.test(action))
-          .toList();
+      Collection<ArenaSetField> supportedFields =
+          Arrays.stream(ArenaSetField.values()).filter(f -> f.supports.test(action)).toList();
       sender.sendRichMessage("<red>Invalid field. Valid fields are: " + supportedFields);
       return false;
     }
@@ -96,5 +99,4 @@ public class ArenaSetCmd extends CommandInst {
 
     return true;
   }
-
 }

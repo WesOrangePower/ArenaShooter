@@ -13,10 +13,11 @@ import org.bukkit.Bukkit;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitTask;
+import org.jspecify.annotations.Nullable;
 
 public class OverdriveManager {
   private static final Set<Player> overdriveSet = new HashSet<>();
-  private static BukkitTask task = null;
+  private static @Nullable BukkitTask task = null;
   private static final AtomicInteger overdriveArmorTickCounter = new AtomicInteger(10);
 
   public static void setHealth(Player player, double health) {

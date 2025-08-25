@@ -1,5 +1,7 @@
 package agency.shitcoding.arena;
 
+import static java.util.Objects.requireNonNull;
+
 import agency.shitcoding.arena.command.ArenaCommandInvoker;
 import agency.shitcoding.arena.command.LeaveCommandInvoker;
 import agency.shitcoding.arena.events.PortalListener;
@@ -19,20 +21,22 @@ import com.comphenix.protocol.ProtocolLibrary;
 import com.comphenix.protocol.ProtocolManager;
 import com.onarandombox.MultiverseCore.MultiverseCore;
 import java.io.File;
-import java.util.Objects;
 import java.util.Optional;
 import lombok.Getter;
 import org.bukkit.Bukkit;
 import org.bukkit.event.Listener;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.jspecify.annotations.Nullable;
 
 @Getter
 public class ArenaShooter extends JavaPlugin {
 
+  @SuppressWarnings("NotNullFieldNotInitialized")
   private StatisticsService statisticsService;
-  private ProtocolManager protocolManager = null;
-  private String version = null;
+  private @Nullable ProtocolManager protocolManager = null;
+  private @Nullable String version = null;
 
+  @SuppressWarnings("NotNullFieldNotInitialized")
   private static ArenaShooter plugin;
 
   public static ArenaShooter getInstance() {
@@ -45,8 +49,8 @@ public class ArenaShooter extends JavaPlugin {
     CleanUp.onStart();
     registerListeners();
 
-    Objects.requireNonNull(getCommand("arena")).setExecutor(ArenaCommandInvoker.getInstance());
-    Objects.requireNonNull(getCommand("leave")).setExecutor(LeaveCommandInvoker.getInstance());
+    requireNonNull(getCommand("arena")).setExecutor(ArenaCommandInvoker.getInstance());
+    requireNonNull(getCommand("leave")).setExecutor(LeaveCommandInvoker.getInstance());
 
     GameOrchestrator.getInstance().unregisterScoreboard();
 
@@ -60,7 +64,7 @@ public class ArenaShooter extends JavaPlugin {
             () -> {
               protocolManager = ProtocolLibrary.getProtocolManager();
               if (isProtocolLibEnabled()) {
-                protocolManager.addPacketListener(new AnvilTextInputPacketAdapter());
+                requireNonNull(protocolManager).addPacketListener(new AnvilTextInputPacketAdapter());
               } else {
                 getLogger().info("ProtocolLib not found. Cannot use anvil text input");
               }

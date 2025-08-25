@@ -12,13 +12,14 @@ import lombok.NoArgsConstructor;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitTask;
+import org.jspecify.annotations.Nullable;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class Announcer implements AnnouncerQueue {
   private final ConcurrentMap<Player, ArrayDeque<Announcement>> queueMap = new ConcurrentHashMap<>();
   private final ConcurrentMap<Player, BukkitTask> taskMap = new ConcurrentHashMap<>();
 
-  private static Announcer instance;
+  private static @Nullable Announcer instance;
 
   public static Announcer getInstance() {
     if (instance == null) {

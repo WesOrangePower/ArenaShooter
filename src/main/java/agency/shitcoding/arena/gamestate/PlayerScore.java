@@ -5,7 +5,6 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import org.bukkit.entity.Player;
-import org.jetbrains.annotations.NotNull;
 
 @RequiredArgsConstructor
 @Data
@@ -17,7 +16,7 @@ public class PlayerScore implements Comparable<PlayerScore> {
   private PlayerStreak streak;
 
   @Override
-  public int compareTo(@NotNull PlayerScore o) {
+  public int compareTo(PlayerScore o) {
     return Integer.compare(o.score, this.score); // Reversed
   }
 }

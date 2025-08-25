@@ -30,7 +30,7 @@ import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.persistence.PersistentDataType;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.util.Vector;
-import org.jetbrains.annotations.NotNull;
+import org.jspecify.annotations.Nullable;
 
 public class AutoRespawnListener implements Listener {
 
@@ -109,7 +109,7 @@ public class AutoRespawnListener implements Listener {
             60);
   }
 
-  private static @NotNull Title getDeathTitle(LangPlayer l, Player killer) {
+  private static Title getDeathTitle(LangPlayer l, @Nullable Player killer) {
     String localized = l.getLocalized("game.death.title.title");
     if (l.getPlayer().getName().equals("markovav") && Math.random() > 0.95) {
       localized = "Bed destroyed";

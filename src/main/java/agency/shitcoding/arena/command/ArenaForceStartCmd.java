@@ -1,5 +1,9 @@
 package agency.shitcoding.arena.command;
 
+import static io.vavr.control.Validation.invalid;
+import static io.vavr.control.Validation.valid;
+import static java.util.Objects.requireNonNull;
+
 import agency.shitcoding.arena.gamestate.Game;
 import agency.shitcoding.arena.gamestate.GameOrchestrator;
 import agency.shitcoding.arena.localization.LangContext;
@@ -10,24 +14,22 @@ import io.vavr.control.Validation;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
-import org.jetbrains.annotations.NotNull;
-
-import static io.vavr.control.Validation.invalid;
-import static io.vavr.control.Validation.valid;
+import org.jspecify.annotations.Nullable;
 
 public class ArenaForceStartCmd extends CommandInst {
 
   public static final int PLAYER_NAME_ARG = 1;
 
-  private Game foundGame = null;
+  private @Nullable Game foundGame = null;
 
-  public ArenaForceStartCmd(@NotNull CommandSender sender, String[] args) {
+  public ArenaForceStartCmd(CommandSender sender, String[] args) {
     super(sender, args);
   }
 
   @Override
   public void execute() {
     if (validateAndSend()) {
+      assert foundGame != null;
       foundGame.forceStart();
       send("command.forceStart.success");
     }
@@ -58,7 +60,7 @@ public class ArenaForceStartCmd extends CommandInst {
     }
 
     var playerName = args[PLAYER_NAME_ARG];
-    var player = Bukkit.getPlayer(playerName);
+    var player = requireNonNull(Bukkit.getPlayer(playerName));
     var game = GameOrchestrator.getInstance().getGameByPlayer(player);
     if (game.isEmpty()) {
       return invalid("command.forceStart.notInGame");

@@ -14,9 +14,9 @@ import java.util.PriorityQueue;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Stream;
+import org.jspecify.annotations.Nullable;
 
-public class StatisticsServiceImpl implements
-    StatisticsService {
+public class StatisticsServiceImpl implements StatisticsService {
 
   private static final Logger logger = ArenaShooter.getInstance().getLogger();
 
@@ -26,7 +26,7 @@ public class StatisticsServiceImpl implements
 
   private boolean isDataFresh = false;
 
-  private GameOutcome[] outcomes;
+  private GameOutcome @Nullable [] outcomes = null;
 
   @SuppressWarnings("ResultOfMethodCallIgnored")
   public StatisticsServiceImpl(File file) {
@@ -45,7 +45,7 @@ public class StatisticsServiceImpl implements
   }
 
   @Override
-  public void endGame(GameOutcome[] gameOutcomes) {
+  public void endGame(GameOutcome @Nullable [] gameOutcomes) {
     if (disabled || gameOutcomes == null || gameOutcomes.length == 0) return;
 
     var charSink = Files.asCharSink(file, StandardCharsets.UTF_8, FileWriteMode.APPEND);
@@ -69,6 +69,7 @@ public class StatisticsServiceImpl implements
     load();
 
     var statistics = new Statistics();
+    assert outcomes != null;
     for (var outcome : outcomes) {
       if (outcome.playerName().equals(playerName)) {
         statistics.totalKills += outcome.kills();
@@ -79,9 +80,10 @@ public class StatisticsServiceImpl implements
     }
 
     statistics.playerName = playerName;
-    statistics.killDeathRatio = statistics.totalDeaths == 0
-        ? statistics.totalKills
-        : (float) statistics.totalKills / statistics.totalDeaths;
+    statistics.killDeathRatio =
+        statistics.totalDeaths == 0
+            ? statistics.totalKills
+            : (float) statistics.totalKills / statistics.totalDeaths;
 
     return statistics;
   }
@@ -97,6 +99,7 @@ public class StatisticsServiceImpl implements
     var result = new ArrayList<GameOutcome>();
 
     var playerName = player.getName();
+    assert outcomes != null;
     for (var outcome : outcomes) {
       if (outcome.playerName().equals(playerName)) {
         result.add(outcome);
@@ -114,10 +117,9 @@ public class StatisticsServiceImpl implements
     load();
 
     var leaderboard = new PriorityQueue<>(criteria.comparator);
-    var playerNames = Stream.of(outcomes)
-        .map(GameOutcome::playerName)
-        .distinct()
-        .toArray(String[]::new);
+    assert outcomes != null;
+    var playerNames =
+        Stream.of(outcomes).map(GameOutcome::playerName).distinct().toArray(String[]::new);
 
     for (var playerName : playerNames) {
       var statistics = getStatistics(playerName);
@@ -132,9 +134,7 @@ public class StatisticsServiceImpl implements
 
     try {
       var lines = Files.readLines(file, StandardCharsets.UTF_8);
-      this.outcomes = lines.stream()
-          .map(GameOutcome::fromString)
-          .toArray(GameOutcome[]::new);
+      this.outcomes = lines.stream().map(GameOutcome::fromString).toArray(GameOutcome[]::new);
       this.isDataFresh = true;
     } catch (IOException e) {
       logger.log(Level.WARNING, "Failed to read stats file.", e);

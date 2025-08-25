@@ -6,7 +6,6 @@ import agency.shitcoding.arena.gamestate.GameOrchestrator;
 import agency.shitcoding.arena.gamestate.team.GameTeam;
 import agency.shitcoding.arena.gamestate.team.TeamGame;
 import org.bukkit.GameMode;
-import org.bukkit.Material;
 import org.bukkit.Tag;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Fireball;

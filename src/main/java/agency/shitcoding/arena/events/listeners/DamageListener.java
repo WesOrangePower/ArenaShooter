@@ -43,12 +43,11 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.SkullMeta;
 import org.bukkit.persistence.PersistentDataType;
 import org.bukkit.util.Vector;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import org.jspecify.annotations.Nullable;
 
 public class DamageListener implements Listener {
 
-  private Random rng;
+  private final Random rng = new Random();
 
   public static void setBaseHealth(Player player) {
     var attribute = player.getAttribute(Attribute.MAX_HEALTH);
@@ -63,7 +62,7 @@ public class DamageListener implements Listener {
 
   @EventHandler
   public void onDamage(GameDamageEvent event) {
-    @Nullable Player dealer = event.getDealer();
+    Player dealer = event.getDealer();
     LivingEntity victim = event.getVictim();
 
     if (dealer != null && victim instanceof Player victimPlayer) {
@@ -138,7 +137,8 @@ public class DamageListener implements Listener {
     applyDamage(victim, dealer, event.getDamage());
   }
 
-  private void applyDamage(LivingEntity victim, Player dealer, double damage) {
+  @SuppressWarnings("UnstableApiUsage")
+  private void applyDamage(LivingEntity victim, @Nullable Player dealer, double damage) {
     if (victim instanceof Player victimPlayer) {
       if (victimPlayer.getGameMode() != GameMode.ADVENTURE) {
         return;
@@ -313,7 +313,7 @@ public class DamageListener implements Listener {
     }
   }
 
-  private void gibbingSequence(@NotNull Player victim, @Nullable Weapon weapon) {
+  private void gibbingSequence(Player victim, @Nullable Weapon weapon) {
     Location eyeLoc = victim.getEyeLocation();
     World world = eyeLoc.getWorld();
 
@@ -329,9 +329,6 @@ public class DamageListener implements Listener {
     head.editMeta(SkullMeta.class, meta -> meta.setOwningPlayer(victim));
     ItemStack bone = new ItemStack(Material.BONE);
     ItemStack meat = new ItemStack(Material.ROTTEN_FLESH);
-    if (rng == null) {
-      rng = new Random();
-    }
     Stream.of(head, bone, meat, meat.clone(), meat.clone(), meat.clone())
         .map(itemStack -> world.dropItem(eyeLoc, itemStack))
         .forEach(

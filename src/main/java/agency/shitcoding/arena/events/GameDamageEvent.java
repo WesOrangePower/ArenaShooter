@@ -11,8 +11,7 @@ import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Cancellable;
 import org.bukkit.event.HandlerList;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import org.jspecify.annotations.Nullable;
 
 @EqualsAndHashCode(callSuper = true)
 @Data
@@ -20,7 +19,7 @@ public class GameDamageEvent extends GameEvent implements Cancellable {
 
   private static final HandlerList handlers = new HandlerList();
   private @Nullable Player dealer;
-  private @NotNull LivingEntity victim;
+  private LivingEntity victim;
   private double damage;
   private Weapon weapon;
   private boolean cancelled;
@@ -31,11 +30,11 @@ public class GameDamageEvent extends GameEvent implements Cancellable {
   }
 
   @Override
-  public @NotNull HandlerList getHandlers() {
+  public HandlerList getHandlers() {
     return handlers;
   }
 
-  public GameDamageEvent(@Nullable Player dealer, @NotNull LivingEntity victim, double damage,
+  public GameDamageEvent(@Nullable Player dealer, LivingEntity victim, double damage,
       Weapon weapon) {
     this.dealer = dealer;
     this.victim = victim;

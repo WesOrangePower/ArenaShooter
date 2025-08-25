@@ -20,7 +20,9 @@ import lombok.Getter;
 import lombok.Setter;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
+import org.jspecify.annotations.Nullable;
 
+import static java.util.Objects.requireNonNull;
 import static net.kyori.adventure.text.minimessage.MiniMessage.miniMessage;
 
 @Getter
@@ -30,13 +32,12 @@ public class Tournament {
   private final int maxPlayerCount;
   private final Arena[] arenas;
   private final List<String> playerNames = new ArrayList<>();
-  private final Map<String, ETeam> playerTeams;
-  private final Game[] games;
+  private final @Nullable Map<String, ETeam> playerTeams;
+  private final @Nullable Game[] games;
   private final boolean publicJoin;
   private int arenaPointer = 0;
-  private Game currentGame;
-  @Setter
-  private GameRules gameRules;
+  private @Nullable Game currentGame;
+  @Setter private GameRules gameRules;
 
   public Tournament(
       boolean publicJoin, RuleSet ruleSet, int gameCount, int maxPlayerCount, Arena[] arenas) {
@@ -61,7 +62,7 @@ public class Tournament {
   }
 
   public boolean removePlayer(String player) {
-    if (isTeamTournament()) playerTeams.remove(player);
+    if (isTeamTournament() && playerTeams != null) playerTeams.remove(player);
     return playerNames.remove(player);
   }
 
@@ -81,7 +82,7 @@ public class Tournament {
     return arenaPointer;
   }
 
-  public Either<String, Void> addPlayer(Player player, ETeam team) {
+  public Either<String, @Nullable Void> addPlayer(Player player, @Nullable ETeam team) {
     if (playerNames.size() >= maxPlayerCount) {
       return Either.left("Tournament is full");
     }
@@ -94,6 +95,8 @@ public class Tournament {
 
     LangPlayer langPlayer = LangPlayer.of(player);
     if (isTeamTournament()) {
+      assert team != null;
+      assert playerTeams != null;
       if (playerTeams.containsKey(player.getName())) {
         return Either.left("Player already in tournament");
       }
@@ -122,12 +125,15 @@ public class Tournament {
     }
 
     final int gamePointer = arenaPointer;
-    currentGame = GameOrchestrator.getInstance().createGame(ruleSet, nextArena(), ruleSet.getDefaultGameRules());
+    currentGame =
+        GameOrchestrator.getInstance()
+            .createGame(ruleSet, nextArena(), ruleSet.getDefaultGameRules());
     games[gamePointer] = currentGame;
 
     for (String playerName : playerNames) {
       var p = Bukkit.getPlayer(playerName);
       if (p != null) {
+        assert currentGame != null;
         if (playerTeams != null) {
           ((TeamGame) currentGame).addPlayer(p, playerTeams.get(playerName));
         } else {
@@ -197,8 +203,7 @@ public class Tournament {
       }
     }
 
-    return scores.entrySet()
-        .stream()
+    return scores.entrySet().stream()
         .map(e -> new Tuple2<>(e.getKey(), e.getValue()))
         .sorted(Comparator.comparingInt(t -> t._2))
         .collect(Collectors.toList())
@@ -233,12 +238,14 @@ public class Tournament {
     currentGame = null;
   }
 
-  public ETeam nextAutoAssignedTeam() {
+  public @Nullable ETeam nextAutoAssignedTeam() {
     if (!isTeamTournament()) return null;
     return Arrays.stream(ETeam.values())
         .min(
             Comparator.comparingInt(
-                team -> (int) playerTeams.values().stream().filter(team::equals).count()))
+                team ->
+                    (int)
+                        requireNonNull(playerTeams).values().stream().filter(team::equals).count()))
         .orElseGet(() -> ETeam.values()[new Random().nextInt(ETeam.values().length)]);
   }
 }

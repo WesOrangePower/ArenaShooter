@@ -18,12 +18,11 @@ import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import org.jspecify.annotations.Nullable;
 
 public class ArenaCosmeticsCmd extends CommandInst {
 
-  public ArenaCosmeticsCmd(@NotNull CommandSender sender, @NotNull String[] args) {
+  public ArenaCosmeticsCmd(CommandSender sender, String[] args) {
     super(sender, args);
   }
 
@@ -58,6 +57,7 @@ public class ArenaCosmeticsCmd extends CommandInst {
     CosmeticsService cosmetics = CosmeticsService.getInstance();
     switch (op.type) {
       case LIST -> {
+        assert op.target != null;
         var mods = cosmetics.getAllAvailableWeaponMods(op.target);
         if (mods.isEmpty()) {
           sender.sendMessage(translateRich("command.cosmetics.noMods"));
@@ -77,14 +77,16 @@ public class ArenaCosmeticsCmd extends CommandInst {
         }
       }
       case ADD -> {
-        cosmetics.addWeaponMod(op.target, op.mod);
         assert op.mod != null;
+        assert op.target != null;
+        cosmetics.addWeaponMod(op.target, op.mod);
         sender.sendMessage(
             translateRich(
                 "command.cosmetics.added", translatePlain(op.mod.getTranslationKey()), op.target));
       }
       case REMOVE -> {
         assert op.mod != null;
+        assert op.target != null;
         cosmetics.removeWeaponMod(op.target, op.mod);
         sender.sendMessage(
             translateRich(
@@ -152,7 +154,7 @@ public class ArenaCosmeticsCmd extends CommandInst {
             .appendNewline()
             .append(translateRich("command.cosmetics.available"));
     for (int i = 0; i < WeaponMods.REGISTRY.length; i++) {
-      @NotNull WeaponMod weaponMod = WeaponMods.REGISTRY[i];
+      WeaponMod weaponMod = WeaponMods.REGISTRY[i];
       if (i != 0) {
         message = message.append(text(", "));
       }
@@ -162,8 +164,8 @@ public class ArenaCosmeticsCmd extends CommandInst {
   }
 
   private static class CosmeticsOperation {
-    private String target;
-    private Type type;
+    private @Nullable String target = "";
+    private Type type = Type.LIST;
     private @Nullable WeaponMod mod;
 
     private enum Type {

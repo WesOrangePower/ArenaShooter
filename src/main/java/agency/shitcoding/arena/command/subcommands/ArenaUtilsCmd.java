@@ -15,11 +15,10 @@ import java.util.Arrays;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
-import org.jetbrains.annotations.NotNull;
 
 public class ArenaUtilsCmd extends CommandInst {
 
-  public ArenaUtilsCmd(@NotNull CommandSender sender, @NotNull String[] args) {
+  public ArenaUtilsCmd(CommandSender sender, String[] args) {
     super(sender, args);
   }
 

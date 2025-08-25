@@ -7,13 +7,12 @@ import agency.shitcoding.arena.gamestate.Lobby;
 import agency.shitcoding.arena.localization.LangPlayer;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
-import org.jetbrains.annotations.NotNull;
 
 import java.util.Optional;
 
 public class ArenaLeaveCmd extends CommandInst {
 
-  public ArenaLeaveCmd(@NotNull CommandSender sender, @NotNull String[] args) {
+  public ArenaLeaveCmd(CommandSender sender, String[] args) {
     super(sender, args);
   }
 

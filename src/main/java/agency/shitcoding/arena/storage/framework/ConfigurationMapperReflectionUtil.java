@@ -10,9 +10,10 @@ import java.util.Set;
 
 import io.vavr.control.Try;
 import org.bukkit.configuration.serialization.ConfigurationSerializable;
-import org.jetbrains.annotations.Nullable;
+
 
 import java.util.List;
+import org.jspecify.annotations.Nullable;
 
 public class ConfigurationMapperReflectionUtil {
   public static Class<?> extractGenericType(Field field) {
@@ -99,7 +100,7 @@ public class ConfigurationMapperReflectionUtil {
     }
   }
 
-  public static Either<ConfigurationMapperValidationException, Void> setFieldValue(
+  public static Either<ConfigurationMapperValidationException, @Nullable Void> setFieldValue(
       Object o, Field field, Object value) {
     Method setter = getSetter(o.getClass(), field);
     if (setter == null) {

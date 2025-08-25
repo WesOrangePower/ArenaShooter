@@ -5,7 +5,6 @@ public final class Conf {
 
   public static final String arenasSection = "arena.arenas";
   public static final String lobbyLocation = "arena.lobby_location";
-  public static final String faqSection = "faqs";
   public static final String weaponModSection = "weapon_mods";
 
   public static class Arenas {
@@ -81,14 +80,6 @@ public final class Conf {
 
       private DoorTriggers() {}
     }
-  }
-
-  public static class Faqs {
-
-    public static final String title = "title";
-    public static final String content = "content";
-
-    private Faqs() {}
   }
 
   private Conf() {}

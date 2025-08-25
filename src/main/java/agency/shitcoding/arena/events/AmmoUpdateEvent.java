@@ -5,8 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import org.bukkit.entity.Player;
 import org.bukkit.event.HandlerList;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import org.jspecify.annotations.Nullable;
 
 @AllArgsConstructor
 @Getter
@@ -17,12 +16,13 @@ public class AmmoUpdateEvent extends GameEvent {
   private int ammoDelta;
   private @Nullable Ammo ammo;
 
+  @SuppressWarnings("unused")
   public static HandlerList getHandlerList() {
     return handlers;
   }
 
   @Override
-  public @NotNull HandlerList getHandlers() {
+  public HandlerList getHandlers() {
     return handlers;
   }
 }

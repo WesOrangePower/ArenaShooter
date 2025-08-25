@@ -6,7 +6,7 @@ import java.util.function.Supplier;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
 import org.bukkit.command.CommandSender;
-import org.jetbrains.annotations.NotNull;
+import org.jspecify.annotations.Nullable;
 
 @SuppressWarnings("unused")
 public class SuggesterRuleBuilder {
@@ -44,7 +44,7 @@ public class SuggesterRuleBuilder {
         (sender, args) -> args.length > argIndex && !args[argIndex].equalsIgnoreCase(value));
   }
 
-  public SuggesterBuilder suggest(@NotNull Supplier<List<String>> suggestions) {
+  public SuggesterBuilder suggest(Supplier<@Nullable List<String>> suggestions) {
     parent.addRule(new SuggestionRule(condition, suggestions));
     return parent;
   }

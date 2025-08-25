@@ -1,14 +1,14 @@
 package agency.shitcoding.arena.storage.framework;
 
-import org.bukkit.configuration.Configuration;
-import org.bukkit.configuration.ConfigurationSection;
-import org.bukkit.configuration.serialization.ConfigurationSerializable;
+import static agency.shitcoding.arena.storage.framework.ConfigurationMapperReflectionUtil.*;
+import static java.util.Objects.requireNonNull;
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
-
-import static agency.shitcoding.arena.storage.framework.ConfigurationMapperReflectionUtil.*;
+import org.bukkit.configuration.Configuration;
+import org.bukkit.configuration.ConfigurationSection;
+import org.bukkit.configuration.serialization.ConfigurationSerializable;
 
 class ConfigurationMapperReader<T extends ConfigurationMappable> {
   private final Class<T> type;
@@ -126,7 +126,7 @@ class ConfigurationMapperReader<T extends ConfigurationMappable> {
     //noinspection unchecked
     var genType = (Class<U>) extractGenericType(field);
     for (String key : listSection.getKeys(false)) {
-      list.add(listSection.getSerializable(key, genType));
+      list.add(requireNonNull(listSection.getSerializable(key, genType)));
     }
     return list;
   }
@@ -170,7 +170,7 @@ class ConfigurationMapperReader<T extends ConfigurationMappable> {
 
   private void readConfigurationSerializable(
       ConfigurationSection base, String name, ConfigurationMappable obj, Field field) {
-    var cs = base.get(name);
+    var cs = requireNonNull(base.get(name));
     setFieldValue(obj, field, cs).getOrElseThrow(x -> x);
   }
 
@@ -224,7 +224,7 @@ class ConfigurationMapperReader<T extends ConfigurationMappable> {
       setFieldValue(obj, field, (short) section.getInt(name)).getOrElseThrow(x -> x);
     }
     if (String.class.isAssignableFrom(fieldType)) {
-      setFieldValue(obj, field, section.getString(name)).getOrElseThrow(x -> x);
+      setFieldValue(obj, field, requireNonNull(section.getString(name))).getOrElseThrow(x -> x);
     }
   }
 }

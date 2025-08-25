@@ -1,5 +1,7 @@
 package agency.shitcoding.arena.storage;
 
+import static java.util.Objects.requireNonNull;
+
 import agency.shitcoding.arena.ArenaShooter;
 import agency.shitcoding.arena.command.Conf;
 import agency.shitcoding.arena.models.*;
@@ -11,14 +13,13 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
-
 import lombok.RequiredArgsConstructor;
 import org.bukkit.Location;
 import org.bukkit.configuration.Configuration;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.util.Vector;
-import org.jetbrains.annotations.Nullable;
+import org.jspecify.annotations.Nullable;
 
 /**
  * @deprecated Use {@link MappedConfigurationArenaStorage} instead.
@@ -35,11 +36,13 @@ public class LegacyConfigurationArenaStorage implements ArenaStorage {
   private final Configuration configuration;
 
   @Override
+  @SuppressWarnings("NullableProblems")
   public Collection<Arena> getArenas() {
     var allArenasSection = configuration.getConfigurationSection(Conf.arenasSection);
     if (allArenasSection == null) {
       allArenasSection = configuration.createSection(Conf.arenasSection);
     }
+    //noinspection DataFlowIssue
     return allArenasSection.getKeys(false).stream().map(this::getArena).toList();
   }
 
@@ -163,8 +166,8 @@ public class LegacyConfigurationArenaStorage implements ArenaStorage {
     return new Arena(
         name,
         authors,
-        lowerBound,
-        upperBound,
+        requireNonNull(lowerBound),
+        requireNonNull(upperBound),
         lootPoints,
         portals,
         windTunnels,
@@ -211,7 +214,7 @@ public class LegacyConfigurationArenaStorage implements ArenaStorage {
     Powerup type = Powerup.valueOf(lootPointSection.getString(Conf.Arenas.LootPoints.type));
     int markers = lootPointSection.getInt(Conf.Arenas.LootPoints.markers, 0);
 
-    return new LootPoint(lootPointId, location, isSpawnPoint, type, markers);
+    return new LootPoint(lootPointId, requireNonNull(location), isSpawnPoint, type, markers);
   }
 
   private Portal parsePortal(String id, ConfigurationSection portalSection) {

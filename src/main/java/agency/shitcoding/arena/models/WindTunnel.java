@@ -11,6 +11,7 @@ import org.bukkit.util.BoundingBox;
 import org.bukkit.util.Vector;
 
 import java.util.Objects;
+import org.jspecify.annotations.Nullable;
 
 @Getter
 @Setter
@@ -31,7 +32,7 @@ public class WindTunnel implements Cloneable, ConfigurationMappable {
     this.velocity = velocity;
   }
 
-  private transient BoundingBox boundingBox = null;
+  private @Nullable transient BoundingBox boundingBox = null;
 
   public BoundingBox getBoundingBox() {
     if (boundingBox == null) {

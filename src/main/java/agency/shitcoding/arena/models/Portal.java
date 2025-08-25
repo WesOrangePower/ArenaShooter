@@ -12,6 +12,7 @@ import org.bukkit.Sound;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.util.BoundingBox;
+import org.jspecify.annotations.Nullable;
 
 @NoArgsConstructor
 @Getter
@@ -43,8 +44,8 @@ public class Portal implements Cloneable, ConfigurationMappable {
     this.targetLocation = targetLocation;
   }
 
-  private Block lowerBlock;
-  private Block upperBlock;
+  private @Nullable Block lowerBlock;
+  private @Nullable Block upperBlock;
 
   public Block getLowerBlock() {
     if (lowerBlock == null) {

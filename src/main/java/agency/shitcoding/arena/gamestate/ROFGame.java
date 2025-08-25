@@ -2,7 +2,6 @@ package agency.shitcoding.arena.gamestate;
 
 import agency.shitcoding.arena.models.*;
 import agency.shitcoding.arena.worlds.ArenaWorld;
-import org.jetbrains.annotations.NotNull;
 
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -18,7 +17,7 @@ public class ROFGame extends DeathMatchGame {
   }
 
   @Override
-  protected @NotNull Set<LootPoint> preprocessLootPoints(Set<LootPoint> lootPoints) {
+  protected Set<LootPoint> preprocessLootPoints(Set<LootPoint> lootPoints) {
     return lootPoints.stream()
         .map(this::changeLootPointType)
         .collect(Collectors.toSet());

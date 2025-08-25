@@ -9,7 +9,7 @@ import java.io.File;
 import java.io.FileFilter;
 import java.io.IOException;
 import org.bukkit.World;
-import org.jetbrains.annotations.NotNull;
+import org.jspecify.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -20,28 +20,28 @@ public class FileUtil {
   private static final FileFilter ALLOW_ALL_FILTER = pathname -> true;
 
   public static Try<Void> tryCopyDirectoryRecursively(
-      @NotNull File sourceDir, @NotNull File targetDir) {
+      File sourceDir, File targetDir) {
     return Try.run(() -> copyDirectoryRecursively(sourceDir, targetDir));
   }
 
   public static Try<Void> tryCopyDirectoryRecursively(
-      @NotNull File sourceDir, @NotNull File targetDir, @NotNull FileFilter fileFilter) {
+      File sourceDir, File targetDir, FileFilter fileFilter) {
     return Try.run(() -> copyDirectoryRecursively(sourceDir, targetDir, fileFilter));
   }
 
-  public static void copyDirectoryRecursively(@NotNull File sourceDir, @NotNull File targetDir)
+  public static void copyDirectoryRecursively(File sourceDir, File targetDir)
       throws IOException {
     copyDirectoryRecursively(sourceDir, targetDir, targetDir, ALLOW_ALL_FILTER);
   }
 
   public static void copyDirectoryRecursively(
-      @NotNull File sourceDir, @NotNull File targetDir, @NotNull FileFilter fileFilter)
+      File sourceDir, File targetDir, FileFilter fileFilter)
       throws IOException {
     copyDirectoryRecursively(sourceDir, targetDir, targetDir, fileFilter);
   }
 
   private static void copyDirectoryRecursivelyPreconditions(
-      File sourceDirectory, File destinationDirectory) throws IOException {
+      @Nullable File sourceDirectory, @Nullable File destinationDirectory) throws IOException {
     if (sourceDirectory == null) {
       throw new IOException("source directory can't be null.");
     }
@@ -58,10 +58,10 @@ public class FileUtil {
   }
 
   private static void copyDirectoryRecursively(
-      File sourceDirectory,
-      File destinationDirectory,
+      @Nullable File sourceDirectory,
+      @Nullable File destinationDirectory,
       File rootDestinationDirectory,
-      FileFilter fileFilter)
+      @Nullable FileFilter fileFilter)
       throws IOException {
     copyDirectoryRecursivelyPreconditions(sourceDirectory, destinationDirectory);
 

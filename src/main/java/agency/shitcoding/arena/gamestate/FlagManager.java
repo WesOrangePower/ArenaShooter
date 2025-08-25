@@ -19,9 +19,8 @@ import org.bukkit.persistence.PersistentDataType;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 import org.bukkit.util.Vector;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 import org.joml.Vector3f;
+import org.jspecify.annotations.Nullable;
 
 public class FlagManager {
   private final EnumMap<ETeam, Flag> flags = new EnumMap<>(ETeam.class);
@@ -148,7 +147,7 @@ public class FlagManager {
     game.onCtfScore(team.getETeam(), 1);
   }
 
-  public Optional<Flag> getFlagByMaterial(@NotNull Material material) {
+  public Optional<Flag> getFlagByMaterial(Material material) {
     return flags.values().stream().filter(flag -> flag.getTeam().getIcon() == material).findFirst();
   }
 

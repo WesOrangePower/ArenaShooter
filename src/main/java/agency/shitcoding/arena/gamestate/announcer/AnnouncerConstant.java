@@ -3,6 +3,7 @@ package agency.shitcoding.arena.gamestate.announcer;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
+import org.jspecify.annotations.Nullable;
 
 @Getter
 @RequiredArgsConstructor
@@ -29,10 +30,14 @@ public enum AnnouncerConstant {
 
   private final String soundName;
 
+  @SuppressWarnings("NonFinalFieldInEnum")
   @Setter
-  private static AnnouncementSkipProvider announcementSkipProvider = null;
+  private static @Nullable AnnouncementSkipProvider announcementSkipProvider = null;
 
   public AnnouncementSkip getSkip() {
+    if (announcementSkipProvider == null) {
+      throw new IllegalStateException("AnnouncementSkipProvider is not set");
+    }
     return announcementSkipProvider.getAnnouncementSkip(this);
   }
 }

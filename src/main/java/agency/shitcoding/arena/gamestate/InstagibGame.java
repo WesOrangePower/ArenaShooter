@@ -4,7 +4,6 @@ import agency.shitcoding.arena.models.*;
 import agency.shitcoding.arena.worlds.ArenaWorld;
 import java.util.Set;
 import java.util.stream.Collectors;
-import org.jetbrains.annotations.NotNull;
 
 public class InstagibGame extends DeathMatchGame {
 
@@ -17,7 +16,7 @@ public class InstagibGame extends DeathMatchGame {
   }
 
   @Override
-  protected @NotNull Set<LootPoint> preprocessLootPoints(Set<LootPoint> lootPoints) {
+  protected Set<LootPoint> preprocessLootPoints(Set<LootPoint> lootPoints) {
     return lootPoints.stream().map(this::changeLootPointType).collect(Collectors.toSet());
   }
 

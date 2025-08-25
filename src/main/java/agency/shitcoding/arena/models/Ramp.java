@@ -16,6 +16,7 @@ import org.bukkit.util.Vector;
 
 import java.util.HashSet;
 import java.util.Set;
+import org.jspecify.annotations.Nullable;
 
 @Setter
 @Getter
@@ -42,7 +43,7 @@ public class Ramp implements Cloneable, ConfigurationMappable {
     this.vector = vector;
   }
 
-  private BoundingBox boundingBox;
+  private @Nullable BoundingBox boundingBox;
 
   public BoundingBox getBoundingBox() {
     if (boundingBox == null) {

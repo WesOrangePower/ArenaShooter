@@ -2,6 +2,7 @@ package agency.shitcoding.arena.command.subcommands;
 
 import static agency.shitcoding.arena.command.ArenaCommand.ADMIN_PERM;
 import static agency.shitcoding.arena.command.subcommands.TournamentInputValidator.tournamentInputValidator;
+import static java.util.Objects.requireNonNull;
 
 import agency.shitcoding.arena.command.CommandInst;
 import agency.shitcoding.arena.gamestate.Game;
@@ -20,12 +21,11 @@ import net.jellycraft.guiapi.api.ViewRegistry;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
-import org.jetbrains.annotations.NotNull;
 
 public class ArenaTournamentCmd extends CommandInst {
 
   public static final int SUB_COMMAND_ARG = 1;
-  TournamentInputValidator validator = tournamentInputValidator();
+  private final TournamentInputValidator validator = tournamentInputValidator();
 
   // Tournament command
   // /arena tournament create <ruleSet> <gameCount> <maxPlayerCount> <arena> [arena2...] - Creates a
@@ -36,7 +36,7 @@ public class ArenaTournamentCmd extends CommandInst {
   // /arena tournament add <player> [team] - Adds player to the tournament
   // /arena tournament kick <player> - Removes player from the tournament
 
-  public ArenaTournamentCmd(@NotNull CommandSender sender, @NotNull String[] args) {
+  public ArenaTournamentCmd(CommandSender sender, String[] args) {
     super(sender, args);
   }
 
@@ -147,7 +147,7 @@ public class ArenaTournamentCmd extends CommandInst {
                 var lang = new LangContext("en");
                 sender.sendMessage(
                     "Teams: "
-                        + t.getPlayerTeams().entrySet().stream()
+                        + requireNonNull(t.getPlayerTeams()).entrySet().stream()
                             .map(
                                 e ->
                                     e.getKey()

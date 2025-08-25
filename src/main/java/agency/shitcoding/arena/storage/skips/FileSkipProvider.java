@@ -1,23 +1,24 @@
 package agency.shitcoding.arena.storage.skips;
 
+import static java.nio.file.StandardWatchEventKinds.ENTRY_MODIFY;
+import static java.util.Objects.requireNonNull;
+
 import agency.shitcoding.arena.ArenaShooter;
 import agency.shitcoding.arena.gamestate.announcer.AnnouncementSkip;
 import agency.shitcoding.arena.gamestate.announcer.AnnouncementSkipProvider;
 import agency.shitcoding.arena.gamestate.announcer.AnnouncerConstant;
-import org.bukkit.Bukkit;
-
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.FileSystems;
 import java.nio.file.WatchService;
 import java.util.EnumMap;
 import java.util.Map;
-
-import static java.nio.file.StandardWatchEventKinds.ENTRY_MODIFY;
+import org.bukkit.Bukkit;
+import org.jspecify.annotations.Nullable;
 
 public abstract class FileSkipProvider implements AnnouncementSkipProvider {
   protected final File file;
-  private Map<AnnouncerConstant, AnnouncementSkip> skipMap = null;
+  private @Nullable Map<AnnouncerConstant, AnnouncementSkip> skipMap = null;
   private final WatchService watchService;
 
   protected FileSkipProvider(File file) {
@@ -56,6 +57,6 @@ public abstract class FileSkipProvider implements AnnouncementSkipProvider {
 
   @Override
   public AnnouncementSkip getAnnouncementSkip(AnnouncerConstant announcerConstant) {
-    return skipMap.get(announcerConstant);
+    return requireNonNull(skipMap).get(announcerConstant);
   }
 }

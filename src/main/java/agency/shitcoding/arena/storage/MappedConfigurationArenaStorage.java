@@ -13,14 +13,15 @@ import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.bukkit.configuration.Configuration;
 import org.bukkit.configuration.file.YamlConfiguration;
-import org.jetbrains.annotations.Nullable;
+import org.jspecify.annotations.Nullable;
 
 @Slf4j
 public class MappedConfigurationArenaStorage implements ArenaStorage {
   private final Configuration configuration;
   private final ConfigurationMapper<ArenaStorageRoot> mapper;
   public static final String ROOT_PATH = "storage";
-  private ArenaStorageRoot root = null;
+  @Nullable
+  private ArenaStorageRoot root;
 
   public MappedConfigurationArenaStorage(Configuration configuration) {
     this.configuration = configuration;
@@ -46,6 +47,7 @@ public class MappedConfigurationArenaStorage implements ArenaStorage {
   @Override
   public void storeArena(Arena arena) {
     read();
+    assert root != null;
     root.getArenas().add(arena);
     writeRoot();
   }
@@ -53,6 +55,7 @@ public class MappedConfigurationArenaStorage implements ArenaStorage {
   @Override
   public @Nullable Arena getArena(String name) {
     read();
+    assert root != null;
     return root.getArenas().stream()
         .filter(arena -> arena.getName().equals(name))
         .findFirst()
@@ -62,17 +65,20 @@ public class MappedConfigurationArenaStorage implements ArenaStorage {
   @Override
   public Collection<Arena> getArenas() {
     reload();
+    assert root != null;
     return root.getArenas();
   }
 
   @Override
   public void deleteArena(Arena arena) {
     reload();
+    assert root != null;
     root.getArenas().remove(arena);
     writeRoot();
   }
 
   private void writeRoot() {
+    assert root != null;
     mapper.writeRoot(root);
     save();
   }

@@ -1,9 +1,11 @@
 package agency.shitcoding.arena.storage;
 
+import org.jspecify.annotations.Nullable;
+
 public final class StorageProvider {
 
-  private static ArenaStorage arenaStorage;
-  private static CosmeticsStorage cosmeticsStorage;
+  private static @Nullable  ArenaStorage arenaStorage;
+  private static @Nullable CosmeticsStorage cosmeticsStorage;
 
   private StorageProvider() {}
 

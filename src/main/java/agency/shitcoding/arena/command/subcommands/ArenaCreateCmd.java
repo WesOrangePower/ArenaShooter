@@ -6,7 +6,6 @@ import agency.shitcoding.arena.models.Arena;
 import agency.shitcoding.arena.storage.StorageProvider;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
-import org.jetbrains.annotations.NotNull;
 
 import java.util.HashSet;
 import java.util.List;
@@ -16,7 +15,7 @@ public class ArenaCreateCmd extends CommandInst {
   public static final int ARG_NAME = 1;
   public static final int ARG_MIN_LEN = 2;
 
-  public ArenaCreateCmd(@NotNull CommandSender sender, @NotNull String[] args) {
+  public ArenaCreateCmd(CommandSender sender, String[] args) {
     super(sender, args);
   }
 

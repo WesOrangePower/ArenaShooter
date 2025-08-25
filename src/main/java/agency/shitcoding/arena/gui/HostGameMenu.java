@@ -1,6 +1,7 @@
 package agency.shitcoding.arena.gui;
 
 import static agency.shitcoding.arena.gui.ArenaControlPanels.backButton;
+import static java.util.Objects.requireNonNull;
 import static net.jellycraft.guiapi.api.fluent.ItemBuilder.itemBuilder;
 import static net.jellycraft.guiapi.api.fluent.ViewBuilder.viewBuilder;
 
@@ -30,14 +31,15 @@ import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
+import org.jspecify.annotations.Nullable;
 
 public class HostGameMenu {
 
   private final LangPlayer player;
-  private Arena chosenArena;
-  private RuleSet chosenRuleSet;
-  private String chosenTeam;
-  private GameRules chosenGameRules;
+  private @Nullable Arena chosenArena;
+  private @Nullable RuleSet chosenRuleSet;
+  private @Nullable String chosenTeam;
+  private @Nullable GameRules chosenGameRules;
 
   public HostGameMenu(Player player) {
     this.player = new LangPlayer(player);
@@ -76,6 +78,8 @@ public class HostGameMenu {
 
   private void execute() {
     ViewRegistry.closeForPlayer(player.getPlayer());
+    assert chosenRuleSet != null;
+    assert chosenArena != null;
     StringBuilder sb =
         new StringBuilder("arena host ")
             .append(chosenRuleSet.name())
@@ -128,7 +132,7 @@ public class HostGameMenu {
 
   private List<Item> getRuleSetItems() {
     return Arrays.stream(RuleSet.values())
-        .filter(ruleSet -> chosenArena.getSupportedRuleSets().contains(ruleSet))
+        .filter(ruleSet -> requireNonNull(chosenArena).getSupportedRuleSets().contains(ruleSet))
         .map(
             ruleSet -> {
               ItemSlot build =

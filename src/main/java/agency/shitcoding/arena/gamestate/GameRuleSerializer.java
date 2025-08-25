@@ -7,7 +7,7 @@ import com.google.gson.Gson;
 
 public class GameRuleSerializer {
 
-  private Gson gson = new Gson();
+  private final Gson gson = new Gson();
 
   public String serialize(GameRules gameRules) {
     var customGameRules = CustomGameRulesBuilder.basedOn(gameRules).build();

@@ -8,6 +8,7 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.regex.Pattern;
 import org.bukkit.configuration.serialization.ConfigurationSerializable;
+import org.jspecify.annotations.Nullable;
 
 public class ConfigurationMapperTypeValidator {
   private final Class<? extends ConfigurationMappable> type;
@@ -17,7 +18,7 @@ public class ConfigurationMapperTypeValidator {
     this.type = type;
   }
 
-  public Validation<ConfigurationMapperValidationException, Void> validateStructure() {
+  public Validation<ConfigurationMapperValidationException, @Nullable Void> validateStructure() {
     Field[] declaredFields = type.getDeclaredFields();
     Set<String> fieldNames = new HashSet<>();
     for (Field field : declaredFields) {

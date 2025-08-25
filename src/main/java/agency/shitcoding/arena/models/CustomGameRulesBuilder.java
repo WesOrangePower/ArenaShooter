@@ -1,5 +1,7 @@
 package agency.shitcoding.arena.models;
 
+import static java.util.Objects.requireNonNull;
+
 import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 import java.util.Map;
@@ -9,7 +11,7 @@ import lombok.Getter;
  * Is a builder for {@link CustomGameRules}. Field names should be the same as methods in {@link
  * GameRules} interface
  */
-@SuppressWarnings("unused")
+@SuppressWarnings({"unused", "DataFlowIssue"})
 @Getter
 public final class CustomGameRulesBuilder {
   private Map<Ammo, Integer> spawnAmmo = null;
@@ -50,16 +52,16 @@ public final class CustomGameRulesBuilder {
 
   public GameRules build() {
     return new CustomGameRules(
-        spawnAmmo,
-        spawnPowerups,
-        spawnArmor,
-        gameLengthSeconds,
-        doRespawn,
-        dropMostValuableWeaponOnDeath,
-        maxPlayers,
-        minPlayers,
-        fastWeaponSpawn,
-        showHealth);
+        requireNonNull(spawnAmmo),
+        requireNonNull(spawnPowerups),
+        requireNonNull(spawnArmor),
+        requireNonNull(gameLengthSeconds),
+        requireNonNull(doRespawn),
+        requireNonNull(dropMostValuableWeaponOnDeath),
+        requireNonNull(maxPlayers),
+        requireNonNull(minPlayers),
+        requireNonNull(fastWeaponSpawn),
+        requireNonNull(showHealth));
   }
 
   private CustomGameRulesBuilder() {}

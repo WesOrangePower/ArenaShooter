@@ -33,8 +33,7 @@ import org.bukkit.Location;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import org.jspecify.annotations.Nullable;
 
 @RequiredArgsConstructor
 public enum ArenaSetField {
@@ -521,7 +520,7 @@ public enum ArenaSetField {
   RULESET(a -> a == ADD || a == REMOVE || a == GET, new RuleSetMutationProcessor());
 
   public final Predicate<ArenaSetAction> supports;
-  public final QuadConsumer<Arena, ArenaSetAction, @Nullable String, @NotNull CommandSender>
+  public final QuadConsumer<Arena, ArenaSetAction, @Nullable String, CommandSender>
       applyValue;
 
   private static void sendBoundaries(Arena ar, CommandSender sender) {

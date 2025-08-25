@@ -39,7 +39,7 @@ public class Door implements Cloneable, ConfigurationMappable {
   private Location destinationCenter;
 
   private boolean open = false;
-  BlockDisplay[] blockDisplays;
+  private BlockDisplay[] blockDisplays;
 
   public Door(
       String id,
@@ -210,6 +210,7 @@ public class Door implements Cloneable, ConfigurationMappable {
                   }
                 }
               }
+              //noinspection DataFlowIssue
               blockDisplays = null;
               this.open = false;
             },

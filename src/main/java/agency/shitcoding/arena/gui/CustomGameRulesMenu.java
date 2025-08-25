@@ -116,7 +116,7 @@ public class CustomGameRulesMenu {
                     }))
             .build(),
         itemBuilder(
-                Boolean.TRUE.equals(customGameRulesBuilder.getDropMostValuableWeaponOnDeath())
+                customGameRulesBuilder.getDropMostValuableWeaponOnDeath()
                     ? Material.CHEST
                     : Material.ENDER_CHEST)
             .withLore(
@@ -132,7 +132,7 @@ public class CustomGameRulesMenu {
                 })
             .build(),
         itemBuilder(
-                Boolean.TRUE.equals(customGameRulesBuilder.getFastWeaponSpawn())
+                customGameRulesBuilder.getFastWeaponSpawn()
                     ? Material.FEATHER
                     : Material.TURTLE_HELMET)
             .withLore(

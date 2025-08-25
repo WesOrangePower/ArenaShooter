@@ -4,13 +4,12 @@ import agency.shitcoding.arena.models.Keys;
 import org.bukkit.entity.Player;
 import org.bukkit.persistence.PersistentDataType;
 import org.jetbrains.annotations.Contract;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import org.jspecify.annotations.Nullable;
 
 import java.util.*;
 
 public class LocalizationService {
-  private static LocalizationService instance;
+  private static @Nullable LocalizationService instance;
   public static LocalizationService getInstance() {
     if (instance == null) {
       instance = new LocalizationService();
@@ -27,7 +26,7 @@ public class LocalizationService {
     }
   }
 
-  public @NotNull String getLocalized(@Nullable String key, @Nullable String locale, Object... args) {
+  public String getLocalized(@Nullable String key, @Nullable String locale, Object... args) {
     if (key == null) {
       return "null";
     }
@@ -39,7 +38,7 @@ public class LocalizationService {
   }
 
   @Contract(pure = true, value = "null, null, _ -> param1")
-  public @NotNull String getLocalized(@Nullable String key, @Nullable Player player, Object... args) {
+  public String getLocalized(@Nullable String key, @Nullable Player player, Object... args) {
 
     var locale = Optional.ofNullable(player)
         .map(

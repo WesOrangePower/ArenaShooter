@@ -16,6 +16,7 @@ import java.util.Arrays;
 import java.util.List;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
+import org.jspecify.annotations.Nullable;
 
 class TournamentInputValidator {
 
@@ -26,7 +27,8 @@ class TournamentInputValidator {
     return new TournamentInputValidator();
   }
 
-  public Validation<String, Tuple2<Player, ETeam>> validateAdd(String playerName, String team) {
+  public Validation<String, Tuple2<Player, ETeam>> validateAdd(String playerName,
+      @Nullable String team) {
 
     var tournament = TournamentAccessor.getInstance().getTournament().orElse(null);
     if (tournament == null) {
@@ -60,7 +62,7 @@ class TournamentInputValidator {
     return Validation.valid(result);
   }
 
-  public Validation<String, Void> validateHostNextMap() {
+  public Validation<String, @Nullable Void> validateHostNextMap() {
     return TournamentAccessor.getInstance().getTournament()
         .map(t -> t.getCurrentGameNumber() < t.getGameCount())
         .orElse(false)
@@ -89,7 +91,7 @@ class TournamentInputValidator {
         .ap((_1, jt, rs, gc, mp, as) -> new Tournament(jt.equals("public"), rs, gc, mp, as));
   }
 
-  private Validation<String, Void> validateNoOngoingTournament() {
+  private Validation<String, @Nullable Void> validateNoOngoingTournament() {
     return TournamentAccessor.getInstance().hasTournament()
         ? Validation.invalid("There is already an ongoing tournament")
         : Validation.valid(null);
@@ -103,7 +105,7 @@ class TournamentInputValidator {
 
   private Validation<String, Arena[]> validateArenas(List<String> arenas, RuleSet ruleSet) {
     ArenaStorage arenaStorage = StorageProvider.getArenaStorage();
-    Arena[] foundArenas = arenas.stream().map(arenaStorage::getArena).toArray(Arena[]::new);
+    @Nullable Arena[] foundArenas = arenas.stream().map(arenaStorage::getArena).toArray(Arena[]::new);
 
     for (int i = 0; i < foundArenas.length; i++) {
       Arena anArena = foundArenas[i];
@@ -115,6 +117,7 @@ class TournamentInputValidator {
       }
     }
 
+    //noinspection NullableProblems
     return Array.of(foundArenas).contains(null) || foundArenas.length != arenas.size()
         ? Validation.invalid("Invalid arena(s)")
         : Validation.valid(foundArenas);

@@ -5,14 +5,13 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabCompleter;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
+import org.jspecify.annotations.Nullable;
 
 public final class ArenaCommandInvoker extends Command implements TabCompleter, CommandExecutor {
 
-  private static ArenaCommandInvoker instance;
+  private static @Nullable ArenaCommandInvoker instance;
 
   private ArenaCommandInvoker() {
     super("arena".toLowerCase());
@@ -27,27 +26,27 @@ public final class ArenaCommandInvoker extends Command implements TabCompleter, 
 
   @Override
   public boolean execute(
-      @NotNull CommandSender sender, @NotNull String commandLabel, @NotNull String[] args) {
+      CommandSender sender, String commandLabel, String[] args) {
     new ArenaCommand(sender, args).execute();
     return true;
   }
 
   @Override
   public @Nullable List<String> onTabComplete(
-      @NotNull CommandSender sender,
-      @NotNull Command command,
-      @NotNull String label,
-      @NotNull String[] args) {
+      CommandSender sender,
+      Command command,
+      String label,
+      String[] args) {
 
     return new ArenaTabCompleter(sender, args).onTabComplete();
   }
 
   @Override
   public boolean onCommand(
-      @NotNull CommandSender sender,
-      @NotNull Command command,
-      @NotNull String label,
-      @NotNull String[] args) {
+      CommandSender sender,
+      Command command,
+      String label,
+      String[] args) {
     new ArenaCommand(sender, args).execute();
     return true;
   }

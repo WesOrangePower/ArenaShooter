@@ -22,7 +22,7 @@ import java.util.*;
 import java.util.logging.Level;
 import java.util.stream.Collectors;
 import org.jetbrains.annotations.Contract;
-import org.jetbrains.annotations.Nullable;
+import org.jspecify.annotations.Nullable;
 
 @Getter
 @Setter
@@ -58,7 +58,7 @@ public class Arena implements Cloneable, ConfigurationMappable {
   private Set<RuleSet> supportedRuleSets;
 
 
-  private transient Set<LootPoint> weaponLootPoints;
+  private transient @Nullable Set<LootPoint> weaponLootPoints;
 
   public Arena(
       String name,
@@ -111,7 +111,7 @@ public class Arena implements Cloneable, ConfigurationMappable {
     return weaponLootPoints;
   }
 
-  public LootPoint spawn(Player player, Game game, LootPointFilter filter) {
+  public @Nullable LootPoint spawn(Player player, Game game, LootPointFilter filter) {
     LootPoint lootPoint = findLootPointToSpawn(filter, player);
     if (lootPoint == null) {
       ArenaShooter.getInstance()
@@ -179,7 +179,7 @@ public class Arena implements Cloneable, ConfigurationMappable {
     }
   }
 
-  private LootPoint findLootPointToSpawn(LootPointFilter filter, Player player) {
+  private @Nullable LootPoint findLootPointToSpawn(LootPointFilter filter, Player player) {
     Set<LootPoint> weaponLootPoints =
         getWeaponLootPoints().stream()
             .filter(lp -> filter.filter(lp, player))
@@ -199,6 +199,7 @@ public class Arena implements Cloneable, ConfigurationMappable {
     return null;
   }
 
+  @SuppressWarnings("DataFlowIssue")
   @Override
   public Arena clone() {
     try {
@@ -242,7 +243,7 @@ public class Arena implements Cloneable, ConfigurationMappable {
   }
 
   @Contract("null -> null")
-  private static <T> Set<T> shallowCloneSet(Set<T> set) {
+  private static <T> @Nullable Set<T> shallowCloneSet(@Nullable Set<T> set) {
     return set == null ? null : new HashSet<>(set);
   }
 

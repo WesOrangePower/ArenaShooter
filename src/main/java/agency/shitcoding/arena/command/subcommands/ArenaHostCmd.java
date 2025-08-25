@@ -1,5 +1,7 @@
 package agency.shitcoding.arena.command.subcommands;
 
+import static java.util.Objects.requireNonNull;
+
 import agency.shitcoding.arena.command.ArenaCommand;
 import agency.shitcoding.arena.command.CommandInst;
 import agency.shitcoding.arena.gamestate.*;
@@ -10,12 +12,11 @@ import agency.shitcoding.arena.models.Arena;
 import agency.shitcoding.arena.models.GameRules;
 import agency.shitcoding.arena.models.RuleSet;
 import agency.shitcoding.arena.storage.StorageProvider;
-import java.util.Arrays;
-
 import com.google.gson.JsonSyntaxException;
+import java.util.Arrays;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
-import org.jetbrains.annotations.NotNull;
+import org.jspecify.annotations.Nullable;
 
 public class ArenaHostCmd extends CommandInst {
 
@@ -24,12 +25,12 @@ public class ArenaHostCmd extends CommandInst {
   public static final int ARG_TEAM = 3;
   public static final int ARG_MIN_LEN = 3;
 
-  private RuleSet ruleSet;
-  private Arena arena;
-  private ETeam team;
-  private GameRules gameRules;
+  private @Nullable RuleSet ruleSet;
+  private @Nullable Arena arena;
+  private @Nullable ETeam team;
+  private @Nullable GameRules gameRules;
 
-  public ArenaHostCmd(@NotNull CommandSender sender, @NotNull String[] args) {
+  public ArenaHostCmd(CommandSender sender, String[] args) {
     super(sender, args);
   }
 
@@ -46,21 +47,26 @@ public class ArenaHostCmd extends CommandInst {
 
   private void hostGameSync() {
     String broadcastKey;
-    Game game = GameOrchestrator.getInstance().createGame(ruleSet, arena, gameRules);
+    Game game =
+        GameOrchestrator.getInstance()
+            .createGame(requireNonNull(ruleSet), requireNonNull(arena), requireNonNull(gameRules));
     if (game instanceof TeamGame teamGame) {
-      teamGame.addPlayer((Player) sender, team);
+      teamGame.addPlayer((Player) sender, requireNonNull(team));
       broadcastKey = "command.host.broadcast.team";
     } else {
       game.addPlayer((Player) sender);
       broadcastKey = "command.host.broadcast";
     }
 
-
-    Lobby.getInstance().getPlayersInLobby().stream().map(LangPlayer::new)
-        .forEach(player -> player.sendRichLocalized(
-            broadcastKey,
-            sender.getName(), player.getLocalized(ruleSet.getName()), arena.getName()
-        ));
+    Lobby.getInstance().getPlayersInLobby().stream()
+        .map(LangPlayer::new)
+        .forEach(
+            player ->
+                player.sendRichLocalized(
+                    broadcastKey,
+                    sender.getName(),
+                    player.getLocalized(ruleSet.getName()),
+                    arena.getName()));
   }
 
   private boolean validate() {
@@ -89,10 +95,11 @@ public class ArenaHostCmd extends CommandInst {
 
     arena = StorageProvider.getArenaStorage().getArena(args[ARG_ARENA]);
     if (arena == null) {
-      String[] arenas = StorageProvider.getArenaStorage().getArenas().stream()
-          .filter(Arena::isAllowHost)
-          .map(Arena::getName)
-          .toArray(String[]::new);
+      String[] arenas =
+          StorageProvider.getArenaStorage().getArenas().stream()
+              .filter(Arena::isAllowHost)
+              .map(Arena::getName)
+              .toArray(String[]::new);
 
       lang.sendRichLocalized("command.host.arenaNotFound", Arrays.toString(arenas));
       return false;
@@ -100,7 +107,8 @@ public class ArenaHostCmd extends CommandInst {
 
     if (!arena.getSupportedRuleSets().contains(ruleSet)) {
       var rulesetName = lang.getLocalized(ruleSet.getName());
-      lang.sendRichLocalized("command.host.ruleSetNotSupportedByArena", rulesetName, arena.getName());
+      lang.sendRichLocalized(
+          "command.host.ruleSetNotSupportedByArena", rulesetName, arena.getName());
       return false;
     }
 
@@ -138,7 +146,7 @@ public class ArenaHostCmd extends CommandInst {
     return true;
   }
 
-  private boolean parseAdditionalArgs(@NotNull String[] args, int maxArgs, LangPlayer lang) {
+  private boolean parseAdditionalArgs(String[] args, int maxArgs, LangPlayer lang) {
     String[] subArgs = Arrays.copyOfRange(args, maxArgs, args.length);
     String trailing = String.join(" ", subArgs);
     try {

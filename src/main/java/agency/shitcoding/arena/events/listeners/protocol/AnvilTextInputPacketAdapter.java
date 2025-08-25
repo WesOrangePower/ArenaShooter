@@ -12,9 +12,12 @@ import java.util.Map;
 import lombok.Getter;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
+import org.jspecify.annotations.NullMarked;
 
+@NullMarked
 public class AnvilTextInputPacketAdapter extends PacketAdapter {
-  @Getter private static final Map<Player, String> currentInput = new HashMap<>();
+  @Getter
+  private static final Map<Player, String> currentInput = new HashMap<>();
 
   public AnvilTextInputPacketAdapter() {
     super(

@@ -4,9 +4,9 @@ import java.util.List;
 import java.util.function.BiPredicate;
 import java.util.function.Supplier;
 import org.bukkit.command.CommandSender;
-import org.jetbrains.annotations.NotNull;
+import org.jspecify.annotations.Nullable;
 
 public record SuggestionRule (
-    @NotNull BiPredicate<CommandSender, String[]> condition,
-    @NotNull Supplier<List<String>> suggestions
+    BiPredicate<CommandSender, String[]> condition,
+    Supplier<@Nullable List<String>> suggestions
 ){}

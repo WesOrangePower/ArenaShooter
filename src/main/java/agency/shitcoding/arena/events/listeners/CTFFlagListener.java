@@ -1,5 +1,7 @@
 package agency.shitcoding.arena.events.listeners;
 
+import static java.util.Objects.requireNonNull;
+
 import agency.shitcoding.arena.gamestate.CTFGame;
 import agency.shitcoding.arena.gamestate.GameOrchestrator;
 import agency.shitcoding.arena.models.Keys;
@@ -11,7 +13,7 @@ import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.ItemDespawnEvent;
 import org.bukkit.event.player.PlayerAttemptPickupItemEvent;
 import org.bukkit.persistence.PersistentDataType;
-import org.jetbrains.annotations.NotNull;
+import org.jspecify.annotations.Nullable;
 
 public class CTFFlagListener implements Listener {
 
@@ -54,7 +56,7 @@ public class CTFFlagListener implements Listener {
             });
   }
 
-  private Integer getTag(@NotNull Item item) {
+  private @Nullable Integer getTag(Item item) {
     return item.getPersistentDataContainer().get(Keys.getFlagKey(), PersistentDataType.INTEGER);
   }
 
@@ -68,8 +70,7 @@ public class CTFFlagListener implements Listener {
         .ifPresent(
             game -> {
               if (game instanceof CTFGame ctfGame) {
-                ctfGame
-                    .getFlagManager()
+                requireNonNull(ctfGame.getFlagManager())
                     .getFlagByMaterial(item.getItemStack().getType())
                     .ifPresent(flag -> ctfGame.getFlagManager().reset(flag));
               }

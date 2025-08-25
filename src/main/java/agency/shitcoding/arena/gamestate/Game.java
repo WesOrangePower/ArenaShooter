@@ -39,8 +39,7 @@ import org.bukkit.scheduler.BukkitTask;
 import org.bukkit.scoreboard.*;
 import org.bukkit.util.BoundingBox;
 import org.bukkit.util.Vector;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import org.jspecify.annotations.Nullable;
 
 @Slf4j
 @Getter
@@ -57,20 +56,19 @@ public abstract class Game {
   protected final MajorBuffTracker majorBuffTracker = new MajorBuffTracker();
   protected final Set<Player> diedOnce = new HashSet<>();
   protected final Announcer announcer = Announcer.getInstance();
-  @Nullable
-  protected LootManager lootManager;
+  protected @Nullable LootManager lootManager;
   protected Map<Player, BossBar> bossBarMap = new ConcurrentHashMap<>();
   protected RuleSet ruleSet;
   protected GameRules gameRules;
   protected Arena arena;
   protected ArenaWorld arenaWorld;
-  protected BukkitTask gameTimerTask;
-  protected BukkitTask ammoActionBarTask;
+  protected @Nullable BukkitTask gameTimerTask;
+  protected @Nullable BukkitTask ammoActionBarTask;
   protected GameStage gamestage = GameStage.WAITING;
-  protected Objective scoreboardObjective;
-  protected Objective healthObjective;
-  private Instant gameStart;
-  private PlayerWaitingManager waitingManager;
+  protected @Nullable Objective scoreboardObjective;
+  protected @Nullable Objective healthObjective;
+  private @Nullable Instant gameStart;
+  private @Nullable PlayerWaitingManager waitingManager;
 
   protected Game(ArenaWorld arenaWorld, RuleSet ruleSet, GameRules gameRules) {
     var arena = arenaWorld.getShifted();
@@ -258,11 +256,12 @@ public abstract class Game {
     updateScoreBoard();
   }
 
-  protected @NotNull Set<LootPoint> preprocessLootPoints(Set<LootPoint> lootPoints) {
+  protected Set<LootPoint> preprocessLootPoints(Set<LootPoint> lootPoints) {
     return lootPoints;
   }
 
   protected void onGameSecondElapsed() {
+    assert gameStart != null;
     long remainingSeconds =
         gameRules.gameLengthSeconds() - (Instant.now().getEpochSecond() - gameStart.getEpochSecond());
     float fractionBase = ((float) remainingSeconds) / gameRules.gameLengthSeconds();
