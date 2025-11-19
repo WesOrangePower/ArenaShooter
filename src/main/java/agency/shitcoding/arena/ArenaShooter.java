@@ -19,20 +19,22 @@ import agency.shitcoding.arena.storage.CosmeticsUpdater;
 import agency.shitcoding.arena.storage.skips.YamlSkipProvider;
 import com.comphenix.protocol.ProtocolLibrary;
 import com.comphenix.protocol.ProtocolManager;
-import com.onarandombox.MultiverseCore.MultiverseCore;
 import java.io.File;
 import java.util.Optional;
 import lombok.Getter;
 import org.bukkit.Bukkit;
 import org.bukkit.event.Listener;
+import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.jspecify.annotations.Nullable;
+import org.mvplugins.multiverse.core.MultiverseCoreApi;
 
 @Getter
 public class ArenaShooter extends JavaPlugin {
 
   @SuppressWarnings("NotNullFieldNotInitialized")
   private StatisticsService statisticsService;
+
   private @Nullable ProtocolManager protocolManager = null;
   private @Nullable String version = null;
 
@@ -64,7 +66,8 @@ public class ArenaShooter extends JavaPlugin {
             () -> {
               protocolManager = ProtocolLibrary.getProtocolManager();
               if (isProtocolLibEnabled()) {
-                requireNonNull(protocolManager).addPacketListener(new AnvilTextInputPacketAdapter());
+                requireNonNull(protocolManager)
+                    .addPacketListener(new AnvilTextInputPacketAdapter());
               } else {
                 getLogger().info("ProtocolLib not found. Cannot use anvil text input");
               }
@@ -156,13 +159,13 @@ public class ArenaShooter extends JavaPlugin {
     }
   }
 
-  public static Optional<MultiverseCore> getMultiverseApi() {
-    var plugin =
-        ArenaShooter.getInstance().getServer().getPluginManager().getPlugin("Multiverse-Core");
-    if (plugin == null) {
+  public static Optional<MultiverseCoreApi> getMultiverseApi() {
+    RegisteredServiceProvider<MultiverseCoreApi> provider =
+        Bukkit.getServicesManager().getRegistration(MultiverseCoreApi.class);
+    if (provider == null) {
       return Optional.empty();
     }
-    return Optional.of((MultiverseCore) plugin);
+    return Optional.of(provider.getProvider());
   }
 
   public String getVersion() {

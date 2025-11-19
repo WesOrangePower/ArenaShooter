@@ -82,7 +82,7 @@
     <repository>
       <id>multiverse-releases</id>
       <name>Multiverse Repository</name>
-      <url>https://repo.onarandombox.com/multiverse-releases/</url>
+      <url>https://repo.onarandombox.com/content/groups/public/</url>
     </repository>
   </repositories>
 
@@ -90,7 +90,7 @@
     <dependency>
       <groupId>io.papermc.paper</groupId>
       <artifactId>paper-api</artifactId>
-      <version>1.21.7-R0.1-SNAPSHOT</version>
+      <version>1.21.10-R0.1-SNAPSHOT</version>
       <scope>provided</scope>
     </dependency>
     <dependency>
@@ -116,9 +116,9 @@
       <version>1.18.34</version>
     </dependency>
     <dependency>
-      <groupId>com.onarandombox.multiversecore</groupId>
+      <groupId>org.mvplugins.multiverse.core</groupId>
       <artifactId>multiverse-core</artifactId>
-      <version>4.3.12</version>
+      <version>5.0.0-SNAPSHOT</version>
       <scope>provided</scope>
     </dependency>
     <dependency>

@@ -10,6 +10,8 @@ import java.io.FileFilter;
 import java.io.IOException;
 import org.bukkit.World;
 import org.jspecify.annotations.Nullable;
+import org.mvplugins.multiverse.core.world.WorldManager;
+import org.mvplugins.multiverse.core.world.options.DeleteWorldOptions;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -19,8 +21,7 @@ public class FileUtil {
 
   private static final FileFilter ALLOW_ALL_FILTER = pathname -> true;
 
-  public static Try<Void> tryCopyDirectoryRecursively(
-      File sourceDir, File targetDir) {
+  public static Try<Void> tryCopyDirectoryRecursively(File sourceDir, File targetDir) {
     return Try.run(() -> copyDirectoryRecursively(sourceDir, targetDir));
   }
 
@@ -29,13 +30,11 @@ public class FileUtil {
     return Try.run(() -> copyDirectoryRecursively(sourceDir, targetDir, fileFilter));
   }
 
-  public static void copyDirectoryRecursively(File sourceDir, File targetDir)
-      throws IOException {
+  public static void copyDirectoryRecursively(File sourceDir, File targetDir) throws IOException {
     copyDirectoryRecursively(sourceDir, targetDir, targetDir, ALLOW_ALL_FILTER);
   }
 
-  public static void copyDirectoryRecursively(
-      File sourceDir, File targetDir, FileFilter fileFilter)
+  public static void copyDirectoryRecursively(File sourceDir, File targetDir, FileFilter fileFilter)
       throws IOException {
     copyDirectoryRecursively(sourceDir, targetDir, targetDir, fileFilter);
   }
@@ -107,9 +106,21 @@ public class FileUtil {
         .ifPresentOrElse(
             mvApi -> {
               try {
-              if (!mvApi.getMVWorldManager().deleteWorld(worldFolderName)) {
-                deleteWorldFolderForce(worldFolderName);
-              }
+                WorldManager worldManager = mvApi.getWorldManager();
+                worldManager
+                    .getWorld(worldFolderName)
+                    .map(DeleteWorldOptions::world)
+                    .map(worldManager::deleteWorld)
+                    .onEmpty(() -> deleteWorldFolderForce(worldFolderName))
+                    .peek(
+                        attempt -> {
+                          if (attempt.isFailure()) {
+                            log.warn(
+                                "MV5 could not delete world: {}",
+                                attempt.getFailureMessage().formatted());
+                            deleteWorldFolderForce(worldFolderName);
+                          }
+                        });
               } catch (IllegalArgumentException e) {
                 deleteWorldFolderForce(worldFolderName);
               }

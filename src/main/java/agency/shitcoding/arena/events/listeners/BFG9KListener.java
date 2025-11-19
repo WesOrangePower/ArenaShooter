@@ -97,7 +97,7 @@ public class BFG9KListener implements Listener {
     w.spawnParticle(Particle.ITEM_SNOWBALL, at, 20, 3, 3, 3, 0);
     boom(at, Material.EMERALD_BLOCK.createBlockData(), SoundConstants.BFG_HIT);
 
-    Runnable flashes = () -> w.spawnParticle(Particle.FLASH, at, 3, 2, 2, 2, .2);
+    Runnable flashes = () -> w.spawnParticle(Particle.FLASH, at, 3, 2, 2, 2, .2, Color.GREEN);
 
     for (long delay : new long[] {2, 4, 8, 10, 12, 14, 16, 18, 20}) {
       Bukkit.getScheduler().runTaskLater(ArenaShooter.getInstance(), flashes, delay);

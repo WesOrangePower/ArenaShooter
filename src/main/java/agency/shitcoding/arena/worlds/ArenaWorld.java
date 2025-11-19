@@ -5,7 +5,6 @@ import agency.shitcoding.arena.models.*;
 import agency.shitcoding.arena.models.door.Door;
 import agency.shitcoding.arena.models.door.DoorTrigger;
 import agency.shitcoding.arena.util.FileUtil;
-import com.onarandombox.MultiverseCore.MultiverseCore;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -14,11 +13,13 @@ import java.util.List;
 import java.util.Optional;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
-import net.kyori.adventure.util.TriState;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.WorldCreator;
 import org.jspecify.annotations.Nullable;
+import org.mvplugins.multiverse.core.MultiverseCoreApi;
+import org.mvplugins.multiverse.core.world.WorldManager;
+import org.mvplugins.multiverse.core.world.options.CloneWorldOptions;
 
 @RequiredArgsConstructor
 public class ArenaWorld {
@@ -35,15 +36,20 @@ public class ArenaWorld {
     var worldName =
         String.format("generated__%s__%s", origin.getName(), System.currentTimeMillis());
 
-    Optional<MultiverseCore> mvApi = ArenaShooter.getMultiverseApi();
+    Optional<MultiverseCoreApi> mvApi = ArenaShooter.getMultiverseApi();
     if (mvApi.isPresent()) {
-      if (mvApi.get().getMVWorldManager().cloneWorld(origin.getName(), worldName)) {
-        generated = true;
-      }
-      if (generated && mvApi.get().getMVWorldManager().loadWorld(worldName)) {
-        this.world = ArenaShooter.getInstance().getServer().getWorld(worldName);
-        return;
-      }
+      WorldManager worldManager = mvApi.get().getWorldManager();
+      worldManager.getLoadedWorld(origin.getName()).map(from ->
+          worldManager.cloneWorld(CloneWorldOptions.fromTo(from, worldName))
+      ).peek(attempt -> {
+        if (attempt.isSuccess()) {
+          attempt.get().getBukkitWorld().peek(world -> {
+            generated = true;
+            this.world = world;
+            world.setAutoSave(false);
+          });
+        }
+      });
     }
 
     if (!generated) {
@@ -89,7 +95,6 @@ public class ArenaWorld {
     worldCreator.generator(world.getGenerator());
     worldCreator.generateStructures(false);
     worldCreator.seed(world.getSeed());
-    worldCreator.keepSpawnLoaded(TriState.FALSE);
     return worldCreator;
   }
 
