@@ -80,7 +80,7 @@ public class RailListener implements Listener {
             .forEach(
                 entity -> {
                   affectedEntities.add(entity);
-                  world.spawnParticle(Particle.FLASH, at, 10, .2, .2, .2, 0);
+                  world.spawnParticle(Particle.FLASH, at, 10, .2, .2, .2, 0, Color.WHITE);
                 });
       }
     }
